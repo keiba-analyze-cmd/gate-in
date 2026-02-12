@@ -1,0 +1,94 @@
+import { createClient } from "@/lib/supabase/server";
+import { NextResponse } from "next/server";
+
+export async function GET(request: Request) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "ログインが必要です" }, { status: 401 });
+  }
+
+  const { searchParams } = new URL(request.url);
+  const cursor = searchParams.get("cursor");
+  const filter = searchParams.get("filter") ?? "all";
+  const limit = 20;
+
+  // フォロー中のユーザーを取得
+  const { data: follows } = await supabase
+    .from("follows")
+    .select("following_id")
+    .eq("follower_id", user.id);
+
+  const followingIds = follows?.map((f) => f.following_id) ?? [];
+  const targetIds = [user.id, ...followingIds];
+
+  // 投票アクティビティ
+  let voteItems: any[] = [];
+  if (filter === "all" || filter === "vote") {
+    let voteQuery = supabase
+      .from("votes")
+      .select("id, user_id, race_id, status, earned_points, is_perfect, settled_at, created_at, profiles(display_name, avatar_url, rank_id), races(name, grade, course_name)")
+      .in("user_id", targetIds)
+      .neq("status", "pending")
+      .order("settled_at", { ascending: false })
+      .limit(limit);
+
+    if (cursor) {
+      voteQuery = voteQuery.lt("settled_at", cursor);
+    }
+
+    const { data } = await voteQuery;
+    voteItems = (data ?? []).map((v) => ({
+      type: "vote_result",
+      id: `vote-${v.id}`,
+      user: v.profiles,
+      user_id: v.user_id,
+      race: v.races,
+      race_id: v.race_id,
+      earned_points: v.earned_points,
+      is_perfect: v.is_perfect,
+      status: v.status,
+      timestamp: v.settled_at ?? v.created_at,
+    }));
+  }
+
+  // コメントアクティビティ
+  let commentItems: any[] = [];
+  if (filter === "all" || filter === "comment") {
+    let commentQuery = supabase
+      .from("comments")
+      .select("id, user_id, race_id, body, sentiment, created_at, profiles(display_name, avatar_url, rank_id), races(name, grade, course_name)")
+      .in("user_id", targetIds)
+      .is("parent_id", null)
+      .eq("is_deleted", false)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (cursor) {
+      commentQuery = commentQuery.lt("created_at", cursor);
+    }
+
+    const { data } = await commentQuery;
+    commentItems = (data ?? []).map((c) => ({
+      type: "comment",
+      id: `comment-${c.id}`,
+      user: c.profiles,
+      user_id: c.user_id,
+      race: c.races,
+      race_id: c.race_id,
+      body: c.body,
+      sentiment: c.sentiment,
+      timestamp: c.created_at,
+    }));
+  }
+
+  // マージして時系列ソート
+  const allItems = [...voteItems, ...commentItems]
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    .slice(0, limit);
+
+  const newCursor = allItems.length === limit ? allItems[allItems.length - 1].timestamp : null;
+
+  return NextResponse.json({ items: allItems, next_cursor: newCursor });
+}

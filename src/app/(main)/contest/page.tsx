@@ -1,0 +1,17 @@
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import ContestBoard from "@/components/rankings/ContestBoard";
+
+export default async function ContestPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) redirect("/login");
+
+  return (
+    <div className="max-w-2xl mx-auto space-y-4">
+      <h1 className="text-xl font-bold text-gray-800">🎪 月間大会</h1>
+      <ContestBoard currentUserId={user.id} />
+    </div>
+  );
+}

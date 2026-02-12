@@ -1,3 +1,8 @@
+#!/bin/bash
+# globals.css 修正（Tailwind v4互換）
+echo "🔧 globals.css を修正中..."
+
+cat << 'FILEOF' > src/app/globals.css
 @import "tailwindcss";
 
 @layer base {
@@ -44,3 +49,7 @@
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+FILEOF
+
+echo "✅ globals.css 修正完了！"
+echo "  pkill -f 'next dev'; rm -rf .next/dev/lock; npm run dev"
