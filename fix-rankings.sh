@@ -1,3 +1,7 @@
+#!/bin/bash
+echo "🔧 rankings/route.ts を修正中..."
+
+cat << 'FILEOF' > src/app/api/rankings/route.ts
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
@@ -63,3 +67,7 @@ export async function GET(request: Request) {
 
   return NextResponse.json({ type, rankings });
 }
+FILEOF
+
+echo "✅ 修正完了！"
+echo "  npm run build"

@@ -1,3 +1,14 @@
+#!/bin/bash
+# ============================================
+# Vercel ビルドエラー修正スクリプト
+# gate-in フォルダ内で実行してください
+# ============================================
+
+echo "🔧 TypeScriptエラーを修正中..."
+
+# ====== votes/route.ts 修正 ======
+echo "📝 src/app/api/races/[raceId]/votes/route.ts"
+cat << 'FILEOF' > src/app/api/races/\[raceId\]/votes/route.ts
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
@@ -77,3 +88,11 @@ export async function GET(request: Request, { params }: Props) {
     danger: aggregate("danger"),
   });
 }
+FILEOF
+
+echo ""
+echo "✅ 修正完了！ローカルでビルドテストしてください："
+echo "  npm run build"
+echo ""
+echo "成功したら："
+echo "  git add . && git commit -m 'fix: TypeScript build errors' && git push"
