@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 type ScrapedEntry = {
   post_number: number;
@@ -24,7 +24,7 @@ type ScrapedRace = {
   distance: number;
   race_number: number;
   entries: ScrapedEntry[];
-  already_registered: boolean;
+  already_registered?: boolean;
   selected?: boolean;
 };
 
@@ -36,59 +36,56 @@ type RegistrationResult = {
 };
 
 export default function AdminScrapeForm() {
-  const [date, setDate] = useState(() => {
-    const d = new Date();
-    const next = new Date(d);
-    // 次の土曜日を計算
-    const dayOfWeek = d.getDay();
-    const daysUntilSat = dayOfWeek <= 6 ? (6 - dayOfWeek) : 0;
-    next.setDate(d.getDate() + (daysUntilSat === 0 && d.getHours() >= 16 ? 1 : daysUntilSat));
-    return next.toISOString().split("T")[0];
-  });
-
   const [races, setRaces] = useState<ScrapedRace[]>([]);
   const [loading, setLoading] = useState(false);
   const [registering, setRegistering] = useState(false);
   const [result, setResult] = useState<RegistrationResult | null>(null);
   const [error, setError] = useState("");
-  const [progress, setProgress] = useState("");
+  const [jsonMeta, setJsonMeta] = useState<{ date: string; scraped_at: string } | null>(null);
   const [expandedRace, setExpandedRace] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // ── スクレイピング実行 ──
-  const handleScrape = async () => {
+  // ── JSONファイル読み込み ──
+  const handleFileLoad = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
     setLoading(true);
     setError("");
     setResult(null);
     setRaces([]);
-    setProgress("レース一覧を取得中...");
 
     try {
-      const dateStr = date.replace(/-/g, "");
-      const res = await fetch(`/api/admin/scrape?date=${dateStr}`);
-      const json = await res.json();
+      const text = await file.text();
+      const json = JSON.parse(text);
 
-      if (!res.ok) {
-        setError(json.error || "取得に失敗しました");
+      if (!json.races || !Array.isArray(json.races)) {
+        setError("無効なJSONフォーマットです。scrape-to-json.mjs で出力したファイルを使用してください。");
         return;
       }
 
-      if (json.races?.length === 0) {
-        setError("この日のレースが見つかりませんでした。出馬表が公開されているか確認してください。");
-        return;
-      }
+      setJsonMeta({ date: json.date, scraped_at: json.scraped_at });
 
-      // 未登録レースをデフォルトで選択
-      const racesWithSelection = json.races.map((r: ScrapedRace) => ({
-        ...r,
-        selected: !r.already_registered,
-      }));
+      // 登録済みチェック
+      const res = await fetch(`/api/admin/scrape?check_date=${json.date}`);
+      const existing = await res.json();
+      const existingSet = new Set(
+        (existing.registered ?? []).map((r: any) => `${r.course_name}_${r.race_number}`)
+      );
+
+      const racesWithSelection = json.races.map((r: ScrapedRace) => {
+        const key = `${r.course_name}_${r.race_number}`;
+        const alreadyRegistered = existingSet.has(key);
+        return { ...r, already_registered: alreadyRegistered, selected: !alreadyRegistered };
+      });
 
       setRaces(racesWithSelection);
-      setProgress("");
     } catch (err: any) {
-      setError(err.message || "ネットワークエラー");
+      setError(`JSONの読み込みに失敗しました: ${err.message}`);
     } finally {
       setLoading(false);
+      // inputをリセット（同じファイルを再選択可能に）
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
@@ -118,11 +115,9 @@ export default function AdminScrapeForm() {
       }
 
       setResult(json);
-
-      // 登録済みフラグを更新
       setRaces(prev => prev.map(r => {
-        const res = json.results?.find((x: any) => x.name === r.name && x.status === "registered");
-        if (res) return { ...r, already_registered: true, selected: false };
+        const match = json.results?.find((x: any) => x.name === r.name && x.status === "registered");
+        if (match) return { ...r, already_registered: true, selected: false };
         return r;
       }));
     } catch (err: any) {
@@ -139,7 +134,6 @@ export default function AdminScrapeForm() {
     );
   };
 
-  // ── 全選択 / 全解除 ──
   const toggleAll = (selected: boolean) => {
     setRaces(prev =>
       prev.map(r => r.already_registered ? r : { ...r, selected })
@@ -170,55 +164,55 @@ export default function AdminScrapeForm() {
 
   return (
     <div className="space-y-6">
-      {/* ── 日付選択 & 取得ボタン ── */}
+      {/* ── 使い方 & JSON読み込み ── */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-          📥 netkeiba からレースデータを取得
+          📥 netkeibaからレース一括登録
         </h3>
-        <div className="flex flex-wrap items-end gap-4">
-          <div>
-            <label className="block text-xs font-bold text-gray-600 mb-1">開催日</label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-            />
+
+        {/* Step 1: ローカルスクレイピング説明 */}
+        <div className="bg-gray-50 rounded-lg p-4 mb-4">
+          <p className="text-sm font-bold text-gray-700 mb-2">Step 1: ローカルでデータ取得</p>
+          <p className="text-xs text-gray-500 mb-2">
+            ターミナルで以下のコマンドを実行してJSONを生成します：
+          </p>
+          <div className="bg-gray-800 text-green-400 rounded-lg px-4 py-3 text-xs font-mono">
+            <div className="text-gray-500"># 日付を指定して取得</div>
+            <div>node scripts/scrape-to-json.mjs 20260215</div>
+            <div className="mt-1 text-gray-500"># 今週末を自動取得</div>
+            <div>node scripts/scrape-to-json.mjs</div>
+            <div className="mt-1 text-gray-500"># 出力: scripts/output/races-YYYYMMDD.json</div>
           </div>
-          <div className="flex gap-2">
-            {/* 今週末のクイック選択 */}
-            {getWeekendDates().map(d => (
-              <button
-                key={d.value}
-                onClick={() => setDate(d.value)}
-                className={`px-3 py-2.5 rounded-lg text-xs font-bold border transition-colors ${
-                  date === d.value
-                    ? "bg-green-600 text-white border-green-600"
-                    : "bg-white text-gray-600 border-gray-300 hover:border-green-400"
-                }`}
-              >
-                {d.label}
-              </button>
-            ))}
-          </div>
-          <button
-            onClick={handleScrape}
-            disabled={loading}
-            className="bg-green-600 text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
-          >
-            {loading ? (
-              <>
-                <span className="animate-spin">⏳</span>
-                取得中...（約1〜2分）
-              </>
-            ) : (
-              <>🔍 出馬表を取得</>
-            )}
-          </button>
         </div>
-        {progress && (
-          <div className="mt-3 text-sm text-gray-500 animate-pulse">{progress}</div>
-        )}
+
+        {/* Step 2: JSON読み込み */}
+        <div className="bg-green-50 rounded-lg p-4">
+          <p className="text-sm font-bold text-gray-700 mb-2">Step 2: JSONを読み込んで登録</p>
+          <div className="flex items-center gap-4">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              onChange={handleFileLoad}
+              className="hidden"
+              id="json-file-input"
+            />
+            <label
+              htmlFor="json-file-input"
+              className="bg-green-600 text-white px-6 py-3 rounded-lg text-sm font-bold hover:bg-green-700 cursor-pointer transition-colors inline-flex items-center gap-2"
+            >
+              📂 JSONファイルを選択
+            </label>
+            {jsonMeta && (
+              <span className="text-sm text-gray-600">
+                📅 {jsonMeta.date}（取得: {new Date(jsonMeta.scraped_at).toLocaleString("ja-JP")}）
+              </span>
+            )}
+            {loading && (
+              <span className="text-sm text-gray-500 animate-pulse">読み込み中...</span>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* ── エラー表示 ── */}
@@ -274,14 +268,12 @@ export default function AdminScrapeForm() {
               <div className="divide-y divide-gray-100">
                 {venueRaces.map((race) => (
                   <div key={race.race_id_external}>
-                    {/* レース行 */}
                     <div
                       className={`px-5 py-3 flex items-center gap-3 cursor-pointer hover:bg-gray-50 transition-colors ${
                         race.already_registered ? "opacity-50" : ""
                       }`}
                       onClick={() => !race.already_registered && toggleRace(race.race_id_external)}
                     >
-                      {/* チェックボックス */}
                       <input
                         type="checkbox"
                         checked={race.selected || false}
@@ -289,47 +281,31 @@ export default function AdminScrapeForm() {
                         onChange={() => toggleRace(race.race_id_external)}
                         className="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500"
                       />
-
-                      {/* レース番号 */}
                       <span className="w-8 text-center font-bold text-gray-600 text-sm">
                         {race.race_number}R
                       </span>
-
-                      {/* グレードバッジ */}
                       {race.grade && (
                         <span className={`text-xs font-bold px-2 py-0.5 rounded border ${gradeColors[race.grade] || "bg-gray-100 text-gray-600"}`}>
                           {race.grade}
                         </span>
                       )}
-
-                      {/* レース名 */}
                       <span className="font-bold text-gray-800 text-sm flex-1 truncate">
                         {race.name}
                       </span>
-
-                      {/* コース情報 */}
                       <span className="text-xs text-gray-500">
                         {race.track_type}{race.distance}m
                       </span>
-
-                      {/* 頭数 */}
                       <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
                         {race.entries.length}頭
                       </span>
-
-                      {/* 発走時刻 */}
                       {race.post_time && (
                         <span className="text-xs text-gray-500">{race.post_time}</span>
                       )}
-
-                      {/* 登録済みバッジ */}
                       {race.already_registered && (
                         <span className="text-xs bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full">
                           登録済み
                         </span>
                       )}
-
-                      {/* 展開ボタン */}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -343,7 +319,6 @@ export default function AdminScrapeForm() {
                       </button>
                     </div>
 
-                    {/* 出走馬プレビュー（展開時） */}
                     {expandedRace === race.race_id_external && (
                       <div className="px-5 pb-4 bg-gray-50">
                         <table className="w-full text-xs">
@@ -380,7 +355,7 @@ export default function AdminScrapeForm() {
             </div>
           ))}
 
-          {/* ── 一括登録ボタン ── */}
+          {/* 一括登録ボタン */}
           <button
             onClick={handleRegister}
             disabled={registering || selectedCount === 0}
@@ -422,26 +397,4 @@ export default function AdminScrapeForm() {
       )}
     </div>
   );
-}
-
-// ── 今週末の日付を取得 ──
-function getWeekendDates() {
-  const today = new Date();
-  const dates = [];
-
-  // 今日を含む直近の土日を探す
-  for (let i = 0; i < 14; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    const day = d.getDay();
-    if (day === 0 || day === 6) {
-      const value = d.toISOString().split("T")[0];
-      const dayLabel = day === 6 ? "土" : "日";
-      const label = `${d.getMonth() + 1}/${d.getDate()}(${dayLabel})`;
-      dates.push({ value, label });
-      if (dates.length >= 4) break;
-    }
-  }
-
-  return dates;
 }

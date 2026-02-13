@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/admin";
-import { load } from "cheerio";
-import iconv from "iconv-lite";
 
 // ── 管理者チェック ──
 async function checkAdmin() {
@@ -16,201 +14,28 @@ async function checkAdmin() {
   return user;
 }
 
-// ── 競馬場コード → 名前 ──
-const VENUE_MAP: Record<string, string> = {
-  "01": "札幌", "02": "函館", "03": "福島", "04": "新潟",
-  "05": "東京", "06": "中山", "07": "中京", "08": "京都",
-  "09": "阪神", "10": "小倉",
-};
-
-// ── グレード判定 ──
-function detectGrade(text: string): string | null {
-  if (/G[Ⅰ1I]|GI[^IVX]|\(G1\)|（G1）/.test(text)) return "G1";
-  if (/G[Ⅱ2]|GII|\(G2\)|（G2）/.test(text)) return "G2";
-  if (/G[Ⅲ3]|GIII|\(G3\)|（G3）/.test(text)) return "G3";
-  if (/\(L\)|（L）|リステッド/.test(text)) return "L";
-  if (/オープン|OP/.test(text)) return "OP";
-  return null;
-}
-
-// ── HTMLフェッチ（EUC-JP対応）──
-async function fetchPage(url: string): Promise<string> {
-  const res = await fetch(url, {
-    headers: {
-      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-      "Accept": "text/html,application/xhtml+xml",
-      "Accept-Language": "ja,en;q=0.9",
-    },
-  });
-  const buffer = Buffer.from(await res.arrayBuffer());
-  const eucHtml = iconv.decode(buffer, "EUC-JP");
-  if (/[あ-んア-ン一-龥]/.test(eucHtml)) return eucHtml;
-  return buffer.toString("utf8");
-}
-
-// ── 指定日のレースID一覧を取得 ──
-async function getRaceIds(dateStr: string): Promise<string[]> {
-  const url = `https://race.netkeiba.com/top/race_list.html?kaisai_date=${dateStr}`;
-  const html = await fetchPage(url);
-  const $ = load(html);
-  const ids = new Set<string>();
-
-  $("a").each((_, el) => {
-    const href = $(el).attr("href") || "";
-    const m = href.match(/race_id=(\d{12})/);
-    if (m) ids.add(m[1]);
-  });
-  $("[data-race_id]").each((_, el) => {
-    const id = $(el).attr("data-race_id");
-    if (id && /^\d{12}$/.test(id)) ids.add(id);
-  });
-
-  return [...ids].sort();
-}
-
-// ── 個別レースの出馬表をパース ──
-async function scrapeRace(raceId: string, fallbackDate: string) {
-  const url = `https://race.netkeiba.com/race/shutuba.html?race_id=${raceId}`;
-  const html = await fetchPage(url);
-  const $ = load(html);
-
-  // レース名
-  const raceNameRaw = $(".RaceName").text().trim() ||
-    $("title").text().split("|")[0].replace(/出馬表/g, "").trim();
-  const raceName = raceNameRaw
-    .replace(/\(G[123]\)/g, "").replace(/（G[123]）/g, "")
-    .replace(/\s+/g, "").trim() || `${parseInt(raceId.slice(-2))}R`;
-
-  // レース情報
-  const rd01 = $(".RaceData01").text().trim();
-  const rd02 = $(".RaceData02").text().trim();
-  const fullInfo = rd01 + " " + rd02;
-
-  // 発走時刻
-  const tm = rd01.match(/(\d{1,2}):(\d{2})/) || fullInfo.match(/(\d{1,2}):(\d{2})/);
-  const postTime = tm ? `${tm[1].padStart(2, "0")}:${tm[2]}` : null;
-
-  // コース・距離
-  const cm = rd01.match(/(芝|ダート|ダ|障).*?(\d{3,4})m/) || fullInfo.match(/(芝|ダート|ダ|障).*?(\d{3,4})m/);
-  let trackType = "芝";
-  let distance = 0;
-  if (cm) {
-    trackType = cm[1] === "ダ" ? "ダート" : cm[1] === "障" ? "障害" : cm[1];
-    distance = parseInt(cm[2]);
-  }
-
-  // 競馬場・レース番号・日付
-  const venueCode = raceId.slice(4, 6);
-  const courseName = VENUE_MAP[venueCode] || "不明";
-  const raceNumber = parseInt(raceId.slice(-2));
-  const dm = rd01.match(/(\d+)月(\d+)日/);
-  const raceDate = dm
-    ? `${raceId.slice(0, 4)}-${dm[1].padStart(2, "0")}-${dm[2].padStart(2, "0")}`
-    : fallbackDate;
-
-  // グレード
-  const gradeText = $(".Icon_GradeType").text().trim();
-  const grade = detectGrade(raceNameRaw + " " + gradeText + " " + fullInfo);
-
-  // 出走馬
-  const entries: any[] = [];
-  $("table.Shutuba_Table tr.HorseList, table.RaceTable01 tr.HorseList").each((_, row) => {
-    const $r = $(row);
-    const tds = $r.find("td");
-    if (tds.length < 4) return;
-
-    const postNum = parseInt($r.find("td.Umaban, td:nth-child(2)").text().trim());
-    if (!postNum || isNaN(postNum)) return;
-
-    const gate = parseInt($r.find("td.Waku, td:nth-child(1)").text().trim()) || null;
-    const horseName = ($r.find("span.HorseName a").first().text().trim() ||
-      $r.find("a[href*='/horse/']").first().text().trim());
-    if (!horseName) return;
-
-    const sexAge = $r.find("td.Barei, span.Barei").text().trim();
-    const sex = sexAge ? sexAge.charAt(0) : "不";
-    const weightStr = $r.find("td.Txt_C").eq(0).text().trim() || $r.find("td").eq(5).text().trim();
-    const weight = parseFloat(weightStr) || null;
-    const jockey = $r.find("td.Jockey a, a[href*='/jockey/']").first().text().trim() || "未定";
-    const oddsStr = $r.find("td.Popular span, span.Odds").first().text().trim();
-    const odds = parseFloat(oddsStr) || null;
-    const popStr = $r.find("span.OddsPeople").text().trim();
-    const popularity = parseInt(popStr) || null;
-
-    entries.push({
-      post_number: postNum, gate_number: gate,
-      horse_name: horseName, sex, jockey, weight, odds, popularity,
-    });
-  });
-
-  return {
-    race_id_external: raceId, name: raceName, grade, race_date: raceDate,
-    post_time: postTime, course_name: courseName, track_type: trackType,
-    distance, race_number: raceNumber, entries,
-  };
-}
-
-// ── GET: スクレイピング（プレビュー用） ──
+// ── GET: 登録済みレース確認（重複チェック用） ──
 export async function GET(request: Request) {
   const user = await checkAdmin();
   if (!user) return NextResponse.json({ error: "管理者権限が必要です" }, { status: 403 });
 
   const { searchParams } = new URL(request.url);
-  const dateStr = searchParams.get("date"); // YYYYMMDD
-  if (!dateStr || !/^\d{8}$/.test(dateStr)) {
-    return NextResponse.json({ error: "date パラメータが必要です (YYYYMMDD)" }, { status: 400 });
+  const checkDate = searchParams.get("check_date"); // YYYY-MM-DD
+
+  if (!checkDate) {
+    return NextResponse.json({ error: "check_date パラメータが必要です" }, { status: 400 });
   }
 
-  const fallbackDate = `${dateStr.slice(0, 4)}-${dateStr.slice(4, 6)}-${dateStr.slice(6, 8)}`;
+  const admin = createAdminClient();
+  const { data: races } = await admin
+    .from("races")
+    .select("id, course_name, race_number, name")
+    .eq("race_date", checkDate);
 
-  try {
-    // レースID一覧を取得
-    const raceIds = await getRaceIds(dateStr);
-    if (raceIds.length === 0) {
-      return NextResponse.json({ races: [], message: "レースが見つかりませんでした" });
-    }
-
-    // 既に登録済みのレースを確認
-    const admin = createAdminClient();
-    const { data: existingRaces } = await admin
-      .from("races")
-      .select("race_date, course_name, race_number")
-      .eq("race_date", fallbackDate);
-    const existingSet = new Set(
-      (existingRaces ?? []).map(r => `${r.race_date}_${r.course_name}_${r.race_number}`)
-    );
-
-    // 各レースをスクレイピング
-    const races = [];
-    for (const raceId of raceIds) {
-      try {
-        const raceData = await scrapeRace(raceId, fallbackDate);
-        const key = `${raceData.race_date}_${raceData.course_name}_${raceData.race_number}`;
-        races.push({
-          ...raceData,
-          already_registered: existingSet.has(key),
-        });
-        // サーバーに優しく
-        await new Promise(r => setTimeout(r, 800));
-      } catch (err: any) {
-        console.error(`スクレイピングエラー (${raceId}):`, err.message);
-      }
-    }
-
-    // 競馬場 → レース番号順でソート
-    races.sort((a, b) => {
-      if (a.course_name !== b.course_name) return a.course_name.localeCompare(b.course_name);
-      return a.race_number - b.race_number;
-    });
-
-    return NextResponse.json({
-      date: fallbackDate,
-      total: races.length,
-      races,
-    });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
-  }
+  return NextResponse.json({
+    date: checkDate,
+    registered: races ?? [],
+  });
 }
 
 // ── POST: 一括登録 ──
@@ -280,6 +105,7 @@ export async function POST(request: Request) {
       for (const entry of raceData.entries ?? []) {
         if (!entry.horse_name) continue;
         let horseId: string;
+
         const { data: existingHorse } = await admin
           .from("horses").select("id").eq("name", entry.horse_name.trim()).maybeSingle();
 

@@ -1,0 +1,5866 @@
+{
+  "date": "2026-02-14",
+  "scraped_at": "2026-02-13T15:24:38.452Z",
+  "total": 36,
+  "total_entries": 539,
+  "races": [
+    {
+      "race_id_external": "202608020501",
+      "name": "3歳未勝利",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "09:50",
+      "course_name": "京都",
+      "track_type": "ダート",
+      "distance": 1800,
+      "race_number": 1,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ドントゥール",
+          "sex": "牝",
+          "jockey": "松山",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 2,
+          "horse_name": "ベンティガスエルテ",
+          "sex": "牝",
+          "jockey": "富田",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 3,
+          "horse_name": "ウエスタンオレンジ",
+          "sex": "牝",
+          "jockey": "古川吉",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 4,
+          "horse_name": "ウンナターシャ",
+          "sex": "牝",
+          "jockey": "ハマーハン",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 4,
+          "horse_name": "ジャージーテーラー",
+          "sex": "牝",
+          "jockey": "▲川端",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 5,
+          "horse_name": "エルマスデセーニ",
+          "sex": "牝",
+          "jockey": "藤懸",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 5,
+          "horse_name": "ティタノマキア",
+          "sex": "牝",
+          "jockey": "西村淳",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 6,
+          "horse_name": "アンヌグロース",
+          "sex": "牝",
+          "jockey": "国分優",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 6,
+          "horse_name": "ロココ",
+          "sex": "牝",
+          "jockey": "幸",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 7,
+          "horse_name": "リーチグローリー",
+          "sex": "牝",
+          "jockey": "高杉",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 7,
+          "horse_name": "ドリームキャリー",
+          "sex": "牝",
+          "jockey": "吉村",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 8,
+          "horse_name": "メイアイリス",
+          "sex": "牝",
+          "jockey": "西塚",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 8,
+          "horse_name": "ベルラフィネ",
+          "sex": "牝",
+          "jockey": "田口",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202608020502",
+      "name": "3歳未勝利",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "10:20",
+      "course_name": "京都",
+      "track_type": "ダート",
+      "distance": 1200,
+      "race_number": 2,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "カーボフリオ",
+          "sex": "牝",
+          "jockey": "団野",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "スターペスアンナ",
+          "sex": "牝",
+          "jockey": "太宰",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "マインセーラ",
+          "sex": "牝",
+          "jockey": "城戸",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "フェンネル",
+          "sex": "牝",
+          "jockey": "国分優",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "グレーターグレイ",
+          "sex": "牝",
+          "jockey": "西塚",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "シンゼンコジロウ",
+          "sex": "牡",
+          "jockey": "菱田",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "ディグニダドレアル",
+          "sex": "牡",
+          "jockey": "古川吉",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "ミスヘンリー",
+          "sex": "牝",
+          "jockey": "幸",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "キャストアイズミー",
+          "sex": "牝",
+          "jockey": "小崎",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "ウシャス",
+          "sex": "牝",
+          "jockey": "藤懸",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "ヤマトチャージ",
+          "sex": "牡",
+          "jockey": "吉村",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "ビスケットアソート",
+          "sex": "牡",
+          "jockey": "富田",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "クラージュスター",
+          "sex": "牡",
+          "jockey": "田口",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "イッタレイッタレ",
+          "sex": "牡",
+          "jockey": "高杉",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "メイショウバルク",
+          "sex": "牡",
+          "jockey": "松山",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "マクアケ",
+          "sex": "牡",
+          "jockey": "西村淳",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202608020503",
+      "name": "3歳未勝利",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "10:50",
+      "course_name": "京都",
+      "track_type": "ダート",
+      "distance": 1900,
+      "race_number": 3,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "マリンパレス",
+          "sex": "牡",
+          "jockey": "菱田",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 2,
+          "horse_name": "リードアクター",
+          "sex": "牡",
+          "jockey": "高杉",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 3,
+          "horse_name": "ダテオトコ",
+          "sex": "牡",
+          "jockey": "団野",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 4,
+          "horse_name": "カシノスパーク",
+          "sex": "牡",
+          "jockey": "▲橋木",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 5,
+          "horse_name": "グロリアス",
+          "sex": "牝",
+          "jockey": "小崎",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 6,
+          "horse_name": "メイショウアカリ",
+          "sex": "牝",
+          "jockey": "太宰",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 6,
+          "horse_name": "ロードヴェリタス",
+          "sex": "牡",
+          "jockey": "西塚",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 7,
+          "horse_name": "ピエナオルカ",
+          "sex": "牡",
+          "jockey": "ハマーハン",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 7,
+          "horse_name": "テイエムパイロダン",
+          "sex": "牡",
+          "jockey": "酒井",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 8,
+          "horse_name": "レイサンソク",
+          "sex": "牡",
+          "jockey": "松山",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 8,
+          "horse_name": "テンマジックアワー",
+          "sex": "牡",
+          "jockey": "田口",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202608020504",
+      "name": "3歳未勝利",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "11:20",
+      "course_name": "京都",
+      "track_type": "ダート",
+      "distance": 1400,
+      "race_number": 4,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ショウナンタマユラ",
+          "sex": "牝",
+          "jockey": "古川吉",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "レヴァンターセ",
+          "sex": "牡",
+          "jockey": "浜中",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "クリノトウシン",
+          "sex": "牡",
+          "jockey": "田口",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "テイエムスワーブ",
+          "sex": "牝",
+          "jockey": "▲川端",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "キープシャイニング",
+          "sex": "牡",
+          "jockey": "吉村",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "ワイドシャッフエン",
+          "sex": "牝",
+          "jockey": "幸",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "イングラム",
+          "sex": "牡",
+          "jockey": "泉谷",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "ジュディーイメル",
+          "sex": "牝",
+          "jockey": "藤岡佑",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "クランドゥルス",
+          "sex": "牡",
+          "jockey": "高倉",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "テーオーパーセル",
+          "sex": "牡",
+          "jockey": "藤懸",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "シュネープリンセス",
+          "sex": "牝",
+          "jockey": "国分優",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "ブリオーニ",
+          "sex": "牡",
+          "jockey": "▲橋木",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "パピプペピンク",
+          "sex": "牝",
+          "jockey": "西村淳",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "ダンジョンヒーロー",
+          "sex": "牡",
+          "jockey": "ハマーハン",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "ナブッコ",
+          "sex": "牡",
+          "jockey": "西塚",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "ナウオアネヴァー",
+          "sex": "牡",
+          "jockey": "高杉",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202608020505",
+      "name": "3歳新馬",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "12:10",
+      "course_name": "京都",
+      "track_type": "ダート",
+      "distance": 1800,
+      "race_number": 5,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "マスターストーン",
+          "sex": "牡",
+          "jockey": "吉村",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "ワイルドカグラ",
+          "sex": "牝",
+          "jockey": "高倉",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "サンライズレマ",
+          "sex": "牡",
+          "jockey": "菱田",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "ゼンノボニータ",
+          "sex": "牡",
+          "jockey": "国分優",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "ガトー",
+          "sex": "牡",
+          "jockey": "富田",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "ロードゴスペル",
+          "sex": "牡",
+          "jockey": "団野",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "メイショウサザナミ",
+          "sex": "牝",
+          "jockey": "太宰",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "ガラード",
+          "sex": "牡",
+          "jockey": "古川吉",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "ゴナビーオーライト",
+          "sex": "牝",
+          "jockey": "藤懸",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "バンブラボー",
+          "sex": "牡",
+          "jockey": "幸",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "リアンドゥクール",
+          "sex": "牝",
+          "jockey": "ハマーハン",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "ゴールドバローズ",
+          "sex": "牡",
+          "jockey": "田口",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "ウェイヴムーン",
+          "sex": "牡",
+          "jockey": "西村淳",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "ヤマニンエラマ",
+          "sex": "牡",
+          "jockey": "酒井",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "ルールオーヴァー",
+          "sex": "牡",
+          "jockey": "小崎",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "ウインアトム",
+          "sex": "牡",
+          "jockey": "高杉",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202608020506",
+      "name": "3歳未勝利",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "12:40",
+      "course_name": "京都",
+      "track_type": "芝",
+      "distance": 1800,
+      "race_number": 6,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "マイネルリーヒム",
+          "sex": "牡",
+          "jockey": "団野",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "イヌボウノサザナミ",
+          "sex": "牝",
+          "jockey": "菱田",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "サンドッグ",
+          "sex": "牡",
+          "jockey": "古川吉",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "メイショウプレマ",
+          "sex": "牝",
+          "jockey": "太宰",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "アロハオエ",
+          "sex": "牝",
+          "jockey": "▲川端",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "ロッククライム",
+          "sex": "牡",
+          "jockey": "国分優",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "ファインマン",
+          "sex": "牡",
+          "jockey": "高倉",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "カフジミモレット",
+          "sex": "牝",
+          "jockey": "酒井",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "ブラックシャリマー",
+          "sex": "牡",
+          "jockey": "吉村",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "ルンベーラ",
+          "sex": "牝",
+          "jockey": "西村淳",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "スチールナイト",
+          "sex": "牡",
+          "jockey": "田口",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "ダノンテムズ",
+          "sex": "牡",
+          "jockey": "高杉",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "フレアオブセンス",
+          "sex": "牡",
+          "jockey": "ハマーハン",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "セルリア",
+          "sex": "牝",
+          "jockey": "富田",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "ミルトメテオ",
+          "sex": "牡",
+          "jockey": "幸",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "シートゥサミット",
+          "sex": "牡",
+          "jockey": "小崎",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 17,
+          "gate_number": 8,
+          "horse_name": "モンシーク",
+          "sex": "牡",
+          "jockey": "松山",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202608020507",
+      "name": "4歳以上1勝クラス",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "13:10",
+      "course_name": "京都",
+      "track_type": "ダート",
+      "distance": 1400,
+      "race_number": 7,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "アメリカンビヨンド",
+          "sex": "牡",
+          "jockey": "西塚",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 2,
+          "horse_name": "エイシンマールス",
+          "sex": "牡",
+          "jockey": "松山",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "ジュンライトニング",
+          "sex": "牡",
+          "jockey": "富田",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 3,
+          "horse_name": "ミヤジマナ",
+          "sex": "牝",
+          "jockey": "浜中",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "タケルハーロック",
+          "sex": "牡",
+          "jockey": "高杉",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 4,
+          "horse_name": "カサブランカキッド",
+          "sex": "牡",
+          "jockey": "古川吉",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "ララバッカナール",
+          "sex": "牝",
+          "jockey": "団野",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 5,
+          "horse_name": "ボストンクーラー",
+          "sex": "牝",
+          "jockey": "酒井",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "ラウルベア",
+          "sex": "牝",
+          "jockey": "西村淳",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 6,
+          "horse_name": "リンゲルブルーメ",
+          "sex": "牝",
+          "jockey": "▲川端",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "モズリバーシャトー",
+          "sex": "牝",
+          "jockey": "藤懸",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 7,
+          "horse_name": "クインズメレンゲ",
+          "sex": "牝",
+          "jockey": "田口",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "セルズパワー",
+          "sex": "牡",
+          "jockey": "吉村",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 8,
+          "horse_name": "モズタチアガレ",
+          "sex": "牡",
+          "jockey": "ハマーハン",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "シュテルンビルト",
+          "sex": "牡",
+          "jockey": "幸",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202608020508",
+      "name": "4歳以上2勝クラス",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "13:45",
+      "course_name": "京都",
+      "track_type": "ダート",
+      "distance": 1900,
+      "race_number": 8,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ロカヒ",
+          "sex": "牡",
+          "jockey": "藤岡佑",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 2,
+          "horse_name": "レッドボブ",
+          "sex": "牡",
+          "jockey": "浜中",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 3,
+          "horse_name": "シュプリンガー",
+          "sex": "セ",
+          "jockey": "団野",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 4,
+          "horse_name": "グランオース",
+          "sex": "牡",
+          "jockey": "酒井",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 4,
+          "horse_name": "ノボリクレバー",
+          "sex": "牝",
+          "jockey": "吉村",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 5,
+          "horse_name": "ハッピーダンチャン",
+          "sex": "牡",
+          "jockey": "西塚",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 5,
+          "horse_name": "バトンインディ",
+          "sex": "牡",
+          "jockey": "幸",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 6,
+          "horse_name": "マナエトレ",
+          "sex": "牡",
+          "jockey": "西村淳",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 6,
+          "horse_name": "レーヴドレフォン",
+          "sex": "牝",
+          "jockey": "富田",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 7,
+          "horse_name": "タイガースパーク",
+          "sex": "牡",
+          "jockey": "田口",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 7,
+          "horse_name": "マンダリンボレロ",
+          "sex": "牡",
+          "jockey": "太宰",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 8,
+          "horse_name": "ソウルアンドジャズ",
+          "sex": "セ",
+          "jockey": "高杉",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 8,
+          "horse_name": "ゲンパチルーナ",
+          "sex": "牝",
+          "jockey": "古川吉",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202608020509",
+      "name": "こぶし賞",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "14:20",
+      "course_name": "京都",
+      "track_type": "芝",
+      "distance": 1600,
+      "race_number": 9,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ナムラコスモス",
+          "sex": "牝",
+          "jockey": "田口",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 2,
+          "horse_name": "ブライトフレア",
+          "sex": "牡",
+          "jockey": "浜中",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 3,
+          "horse_name": "シーミハットク",
+          "sex": "牡",
+          "jockey": "小崎",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 4,
+          "horse_name": "カレントゥルーシー",
+          "sex": "牡",
+          "jockey": "松山",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 5,
+          "horse_name": "ジャスティンルマン",
+          "sex": "牡",
+          "jockey": "団野",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 6,
+          "horse_name": "トワニ",
+          "sex": "牝",
+          "jockey": "吉村",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 6,
+          "horse_name": "アイガーリー",
+          "sex": "牡",
+          "jockey": "菱田",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 7,
+          "horse_name": "サトノセプター",
+          "sex": "牡",
+          "jockey": "ハマーハン",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 7,
+          "horse_name": "チュウワカーネギー",
+          "sex": "牡",
+          "jockey": "藤岡佑",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 8,
+          "horse_name": "シュガービスケッツ",
+          "sex": "牝",
+          "jockey": "幸",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 8,
+          "horse_name": "メイショウハッケイ",
+          "sex": "牝",
+          "jockey": "高杉",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202608020510",
+      "name": "飛鳥S",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "14:55",
+      "course_name": "京都",
+      "track_type": "芝",
+      "distance": 2000,
+      "race_number": 10,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ジェットマグナム",
+          "sex": "牡",
+          "jockey": "吉村",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "ミラージュナイト",
+          "sex": "牡",
+          "jockey": "藤岡佑",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "エゾダイモン",
+          "sex": "牡",
+          "jockey": "浜中",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "コスモフロイデ",
+          "sex": "牡",
+          "jockey": "国分優",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "ドットクルー",
+          "sex": "牡",
+          "jockey": "高杉",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "マイネルエニグマ",
+          "sex": "牡",
+          "jockey": "田口",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "アレナリア",
+          "sex": "牝",
+          "jockey": "西村淳",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "ノーランサンライズ",
+          "sex": "牝",
+          "jockey": "小崎",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "ミュージシャン",
+          "sex": "牡",
+          "jockey": "泉谷",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "ロワンディシー",
+          "sex": "牡",
+          "jockey": "幸",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "ハギノアルデバラン",
+          "sex": "牡",
+          "jockey": "富田",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "オールセインツ",
+          "sex": "牡",
+          "jockey": "団野",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "イケイケドンドン",
+          "sex": "牡",
+          "jockey": "菱田",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "ジーティーアダマン",
+          "sex": "牡",
+          "jockey": "松山",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "マイネルニコラス",
+          "sex": "牡",
+          "jockey": "西塚",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "マイネルラウレア",
+          "sex": "牡",
+          "jockey": "ハマーハン",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202608020511",
+      "name": "洛陽S",
+      "grade": "OP",
+      "race_date": "2026-02-14",
+      "post_time": "15:30",
+      "course_name": "京都",
+      "track_type": "芝",
+      "distance": 1600,
+      "race_number": 11,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ニホンピロキーフ",
+          "sex": "牡",
+          "jockey": "幸",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 2,
+          "horse_name": "サトノカルナバル",
+          "sex": "牡",
+          "jockey": "松山",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 3,
+          "horse_name": "セッション",
+          "sex": "牡",
+          "jockey": "ハマーハン",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 3,
+          "horse_name": "スカイロケット",
+          "sex": "牡",
+          "jockey": "吉村",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 4,
+          "horse_name": "ソルトクィーン",
+          "sex": "牝",
+          "jockey": "富田",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 4,
+          "horse_name": "ブラックシールド",
+          "sex": "牡",
+          "jockey": "国分優",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 5,
+          "horse_name": "リラボニート",
+          "sex": "牝",
+          "jockey": "浜中",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 5,
+          "horse_name": "ジャスティンスカイ",
+          "sex": "牡",
+          "jockey": "田口",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 6,
+          "horse_name": "ラケマーダ",
+          "sex": "牡",
+          "jockey": "藤岡佑",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 6,
+          "horse_name": "エナジーグラン",
+          "sex": "牡",
+          "jockey": "古川吉",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 7,
+          "horse_name": "スズハローム",
+          "sex": "牡",
+          "jockey": "藤懸",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 7,
+          "horse_name": "キョウエイブリッサ",
+          "sex": "牡",
+          "jockey": "酒井",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 8,
+          "horse_name": "ゴートゥファースト",
+          "sex": "牡",
+          "jockey": "団野",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 8,
+          "horse_name": "チェルビアット",
+          "sex": "牝",
+          "jockey": "西村淳",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202608020512",
+      "name": "4歳以上1勝クラス",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "16:10",
+      "course_name": "京都",
+      "track_type": "ダート",
+      "distance": 1200,
+      "race_number": 12,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ロトエンペラー",
+          "sex": "牡",
+          "jockey": "▲橋木",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 2,
+          "horse_name": "メイショウハボマイ",
+          "sex": "牡",
+          "jockey": "太宰",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "リードプリンシパル",
+          "sex": "牝",
+          "jockey": "吉村",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 3,
+          "horse_name": "リュキア",
+          "sex": "牡",
+          "jockey": "国分優",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "サンライズブレイク",
+          "sex": "牡",
+          "jockey": "富田",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 4,
+          "horse_name": "ザブルース",
+          "sex": "牝",
+          "jockey": "古川吉",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "インディゴアスール",
+          "sex": "牡",
+          "jockey": "田口",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 5,
+          "horse_name": "アスゴッド",
+          "sex": "牡",
+          "jockey": "西村淳",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "チムニーパイプ",
+          "sex": "牝",
+          "jockey": "浜中",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 6,
+          "horse_name": "クインズシャウラ",
+          "sex": "牝",
+          "jockey": "西塚",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "レジェンダリーデイ",
+          "sex": "セ",
+          "jockey": "高杉",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 7,
+          "horse_name": "キープライジング",
+          "sex": "牝",
+          "jockey": "藤懸",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "ミキノバカラ",
+          "sex": "牡",
+          "jockey": "▲川端",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 8,
+          "horse_name": "クリナッチ",
+          "sex": "牝",
+          "jockey": "菱田",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "ジェイエルバース",
+          "sex": "牡",
+          "jockey": "小崎",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202610010701",
+      "name": "3歳未勝利",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "09:45",
+      "course_name": "小倉",
+      "track_type": "ダート",
+      "distance": 1700,
+      "race_number": 1,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "モーニングダリア",
+          "sex": "牝",
+          "jockey": "小林凌",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "エンジェルグラース",
+          "sex": "牝",
+          "jockey": "国分恭",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "サウンドディアナ",
+          "sex": "牝",
+          "jockey": "▲森田",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "ブリスフルイヤー",
+          "sex": "牝",
+          "jockey": "▲石田",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "エルファリス",
+          "sex": "牝",
+          "jockey": "菊沢",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "パープルウインド",
+          "sex": "牝",
+          "jockey": "▲古川奈",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "ゼルノードゥス",
+          "sex": "牝",
+          "jockey": "△柴田裕",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "チカマヨルキーナ",
+          "sex": "牝",
+          "jockey": "▲舟山",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "タガノシルフィー",
+          "sex": "牝",
+          "jockey": "角田和",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "コサージュ",
+          "sex": "牝",
+          "jockey": "横山琉",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "アークブリッツ",
+          "sex": "牝",
+          "jockey": "▲和田陽",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "レジーナレガリア",
+          "sex": "牝",
+          "jockey": "小沢",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "ソルアモール",
+          "sex": "牝",
+          "jockey": "荻野琢",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "ツァレヴナ",
+          "sex": "牝",
+          "jockey": "▲田山",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "ハツアカネ",
+          "sex": "牝",
+          "jockey": "松若",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "ペンダント",
+          "sex": "牝",
+          "jockey": "丹内",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202610010702",
+      "name": "3歳未勝利",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "10:10",
+      "course_name": "小倉",
+      "track_type": "芝",
+      "distance": 1200,
+      "race_number": 2,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "マーゴットミスト",
+          "sex": "牡",
+          "jockey": "▲古川奈",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "オレンジキャンパス",
+          "sex": "牝",
+          "jockey": "武藤",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "ミツカネマルテ",
+          "sex": "牝",
+          "jockey": "▲土田",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "セイウンシシマイ",
+          "sex": "牡",
+          "jockey": "▲水沼",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "オタルイーグル",
+          "sex": "牡",
+          "jockey": "亀田",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "アルデマン",
+          "sex": "牡",
+          "jockey": "小沢",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "クリコファルコン",
+          "sex": "牡",
+          "jockey": "△柴田裕",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "ララクレアドルーン",
+          "sex": "牝",
+          "jockey": "中井",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "ミラクルスパート",
+          "sex": "牝",
+          "jockey": "斎藤",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "ドリーマーズ",
+          "sex": "牝",
+          "jockey": "嶋田",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "セイカユウヒ",
+          "sex": "牡",
+          "jockey": "▲小林美",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "スイートポメロ",
+          "sex": "牝",
+          "jockey": "松本",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "リラベガ",
+          "sex": "牝",
+          "jockey": "丸山",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "メーテルリンク",
+          "sex": "牝",
+          "jockey": "▲石神道",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 7,
+          "horse_name": "ノーブルマドンナ",
+          "sex": "牝",
+          "jockey": "丹内",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "ワンダーアスク",
+          "sex": "牝",
+          "jockey": "川又",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 17,
+          "gate_number": 8,
+          "horse_name": "チョウブク",
+          "sex": "牡",
+          "jockey": "▲石田",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 18,
+          "gate_number": 8,
+          "horse_name": "ウインドトリック",
+          "sex": "牡",
+          "jockey": "国分恭",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202610010703",
+      "name": "3歳未勝利",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "10:40",
+      "course_name": "小倉",
+      "track_type": "ダート",
+      "distance": 1000,
+      "race_number": 3,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ゴーゴーパンチ",
+          "sex": "牡",
+          "jockey": "▲和田陽",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 2,
+          "horse_name": "マーゴットオネイロ",
+          "sex": "牡",
+          "jockey": "角田和",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 3,
+          "horse_name": "カガラプンツェル",
+          "sex": "牝",
+          "jockey": "菊沢",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 3,
+          "horse_name": "スマートイデアル",
+          "sex": "牝",
+          "jockey": "▲石神道",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 4,
+          "horse_name": "イッツソーブライト",
+          "sex": "牡",
+          "jockey": "黛",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 4,
+          "horse_name": "ローズライズ",
+          "sex": "牝",
+          "jockey": "★河原田",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 5,
+          "horse_name": "バンダムソレール",
+          "sex": "牡",
+          "jockey": "▲田山",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 5,
+          "horse_name": "スイーヴル",
+          "sex": "牝",
+          "jockey": "長岡",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 6,
+          "horse_name": "カッサンドラ",
+          "sex": "牝",
+          "jockey": "横山琉",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 6,
+          "horse_name": "ポポラヴィスタ",
+          "sex": "牝",
+          "jockey": "▲石田",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 7,
+          "horse_name": "チュラヴェール",
+          "sex": "牝",
+          "jockey": "丹内",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 7,
+          "horse_name": "ミヤフロント",
+          "sex": "牝",
+          "jockey": "▲森田",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 8,
+          "horse_name": "オンマイビート",
+          "sex": "牡",
+          "jockey": "荻野琢",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 8,
+          "horse_name": "シーキングザバース",
+          "sex": "牝",
+          "jockey": "▲小林美",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202610010704",
+      "name": "4歳以上障害未勝利",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "11:10",
+      "course_name": "小倉",
+      "track_type": "障害",
+      "distance": 2860,
+      "race_number": 4,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ダスク",
+          "sex": "牡",
+          "jockey": "小野寺",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 2,
+          "horse_name": "ボエーム",
+          "sex": "牡",
+          "jockey": "▲坂口",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 3,
+          "horse_name": "セイフウサツキ",
+          "sex": "牡",
+          "jockey": "難波",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 4,
+          "horse_name": "ディベルティスマン",
+          "sex": "牡",
+          "jockey": "伴",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 5,
+          "horse_name": "ヴォンヌヴォー",
+          "sex": "牝",
+          "jockey": "黒岩",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 5,
+          "horse_name": "アドアプローズ",
+          "sex": "牡",
+          "jockey": "上野",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 6,
+          "horse_name": "フォルガイル",
+          "sex": "牡",
+          "jockey": "▲水沼",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 6,
+          "horse_name": "ベイビーベリッシモ",
+          "sex": "牡",
+          "jockey": "五十嵐",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 7,
+          "horse_name": "ストームバンガード",
+          "sex": "牡",
+          "jockey": "小牧加",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 7,
+          "horse_name": "ゴールデンルーキー",
+          "sex": "牡",
+          "jockey": "草野",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 8,
+          "horse_name": "ブランフォルテ",
+          "sex": "牡",
+          "jockey": "石神深",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 8,
+          "horse_name": "リオンエトワール",
+          "sex": "セ",
+          "jockey": "大江圭",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202610010705",
+      "name": "3歳未勝利",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "12:00",
+      "course_name": "小倉",
+      "track_type": "芝",
+      "distance": 2000,
+      "race_number": 5,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "スパルタンエックス",
+          "sex": "牡",
+          "jockey": "松若",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "トリニタリオ",
+          "sex": "牡",
+          "jockey": "菊沢",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "エイシンニラク",
+          "sex": "牡",
+          "jockey": "▲舟山",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "ブライスフェアリー",
+          "sex": "牝",
+          "jockey": "武藤",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "ミエノストロング",
+          "sex": "牡",
+          "jockey": "丹内",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "ノンブルドール",
+          "sex": "牡",
+          "jockey": "亀田",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "ノリマル",
+          "sex": "牡",
+          "jockey": "吉田隼",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "リバージュエル",
+          "sex": "牝",
+          "jockey": "◇今村",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "クーレスト",
+          "sex": "牡",
+          "jockey": "秋山稔",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "ノーブルトレジャー",
+          "sex": "牝",
+          "jockey": "国分恭",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "ナムラヴンダー",
+          "sex": "牡",
+          "jockey": "斎藤",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "シーズンシート",
+          "sex": "牝",
+          "jockey": "野中",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "グリミスティ",
+          "sex": "牝",
+          "jockey": "杉原",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "ウインマニフィーク",
+          "sex": "牡",
+          "jockey": "▲石神道",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 7,
+          "horse_name": "シュプリームレルム",
+          "sex": "牡",
+          "jockey": "松本",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "ヒロイックヴァース",
+          "sex": "牡",
+          "jockey": "小林脩",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 17,
+          "gate_number": 8,
+          "horse_name": "マイバレンタイン",
+          "sex": "牡",
+          "jockey": "丸山",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 18,
+          "gate_number": 8,
+          "horse_name": "クータモ",
+          "sex": "牡",
+          "jockey": "角田和",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202610010706",
+      "name": "4歳以上1勝クラス",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "12:30",
+      "course_name": "小倉",
+      "track_type": "芝",
+      "distance": 1200,
+      "race_number": 6,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ダイヤモンド",
+          "sex": "牡",
+          "jockey": "小沢",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "マキシマムドライブ",
+          "sex": "牡",
+          "jockey": "黛",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "ノーブルオリンポス",
+          "sex": "セ",
+          "jockey": "▲石神道",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "シャインズオンユー",
+          "sex": "牡",
+          "jockey": "松若",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "ホシニネガイヲ",
+          "sex": "牝",
+          "jockey": "▲小林美",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "ケイアイクビラ",
+          "sex": "牡",
+          "jockey": "加藤",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "レーヴドアンジュ",
+          "sex": "牝",
+          "jockey": "横山琉",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "ディクシーヴォーグ",
+          "sex": "牝",
+          "jockey": "野中",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "ハルオーブ",
+          "sex": "牡",
+          "jockey": "◇今村",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "フォルトレス",
+          "sex": "牝",
+          "jockey": "▲舟山",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "ラブディーヴァ",
+          "sex": "牝",
+          "jockey": "▲石田",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "ノボリリア",
+          "sex": "牝",
+          "jockey": "丹内",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "ブラヴィーノ",
+          "sex": "牡",
+          "jockey": "斎藤",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "ブライトアゲイン",
+          "sex": "牝",
+          "jockey": "松本",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 7,
+          "horse_name": "レオプルミエール",
+          "sex": "牡",
+          "jockey": "▲水沼",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "アルマロクザン",
+          "sex": "牝",
+          "jockey": "小林凌",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 17,
+          "gate_number": 8,
+          "horse_name": "ベルタソ",
+          "sex": "牝",
+          "jockey": "▲田山",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 18,
+          "gate_number": 8,
+          "horse_name": "レオナルドスター",
+          "sex": "セ",
+          "jockey": "荻野琢",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202610010707",
+      "name": "4歳以上1勝クラス",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "13:00",
+      "course_name": "小倉",
+      "track_type": "ダート",
+      "distance": 1700,
+      "race_number": 7,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ブーケドグレイス",
+          "sex": "牝",
+          "jockey": "横山琉",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "シュニー",
+          "sex": "牝",
+          "jockey": "松若",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "アンリーベイビー",
+          "sex": "牝",
+          "jockey": "丸山",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "クインズセレネ",
+          "sex": "牝",
+          "jockey": "松本",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "メイショウハマギク",
+          "sex": "牝",
+          "jockey": "▲舟山",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "スマイルディシー",
+          "sex": "牝",
+          "jockey": "▲石田",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "キミオモウハナ",
+          "sex": "牝",
+          "jockey": "斎藤",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "ディスパラール",
+          "sex": "牝",
+          "jockey": "▲田山",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "ココボロ",
+          "sex": "牝",
+          "jockey": "▲土田",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "メラヴィリオーザ",
+          "sex": "牝",
+          "jockey": "△柴田裕",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "エイトスターズ",
+          "sex": "牝",
+          "jockey": "吉田隼",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "ヴァカンツァ",
+          "sex": "牝",
+          "jockey": "角田和",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "ライラックデューン",
+          "sex": "牝",
+          "jockey": "▲和田陽",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "ミサビスケッツ",
+          "sex": "牝",
+          "jockey": "丹内",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "カルドウェル",
+          "sex": "牝",
+          "jockey": "▲小林美",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "タマモジャスミン",
+          "sex": "牝",
+          "jockey": "小沢",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202610010708",
+      "name": "小倉JS",
+      "grade": "OP",
+      "race_date": "2026-02-14",
+      "post_time": "13:35",
+      "course_name": "小倉",
+      "track_type": "障害",
+      "distance": 3390,
+      "race_number": 8,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ジューンベロシティ",
+          "sex": "牡",
+          "jockey": "高田",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 2,
+          "horse_name": "ローディアマント",
+          "sex": "セ",
+          "jockey": "伴",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 3,
+          "horse_name": "テイエムマジック",
+          "sex": "牡",
+          "jockey": "難波",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 4,
+          "horse_name": "ブラックボイス",
+          "sex": "牡",
+          "jockey": "坂口",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 4,
+          "horse_name": "フェーングロッテン",
+          "sex": "セ",
+          "jockey": "小野寺",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 5,
+          "horse_name": "レッドファーロ",
+          "sex": "牡",
+          "jockey": "西谷誠",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 5,
+          "horse_name": "オールザワールド",
+          "sex": "牡",
+          "jockey": "森一",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 6,
+          "horse_name": "サルサロッサ",
+          "sex": "牝",
+          "jockey": "五十嵐",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 6,
+          "horse_name": "エンデュミオン",
+          "sex": "牡",
+          "jockey": "鷲頭",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 7,
+          "horse_name": "サンデイビス",
+          "sex": "牡",
+          "jockey": "上野",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 7,
+          "horse_name": "トーアモルペウス",
+          "sex": "セ",
+          "jockey": "石神深",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 8,
+          "horse_name": "ワールドスケール",
+          "sex": "牡",
+          "jockey": "黒岩",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 8,
+          "horse_name": "トゥラッタッタ",
+          "sex": "牡",
+          "jockey": "草野",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202610010709",
+      "name": "あすなろ賞",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "14:10",
+      "course_name": "小倉",
+      "track_type": "芝",
+      "distance": 2000,
+      "race_number": 9,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ローザレイア",
+          "sex": "牝",
+          "jockey": "国分恭",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 2,
+          "horse_name": "ブラックハヤテ",
+          "sex": "牡",
+          "jockey": "丹内",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 3,
+          "horse_name": "アロンソア",
+          "sex": "牡",
+          "jockey": "川又",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 4,
+          "horse_name": "キッコベッロ",
+          "sex": "牡",
+          "jockey": "杉原",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 5,
+          "horse_name": "アイドクレース",
+          "sex": "牝",
+          "jockey": "石神道",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 6,
+          "horse_name": "グレーヌドジョワ",
+          "sex": "牡",
+          "jockey": "荻野琢",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 7,
+          "horse_name": "ドッグウッド",
+          "sex": "牡",
+          "jockey": "斎藤",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 7,
+          "horse_name": "エドウィンナルコ",
+          "sex": "牡",
+          "jockey": "小沢",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 8,
+          "horse_name": "ソラーロ",
+          "sex": "牡",
+          "jockey": "亀田",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 8,
+          "horse_name": "アンソニー",
+          "sex": "牡",
+          "jockey": "松若",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202610010710",
+      "name": "伊万里特別",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "14:45",
+      "course_name": "小倉",
+      "track_type": "ダート",
+      "distance": 1000,
+      "race_number": 10,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ララアヴリル",
+          "sex": "セ",
+          "jockey": "中井",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 2,
+          "horse_name": "トーアジョウトウ",
+          "sex": "牡",
+          "jockey": "舟山",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 3,
+          "horse_name": "パルプフィクション",
+          "sex": "牝",
+          "jockey": "吉田隼",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 3,
+          "horse_name": "ザウリ",
+          "sex": "牡",
+          "jockey": "丸山",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 4,
+          "horse_name": "クラリティスケール",
+          "sex": "牝",
+          "jockey": "松本",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 4,
+          "horse_name": "アネモス",
+          "sex": "牝",
+          "jockey": "亀田",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 5,
+          "horse_name": "ホークレア",
+          "sex": "牝",
+          "jockey": "菊沢",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 5,
+          "horse_name": "パールフロント",
+          "sex": "牝",
+          "jockey": "川又",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 6,
+          "horse_name": "ビーアイフォルテ",
+          "sex": "牝",
+          "jockey": "小沢",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 6,
+          "horse_name": "ストラテージュ",
+          "sex": "牡",
+          "jockey": "古川奈",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 7,
+          "horse_name": "ラホーヤストーム",
+          "sex": "牝",
+          "jockey": "小林美",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 7,
+          "horse_name": "ディーエスショウマ",
+          "sex": "牡",
+          "jockey": "斎藤",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 8,
+          "horse_name": "ゼンノツキヨミ",
+          "sex": "牝",
+          "jockey": "秋山稔",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 8,
+          "horse_name": "キングクー",
+          "sex": "牡",
+          "jockey": "松若",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202610010711",
+      "name": "下関S",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "15:20",
+      "course_name": "小倉",
+      "track_type": "芝",
+      "distance": 1200,
+      "race_number": 11,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ロードトレイル",
+          "sex": "牡",
+          "jockey": "小沢",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "コウセキ",
+          "sex": "牡",
+          "jockey": "丸山",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "エコロマーズ",
+          "sex": "牡",
+          "jockey": "菊沢",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "ハートホイップ",
+          "sex": "牝",
+          "jockey": "黛",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "レオテミス",
+          "sex": "牝",
+          "jockey": "石田",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "ルーフ",
+          "sex": "牝",
+          "jockey": "松若",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "ベイビーキッス",
+          "sex": "牝",
+          "jockey": "小林脩",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "ミルテンベルク",
+          "sex": "牡",
+          "jockey": "吉田隼",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "シュヴェルトライテ",
+          "sex": "牝",
+          "jockey": "亀田",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "エマヌエーレ",
+          "sex": "牡",
+          "jockey": "横山琉",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "ナムラローズマリー",
+          "sex": "牝",
+          "jockey": "長岡",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "ブリックワーク",
+          "sex": "牝",
+          "jockey": "斎藤",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "ハピネスアゲン",
+          "sex": "牝",
+          "jockey": "野中",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "フォルテム",
+          "sex": "牡",
+          "jockey": "丹内",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 7,
+          "horse_name": "トーラスシャイン",
+          "sex": "牡",
+          "jockey": "松本",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "ジャスパーディビネ",
+          "sex": "牡",
+          "jockey": "和田陽",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 17,
+          "gate_number": 8,
+          "horse_name": "スコーピオン",
+          "sex": "牡",
+          "jockey": "武藤",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 18,
+          "gate_number": 8,
+          "horse_name": "ジュンヴァンケット",
+          "sex": "セ",
+          "jockey": "杉原",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202610010712",
+      "name": "4歳以上1勝クラス",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "16:00",
+      "course_name": "小倉",
+      "track_type": "芝",
+      "distance": 1800,
+      "race_number": 12,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "アンドローゼス",
+          "sex": "牝",
+          "jockey": "丸山",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 2,
+          "horse_name": "アクイローネ",
+          "sex": "牡",
+          "jockey": "菊沢",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "ハレアカラフラ",
+          "sex": "牝",
+          "jockey": "松若",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 3,
+          "horse_name": "ウインボレロ",
+          "sex": "牡",
+          "jockey": "武藤",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "ブルバンビーナ",
+          "sex": "牝",
+          "jockey": "▲石田",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 4,
+          "horse_name": "シュードタキライト",
+          "sex": "牡",
+          "jockey": "△鷲頭",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "グローブアマランス",
+          "sex": "牝",
+          "jockey": "横山琉",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 5,
+          "horse_name": "ナムラブーニン",
+          "sex": "牡",
+          "jockey": "吉田隼",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "パシフィックハイ",
+          "sex": "牝",
+          "jockey": "斎藤",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 6,
+          "horse_name": "プリンセスロロ",
+          "sex": "牝",
+          "jockey": "小林凌",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "オベイユアマスター",
+          "sex": "セ",
+          "jockey": "岩部",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 7,
+          "horse_name": "シンゼンカガ",
+          "sex": "牡",
+          "jockey": "丹内",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "ロジウムエポック",
+          "sex": "牡",
+          "jockey": "▲小林美",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 8,
+          "horse_name": "ジャグアール",
+          "sex": "牡",
+          "jockey": "◇今村",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "ホウオウサムレット",
+          "sex": "牡",
+          "jockey": "▲舟山",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202605010501",
+      "name": "3歳未勝利",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "10:05",
+      "course_name": "東京",
+      "track_type": "ダート",
+      "distance": 1400,
+      "race_number": 1,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ツクバヴァンガード",
+          "sex": "牡",
+          "jockey": "横山武",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "ライカ",
+          "sex": "牡",
+          "jockey": "大野",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "ビップブレット",
+          "sex": "牡",
+          "jockey": "木幡巧",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "フォーエバーラブ",
+          "sex": "牡",
+          "jockey": "▲上里",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "エクスプレスナイト",
+          "sex": "牡",
+          "jockey": "原",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "コウソクルリアン",
+          "sex": "牡",
+          "jockey": "石川",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "ライヴマティーニ",
+          "sex": "牝",
+          "jockey": "▲佐藤",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "テンノルーキー",
+          "sex": "牡",
+          "jockey": "三浦",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "エフハリスト",
+          "sex": "牝",
+          "jockey": "横山和",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "ゲンテン",
+          "sex": "牡",
+          "jockey": "岩田康",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "タマモトップハット",
+          "sex": "牡",
+          "jockey": "△長浜",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "タイセイゴッシュ",
+          "sex": "牡",
+          "jockey": "キング",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "プラネタリーアワー",
+          "sex": "牝",
+          "jockey": "北村友",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "トウカイレオ",
+          "sex": "牡",
+          "jockey": "佐々木",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "スーホ",
+          "sex": "牡",
+          "jockey": "荻野極",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "パンパネイラ",
+          "sex": "セ",
+          "jockey": "吉田豊",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202605010502",
+      "name": "4歳以上1勝クラス",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "10:35",
+      "course_name": "東京",
+      "track_type": "ダート",
+      "distance": 2100,
+      "race_number": 2,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "オウケンシルヴァー",
+          "sex": "牡",
+          "jockey": "木幡育",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "メイショウコウベ",
+          "sex": "牡",
+          "jockey": "△長浜",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "ベネスピラ",
+          "sex": "牡",
+          "jockey": "三浦",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "カイトヴィント",
+          "sex": "牡",
+          "jockey": "丸田",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "ライノ",
+          "sex": "セ",
+          "jockey": "川田",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "タケルゴールド",
+          "sex": "牡",
+          "jockey": "岩田康",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "スマートクオーレ",
+          "sex": "牡",
+          "jockey": "柴田大",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "アルカナエ",
+          "sex": "セ",
+          "jockey": "▲上里",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "ブレイヴアロウ",
+          "sex": "牡",
+          "jockey": "大野",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "メイショウアゴナス",
+          "sex": "牡",
+          "jockey": "柴田善",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "ソリッドベーシス",
+          "sex": "セ",
+          "jockey": "木幡巧",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "ディースプレマシー",
+          "sex": "牡",
+          "jockey": "石橋脩",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "トレインザマインド",
+          "sex": "セ",
+          "jockey": "荻野極",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "ロードインフェルノ",
+          "sex": "牡",
+          "jockey": "田辺",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "チュラビックタイム",
+          "sex": "牡",
+          "jockey": "原",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "カージオイド",
+          "sex": "牡",
+          "jockey": "佐々木",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202605010503",
+      "name": "3歳未勝利",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "11:05",
+      "course_name": "東京",
+      "track_type": "ダート",
+      "distance": 1600,
+      "race_number": 3,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ピードモント",
+          "sex": "セ",
+          "jockey": "岩田康",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "ホウオウファラオ",
+          "sex": "牡",
+          "jockey": "石川",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "タニセンローマ",
+          "sex": "牡",
+          "jockey": "北村友",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "フクノエルデ",
+          "sex": "セ",
+          "jockey": "江田照",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "ロードトライデント",
+          "sex": "牡",
+          "jockey": "横山武",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "ニシノヒンメル",
+          "sex": "牝",
+          "jockey": "池添",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "ポッドスモーカー",
+          "sex": "牡",
+          "jockey": "▲大久保",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "イナズマダイモン",
+          "sex": "牡",
+          "jockey": "川田",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "アスクホープマン",
+          "sex": "牡",
+          "jockey": "木幡巧",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "ドゥーニ",
+          "sex": "牡",
+          "jockey": "津村",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "トルネードアイル",
+          "sex": "牡",
+          "jockey": "ルメール",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "スカイレックス",
+          "sex": "牡",
+          "jockey": "菅原明",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "ニシノナスタチウム",
+          "sex": "牝",
+          "jockey": "原田和",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "ワルキューレキング",
+          "sex": "牡",
+          "jockey": "佐々木",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "レイズテンペスト",
+          "sex": "牡",
+          "jockey": "三浦",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "リアライズタキオン",
+          "sex": "牡",
+          "jockey": "キング",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202605010504",
+      "name": "3歳新馬",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "11:35",
+      "course_name": "東京",
+      "track_type": "ダート",
+      "distance": 1400,
+      "race_number": 4,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "プティシラー",
+          "sex": "牝",
+          "jockey": "△長浜",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "ルビーサンセット",
+          "sex": "牝",
+          "jockey": "荻野極",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "レウコテア",
+          "sex": "牝",
+          "jockey": "津村",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "アスクドゥチャンプ",
+          "sex": "牡",
+          "jockey": "横山武",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "ミアルーチェ",
+          "sex": "牝",
+          "jockey": "北村友",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "トウカイティエラ",
+          "sex": "牝",
+          "jockey": "菅原明",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "ナムラコハル",
+          "sex": "牝",
+          "jockey": "木幡巧",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "ヘルヴィッツ",
+          "sex": "牡",
+          "jockey": "丸田",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "ラガッツァケコーレ",
+          "sex": "牝",
+          "jockey": "柴田大",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "リバーブレーション",
+          "sex": "牡",
+          "jockey": "▲上里",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "ノースブルースカイ",
+          "sex": "牝",
+          "jockey": "松岡",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "ベラジオカイザー",
+          "sex": "牡",
+          "jockey": "佐々木",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "クィーンコッチャン",
+          "sex": "牝",
+          "jockey": "原田和",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "ヴィスクレス",
+          "sex": "牡",
+          "jockey": "岩田康",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "アンジュブルー",
+          "sex": "牝",
+          "jockey": "柴田善",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "フライトマップ",
+          "sex": "牡",
+          "jockey": "石橋脩",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202605010505",
+      "name": "3歳未勝利",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "12:25",
+      "course_name": "東京",
+      "track_type": "芝",
+      "distance": 1400,
+      "race_number": 5,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ルージュリリック",
+          "sex": "牝",
+          "jockey": "荻野極",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "ヤマニンアレシス",
+          "sex": "牡",
+          "jockey": "大野",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "ペルシアーノ",
+          "sex": "牝",
+          "jockey": "石川",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "フォセットジェンヌ",
+          "sex": "牝",
+          "jockey": "岩田康",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "ダイユウルミナス",
+          "sex": "牝",
+          "jockey": "▲佐藤",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "サンデースマッシュ",
+          "sex": "牡",
+          "jockey": "ルメール",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "ダイシンレスター",
+          "sex": "牡",
+          "jockey": "松岡",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "ケイツータカ",
+          "sex": "牝",
+          "jockey": "柴田大",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "ブレイシオン",
+          "sex": "牝",
+          "jockey": "原",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "ヨドノティアラ",
+          "sex": "牝",
+          "jockey": "津村",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "アイアムアヒーロー",
+          "sex": "牡",
+          "jockey": "吉田豊",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "ベアカッコウ",
+          "sex": "牝",
+          "jockey": "△長浜",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "タイキプレジール",
+          "sex": "牡",
+          "jockey": "キング",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "レゲンデ",
+          "sex": "牝",
+          "jockey": "菅原明",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "ナックセシリア",
+          "sex": "牝",
+          "jockey": "▲上里",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "アイムインディ",
+          "sex": "牝",
+          "jockey": "武豊",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202605010506",
+      "name": "3歳未勝利",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "12:55",
+      "course_name": "東京",
+      "track_type": "芝",
+      "distance": 1800,
+      "race_number": 6,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "スカーレットジーン",
+          "sex": "牝",
+          "jockey": "△長浜",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "シャンパンクォーツ",
+          "sex": "牝",
+          "jockey": "荻野極",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "シンデレラヒメ",
+          "sex": "牝",
+          "jockey": "▲上里",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "ミズノミヤコ",
+          "sex": "牝",
+          "jockey": "原",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "マンサニージャ",
+          "sex": "牝",
+          "jockey": "佐々木",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "マトリカリア",
+          "sex": "牝",
+          "jockey": "▲遠藤",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "アルペンローゼ",
+          "sex": "牝",
+          "jockey": "菅原明",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "ダーリングハースト",
+          "sex": "牝",
+          "jockey": "キング",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "ラインクインビー",
+          "sex": "牝",
+          "jockey": "木幡巧",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "クイーンズレイン",
+          "sex": "牝",
+          "jockey": "津村",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "キコリータ",
+          "sex": "牝",
+          "jockey": "柴田善",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "ソルトバーン",
+          "sex": "牝",
+          "jockey": "柴田大",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "ジーティーウブラブ",
+          "sex": "牝",
+          "jockey": "★谷原",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "コンサートピアノ",
+          "sex": "牝",
+          "jockey": "北村友",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "シニャンガ",
+          "sex": "牝",
+          "jockey": "ルメール",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "サートゥルチェア",
+          "sex": "牝",
+          "jockey": "横山和",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202605010507",
+      "name": "3歳1勝クラス",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "13:25",
+      "course_name": "東京",
+      "track_type": "芝",
+      "distance": 1400,
+      "race_number": 7,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ニシノセイドウ",
+          "sex": "牡",
+          "jockey": "池添",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "フローラルツッキー",
+          "sex": "牝",
+          "jockey": "▲上里",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "タイセイアストロ",
+          "sex": "牡",
+          "jockey": "荻野極",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "グリオンヴール",
+          "sex": "牡",
+          "jockey": "ルメール",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "シャオママル",
+          "sex": "牡",
+          "jockey": "横山武",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "ルージュブリッツ",
+          "sex": "牝",
+          "jockey": "キング",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "ベレーバスク",
+          "sex": "牝",
+          "jockey": "武豊",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "ディヴァインスカイ",
+          "sex": "牡",
+          "jockey": "石川",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "フォトンゲイザー",
+          "sex": "牡",
+          "jockey": "木幡巧",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "トラスコンガーデン",
+          "sex": "牝",
+          "jockey": "田辺",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "シュペルリング",
+          "sex": "牡",
+          "jockey": "津村",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "ミスバレンシア",
+          "sex": "牝",
+          "jockey": "◇永島",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "ランプローグ",
+          "sex": "牝",
+          "jockey": "吉田豊",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "ラテラルパーム",
+          "sex": "牡",
+          "jockey": "北村友",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "リネンタイリン",
+          "sex": "牡",
+          "jockey": "柴田大",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "グロリアスマーチ",
+          "sex": "牡",
+          "jockey": "佐々木",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202605010508",
+      "name": "4歳以上2勝クラス",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "14:00",
+      "course_name": "東京",
+      "track_type": "ダート",
+      "distance": 1600,
+      "race_number": 8,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ファイヴレター",
+          "sex": "牡",
+          "jockey": "丸田",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "アデランテ",
+          "sex": "セ",
+          "jockey": "佐々木",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "ニシノクードクール",
+          "sex": "牝",
+          "jockey": "池添",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "レッドセニョール",
+          "sex": "牡",
+          "jockey": "△長浜",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "チュウワチーフ",
+          "sex": "牡",
+          "jockey": "三浦",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "エーリアル",
+          "sex": "牝",
+          "jockey": "津村",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "アルドール",
+          "sex": "牝",
+          "jockey": "石川",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "キョウエイフロイデ",
+          "sex": "牝",
+          "jockey": "原",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "ラオラシオン",
+          "sex": "セ",
+          "jockey": "北村友",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "コスモストーム",
+          "sex": "牡",
+          "jockey": "武豊",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "ヘリオトロープ",
+          "sex": "牡",
+          "jockey": "ルメール",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "マイティマイティー",
+          "sex": "牡",
+          "jockey": "キング",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "プライベートアイズ",
+          "sex": "牡",
+          "jockey": "荻野極",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "ジャズ",
+          "sex": "牡",
+          "jockey": "横山武",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "クレイヴィンオナー",
+          "sex": "セ",
+          "jockey": "岩田康",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "スカイビート",
+          "sex": "牝",
+          "jockey": "石橋脩",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202605010509",
+      "name": "箱根特別",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "14:35",
+      "course_name": "東京",
+      "track_type": "芝",
+      "distance": 2400,
+      "race_number": 9,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ワイズゴールド",
+          "sex": "牝",
+          "jockey": "菅原隆",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 2,
+          "horse_name": "アヴニールドブリエ",
+          "sex": "セ",
+          "jockey": "池添",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 3,
+          "horse_name": "イクリール",
+          "sex": "牡",
+          "jockey": "原",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 4,
+          "horse_name": "サトノスカイターフ",
+          "sex": "牡",
+          "jockey": "荻野極",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 5,
+          "horse_name": "ズイウンゴサイ",
+          "sex": "牡",
+          "jockey": "大野",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 6,
+          "horse_name": "アロンズロッド",
+          "sex": "牡",
+          "jockey": "ルメール",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 7,
+          "horse_name": "レッドバンデ",
+          "sex": "牡",
+          "jockey": "佐々木",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 8,
+          "horse_name": "オウケンボルト",
+          "sex": "牡",
+          "jockey": "吉田豊",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202605010510",
+      "name": "銀蹄S",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "15:10",
+      "course_name": "東京",
+      "track_type": "ダート",
+      "distance": 1400,
+      "race_number": 10,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "カフェニクス",
+          "sex": "牝",
+          "jockey": "長浜",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "グラウンドビート",
+          "sex": "セ",
+          "jockey": "佐々木",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "ガンウルフ",
+          "sex": "牡",
+          "jockey": "北村友",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "ターコイズフリンジ",
+          "sex": "牡",
+          "jockey": "ルメール",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "メイショウハチロー",
+          "sex": "牡",
+          "jockey": "川田",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "トウカイファクター",
+          "sex": "セ",
+          "jockey": "吉田豊",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "ベンヌ",
+          "sex": "牡",
+          "jockey": "横山武",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "マーズオデッセイ",
+          "sex": "牡",
+          "jockey": "三浦",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "オーサムストローク",
+          "sex": "牡",
+          "jockey": "原",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "ヴァンドーム",
+          "sex": "牡",
+          "jockey": "大野",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "グレノークス",
+          "sex": "牝",
+          "jockey": "荻野極",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "ストレングス",
+          "sex": "牡",
+          "jockey": "武豊",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "トクシーカイザー",
+          "sex": "牡",
+          "jockey": "菅原明",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "レイズカイザー",
+          "sex": "セ",
+          "jockey": "田辺",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "トルーマンテソーロ",
+          "sex": "牡",
+          "jockey": "永島",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "スリーピース",
+          "sex": "セ",
+          "jockey": "岩田康",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202605010511",
+      "name": "クイーンC",
+      "grade": "OP",
+      "race_date": "2026-02-14",
+      "post_time": "15:45",
+      "course_name": "東京",
+      "track_type": "芝",
+      "distance": 1600,
+      "race_number": 11,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ドリームコア",
+          "sex": "牝",
+          "jockey": "ルメール",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "ジッピーチューン",
+          "sex": "牝",
+          "jockey": "北村友",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "マルガ",
+          "sex": "牝",
+          "jockey": "武豊",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "モートンアイランド",
+          "sex": "牝",
+          "jockey": "キング",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "ヒズマスターピース",
+          "sex": "牝",
+          "jockey": "佐々木",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "ニシノサリーナ",
+          "sex": "牝",
+          "jockey": "池添",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "フェーダーローター",
+          "sex": "牝",
+          "jockey": "原",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "ラヴノー",
+          "sex": "牝",
+          "jockey": "石橋脩",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "ギャラボーグ",
+          "sex": "牝",
+          "jockey": "川田",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "ミツカネベネラ",
+          "sex": "牝",
+          "jockey": "津村",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "レディーゴール",
+          "sex": "牝",
+          "jockey": "菅原明",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "ザバルガド",
+          "sex": "牝",
+          "jockey": "長浜",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "ゴバド",
+          "sex": "牝",
+          "jockey": "岩田康",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "モルニケ",
+          "sex": "牝",
+          "jockey": "田辺",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "マスターソアラ",
+          "sex": "牝",
+          "jockey": "横山武",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "タイムレスキス",
+          "sex": "牝",
+          "jockey": "石川",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    },
+    {
+      "race_id_external": "202605010512",
+      "name": "4歳以上1勝クラス",
+      "grade": null,
+      "race_date": "2026-02-14",
+      "post_time": "16:25",
+      "course_name": "東京",
+      "track_type": "芝",
+      "distance": 1600,
+      "race_number": 12,
+      "entries": [
+        {
+          "post_number": 1,
+          "gate_number": 1,
+          "horse_name": "ミエノフェアリー",
+          "sex": "牝",
+          "jockey": "菅原明",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 2,
+          "gate_number": 1,
+          "horse_name": "ソニックライン",
+          "sex": "セ",
+          "jockey": "岩田康",
+          "weight": 1,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 3,
+          "gate_number": 2,
+          "horse_name": "レッドレナート",
+          "sex": "牡",
+          "jockey": "△長浜",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 4,
+          "gate_number": 2,
+          "horse_name": "キューティリップ",
+          "sex": "牝",
+          "jockey": "横山武",
+          "weight": 2,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 5,
+          "gate_number": 3,
+          "horse_name": "チョングク",
+          "sex": "牡",
+          "jockey": "江田照",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 6,
+          "gate_number": 3,
+          "horse_name": "メランジェ",
+          "sex": "牝",
+          "jockey": "三浦",
+          "weight": 3,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 7,
+          "gate_number": 4,
+          "horse_name": "アルレッキーノ",
+          "sex": "セ",
+          "jockey": "ルメール",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 8,
+          "gate_number": 4,
+          "horse_name": "シークレットイスラ",
+          "sex": "牡",
+          "jockey": "▲遠藤",
+          "weight": 4,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 9,
+          "gate_number": 5,
+          "horse_name": "シャンクス",
+          "sex": "牡",
+          "jockey": "荻野極",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 10,
+          "gate_number": 5,
+          "horse_name": "ドルビナ",
+          "sex": "牡",
+          "jockey": "大野",
+          "weight": 5,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 11,
+          "gate_number": 6,
+          "horse_name": "マニス",
+          "sex": "牝",
+          "jockey": "▲上里",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 12,
+          "gate_number": 6,
+          "horse_name": "モティスフォント",
+          "sex": "牡",
+          "jockey": "キング",
+          "weight": 6,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 13,
+          "gate_number": 7,
+          "horse_name": "コア",
+          "sex": "牡",
+          "jockey": "佐々木",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 14,
+          "gate_number": 7,
+          "horse_name": "トレヴィ",
+          "sex": "牝",
+          "jockey": "武豊",
+          "weight": 7,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 15,
+          "gate_number": 8,
+          "horse_name": "トロピカルティー",
+          "sex": "牝",
+          "jockey": "津村",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        },
+        {
+          "post_number": 16,
+          "gate_number": 8,
+          "horse_name": "エルマーゴ",
+          "sex": "牡",
+          "jockey": "川田",
+          "weight": 8,
+          "odds": null,
+          "popularity": null
+        }
+      ]
+    }
+  ]
+}
