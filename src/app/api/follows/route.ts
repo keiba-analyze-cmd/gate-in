@@ -1,3 +1,5 @@
+import { rateLimit, rateLimitResponse } from "@/lib/rate-limit";
+import { validateUUID } from "@/lib/validation";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
@@ -9,7 +11,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "ログインが必要です" }, { status: 401 });
   }
 
+  // レート制限
+  const rl = rateLimit(`follows:${user.id}`, { limit: 30, windowMs: 60_000 });
+  if (!rl.ok) return rateLimitResponse();
+
   const { following_id } = await request.json();
+
+  // バリデーション
+  const idCheck = validateUUID(following_id);
+  if (!idCheck.ok) {
+    return NextResponse.json({ error: idCheck.error }, { status: 400 });
+  }
 
   if (!following_id || following_id === user.id) {
     return NextResponse.json({ error: "無効なユーザーです" }, { status: 400 });

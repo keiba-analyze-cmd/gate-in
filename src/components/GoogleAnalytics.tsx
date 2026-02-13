@@ -1,11 +1,21 @@
 "use client";
 
 import Script from "next/script";
+import { useEffect, useState } from "react";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 export default function GoogleAnalytics() {
-  if (!GA_ID) return null;
+  const [consented, setConsented] = useState(false);
+
+  useEffect(() => {
+    const consent = localStorage.getItem("gate-in-cookie-consent");
+    if (consent === "accepted") {
+      setConsented(true);
+    }
+  }, []);
+
+  if (!GA_ID || !consented) return null;
 
   return (
     <>

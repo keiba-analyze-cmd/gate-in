@@ -11,6 +11,18 @@ export default function Error({
 }) {
   useEffect(() => {
     console.error("App error:", error);
+    // エラーをAPIに送信（Vercel Logsで閲覧可能）
+    fetch("/api/error-report", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: error.message,
+        stack: error.stack,
+        digest: error.digest,
+        page: window.location.pathname,
+        userAgent: navigator.userAgent,
+      }),
+    }).catch(() => {});
   }, [error]);
 
   return (

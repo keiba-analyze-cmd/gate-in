@@ -1,3 +1,5 @@
+export const revalidate = 300;
+
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/admin";
 import { notFound } from "next/navigation";

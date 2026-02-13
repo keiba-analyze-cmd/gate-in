@@ -1,3 +1,4 @@
+import { rateLimit, rateLimitResponse } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
@@ -8,6 +9,10 @@ export async function PATCH(request: Request) {
   if (!user) {
     return NextResponse.json({ error: "ログインが必要です" }, { status: 401 });
   }
+
+  // レート制限
+  const rl = rateLimit(`profile:${user.id}`, { limit: 10, windowMs: 60_000 });
+  if (!rl.ok) return rateLimitResponse();
 
   const body = await request.json();
   const allowedFields = ["display_name", "bio"];

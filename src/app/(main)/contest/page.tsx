@@ -1,3 +1,5 @@
+export const revalidate = 120;
+
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import ContestBoard from "@/components/rankings/ContestBoard";

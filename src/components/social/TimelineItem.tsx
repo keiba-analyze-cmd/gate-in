@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { getRank } from "@/lib/constants/ranks";
 
 type Props = {
@@ -76,7 +77,7 @@ export default function TimelineItem({ item }: Props) {
       <div className="flex items-center gap-2 mb-2">
         <Link href={`/users/${item.user_id}`} className="flex items-center gap-2 group">
           {item.user?.avatar_url ? (
-            <img src={item.user.avatar_url} alt="" className="w-8 h-8 rounded-full" />
+            <Image width={32} height={32} src={item.user.avatar_url} alt="" className="w-8 h-8 rounded-full" unoptimized />
           ) : (
             <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-sm">🏇</div>
           )}

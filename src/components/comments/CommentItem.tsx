@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { getRank } from "@/lib/constants/ranks";
 import CommentForm from "./CommentForm";
 
@@ -79,7 +80,7 @@ export default function CommentItem({ comment, currentUserId, raceId }: Props) {
       <div className="flex items-center gap-2 mb-2">
         <Link href={`/users/${comment.user_id}`} className="flex items-center gap-2 group">
           {comment.profiles?.avatar_url ? (
-            <img src={comment.profiles.avatar_url} alt="" className="w-8 h-8 rounded-full" />
+            <Image width={32} height={32} src={comment.profiles.avatar_url} alt="" className="w-8 h-8 rounded-full" unoptimized />
           ) : (
             <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-sm">🏇</div>
           )}

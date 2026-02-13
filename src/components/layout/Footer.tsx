@@ -14,6 +14,9 @@ export default function Footer() {
           <Link href="/legal" className="text-[11px] text-gray-400 hover:text-green-600 transition-colors">
             特定商取引法に基づく表記
           </Link>
+          <Link href="/contact" className="text-[11px] text-gray-400 hover:text-green-600 transition-colors">
+            お問い合わせ
+          </Link>
         </div>
         <p className="text-center text-[10px] text-gray-300">
           © 2026 ゲートイン！ All rights reserved.

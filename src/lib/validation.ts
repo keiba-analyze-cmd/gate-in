@@ -41,3 +41,42 @@ export function validateDisplayName(name: string): { ok: boolean; error?: string
   // NGワード等はここに追加可能
   return { ok: true };
 }
+
+
+/**
+ * ユーザーID (UUID) バリデーション
+ */
+export function validateUUID(id: string): { ok: boolean; error?: string } {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!id || !uuidRegex.test(id)) {
+    return { ok: false, error: "無効なIDです" };
+  }
+  return { ok: true };
+}
+
+/**
+ * ページネーション cursor バリデーション
+ */
+export function validateCursor(cursor: string | null): boolean {
+  if (!cursor) return true;
+  // ISO date string check
+  return !isNaN(Date.parse(cursor));
+}
+
+/**
+ * 汎用文字列長バリデーション
+ */
+export function validateStringLength(
+  value: string,
+  field: string,
+  min: number,
+  max: number
+): { ok: boolean; error?: string } {
+  if (value.length < min) {
+    return { ok: false, error: `${field}は${min}文字以上で入力してください` };
+  }
+  if (value.length > max) {
+    return { ok: false, error: `${field}は${max}文字以内で入力してください` };
+  }
+  return { ok: true };
+}

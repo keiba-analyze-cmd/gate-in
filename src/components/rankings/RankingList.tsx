@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getRank } from "@/lib/constants/ranks";
 
 type RankingEntry = {
@@ -86,7 +87,7 @@ export default function RankingList({ rankings, type, currentUserId }: Props) {
                   {entry.rank}
                 </span>
                 {entry.avatar_url ? (
-                  <img src={entry.avatar_url} alt="" className="w-9 h-9 rounded-full" />
+                  <Image width={32} height={32} src={entry.avatar_url} alt="" className="w-9 h-9 rounded-full" unoptimized />
                 ) : (
                   <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-sm">🏇</div>
                 )}

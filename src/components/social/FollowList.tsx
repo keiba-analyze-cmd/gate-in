@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { getRank } from "@/lib/constants/ranks";
 import FollowButton from "./FollowButton";
 
@@ -92,7 +93,7 @@ export default function FollowList({ userId, type, currentUserId }: Props) {
             <div key={u.id} className="flex items-center gap-3 py-3 px-1">
               <Link href={`/users/${u.id}`} className="shrink-0">
                 {u.avatar_url ? (
-                  <img src={u.avatar_url} alt="" className="w-10 h-10 rounded-full" />
+                  <Image width={40} height={40} src={u.avatar_url} alt="" className="w-10 h-10 rounded-full" unoptimized />
                 ) : (
                   <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-lg">🏇</div>
                 )}

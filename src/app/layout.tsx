@@ -33,6 +33,7 @@ export const viewport: Viewport = {
 };
 
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import CookieConsent from "@/components/CookieConsent";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       <body>
         <GoogleAnalytics />
+        <CookieConsent />
         {children}
       </body>
     </html>

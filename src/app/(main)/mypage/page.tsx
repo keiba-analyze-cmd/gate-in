@@ -152,10 +152,13 @@ export default async function MyPage() {
       {/* メニュー */}
       <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
         <MenuItem href="/mypage/points" icon="💰" label="ポイント履歴" desc="獲得ポイントの詳細" />
+        <MenuItem href="/mypage/votes" icon="📋" label="予想履歴" desc="全投票の一覧" />
         <MenuItem href="/mypage/badges" icon="🏅" label="バッジコレクション" desc={`${badgeCount ?? 0}個獲得`} />
         <MenuItem href="/notifications" icon="🔔" label="通知" desc="お知らせ一覧" />
+        <MenuItem href="/mypage/notification-settings" icon="⚙️" label="通知設定" desc="通知のON/OFF" />
         <MenuItem href="/timeline" icon="📰" label="タイムライン" desc="フォロー中のアクティビティ" />
         <MenuItem href={`/users/${user.id}`} icon="👤" label="公開プロフィール" desc="他の人から見えるページ" />
+        <MenuItem href="/mypage/delete" icon="🚪" label="退会" desc="アカウントの削除" />
       </div>
 
       {/* 最近のポイント履歴 */}
