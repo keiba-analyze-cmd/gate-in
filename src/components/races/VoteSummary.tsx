@@ -17,9 +17,9 @@ type Props = {
 };
 
 export default function VoteSummary({ vote, isFinished }: Props) {
-  const winPick = vote.vote_picks.find((p) => p.pick_type === "win");
-  const placePicks = vote.vote_picks.filter((p) => p.pick_type === "place");
-  const dangerPick = vote.vote_picks.find((p) => p.pick_type === "danger");
+  const winPick = (vote.vote_picks ?? []).find((p) => p.pick_type === "win");
+  const placePicks = (vote.vote_picks ?? []).filter((p) => p.pick_type === "place");
+  const dangerPick = (vote.vote_picks ?? []).find((p) => p.pick_type === "danger");
 
   const isHit = vote.status === "settled_hit";
 
