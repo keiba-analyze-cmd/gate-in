@@ -4,6 +4,7 @@ import AdminTabs from "@/components/admin/AdminTabs";
 import AdminRaceCreateForm from "@/components/admin/AdminRaceCreateForm";
 import AdminScrapeForm from "@/components/admin/AdminScrapeForm";
 import AdminInquiries from "@/components/admin/AdminInquiries";
+import AdminComments from "@/components/admin/AdminComments";
 
 type Props = {
   searchParams: Promise<{ tab?: string }>;
@@ -58,6 +59,9 @@ export default async function AdminPage({ searchParams }: Props) {
 
         {/* 📩 お問い合わせタブ */}
         {currentTab === "inquiries" && <AdminInquiries />}
+
+        {/* 💬 コメント管理タブ */}
+        {currentTab === "comments" && <AdminComments />}
 
         {/* 📋 レース一覧タブ */}
         {currentTab === "list" && (

@@ -75,7 +75,7 @@ export default async function RaceListPage({ searchParams }: Props) {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-bold text-gray-800">🏇 レース一覧</h1>
+      <div className="flex items-center justify-between"><h1 className="text-xl font-bold text-gray-800">🏇 レース一覧</h1><a href="/races/calendar" className="text-sm text-green-600 hover:text-green-700 font-bold bg-green-50 px-3 py-1.5 rounded-lg border border-green-200">📅 カレンダー</a></div>
 
       {/* 検索バー */}
       <RaceSearchBar

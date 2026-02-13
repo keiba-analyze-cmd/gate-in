@@ -2,7 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { getRank, getNextRank } from "@/lib/constants/ranks";
 import FollowButton from "@/components/social/FollowButton";
-import BlockButton from "@/components/social/BlockButton";
 import Link from "next/link";
 
 type Props = {
@@ -29,7 +28,6 @@ export default async function UserProfilePage({ params }: Props) {
   const isOwnProfile = user.id === userId;
 
   let isFollowing = false;
-  let isBlocked = false;
   if (!isOwnProfile) {
     const { data } = await supabase
       .from("follows")
@@ -38,14 +36,6 @@ export default async function UserProfilePage({ params }: Props) {
       .eq("following_id", userId)
       .maybeSingle();
     isFollowing = !!data;
-
-    const { data: blockData } = await supabase
-      .from("blocks")
-      .select("id")
-      .eq("blocker_id", user.id)
-      .eq("blocked_id", userId)
-      .maybeSingle();
-    isBlocked = !!blockData;
   }
 
   const { count: followingCount } = await supabase
@@ -105,7 +95,7 @@ export default async function UserProfilePage({ params }: Props) {
                 </div>
               </div>
               {!isOwnProfile && (
-                <div className="flex items-center gap-2"><FollowButton targetUserId={userId} initialFollowing={isFollowing} /><BlockButton targetUserId={userId} initialBlocked={isBlocked} /></div>
+                <FollowButton targetUserId={userId} initialFollowing={isFollowing} />
               )}
             </div>
             {profile.bio && (

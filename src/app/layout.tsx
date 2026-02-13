@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import StagingBanner from "@/components/layout/StagingBanner";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       <body>
+        <StagingBanner />
         <GoogleAnalytics />
         <CookieConsent />
         {children}

@@ -48,6 +48,7 @@ export default async function Header() {
           <NavLink href="/rankings">ランキング</NavLink>
           <NavLink href="/contest">大会</NavLink>
           <NavLink href="/timeline">TL</NavLink>
+          <NavLink href="/users">検索</NavLink>
         </nav>
 
         {/* 右側 */}
