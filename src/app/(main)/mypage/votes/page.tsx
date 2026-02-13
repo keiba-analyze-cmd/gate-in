@@ -1,3 +1,4 @@
+import BackLink from "@/components/ui/BackLink";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -56,6 +57,7 @@ export default async function VoteHistoryPage({ searchParams }: Props) {
       </div>
 
       <div className="flex items-center justify-between">
+        <BackLink href="/mypage" label="マイページ" />
         <h1 className="text-xl font-bold text-gray-800">📋 予想履歴</h1>
         <span className="text-sm text-gray-500">全{totalCount ?? 0}件</span>
       </div>

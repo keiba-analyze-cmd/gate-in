@@ -1,6 +1,7 @@
 export const revalidate = 3600;
 
 import Link from "next/link";
+import BackLink from "@/components/ui/BackLink";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,11 +12,7 @@ export const metadata: Metadata = {
 export default function PointsGuidePage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <div className="text-sm text-gray-400">
-        <Link href="/" className="hover:text-green-600">TOP</Link>
-        <span className="mx-2">›</span>
-        <span className="text-gray-600">ポイントシステム</span>
-      </div>
+      <BackLink href="/" label="トップ" />
 
       <h1 className="text-2xl font-bold text-gray-800">🎯 ポイントシステム</h1>
 

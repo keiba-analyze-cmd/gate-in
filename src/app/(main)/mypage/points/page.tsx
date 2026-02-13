@@ -1,3 +1,4 @@
+import BackLink from "@/components/ui/BackLink";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -43,7 +44,7 @@ export default async function PointsHistoryPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-4">
       <div className="flex items-center gap-3">
-        <Link href="/mypage" className="text-gray-400 hover:text-green-600">← 戻る</Link>
+        <BackLink href="/mypage" label="マイページ" />
         <h1 className="text-xl font-bold text-gray-800">💰 ポイント履歴</h1>
       </div>
 

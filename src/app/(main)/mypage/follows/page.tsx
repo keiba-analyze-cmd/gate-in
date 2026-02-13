@@ -1,3 +1,4 @@
+import BackLink from "@/components/ui/BackLink";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -32,6 +33,7 @@ export default async function MyFollowsPage({ searchParams }: Props) {
         <Link href="/mypage" className="text-gray-400 hover:text-gray-600">
           ←
         </Link>
+        <BackLink href="/mypage" label="マイページ" />
         <h1 className="text-lg font-bold text-gray-800">フォロー / フォロワー</h1>
       </div>
 

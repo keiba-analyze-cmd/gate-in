@@ -1,4 +1,5 @@
 "use client";
+import BackLink from "@/components/ui/BackLink";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -43,6 +44,7 @@ export default function DeleteAccountPage() {
         <span className="text-gray-600">退会</span>
       </div>
 
+      <BackLink href="/mypage" label="マイページ" />
       <h1 className="text-xl font-bold text-gray-800">⚠️ アカウント削除</h1>
 
       <div className="bg-red-50 border border-red-200 rounded-2xl p-5 space-y-3">

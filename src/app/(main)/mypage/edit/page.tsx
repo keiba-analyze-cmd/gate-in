@@ -1,3 +1,4 @@
+import BackLink from "@/components/ui/BackLink";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import ProfileEditForm from "@/components/mypage/ProfileEditForm";
@@ -18,6 +19,7 @@ export default async function ProfileEditPage() {
 
   return (
     <div className="max-w-lg mx-auto space-y-4">
+      <BackLink href="/mypage" label="マイページ" />
       <h1 className="text-xl font-bold text-gray-800">✏️ プロフィール編集</h1>
       <ProfileEditForm
         initialName={profile.display_name}

@@ -1,3 +1,4 @@
+import BackLink from "@/components/ui/BackLink";
 import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";

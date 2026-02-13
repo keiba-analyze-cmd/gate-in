@@ -1,3 +1,4 @@
+import BackLink from "@/components/ui/BackLink";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -14,6 +15,7 @@ export default async function ContestPage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
+      <BackLink href="/" label="トップ" />
       <h1 className="text-xl font-bold text-gray-800">🎪 月間大会</h1>
 
       {/* メインビジュアル */}

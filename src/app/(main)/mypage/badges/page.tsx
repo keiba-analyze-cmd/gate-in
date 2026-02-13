@@ -1,3 +1,4 @@
+import BackLink from "@/components/ui/BackLink";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -44,6 +45,7 @@ export default async function BadgesPage() {
       </div>
 
       <div className="bg-white rounded-2xl border border-gray-100 p-5 text-center">
+        <BackLink href="/mypage" label="マイページ" />
         <h1 className="text-xl font-bold text-gray-800 mb-2">🏅 バッジコレクション</h1>
         <div className="text-3xl font-black text-green-600">{earned} <span className="text-lg text-gray-400">/ {total}</span></div>
         <div className="mt-2 h-3 bg-gray-100 rounded-full overflow-hidden max-w-xs mx-auto">

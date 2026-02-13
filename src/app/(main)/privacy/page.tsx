@@ -1,3 +1,4 @@
+import BackLink from "@/components/ui/BackLink";
 export const revalidate = 86400;
 
 import type { Metadata } from "next";
@@ -21,6 +22,7 @@ export default function PrivacyPage() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-6 text-center text-white mb-6">
+        <BackLink href="/" label="トップ" />
         <h1 className="text-xl font-black mb-1">🔒 プライバシーポリシー</h1>
         <p className="text-green-200 text-xs">PRIVACY POLICY</p>
       </div>

@@ -1,4 +1,5 @@
 "use client";
+import BackLink from "@/components/ui/BackLink";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -57,7 +58,6 @@ export default function ContactPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="text-sm text-gray-400">
-        <Link href="/" className="hover:text-green-600">TOP</Link>
         <span className="mx-2">›</span>
         <span className="text-gray-600">お問い合わせ</span>
       </div>

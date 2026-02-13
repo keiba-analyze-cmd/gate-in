@@ -1,4 +1,5 @@
 "use client";
+import BackLink from "@/components/ui/BackLink";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -81,6 +82,7 @@ export default function NotificationSettingsPage() {
         <span className="text-gray-600">通知設定</span>
       </div>
 
+      <BackLink href="/mypage" label="マイページ" />
       <h1 className="text-xl font-bold text-gray-800">🔔 通知設定</h1>
 
       {message && (

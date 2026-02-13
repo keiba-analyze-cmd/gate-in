@@ -1,3 +1,4 @@
+import BackLink from "@/components/ui/BackLink";
 import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { getRank, getNextRank } from "@/lib/constants/ranks";
@@ -87,6 +88,7 @@ export default async function UserProfilePage({ params }: Props) {
 
   return (
     <div className="max-w-2xl mx-auto space-y-4">
+      <BackLink href="/users" label="ユーザー検索" />
       {/* プロフィールカード */}
       <div className="bg-white rounded-2xl border border-gray-200 p-6">
         <div className="flex items-start gap-4 mb-4">

@@ -1,3 +1,4 @@
+import BackLink from "@/components/ui/BackLink";
 export const revalidate = 300;
 
 import { createClient } from "@/lib/supabase/server";
@@ -93,6 +94,7 @@ export default async function HorseDetailPage({ params }: Props) {
         <div className="flex items-center gap-3 mb-3">
           <span className="text-3xl">🐴</span>
           <div>
+            <BackLink href="/races" label="レース一覧" />
             <h1 className="text-2xl font-bold text-gray-800">{horse.name}</h1>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500 mt-1">
               {sexLabel && <span>{sexLabel}</span>}
