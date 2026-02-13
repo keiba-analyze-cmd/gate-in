@@ -150,12 +150,28 @@ export default async function RaceDetailPage({ params }: Props) {
           )}
 
           {/* SNSシェア */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-4 flex items-center justify-between">
-            <span className="text-sm font-bold text-gray-700">📣 予想をシェア</span>
-            <ShareButtons
-              text={`${race.grade ? `[${race.grade}] ` : ""}${race.name}の予想をチェック！ #ゲートイン #競馬予想`}
-            />
-          </div>
+          {hasVoted && myVote && (() => {
+            const picks = myVote.vote_picks ?? [];
+            const winPick = picks.find((p: any) => p.pick_type === "win");
+            const placePicks = picks.filter((p: any) => p.pick_type === "place");
+            const dangerPick = picks.find((p: any) => p.pick_type === "danger");
+            const fmt = (p: any) => `${p.race_entries?.post_number ?? "?"}.${ (p.race_entries?.horses as any)?.name ?? "不明"}`;
+            const weekday = ["日","月","火","水","木","金","土"][new Date(race.race_date + "T00:00:00+09:00").getDay()];
+            const lines = [
+              "#ゲートイン競馬予想",
+              `${race.race_date}(${weekday}) ${race.course_name}${race.race_number ? ` ${race.race_number}R` : ""} ${race.grade ? `[${race.grade}] ` : ""}${race.name}`,
+              winPick ? `◎本命: ${fmt(winPick)}` : "",
+              placePicks.length > 0 ? `○相手: ${placePicks.map(fmt).join(" / ")}` : "",
+              dangerPick ? `△危険: ${fmt(dangerPick)}` : "",
+              "https://gate-in.jp",
+            ].filter(Boolean).join("\n");
+            return (
+              <div className="bg-white rounded-2xl border border-gray-100 p-4 flex items-center justify-between">
+                <span className="text-sm font-bold text-gray-700">📣 予想をシェア</span>
+                <ShareButtons text={lines} />
+              </div>
+            );
+          })()}
 
           {/* コメント掲示板 */}
           <CommentSection raceId={race.id} currentUserId={user.id} />
