@@ -171,6 +171,10 @@ export default async function RaceDetailPage({ params }: Props) {
                 <span className="font-bold text-green-600">+50P</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-gray-50">
+                <span className="text-gray-600">1着的中（2〜3番人気）</span>
+                <span className="font-bold text-green-600">+100P</span>
+              </div>
+              <div className="flex justify-between py-1.5 border-b border-gray-50">
                 <span className="text-gray-600">1着的中（4〜6番人気）</span>
                 <span className="font-bold text-green-600">+200P</span>
               </div>

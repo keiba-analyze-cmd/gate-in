@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/admin";
 import { NextResponse } from "next/server";
 
 type Props = {
@@ -7,10 +8,19 @@ type Props = {
 
 export async function GET(request: Request, { params }: Props) {
   const { raceId } = await params;
+
+  // 認証チェック（ログイン済みユーザーのみ閲覧可）
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "ログインが必要です" }, { status: 401 });
+  }
+
+  // 集計にはAdmin clientを使用（RLSバイパスで全投票を集計）
+  const admin = createAdminClient();
 
   // 全投票データを取得
-  const { data: votes, error: votesErr } = await supabase
+  const { data: votes, error: votesErr } = await admin
     .from("votes")
     .select("id, user_id, profiles(rank_id)")
     .eq("race_id", raceId);
@@ -27,13 +37,13 @@ export async function GET(request: Request, { params }: Props) {
     return NextResponse.json({ total_votes: 0, win: [], place: [], danger: [] });
   }
 
-  const { data: picks } = await supabase
+  const { data: picks } = await admin
     .from("vote_picks")
     .select("vote_id, pick_type, race_entry_id")
     .in("vote_id", voteIds);
 
   // エントリー情報
-  const { data: entries } = await supabase
+  const { data: entries } = await admin
     .from("race_entries")
     .select("id, post_number, odds, popularity, horses(name)")
     .eq("race_id", raceId)
@@ -52,6 +62,13 @@ export async function GET(request: Request, { params }: Props) {
     ])
   );
 
+  // 投票者のランク分布
+  const rankCounts: Record<string, number> = {};
+  for (const vote of votes ?? []) {
+    const rankId = (vote.profiles as any)?.rank_id ?? "unknown";
+    rankCounts[rankId] = (rankCounts[rankId] ?? 0) + 1;
+  }
+
   // 集計
   const aggregate = (pickType: string) => {
     const counts = new Map<string, number>();
@@ -63,6 +80,7 @@ export async function GET(request: Request, { params }: Props) {
     return [...counts.entries()]
       .map(([entryId, count]) => ({
         ...(entryMap.get(entryId) ?? { post_number: 0, horse_name: "不明" }),
+        race_entry_id: entryId,
         count,
         percentage: totalVotes > 0 ? Math.round((count / totalVotes) * 1000) / 10 : 0,
       }))
@@ -75,5 +93,6 @@ export async function GET(request: Request, { params }: Props) {
     win: aggregate("win"),
     place: aggregate("place"),
     danger: aggregate("danger"),
+    rank_distribution: rankCounts,
   });
 }
