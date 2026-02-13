@@ -3,12 +3,14 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import HorseList from "@/components/races/HorseList";
 import VoteForm from "@/components/races/VoteForm";
+import VoteEditForm from "@/components/races/VoteEditForm";
 import VoteSummary from "@/components/races/VoteSummary";
 import VoteDistribution from "@/components/races/VoteDistribution";
 import RaceResultTable from "@/components/races/RaceResultTable";
 import CommentSection from "@/components/comments/CommentSection";
 import ShareButtons from "@/components/social/ShareButtons";
 import RaceCountdown from "@/components/races/RaceCountdown";
+import JsonLd from "@/components/seo/JsonLd";
 
 type Props = {
   params: Promise<{ raceId: string }>;
@@ -84,8 +86,40 @@ export default async function RaceDetailPage({ params }: Props) {
   const hasVoted = !!myVote;
   const isFinished = race.status === "finished";
 
+
+  // JSON-LD 構造化データ
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SportsEvent",
+    name: race.name,
+    description: `${race.course_name} ${race.race_number ? race.race_number + "R" : ""} ${race.grade ? "[" + race.grade + "]" : ""} ${race.name}`,
+    startDate: race.post_time
+      ? new Date(race.post_time).toISOString()
+      : `${race.race_date}T00:00:00+09:00`,
+    location: {
+      "@type": "Place",
+      name: race.course_name + "競馬場",
+      address: { "@type": "PostalAddress", addressCountry: "JP" },
+    },
+    sport: "Horse Racing",
+    url: `https://gate-in.jp/races/${raceId}`,
+    organizer: {
+      "@type": "Organization",
+      name: "ゲートイン！",
+      url: "https://gate-in.jp",
+    },
+    ...(isFinished && results && results.length > 0 ? {
+      competitor: results.slice(0, 3).map((r: any) => ({
+        "@type": "Person",
+        name: r.race_entries?.horses?.name ?? "不明",
+        result: `${r.finish_position}着`,
+      })),
+    } : {}),
+  };
+
   return (
     <div className="space-y-4">
+      <JsonLd data={jsonLd} />
       {/* パンくずリスト */}
       <div className="text-sm text-gray-400">
         <Link href="/races" className="hover:text-green-600">レース一覧</Link>
@@ -149,6 +183,19 @@ export default async function RaceDetailPage({ params }: Props) {
               <h2 className="font-bold text-gray-800 mb-3">📋 出馬表</h2>
               <HorseList entries={entries} myVote={myVote} results={results} />
             </div>
+          )}
+
+          {/* 投票変更・取消（投票済み & 発走前） */}
+          {hasVoted && myVote && race.status === "voting_open" && entries && (
+            <VoteEditForm
+              raceId={race.id}
+              entries={entries}
+              existingPicks={(myVote.vote_picks ?? []).map((p: any) => ({
+                pick_type: p.pick_type,
+                race_entry_id: p.race_entry_id,
+              }))}
+              postTime={race.post_time}
+            />
           )}
 
           {/* SNSシェア */}
@@ -224,6 +271,9 @@ export default async function RaceDetailPage({ params }: Props) {
                 <span className="font-bold text-yellow-600">+300P</span>
               </div>
             </div>
+            <Link href="/guide/points" className="block text-center text-xs text-green-600 font-bold mt-3 hover:underline">
+              📖 ポイントルール詳細 →
+            </Link>
           </div>
         </div>
       </div>

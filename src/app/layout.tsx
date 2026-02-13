@@ -37,6 +37,21 @@ import GoogleAnalytics from "@/components/GoogleAnalytics";
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
+      
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "ゲートイン！",
+              url: "https://gate-in.jp",
+              logo: "https://gate-in.jp/icon.png",
+              description: "競馬予想SNS。レースの1着・複勝・危険馬を予想してポイントを稼ごう！",
+              sameAs: [],
+            }),
+          }}
+        />
       <body>
         <GoogleAnalytics />
         {children}

@@ -5,99 +5,87 @@ import Link from "next/link";
 export default async function BadgesPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-
   if (!user) redirect("/login");
 
-  // 全バッジ
+  // 全バッジマスタ
   const { data: allBadges } = await supabase
     .from("badges")
     .select("*")
-    .order("id");
+    .order("category")
+    .order("condition_value", { ascending: true });
 
-  // ユーザーが獲得したバッジ
-  const { data: earnedBadges } = await supabase
+  // ユーザーの獲得済みバッジ
+  const { data: userBadges } = await supabase
     .from("user_badges")
     .select("badge_id, earned_at")
     .eq("user_id", user.id);
 
-  const earnedMap = new Map(earnedBadges?.map((b) => [b.badge_id, b.earned_at]) ?? []);
+  const earnedMap = new Map(
+    (userBadges ?? []).map((ub) => [ub.badge_id, ub.earned_at])
+  );
 
-  // カテゴリ別に分類
-  const categories: Record<string, typeof allBadges> = {};
-  for (const badge of allBadges ?? []) {
-    const cat = badge.category ?? "その他";
-    if (!categories[cat]) categories[cat] = [];
-    categories[cat].push(badge);
-  }
+  const categories = [
+    { key: "milestone", label: "🎫 マイルストーン", desc: "投票回数で獲得" },
+    { key: "achievement", label: "🎯 アチーブメント", desc: "的中実績で獲得" },
+    { key: "streak", label: "🔥 連続記録", desc: "連続的中で獲得" },
+    { key: "rank", label: "👑 ランク", desc: "ランク到達で獲得" },
+    { key: "special", label: "🦄 スペシャル", desc: "特別な条件で獲得" },
+  ];
 
-  const categoryLabels: Record<string, string> = {
-    accuracy: "🎯 的中系",
-    streak: "🔥 連続系",
-    volume: "📊 投票数系",
-    grade: "🏆 重賞系",
-    social: "💬 ソーシャル系",
-    special: "✨ 特別",
-  };
-
-  const earnedCount = earnedBadges?.length ?? 0;
-  const totalCount = allBadges?.length ?? 0;
+  const earned = (userBadges ?? []).length;
+  const total = (allBadges ?? []).length;
 
   return (
     <div className="max-w-2xl mx-auto space-y-4">
-      <div className="flex items-center gap-3">
-        <Link href="/mypage" className="text-gray-400 hover:text-green-600">← 戻る</Link>
-        <h1 className="text-xl font-bold text-gray-800">🏅 バッジコレクション</h1>
+      <div className="text-sm text-gray-400">
+        <Link href="/mypage" className="hover:text-green-600">マイページ</Link>
+        <span className="mx-2">›</span>
+        <span className="text-gray-600">バッジコレクション</span>
       </div>
 
-      {/* 進捗 */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-5">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-bold text-gray-700">コンプリート進捗</span>
-          <span className="text-sm font-bold text-green-600">{earnedCount} / {totalCount}</span>
-        </div>
-        <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full transition-all"
-            style={{ width: `${totalCount > 0 ? (earnedCount / totalCount) * 100 : 0}%` }}
-          />
+      <div className="bg-white rounded-2xl border border-gray-100 p-5 text-center">
+        <h1 className="text-xl font-bold text-gray-800 mb-2">🏅 バッジコレクション</h1>
+        <div className="text-3xl font-black text-green-600">{earned} <span className="text-lg text-gray-400">/ {total}</span></div>
+        <div className="mt-2 h-3 bg-gray-100 rounded-full overflow-hidden max-w-xs mx-auto">
+          <div className="h-full bg-green-500 rounded-full transition-all" style={{ width: `${total > 0 ? (earned / total) * 100 : 0}%` }} />
         </div>
       </div>
 
-      {/* バッジ一覧 */}
-      {Object.entries(categories).map(([category, badges]) => (
-        <div key={category} className="bg-white rounded-2xl border border-gray-100 p-5">
-          <h2 className="font-bold text-gray-800 mb-3">
-            {categoryLabels[category] ?? category}
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {badges?.map((badge) => {
-              const isEarned = earnedMap.has(badge.id);
-              const earnedAt = earnedMap.get(badge.id);
-              return (
-                <div
-                  key={badge.id}
-                  className={`rounded-xl p-4 text-center transition-all ${
-                    isEarned
-                      ? "bg-yellow-50 border-2 border-yellow-200"
-                      : "bg-gray-50 border-2 border-transparent opacity-50"
-                  }`}
-                >
-                  <div className={`text-3xl mb-2 ${isEarned ? "" : "grayscale"}`}>
-                    {badge.icon}
-                  </div>
-                  <div className="text-sm font-bold text-gray-800">{badge.name}</div>
-                  <div className="text-xs text-gray-500 mt-1">{badge.description}</div>
-                  {isEarned && earnedAt && (
-                    <div className="text-xs text-yellow-600 mt-2">
-                      ✓ {new Date(earnedAt).toLocaleDateString("ja-JP", { month: "short", day: "numeric" })}獲得
+      {categories.map((cat) => {
+        const badges = (allBadges ?? []).filter((b) => b.category === cat.key);
+        if (badges.length === 0) return null;
+        return (
+          <div key={cat.key} className="bg-white rounded-2xl border border-gray-100 p-5">
+            <h2 className="font-bold text-gray-800 mb-1">{cat.label}</h2>
+            <p className="text-xs text-gray-400 mb-3">{cat.desc}</p>
+            <div className="grid grid-cols-1 gap-2">
+              {badges.map((badge) => {
+                const isEarned = earnedMap.has(badge.id);
+                const earnedAt = earnedMap.get(badge.id);
+                return (
+                  <div
+                    key={badge.id}
+                    className={`flex items-center gap-3 p-3 rounded-xl border ${
+                      isEarned ? "bg-green-50 border-green-200" : "bg-gray-50 border-gray-100 opacity-50"
+                    }`}
+                  >
+                    <span className="text-2xl">{isEarned ? badge.icon : "🔒"}</span>
+                    <div className="flex-1">
+                      <div className="font-bold text-sm text-gray-800">{badge.name}</div>
+                      <div className="text-xs text-gray-500">{badge.description}</div>
                     </div>
-                  )}
-                </div>
-              );
-            })}
+                    {isEarned && earnedAt && (
+                      <span className="text-xs text-green-600 font-medium">
+                        {new Date(earnedAt).toLocaleDateString("ja-JP")}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/monthly-contest",
+      "schedule": "5 15 1 * *"
+    },
+    {
+      "path": "/api/cron/monthly-reset",
+      "schedule": "10 15 1 * *"
+    }
+  ]
+}

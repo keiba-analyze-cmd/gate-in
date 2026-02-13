@@ -4,9 +4,11 @@ import { createClient } from "@/lib/supabase/server";
 import RaceCard from "@/components/races/RaceCard";
 import DateFilter from "@/components/races/DateFilter";
 import CourseFilter from "@/components/races/CourseFilter";
+import GradeFilter from "@/components/races/GradeFilter";
+import RaceSearchBar from "@/components/races/RaceSearchBar";
 
 type Props = {
-  searchParams: Promise<{ date?: string; course?: string }>;
+  searchParams: Promise<{ date?: string; course?: string; grade?: string; q?: string }>;
 };
 
 export default async function RaceListPage({ searchParams }: Props) {
@@ -44,18 +46,23 @@ export default async function RaceListPage({ searchParams }: Props) {
   if (params.course) {
     query = query.eq("course_name", params.course);
   }
+  if (params.grade) {
+    query = query.eq("grade", params.grade);
+  }
 
   const { data: races } = await query;
 
+  // キーワード検索（レース名でフィルター）
+  let filteredRaces = races ?? [];
+  if (params.q) {
+    const q = params.q.toLowerCase();
+    filteredRaces = filteredRaces.filter((r) =>
+      r.name.toLowerCase().includes(q) ||
+      (r.course_name ?? "").toLowerCase().includes(q)
+    );
+  }
+
   // その日の競馬場一覧
-  const coursesForDay = [
-    ...new Set(
-      dateDays
-        ?.filter((d) => d.race_date === selectedDate)
-        ? races?.map((r) => r.course_name)
-        : []
-    ),
-  ];
   const { data: allRacesForDay } = await supabase
     .from("races")
     .select("course_name")
@@ -63,12 +70,20 @@ export default async function RaceListPage({ searchParams }: Props) {
   const uniqueCourses = [...new Set(allRacesForDay?.map((r) => r.course_name) ?? [])];
 
   // グレード別に分類
-  const gradeRaces = races?.filter((r) => r.grade) ?? [];
-  const normalRaces = races?.filter((r) => !r.grade) ?? [];
+  const gradeRaces = filteredRaces.filter((r) => r.grade);
+  const normalRaces = filteredRaces.filter((r) => !r.grade);
 
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-bold text-gray-800">🏇 レース一覧</h1>
+
+      {/* 検索バー */}
+      <RaceSearchBar
+        initialQuery={params.q ?? ""}
+        date={selectedDate}
+        course={params.course ?? ""}
+        grade={params.grade ?? ""}
+      />
 
       {/* 日付フィルター */}
       <DateFilter dates={uniqueDates} selected={selectedDate} course={params.course} />
@@ -79,6 +94,20 @@ export default async function RaceListPage({ searchParams }: Props) {
         selected={params.course ?? ""}
         date={selectedDate}
       />
+
+      {/* グレードフィルター */}
+      <GradeFilter
+        selected={params.grade ?? ""}
+        date={selectedDate}
+        course={params.course ?? ""}
+      />
+
+      {/* 検索結果表示 */}
+      {params.q && (
+        <div className="text-sm text-gray-500">
+          「{params.q}」の検索結果: {filteredRaces.length}件
+        </div>
+      )}
 
       {/* 重賞・特別レース */}
       {gradeRaces.length > 0 && (
@@ -105,10 +134,10 @@ export default async function RaceListPage({ searchParams }: Props) {
       )}
 
       {/* レースがない場合 */}
-      {(!races || races.length === 0) && (
+      {filteredRaces.length === 0 && (
         <div className="bg-white rounded-xl p-12 text-center text-gray-400">
           <div className="text-4xl mb-3">🏇</div>
-          <p>この日のレースはありません</p>
+          <p>{params.q ? `「${params.q}」に一致するレースがありません` : "この日のレースはありません"}</p>
         </div>
       )}
     </div>

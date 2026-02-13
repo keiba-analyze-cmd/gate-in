@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 type Entry = {
   id: string;
   post_number: number;
@@ -76,7 +78,13 @@ export default function HorseList({ entries, myVote, results }: Props) {
             {/* 馬名 */}
             <div className="col-span-3">
               <div className="font-bold text-gray-800 truncate">
-                {entry.horses?.name ?? "不明"}
+                {entry.horses?.id ? (
+                  <Link href={"/horses/" + entry.horses.id} className="hover:text-green-600 hover:underline">
+                    {entry.horses.name}
+                  </Link>
+                ) : (
+                  "不明"
+                )}
               </div>
               <div className="text-xs text-gray-400 truncate">
                 {entry.horses?.sex} {entry.horses?.sire}

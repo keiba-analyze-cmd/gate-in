@@ -1,4 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
+import { checkAndGrantBadges } from "@/lib/badges";
+import { checkRankUp } from "@/lib/rank-check";
 import { getWinPoints, POINT_RULES } from "@/lib/constants/ranks";
 
 type SettleResult = {
@@ -312,6 +314,18 @@ export async function settleRace(
           });
         }
       }
+
+      // 8.5 バッジ自動付与チェック
+      const isUpset = winHit && winnerPopularity >= 10;
+      const isG1Win = winHit && race.grade === "G1";
+      await checkAndGrantBadges(vote.user_id, {
+        isPerfect,
+        isUpset,
+        isG1Win,
+      });
+
+      // 8.6 ランクアップチェック & 通知
+      await checkRankUp(vote.user_id);
 
       settledVotes++;
       totalPointsAwarded += votePoints;

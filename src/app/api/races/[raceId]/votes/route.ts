@@ -101,3 +101,136 @@ export async function GET(request: Request, { params }: Props) {
     rank_distribution: rankCounts,
   });
 }
+
+
+// ====== 投票取り消し ======
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ raceId: string }> }
+) {
+  const { raceId } = await params;
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return Response.json({ error: "ログインが必要です" }, { status: 401 });
+  }
+
+  // レースの発走時刻チェック（2分前まで変更可能）
+  const { createAdminClient } = await import("@/lib/admin");
+  const admin = createAdminClient();
+  const { data: race } = await admin
+    .from("races")
+    .select("post_time, status")
+    .eq("id", raceId)
+    .single();
+
+  if (!race || race.status !== "voting_open") {
+    return Response.json({ error: "投票受付中ではありません" }, { status: 400 });
+  }
+
+  if (race.post_time) {
+    const deadline = new Date(race.post_time).getTime() - 2 * 60 * 1000;
+    if (Date.now() > deadline) {
+      return Response.json({ error: "締切を過ぎています（発走2分前）" }, { status: 400 });
+    }
+  }
+
+  // 投票を取得
+  const { data: vote } = await supabase
+    .from("votes")
+    .select("id")
+    .eq("race_id", raceId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!vote) {
+    return Response.json({ error: "投票が見つかりません" }, { status: 404 });
+  }
+
+  // vote_picks → votes の順で削除
+  await admin.from("vote_picks").delete().eq("vote_id", vote.id);
+  await admin.from("votes").delete().eq("id", vote.id);
+
+  return Response.json({ success: true, message: "投票を取り消しました" });
+}
+
+
+// ====== 投票変更 ======
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ raceId: string }> }
+) {
+  const { raceId } = await params;
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return Response.json({ error: "ログインが必要です" }, { status: 401 });
+  }
+
+  const body = await request.json();
+  const { winPick, placePicks, dangerPick } = body as {
+    winPick: string;
+    placePicks: string[];
+    dangerPick: string | null;
+  };
+
+  if (!winPick) {
+    return Response.json({ error: "1着予想は必須です" }, { status: 400 });
+  }
+
+  // レースの発走時刻チェック
+  const { createAdminClient } = await import("@/lib/admin");
+  const admin = createAdminClient();
+  const { data: race } = await admin
+    .from("races")
+    .select("post_time, status")
+    .eq("id", raceId)
+    .single();
+
+  if (!race || race.status !== "voting_open") {
+    return Response.json({ error: "投票受付中ではありません" }, { status: 400 });
+  }
+
+  if (race.post_time) {
+    const deadline = new Date(race.post_time).getTime() - 2 * 60 * 1000;
+    if (Date.now() > deadline) {
+      return Response.json({ error: "締切を過ぎています（発走2分前）" }, { status: 400 });
+    }
+  }
+
+  // 既存投票を取得
+  const { data: vote } = await supabase
+    .from("votes")
+    .select("id")
+    .eq("race_id", raceId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!vote) {
+    return Response.json({ error: "投票が見つかりません" }, { status: 404 });
+  }
+
+  // 既存 picks を削除して新しいものを挿入
+  await admin.from("vote_picks").delete().eq("vote_id", vote.id);
+
+  const picks = [
+    { vote_id: vote.id, pick_type: "win", race_entry_id: winPick },
+    ...placePicks.map((id: string) => ({
+      vote_id: vote.id,
+      pick_type: "place",
+      race_entry_id: id,
+    })),
+    ...(dangerPick
+      ? [{ vote_id: vote.id, pick_type: "danger", race_entry_id: dangerPick }]
+      : []),
+  ];
+
+  const { error: pickErr } = await admin.from("vote_picks").insert(picks);
+  if (pickErr) {
+    return Response.json({ error: "投票の更新に失敗しました" }, { status: 500 });
+  }
+
+  return Response.json({ success: true, message: "投票を変更しました" });
+}
