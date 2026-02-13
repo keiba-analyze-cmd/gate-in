@@ -7,6 +7,16 @@ export default async function HomePage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  // ユーザーの投票済みレースを取得
+  let votedRaceIds = new Set<string>();
+  if (user) {
+    const { data: myVotes } = await supabase
+      .from("votes")
+      .select("race_id")
+      .eq("user_id", user.id);
+    votedRaceIds = new Set((myVotes ?? []).map((v) => v.race_id));
+  }
+
   // 投票受付中のレース
   const { data: openRaces } = await supabase
     .from("races")
@@ -15,30 +25,9 @@ export default async function HomePage() {
     .order("race_date", { ascending: true })
     .limit(6);
 
-  // 注目レース（G1/G2を優先）
-  const featuredRace = openRaces?.find((r) => r.grade === "G1" || r.grade === "G2") ?? openRaces?.[0];
-  const otherRaces = openRaces?.filter((r) => r.id !== featuredRace?.id) ?? [];
-
-  // 投票数を取得
-  let featuredVoteCount = 0;
-  if (featuredRace) {
-    const { count } = await supabase
-      .from("votes")
-      .select("*", { count: "exact", head: true })
-      .eq("race_id", featuredRace.id);
-    featuredVoteCount = count ?? 0;
-  }
-
-  // コメント数
-  let featuredCommentCount = 0;
-  if (featuredRace) {
-    const { count } = await supabase
-      .from("comments")
-      .select("*", { count: "exact", head: true })
-      .eq("race_id", featuredRace.id)
-      .eq("is_deleted", false);
-    featuredCommentCount = count ?? 0;
-  }
+  // 今週の重賞レース（grade付きを全て表示）
+  const featuredRaces = openRaces?.filter((r) => r.grade) ?? [];
+  const otherRaces = openRaces?.filter((r) => !r.grade) ?? [];
 
   // 今月の大会
   const now = new Date();
@@ -113,62 +102,48 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-5">
-      {/* ====== 👤 クイックアクセス ====== */}
-      {user && (
-        <div className="flex gap-2">
-          <Link href="/mypage" className="flex-1 bg-white rounded-xl border border-gray-200 p-3 flex items-center gap-3 hover:border-green-300 transition-colors">
-            <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-lg">🏇</div>
-            <div className="min-w-0">
-              <div className="text-xs text-gray-400">マイページ</div>
-              <div className="text-sm font-bold text-gray-800 truncate">プロフィール・成績</div>
-            </div>
-            <span className="text-gray-300 ml-auto">›</span>
-          </Link>
-          <Link href="/mypage/points" className="bg-white rounded-xl border border-gray-200 p-3 flex items-center gap-2 hover:border-green-300 transition-colors shrink-0">
-            <span className="text-lg">💰</span>
-            <div>
-              <div className="text-xs text-gray-400">ポイント</div>
-              <div className="text-xs font-bold text-gray-700">履歴</div>
-            </div>
-          </Link>
-        </div>
-      )}
-
-      {/* ====== 🔥 注目レースヒーロー ====== */}
-      {featuredRace && (
-        <Link href={`/races/${featuredRace.id}`} className="block">
-          <div
-            className="rounded-2xl p-5 text-white text-center relative overflow-hidden"
-            style={{ background: "linear-gradient(135deg, #16a34a 0%, #15803d 100%)" }}
-          >
-            <div className="relative">
-              <p className="text-green-200 text-xs font-bold mb-1">📅 今週の注目レース</p>
-              <h2 className="text-2xl font-black mb-1">
-                {featuredRace.name}
-                {featuredRace.grade && (
-                  <span className="text-lg ml-2 text-white/80">({featuredRace.grade})</span>
-                )}
-              </h2>
-              <p className="text-green-100 text-sm font-medium">
-                {featuredRace.race_date} {featuredRace.course_name}
-                {featuredRace.distance && ` ${featuredRace.distance}`}
-              </p>
-              <div className="flex gap-2 justify-center mt-3">
-                <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">
-                  🗳 {featuredVoteCount}人が投票済み
-                </span>
-                <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">
-                  💬 {featuredCommentCount}件
-                </span>
-              </div>
-              <div className="mt-4">
-                <span className="inline-block bg-white text-green-700 font-black text-sm px-6 py-2.5 rounded-full shadow-lg">
-                  予想を投票する →
-                </span>
-              </div>
-            </div>
+      {/* ====== 🔥 今週の重賞 ====== */}
+      {featuredRaces.length > 0 && (
+        <section>
+          <h2 className="text-sm font-black text-gray-900 mb-3">🏆 今週の重賞</h2>
+          <div className={`grid gap-3 ${featuredRaces.length === 1 ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}>
+            {featuredRaces.map((race) => {
+              const gradeColors: Record<string, string> = {
+                G1: "from-yellow-500 to-yellow-600",
+                G2: "from-red-500 to-red-600",
+                G3: "from-green-500 to-green-600",
+                OP: "from-gray-500 to-gray-600",
+                L: "from-blue-500 to-blue-600",
+              };
+              const bg = gradeColors[race.grade ?? ""] ?? "from-green-500 to-green-600";
+              return (
+                <Link key={race.id} href={`/races/${race.id}`} className="block group">
+                  <div className={`rounded-2xl p-4 text-white relative overflow-hidden bg-gradient-to-br ${bg} group-hover:shadow-lg transition-shadow`}>
+                    <div className="flex items-start justify-between mb-2">
+                      <span className="bg-white/25 text-white text-xs font-black px-2 py-0.5 rounded">
+                        {race.grade}
+                      </span>
+                      <span className="text-white/70 text-xs font-medium">
+                        {new Date(race.race_date + "T00:00:00+09:00").toLocaleDateString("ja-JP", { month: "short", day: "numeric", weekday: "short" })}
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-black mb-1">{race.name}</h3>
+                    <p className="text-white/80 text-xs font-medium">
+                      {race.course_name}
+                      {race.distance && ` ${race.distance}`}
+                      {race.head_count && ` ${race.head_count}頭`}
+                    </p>
+                    <div className="mt-3 text-right">
+                      <span className="inline-block bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full group-hover:bg-white/30 transition-colors">
+                        予想する →
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
-        </Link>
+        </section>
       )}
 
       {/* ====== 🏆 月間大会バナー ====== */}
@@ -265,7 +240,7 @@ export default async function HomePage() {
           </div>
           <div className="space-y-2">
             {otherRaces.map((race) => (
-              <RaceCard key={race.id} race={race} />
+              <RaceCard key={race.id} race={race} voted={votedRaceIds.has(race.id)} />
             ))}
           </div>
         </section>

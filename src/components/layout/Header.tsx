@@ -67,7 +67,7 @@ export default async function Header() {
 
               <Link
                 href="/mypage"
-                className="flex items-center gap-1.5 bg-yellow-50 px-2.5 py-1 rounded-full hover:bg-yellow-100 transition-colors border border-yellow-200"
+                className="flex items-center gap-1.5 bg-green-50 px-2.5 py-1 rounded-full hover:bg-green-100 transition-colors border border-green-200"
               >
                 <span className="text-xs">💰</span>
                 <span className="text-sm font-black text-gray-800 font-num">
@@ -78,12 +78,13 @@ export default async function Header() {
 
               <Link
                 href="/mypage"
-                className="hidden sm:flex items-center gap-1.5 hover:opacity-70 transition-opacity"
+                className="flex items-center gap-1.5 hover:opacity-70 transition-opacity"
+                title="マイページ"
               >
                 {profile.avatar_url ? (
-                  <img src={profile.avatar_url} alt="" className="w-7 h-7 rounded-full" />
+                  <img src={profile.avatar_url} alt="" className="w-7 h-7 rounded-full border border-gray-200" />
                 ) : (
-                  <div className="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center text-xs">
+                  <div className="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center text-xs border border-green-200">
                     {rank?.icon ?? "🏇"}
                   </div>
                 )}

@@ -11,6 +11,17 @@ export default async function RaceListPage({ searchParams }: Props) {
   const params = await searchParams;
   const supabase = await createClient();
 
+  // ユーザーの投票済みレースを取得
+  const { data: { user } } = await supabase.auth.getUser();
+  let votedRaceIds = new Set<string>();
+  if (user) {
+    const { data: myVotes } = await supabase
+      .from("votes")
+      .select("race_id")
+      .eq("user_id", user.id);
+    votedRaceIds = new Set((myVotes ?? []).map((v) => v.race_id));
+  }
+
   // 日付一覧を取得（直近2週間のレースがある日）
   const { data: dateDays } = await supabase
     .from("races")
@@ -73,7 +84,7 @@ export default async function RaceListPage({ searchParams }: Props) {
           <h2 className="text-sm font-bold text-gray-600 mb-2">🏆 重賞・特別</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {gradeRaces.map((race) => (
-              <RaceCard key={race.id} race={race} />
+              <RaceCard key={race.id} race={race} voted={votedRaceIds.has(race.id)} />
             ))}
           </div>
         </section>
@@ -85,7 +96,7 @@ export default async function RaceListPage({ searchParams }: Props) {
           <h2 className="text-sm font-bold text-gray-600 mb-2">📋 一般レース</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {normalRaces.map((race) => (
-              <RaceCard key={race.id} race={race} />
+              <RaceCard key={race.id} race={race} voted={votedRaceIds.has(race.id)} />
             ))}
           </div>
         </section>

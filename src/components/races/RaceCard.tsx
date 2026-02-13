@@ -10,7 +10,9 @@ type Props = {
     status: string;
     race_number?: number | null;
     distance?: string | null;
+    start_time?: string | null;
   };
+  voted?: boolean;
 };
 
 const GRADE_STYLES: Record<string, { bg: string; text: string }> = {
@@ -27,12 +29,19 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   finished: { label: "確定", color: "text-gray-500 font-bold" },
 };
 
-export default function RaceCard({ race }: Props) {
+export default function RaceCard({ race, voted }: Props) {
   const grade = race.grade ? GRADE_STYLES[race.grade] ?? { bg: "bg-gray-500", text: "text-white" } : null;
   const status = STATUS_LABELS[race.status] ?? { label: race.status, color: "text-gray-600" };
 
   return (
-    <Link href={`/races/${race.id}`} className="bg-white rounded-2xl border border-gray-200 flex items-center gap-3 px-4 py-3 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer">
+    <Link href={`/races/${race.id}`} className="bg-white rounded-2xl border border-gray-200 flex items-center gap-3 px-4 py-3 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer relative">
+      {/* 投票済タグ */}
+      {voted && (
+        <span className="absolute -top-2 -left-1 bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm rotate-[-3deg] z-10">
+          ✅ 投票済
+        </span>
+      )}
+
       {grade ? (
         <span className={`${grade.bg} ${grade.text} text-[11px] font-black px-2 py-1 rounded-md min-w-[32px] text-center`}>
           {race.grade}
@@ -45,9 +54,16 @@ export default function RaceCard({ race }: Props) {
 
       <div className="flex-1 min-w-0">
         <div className="text-sm font-bold text-gray-900 truncate">{race.name}</div>
-        <div className="text-[11px] text-gray-500 font-medium">
-          {race.race_date} {race.course_name}
-          {race.distance && ` ${race.distance}`}
+        <div className="text-[11px] text-gray-500 font-medium flex items-center gap-1.5">
+          <span>{race.course_name}</span>
+          <span className="text-gray-300">|</span>
+          <span>{race.distance}</span>
+          {race.start_time && (
+            <>
+              <span className="text-gray-300">|</span>
+              <span>{race.start_time}</span>
+            </>
+          )}
         </div>
       </div>
 
