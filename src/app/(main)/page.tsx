@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { getRank } from "@/lib/constants/ranks";
 import RaceCard from "@/components/races/RaceCard";
+import LandingHero from "@/components/landing/LandingHero";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -99,6 +100,11 @@ export default async function HomePage() {
   const monthLabel = `${now.getMonth() + 1}月`;
   const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
   const daysLeft = Math.max(0, Math.ceil((endOfMonth.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+
+  // 未ログイン → ランディングページ
+  if (!user) {
+    return <LandingHero openRaces={openRaces ?? []} />;
+  }
 
   return (
     <div className="space-y-5">

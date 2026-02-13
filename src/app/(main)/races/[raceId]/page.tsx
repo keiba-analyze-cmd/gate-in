@@ -7,6 +7,7 @@ import VoteSummary from "@/components/races/VoteSummary";
 import VoteDistribution from "@/components/races/VoteDistribution";
 import RaceResultTable from "@/components/races/RaceResultTable";
 import CommentSection from "@/components/comments/CommentSection";
+import ShareButtons from "@/components/social/ShareButtons";
 
 type Props = {
   params: Promise<{ raceId: string }>;
@@ -147,6 +148,14 @@ export default async function RaceDetailPage({ params }: Props) {
               <HorseList entries={entries} myVote={myVote} results={results} />
             </div>
           )}
+
+          {/* SNSシェア */}
+          <div className="bg-white rounded-2xl border border-gray-100 p-4 flex items-center justify-between">
+            <span className="text-sm font-bold text-gray-700">📣 予想をシェア</span>
+            <ShareButtons
+              text={`${race.grade ? `[${race.grade}] ` : ""}${race.name}の予想をチェック！ #ゲートイン #競馬予想`}
+            />
+          </div>
 
           {/* コメント掲示板 */}
           <CommentSection raceId={race.id} currentUserId={user.id} />
