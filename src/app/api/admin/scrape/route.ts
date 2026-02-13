@@ -187,7 +187,7 @@ export async function GET(request: Request) {
   return NextResponse.json({ error: "mode または check_date パラメータが必要です" }, { status: 400 });
 }
 
-// ── POST: 一括登録 ──
+// ── POST: 一括登録（上書き対応） ──
 export async function POST(request: Request) {
   const user = await checkAdmin();
   if (!user) return NextResponse.json({ error: "管理者権限が必要です" }, { status: 403 });
@@ -199,12 +199,13 @@ export async function POST(request: Request) {
 
   const admin = createAdminClient();
   let registered = 0;
-  let skipped = 0;
+  let updated = 0;
   let failed = 0;
   const results: any[] = [];
 
   for (const raceData of races) {
     try {
+      // 既存レースを確認
       const { data: existing } = await admin
         .from("races").select("id")
         .eq("race_date", raceData.race_date)
@@ -212,33 +213,64 @@ export async function POST(request: Request) {
         .eq("race_number", raceData.race_number)
         .maybeSingle();
 
-      if (existing) {
-        skipped++;
-        results.push({ name: raceData.name, status: "skipped" });
-        continue;
-      }
-
       const postTimeValue = raceData.post_time
         ? `${raceData.race_date}T${raceData.post_time}:00+09:00` : null;
 
-      const { data: race, error: raceErr } = await admin
-        .from("races")
-        .insert({
-          external_id: raceData.race_id_external,
-          name: raceData.name, grade: raceData.grade,
-          race_date: raceData.race_date, post_time: postTimeValue,
-          course_name: raceData.course_name, track_type: raceData.track_type,
-          distance: raceData.distance, race_number: raceData.race_number,
-          head_count: raceData.entries?.length ?? 0, status: "voting_open",
-        })
-        .select("id").single();
+      let raceId: string;
 
-      if (raceErr || !race) {
-        failed++;
-        results.push({ name: raceData.name, status: "error", error: raceErr?.message });
-        continue;
+      if (existing) {
+        // ── 既存レースを上書き更新 ──
+        const { error: updateErr } = await admin
+          .from("races")
+          .update({
+            external_id: raceData.race_id_external,
+            name: raceData.name, grade: raceData.grade,
+            post_time: postTimeValue,
+            track_type: raceData.track_type,
+            distance: raceData.distance,
+            head_count: raceData.entries?.length ?? 0,
+          })
+          .eq("id", existing.id);
+
+        if (updateErr) {
+          failed++;
+          results.push({ name: raceData.name, status: "error", error: updateErr.message });
+          continue;
+        }
+
+        raceId = existing.id;
+
+        // 既存の出走馬を削除（新データで差し替え）
+        if (raceData.entries?.length > 0) {
+          await admin.from("race_entries").delete().eq("race_id", raceId);
+        }
+
+        updated++;
+      } else {
+        // ── 新規登録 ──
+        const { data: race, error: raceErr } = await admin
+          .from("races")
+          .insert({
+            external_id: raceData.race_id_external,
+            name: raceData.name, grade: raceData.grade,
+            race_date: raceData.race_date, post_time: postTimeValue,
+            course_name: raceData.course_name, track_type: raceData.track_type,
+            distance: raceData.distance, race_number: raceData.race_number,
+            head_count: raceData.entries?.length ?? 0, status: "voting_open",
+          })
+          .select("id").single();
+
+        if (raceErr || !race) {
+          failed++;
+          results.push({ name: raceData.name, status: "error", error: raceErr?.message });
+          continue;
+        }
+
+        raceId = race.id;
+        registered++;
       }
 
+      // ── 出走馬登録 ──
       const entryInserts = [];
       for (const entry of raceData.entries ?? []) {
         if (!entry.horse_name) continue;
@@ -258,7 +290,7 @@ export async function POST(request: Request) {
         }
 
         entryInserts.push({
-          race_id: race.id, horse_id: horseId,
+          race_id: raceId, horse_id: horseId,
           post_number: entry.post_number, gate_number: entry.gate_number,
           jockey: entry.jockey?.trim() || "未定", weight: entry.weight,
           odds: entry.odds, popularity: entry.popularity,
@@ -269,13 +301,13 @@ export async function POST(request: Request) {
         await admin.from("race_entries").insert(entryInserts);
       }
 
-      registered++;
-      results.push({ name: raceData.name, status: "registered", race_id: race.id, entries_count: entryInserts.length });
+      const status = existing ? "updated" : "registered";
+      results.push({ name: raceData.name, status, race_id: raceId, entries_count: entryInserts.length });
     } catch (err: any) {
       failed++;
       results.push({ name: raceData.name, status: "error", error: err.message });
     }
   }
 
-  return NextResponse.json({ registered, skipped, failed, results });
+  return NextResponse.json({ registered, updated, failed, results });
 }

@@ -30,7 +30,7 @@ type ScrapedRace = {
 
 type RegistrationResult = {
   registered: number;
-  skipped: number;
+  updated: number;
   failed: number;
   results: { name: string; status: string; entries_count?: number; error?: string }[];
 };
@@ -190,7 +190,7 @@ export default function AdminScrapeForm() {
 
   // ── 一括登録（バッチ処理：3レースずつ） ──
   const handleRegister = async () => {
-    const selectedRaces = races.filter(r => r.selected && !r.already_registered);
+    const selectedRaces = races.filter(r => r.selected);
     if (selectedRaces.length === 0) {
       setError("登録するレースを選択してください");
       return;
@@ -203,7 +203,7 @@ export default function AdminScrapeForm() {
     const BATCH_SIZE = 3;
     const allResults: any[] = [];
     let totalRegistered = 0;
-    let totalSkipped = 0;
+    let totalUpdated = 0;
     let totalFailed = 0;
 
     setBatchProgress({ current: 0, total: selectedRaces.length });
@@ -227,18 +227,18 @@ export default function AdminScrapeForm() {
         }
 
         totalRegistered += json.registered ?? 0;
-        totalSkipped += json.skipped ?? 0;
+        totalUpdated += json.updated ?? 0;
         totalFailed += json.failed ?? 0;
         allResults.push(...(json.results ?? []));
 
         setRaces(prev => prev.map(r => {
-          const match = json.results?.find((x: any) => x.name === r.name && x.status === "registered");
+          const match = json.results?.find((x: any) => x.name === r.name && (x.status === "registered" || x.status === "updated"));
           if (match) return { ...r, already_registered: true, selected: false };
           return r;
         }));
       }
 
-      setResult({ registered: totalRegistered, skipped: totalSkipped, failed: totalFailed, results: allResults });
+      setResult({ registered: totalRegistered, updated: totalUpdated, failed: totalFailed, results: allResults });
     } catch (err: any) {
       setError(err.message || "登録エラー");
     } finally {
@@ -256,14 +256,14 @@ export default function AdminScrapeForm() {
 
   const toggleAll = (selected: boolean) => {
     setRaces(prev =>
-      prev.map(r => r.already_registered ? r : { ...r, selected })
+      prev.map(r => ({ ...r, selected }))
     );
   };
 
   // ── 統計 ──
-  const selectedCount = races.filter(r => r.selected && !r.already_registered).length;
+  const selectedCount = races.filter(r => r.selected).length;
   const registeredCount = races.filter(r => r.already_registered).length;
-  const totalEntries = races.filter(r => r.selected && !r.already_registered)
+  const totalEntries = races.filter(r => r.selected)
     .reduce((sum, r) => sum + r.entries.length, 0);
 
   // ── 競馬場ごとにグルーピング ──
@@ -397,7 +397,7 @@ export default function AdminScrapeForm() {
               <span className="font-bold text-gray-800">📊 {races.length}レース</span>
               <span className="text-green-600 font-bold">✅ {selectedCount}件選択中</span>
               {registeredCount > 0 && (
-                <span className="text-gray-400">（{registeredCount}件は登録済み）</span>
+                <span className="text-blue-500">（{registeredCount}件は登録済み・選択で更新可）</span>
               )}
               <span className="text-gray-500">🐎 合計{totalEntries}頭</span>
             </div>
@@ -417,13 +417,12 @@ export default function AdminScrapeForm() {
                 {venueRaces.map((race) => (
                   <div key={race.race_id_external}>
                     <div
-                      className={`px-5 py-3 flex items-center gap-3 cursor-pointer hover:bg-gray-50 transition-colors ${race.already_registered ? "opacity-50" : ""}`}
-                      onClick={() => !race.already_registered && toggleRace(race.race_id_external)}
+                      className={`px-5 py-3 flex items-center gap-3 cursor-pointer hover:bg-gray-50 transition-colors`}
+                      onClick={() => toggleRace(race.race_id_external)}
                     >
                       <input
                         type="checkbox"
                         checked={race.selected || false}
-                        disabled={race.already_registered}
                         onChange={() => toggleRace(race.race_id_external)}
                         className="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500"
                       />
@@ -438,7 +437,7 @@ export default function AdminScrapeForm() {
                       <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{race.entries.length}頭</span>
                       {race.post_time && <span className="text-xs text-gray-500">{race.post_time}</span>}
                       {race.already_registered && (
-                        <span className="text-xs bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full">登録済み</span>
+                        <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">登録済み</span>
                       )}
                       <button
                         onClick={(e) => {
@@ -505,14 +504,14 @@ export default function AdminScrapeForm() {
         <div className="bg-white rounded-xl border border-green-200 p-5 space-y-3">
           <h3 className="font-bold text-green-700 text-lg">✅ 登録完了！</h3>
           <div className="flex gap-6 text-sm">
-            <span className="text-green-600 font-bold">✅ 登録: {result.registered}件</span>
-            <span className="text-gray-500">⏭ スキップ: {result.skipped}件</span>
+            <span className="text-green-600 font-bold">✅ 新規登録: {result.registered}件</span>
+            {result.updated > 0 && <span className="text-blue-600 font-bold">🔄 更新: {result.updated}件</span>}
             {result.failed > 0 && <span className="text-red-500">❌ 失敗: {result.failed}件</span>}
           </div>
           <div className="max-h-60 overflow-y-auto space-y-1">
             {result.results.map((r, i) => (
               <div key={i} className="text-xs flex items-center gap-2">
-                <span>{r.status === "registered" ? "✅" : r.status === "skipped" ? "⏭" : "❌"}</span>
+                <span>{r.status === "registered" ? "✅" : r.status === "updated" ? "🔄" : "❌"}</span>
                 <span className="text-gray-700">{r.name}</span>
                 {r.entries_count != null && <span className="text-gray-400">({r.entries_count}頭)</span>}
                 {r.error && <span className="text-red-500">{r.error}</span>}
