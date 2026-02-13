@@ -1,3 +1,7 @@
+#!/bin/bash
+set -e
+
+cat > 'src/app/(main)/guide/points/page.tsx' << 'EOF'
 export const revalidate = 3600;
 
 import Link from "next/link";
@@ -227,3 +231,5 @@ function FAQ({ q, a }: { q: string; a: string }) {
     </div>
   );
 }
+EOF
+echo "✅ ポイントガイドページ更新完了"
