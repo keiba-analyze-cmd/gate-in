@@ -44,8 +44,10 @@ export default async function RaceDetailPage({ params }: Props) {
     .eq("user_id", user.id)
     .maybeSingle();
 
-  // 投票集計
-  const { count: totalVotes } = await supabase
+  // 投票集計（全ユーザー分をカウント）
+  const { createAdminClient } = await import("@/lib/admin");
+  const adminDb = createAdminClient();
+  const { count: totalVotes } = await adminDb
     .from("votes")
     .select("*", { count: "exact", head: true })
     .eq("race_id", raceId);
@@ -204,10 +206,11 @@ export default async function RaceDetailPage({ params }: Props) {
 
 // 投票状況サマリーカード（サーバーコンポーネント）
 async function VoteStats({ raceId, totalVotes }: { raceId: string; totalVotes: number }) {
-  const supabase = await createClient();
+  const { createAdminClient: createAdmin } = await import("@/lib/admin");
+  const adminStats = createAdmin();
 
   // 投票者のランク分布を取得
-  const { data: voterProfiles } = await supabase
+  const { data: voterProfiles } = await adminStats
     .from("votes")
     .select("user_id, profiles(rank_id)")
     .eq("race_id", raceId);
