@@ -1,3 +1,120 @@
+#!/bin/bash
+set -e
+
+echo "=================================================="
+echo "🏇 ポイント・ランクシステム改定"
+echo "=================================================="
+echo ""
+
+# ============================================================
+# 1. ranks.ts 全置換（ポイントルール + ランク閾値）
+# ============================================================
+echo "━━━ 1. ポイントルール＆ランク閾値 改定 ━━━"
+
+cat > src/lib/constants/ranks.ts << 'EOF'
+// ====================================================
+// ランク定義（累計ポイント基準）
+// 目安: 週10投票 x 月4週 = 40投票/月
+// 上級者で月3000-4000P → レジェンドまで約6ヶ月
+// ====================================================
+export const RANKS = [
+  { id: "beginner_1", name: "ビギナー Ⅰ", icon: "🔰", tier: "ビギナー", threshold: 0 },
+  { id: "beginner_2", name: "ビギナー Ⅱ", icon: "🔰", tier: "ビギナー", threshold: 30 },
+  { id: "beginner_3", name: "ビギナー Ⅲ", icon: "🔰", tier: "ビギナー", threshold: 80 },
+  { id: "beginner_4", name: "ビギナー Ⅳ", icon: "🔰", tier: "ビギナー", threshold: 200 },
+  { id: "beginner_5", name: "ビギナー Ⅴ", icon: "🔰", tier: "ビギナー", threshold: 400 },
+  { id: "forecaster_1", name: "予想士 Ⅰ", icon: "⭐", tier: "予想士", threshold: 700 },
+  { id: "forecaster_2", name: "予想士 Ⅱ", icon: "⭐", tier: "予想士", threshold: 1100 },
+  { id: "forecaster_3", name: "予想士 Ⅲ", icon: "⭐", tier: "予想士", threshold: 1600 },
+  { id: "forecaster_4", name: "予想士 Ⅳ", icon: "⭐", tier: "予想士", threshold: 2200 },
+  { id: "forecaster_5", name: "予想士 Ⅴ", icon: "⭐", tier: "予想士", threshold: 3000 },
+  { id: "advanced_1", name: "上級予想士 Ⅰ", icon: "⭐⭐", tier: "上級予想士", threshold: 4000 },
+  { id: "advanced_2", name: "上級予想士 Ⅱ", icon: "⭐⭐", tier: "上級予想士", threshold: 5500 },
+  { id: "advanced_3", name: "上級予想士 Ⅲ", icon: "⭐⭐", tier: "上級予想士", threshold: 7500 },
+  { id: "advanced_4", name: "上級予想士 Ⅳ", icon: "⭐⭐", tier: "上級予想士", threshold: 10000 },
+  { id: "advanced_5", name: "上級予想士 Ⅴ", icon: "⭐⭐", tier: "上級予想士", threshold: 13000 },
+  { id: "master_1", name: "予想マスター Ⅰ", icon: "👑", tier: "予想マスター", threshold: 16500 },
+  { id: "master_2", name: "予想マスター Ⅱ", icon: "👑", tier: "予想マスター", threshold: 20500 },
+  { id: "master_3", name: "予想マスター Ⅲ", icon: "👑", tier: "予想マスター", threshold: 25000 },
+  { id: "master_4", name: "予想マスター Ⅳ", icon: "👑", tier: "予想マスター", threshold: 30000 },
+  { id: "master_5", name: "予想マスター Ⅴ", icon: "👑", tier: "予想マスター", threshold: 36000 },
+  { id: "legend", name: "レジェンド", icon: "🏆", tier: "レジェンド", threshold: 45000 },
+] as const;
+
+export function getRank(rankId: string) {
+  return RANKS.find((r) => r.id === rankId) ?? RANKS[0];
+}
+
+export function getNextRank(rankId: string) {
+  const idx = RANKS.findIndex((r) => r.id === rankId);
+  if (idx < 0 || idx >= RANKS.length - 1) return null;
+  return RANKS[idx + 1];
+}
+
+// ====================================================
+// ポイントルール
+// ====================================================
+
+// 1着的中: 人気別ポイント（大穴ほど高い）
+export const POINT_RULES = {
+  win: {
+    1: 30, 2: 50, 3: 50,
+    4: 80, 5: 80,
+    6: 120, 7: 120,
+    8: 200, 9: 200,
+    default: 300,
+  } as Record<number | string, number>,
+
+  // 複勝的中: 固定
+  place: 20,
+
+  // 危険馬的中: 人気別ポイント（人気馬を危険視→着外ほど評価高い）
+  danger: {
+    1: 50, 2: 40, 3: 30,
+    4: 20, 5: 15,
+    default: 10,
+  } as Record<number | string, number>,
+
+  // グレード別ボーナス（各的中に加算）
+  grade_bonus: {
+    G1: 30,
+    G2: 15,
+    G3: 10,
+    L: 5,
+    OP: 5,
+  } as Record<string, number>,
+
+  // 完全的中ボーナス（◎○△全的中）
+  perfect: 200,
+
+  // 連続的中ボーナス（3の倍数ごと）
+  streak3: 50,
+} as const;
+
+// 1着的中ポイントを取得
+export function getWinPoints(popularity: number): number {
+  return POINT_RULES.win[popularity] ?? POINT_RULES.win.default;
+}
+
+// 危険馬的中ポイントを取得（人気馬ほど高い）
+export function getDangerPoints(popularity: number): number {
+  return POINT_RULES.danger[popularity] ?? POINT_RULES.danger.default;
+}
+
+// グレードボーナスを取得
+export function getGradeBonus(grade: string | null): number {
+  if (!grade) return 0;
+  return (POINT_RULES.grade_bonus as Record<string, number>)[grade] ?? 0;
+}
+EOF
+echo "  ✅ src/lib/constants/ranks.ts"
+
+# ============================================================
+# 2. settle-race.ts 全置換（グレード＆危険馬 人気反映）
+# ============================================================
+echo "━━━ 2. 清算ロジック改定 ━━━"
+
+cat > src/lib/services/settle-race.ts << 'EOF'
 import { SupabaseClient } from "@supabase/supabase-js";
 import { checkAndGrantBadges } from "@/lib/badges";
 import { checkRankUp } from "@/lib/rank-check";
@@ -277,3 +394,59 @@ export async function settleRace(
 
   return { success: errors.length === 0, settled_votes: settledVotes, total_points_awarded: totalPointsAwarded, errors };
 }
+EOF
+echo "  ✅ src/lib/services/settle-race.ts"
+
+# ============================================================
+# 3. ポイント説明ページの更新
+# ============================================================
+echo "━━━ 3. ポイント説明ページ更新確認 ━━━"
+
+# getWinPointsとgetDangerPointsのimportが必要な箇所を確認
+grep -rn "getWinPoints\|POINT_RULES\|getDangerPoints" src/ --include="*.ts" --include="*.tsx" | grep -v "node_modules" | grep -v "ranks.ts" | grep -v "settle-race.ts"
+
+echo ""
+echo "=================================================="
+echo "🏁 ポイント・ランクシステム改定 完了!"
+echo "=================================================="
+echo ""
+echo "📊 ポイントルール変更点:"
+echo ""
+echo "  【1着的中（人気別）】旧 → 新"
+echo "  1番人気: 50P → 30P"
+echo "  2-3番人気: 100P → 50P"
+echo "  4-5番人気: 200P → 80P"
+echo "  6-7番人気: 350P → 120P"
+echo "  8-9番人気: 350P → 200P"
+echo "  10番人気〜: 500P → 300P"
+echo ""
+echo "  【危険馬的中（人気別 ★NEW）】"
+echo "  1番人気着外: 50P（最も評価）"
+echo "  2番人気着外: 40P"
+echo "  3番人気着外: 30P"
+echo "  4番人気着外: 20P"
+echo "  5番人気着外: 15P"
+echo "  6番人気〜:   10P"
+echo ""
+echo "  【グレード別ボーナス ★NEW】"
+echo "  G1: +30P（各的中に加算）"
+echo "  G2: +15P"
+echo "  G3: +10P"
+echo "  OP/L: +5P"
+echo "  平場: +0P"
+echo ""
+echo "  【その他】"
+echo "  複勝: 30P → 20P（+グレード加算）"
+echo "  完全的中: 300P → 200P"
+echo "  連続的中: 50P（変更なし）"
+echo ""
+echo "  【ランク閾値】"
+echo "  レジェンド: 100,000P → 45,000P"
+echo "  想定到達: 上級者(月3500P) → 約12ヶ月"
+echo "           トッププレイヤー(月5000P) → 約9ヶ月"
+echo ""
+echo "📋 次のステップ:"
+echo "  1. npm run build"
+echo "  2. ビルド成功後:"
+echo "     git add -A && git commit -m 'feat: ポイント・ランク改定（グレード加算・危険馬人気傾斜）' && git push"
+echo "  3. ポイント説明ページ（/guide/points）の文言も更新推奨"
