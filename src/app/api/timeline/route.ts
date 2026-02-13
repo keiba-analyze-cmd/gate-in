@@ -73,6 +73,7 @@ export async function GET(request: Request) {
     commentItems = (data ?? []).map((c) => ({
       type: "comment",
       id: `comment-${c.id}`,
+      comment_id: c.id,
       user: c.profiles,
       user_id: c.user_id,
       race: c.races,

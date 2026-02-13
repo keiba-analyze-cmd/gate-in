@@ -1,9 +1,13 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { getRank } from "@/lib/constants/ranks";
 
 type Props = {
   item: {
     type: string;
+    id: string;
     user: { display_name: string; avatar_url: string | null; rank_id: string } | null;
     user_id: string;
     race: { name: string; grade: string | null; course_name: string } | null;
@@ -14,6 +18,8 @@ type Props = {
     body?: string;
     sentiment?: string;
     timestamp: string;
+    // コメントの場合、元のcomment IDを保持
+    comment_id?: string;
   };
 };
 
@@ -27,6 +33,10 @@ const SENTIMENT_LABEL: Record<string, string> = {
 export default function TimelineItem({ item }: Props) {
   const rank = item.user ? getRank(item.user.rank_id) : null;
   const timeAgo = getTimeAgo(item.timestamp);
+  const [showReply, setShowReply] = useState(false);
+  const [replyText, setReplyText] = useState("");
+  const [sending, setSending] = useState(false);
+  const [replySent, setReplySent] = useState(false);
 
   const isHit = item.status === "settled_hit";
   const gradeColor = item.race?.grade
@@ -35,6 +45,30 @@ export default function TimelineItem({ item }: Props) {
     : item.race.grade === "G3" ? "bg-green-100 text-green-700"
     : "bg-gray-100 text-gray-600"
     : "";
+
+  const handleReply = async () => {
+    if (!replyText.trim() || sending) return;
+    setSending(true);
+    try {
+      const res = await fetch(`/api/races/${item.race_id}/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          body: replyText.trim(),
+          parent_id: item.comment_id ?? null,
+        }),
+      });
+      if (res.ok) {
+        setReplyText("");
+        setShowReply(false);
+        setReplySent(true);
+        setTimeout(() => setReplySent(false), 3000);
+      }
+    } catch {
+      // エラーは無視
+    }
+    setSending(false);
+  };
 
   return (
     <div className="bg-white rounded-xl border border-gray-100 p-4">
@@ -54,12 +88,12 @@ export default function TimelineItem({ item }: Props) {
         <span className="text-xs text-gray-300 ml-auto">{timeAgo}</span>
       </div>
 
-      {/* コンテンツ */}
+      {/* コンテンツ: 投票結果 */}
       {item.type === "vote_result" && (
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs text-gray-500">
-              {isHit ? "🎯 的中！" : "📊 結果"} 
+              {isHit ? "🎯 的中！" : "📊 結果"}
             </span>
             {item.race?.grade && (
               <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${gradeColor}`}>
@@ -89,6 +123,7 @@ export default function TimelineItem({ item }: Props) {
         </div>
       )}
 
+      {/* コンテンツ: コメント */}
       {item.type === "comment" && (
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -109,6 +144,54 @@ export default function TimelineItem({ item }: Props) {
             )}
           </div>
           <p className="text-sm text-gray-600 line-clamp-2">{item.body}</p>
+        </div>
+      )}
+
+      {/* アクションバー */}
+      {item.type === "comment" && (
+        <div className="mt-2 pt-2 border-t border-gray-50 flex items-center gap-3">
+          <button
+            onClick={() => setShowReply(!showReply)}
+            className="text-xs text-gray-400 hover:text-green-600 transition-colors flex items-center gap-1"
+          >
+            💬 返信
+          </button>
+          <Link
+            href={`/races/${item.race_id}`}
+            className="text-xs text-gray-400 hover:text-green-600 transition-colors flex items-center gap-1"
+          >
+            📄 レースを見る
+          </Link>
+          {replySent && (
+            <span className="text-xs text-green-500 ml-auto">✅ 返信しました</span>
+          )}
+        </div>
+      )}
+
+      {/* リプライフォーム */}
+      {showReply && (
+        <div className="mt-3 flex gap-2">
+          <input
+            type="text"
+            value={replyText}
+            onChange={(e) => setReplyText(e.target.value)}
+            placeholder="返信を入力..."
+            maxLength={500}
+            className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleReply();
+              }
+            }}
+          />
+          <button
+            onClick={handleReply}
+            disabled={!replyText.trim() || sending}
+            className="px-4 py-2 bg-green-600 text-white text-sm font-bold rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0"
+          >
+            {sending ? "..." : "送信"}
+          </button>
         </div>
       )}
     </div>

@@ -130,8 +130,8 @@ export default async function MyPage() {
 
       {/* 1段目: フォロー + フォロワー */}
       <div className="grid grid-cols-2 gap-2">
-        <StatCard label="フォロー" value={followingCount ?? 0} />
-        <StatCard label="フォロワー" value={followerCount ?? 0} />
+        <Link href="/mypage/follows?tab=following"><StatCard label="フォロー" value={followingCount ?? 0} /></Link>
+        <Link href="/mypage/follows?tab=followers"><StatCard label="フォロワー" value={followerCount ?? 0} /></Link>
       </div>
 
       {/* 2段目: 投票数 + 1着率 + 複勝率 + 連続的中 */}
