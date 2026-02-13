@@ -13,7 +13,7 @@ type DistributionItem = {
   percentage: number;
 };
 
-type VoteData = {
+type VoteData = { [key: string]: any;
   total_votes: number;
   win_distribution: DistributionItem[];
   place_distribution: DistributionItem[];
@@ -88,9 +88,9 @@ export default function VoteDistribution({ raceId }: Props) {
   }
 
   const tabs = [
-    { key: "win" as const, label: "◎ 1着予想", data: data.win_distribution, color: "red" },
-    { key: "place" as const, label: "○ 複勝予想", data: data.place_distribution, color: "blue" },
-    { key: "danger" as const, label: "△ 危険馬", data: data.danger_distribution, color: "gray" },
+    { key: "win" as const, label: "◎ 1着予想", data: data.win_distribution ?? data.win ?? [], color: "red" },
+    { key: "place" as const, label: "○ 複勝予想", data: data.place_distribution ?? data.place ?? [], color: "blue" },
+    { key: "danger" as const, label: "△ 危険馬", data: data.danger_distribution ?? data.danger ?? [], color: "gray" },
   ];
 
   const activeData = tabs.find((t) => t.key === activeTab);
