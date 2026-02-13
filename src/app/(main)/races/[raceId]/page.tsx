@@ -70,7 +70,7 @@ export default async function RaceDetailPage({ params }: Props) {
 
   const gradeColor = getGradeColor(race.grade);
   const postTime = race.post_time
-    ? new Date(race.post_time).toLocaleTimeString("ja-JP", {
+    ? new Date(race.post_time).toLocaleTimeString("ja-JP", { timeZone: "Asia/Tokyo",
         hour: "2-digit",
         minute: "2-digit",
       })
