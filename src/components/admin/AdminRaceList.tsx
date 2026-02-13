@@ -6,6 +6,7 @@ import AdminSettleForm from "./AdminSettleForm";
 type Race = {
   id: string;
   name: string;
+  external_id?: string | null;
   grade: string | null;
   race_date: string;
   course_name: string;

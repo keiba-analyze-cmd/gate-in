@@ -5,6 +5,7 @@ import AdminRaceCreateForm from "@/components/admin/AdminRaceCreateForm";
 import AdminScrapeForm from "@/components/admin/AdminScrapeForm";
 import AdminInquiries from "@/components/admin/AdminInquiries";
 import AdminComments from "@/components/admin/AdminComments";
+import AdminRaceList from "@/components/admin/AdminRaceList";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 
 type Props = {
@@ -29,14 +30,27 @@ export default async function AdminPage({ searchParams }: Props) {
 
   // レース一覧（list タブ用）
   let races: any[] = [];
+  let resultsRaces: any[] = [];
   if (currentTab === "list") {
     const { data } = await supabase
       .from("races")
-      .select("id, name, grade, race_date, course_name, race_number, status, head_count")
+      .select("id, name, external_id, grade, race_date, course_name, race_number, status, head_count")
       .order("race_date", { ascending: false })
       .order("race_number")
       .limit(100);
     races = data ?? [];
+  }
+
+  // 結果入力タブ用（投票受付中のレースを取得）
+  if (currentTab === "results") {
+    const { data } = await supabase
+      .from("races")
+      .select("id, name, external_id, grade, race_date, course_name, race_number, status, head_count, race_entries(id, post_number, horses(name))")
+      .in("status", ["voting_open", "voting_closed"])
+      .order("race_date", { ascending: false })
+      .order("race_number")
+      .limit(50);
+    resultsRaces = data ?? [];
   }
 
   return (
@@ -52,12 +66,16 @@ export default async function AdminPage({ searchParams }: Props) {
 
         {/* 🏁 結果入力タブ */}
         {currentTab === "results" && (
-          <div className="text-center py-12 text-gray-400">
-            <p className="text-4xl mb-3">🏁</p>
-            <p>レース結果入力機能は次のフェーズで実装予定です</p>
-          </div>
+          resultsRaces.length > 0 ? (
+            <AdminRaceList races={resultsRaces} type="pending" />
+          ) : (
+            <div className="text-center py-12 text-gray-400">
+              <p className="text-4xl mb-3">🏁</p>
+              <p>結果入力待ちのレースはありません</p>
+              <p className="text-xs mt-1">ステータスが「投票受付中」のレースがここに表示されます</p>
+            </div>
+          )
         )}
-
         {/* 📩 お問い合わせタブ */}
         {currentTab === "inquiries" && <AdminInquiries />}
 
