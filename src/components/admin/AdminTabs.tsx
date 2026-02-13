@@ -7,6 +7,7 @@ const TABS = [
   { key: "create", label: "➕ レース登録", description: "手動で登録" },
   { key: "results", label: "🏁 結果入力", description: "レース結果を入力" },
   { key: "list", label: "📋 レース一覧", description: "登録済みレース" },
+  { key: "inquiries", label: "📩 お問い合わせ", description: "問い合わせ管理" },
 ];
 
 export default function AdminTabs() {

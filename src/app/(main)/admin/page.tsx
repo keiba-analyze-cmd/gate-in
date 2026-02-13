@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import AdminTabs from "@/components/admin/AdminTabs";
 import AdminRaceCreateForm from "@/components/admin/AdminRaceCreateForm";
 import AdminScrapeForm from "@/components/admin/AdminScrapeForm";
+import AdminInquiries from "@/components/admin/AdminInquiries";
 
 type Props = {
   searchParams: Promise<{ tab?: string }>;
@@ -54,6 +55,9 @@ export default async function AdminPage({ searchParams }: Props) {
             <p>レース結果入力機能は次のフェーズで実装予定です</p>
           </div>
         )}
+
+        {/* 📩 お問い合わせタブ */}
+        {currentTab === "inquiries" && <AdminInquiries />}
 
         {/* 📋 レース一覧タブ */}
         {currentTab === "list" && (

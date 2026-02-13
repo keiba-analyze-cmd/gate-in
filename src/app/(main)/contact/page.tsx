@@ -1,12 +1,59 @@
-import type { Metadata } from "next";
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "お問い合わせ",
-  description: "ゲートイン！へのお問い合わせ",
-};
+const CATEGORIES = [
+  { value: "general", label: "一般的なお問い合わせ" },
+  { value: "bug", label: "不具合の報告" },
+  { value: "feature", label: "機能のリクエスト" },
+  { value: "account", label: "アカウントについて" },
+  { value: "other", label: "その他" },
+];
 
 export default function ContactPage() {
+  const [form, setForm] = useState({ name: "", email: "", category: "general", subject: "", body: "" });
+  const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    setError("");
+
+    const res = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+
+    if (res.ok) {
+      setSent(true);
+    } else {
+      const data = await res.json();
+      setError(data.error ?? "送信に失敗しました");
+    }
+    setLoading(false);
+  };
+
+  if (sent) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center space-y-4">
+          <div className="text-5xl">✉️</div>
+          <h1 className="text-xl font-bold text-gray-800">お問い合わせを受け付けました</h1>
+          <p className="text-sm text-gray-500">
+            内容を確認の上、ご入力いただいたメールアドレスに返信いたします。<br />
+            通常2〜3営業日以内に回答いたします。
+          </p>
+          <Link href="/" className="inline-block text-sm text-green-600 hover:underline font-medium mt-4">
+            ← トップページに戻る
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="text-sm text-gray-400">
@@ -18,49 +65,78 @@ export default function ContactPage() {
       <h1 className="text-xl font-bold text-gray-800">📩 お問い合わせ</h1>
 
       <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
-        <p className="text-sm text-gray-600 leading-relaxed">
-          ゲートイン！に関するご質問、ご意見、不具合の報告は下記メールアドレスまでお気軽にご連絡ください。
-        </p>
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-1">お名前 <span className="text-red-500">*</span></label>
+          <input
+            type="text"
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            placeholder="山田 太郎"
+            maxLength={50}
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none"
+          />
+        </div>
 
-        <div className="bg-green-50 rounded-xl p-5 text-center">
-          <p className="text-xs text-gray-500 mb-1">メールアドレス</p>
-          <a
-            href="mailto:support@gate-in.jp"
-            className="text-lg font-bold text-green-700 hover:underline"
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-1">メールアドレス <span className="text-red-500">*</span></label>
+          <input
+            type="email"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            placeholder="example@email.com"
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-1">カテゴリ</label>
+          <select
+            value={form.category}
+            onChange={(e) => setForm({ ...form, category: e.target.value })}
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none bg-white"
           >
-            support@gate-in.jp
-          </a>
+            {CATEGORIES.map((c) => (
+              <option key={c.value} value={c.value}>{c.label}</option>
+            ))}
+          </select>
         </div>
 
-        <div className="space-y-3">
-          <h2 className="font-bold text-gray-800 text-sm">お問い合わせの際のお願い</h2>
-          <ul className="text-sm text-gray-600 space-y-2">
-            <li className="flex gap-2">
-              <span className="text-green-600 shrink-0">✓</span>
-              <span>ご利用中のブラウザ・端末をお知らせください</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-green-600 shrink-0">✓</span>
-              <span>不具合の場合は再現手順をできるだけ詳しくお知らせください</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-green-600 shrink-0">✓</span>
-              <span>スクリーンショットがあると対応がスムーズです</span>
-            </li>
-          </ul>
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-1">件名 <span className="text-red-500">*</span></label>
+          <input
+            type="text"
+            value={form.subject}
+            onChange={(e) => setForm({ ...form, subject: e.target.value })}
+            placeholder="お問い合わせの件名"
+            maxLength={100}
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none"
+          />
         </div>
 
-        <div className="border-t border-gray-100 pt-4">
-          <p className="text-xs text-gray-400">
-            通常2〜3営業日以内にご返信いたします。お急ぎの場合はその旨お書き添えください。
-          </p>
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-1">内容 <span className="text-red-500">*</span></label>
+          <textarea
+            value={form.body}
+            onChange={(e) => setForm({ ...form, body: e.target.value })}
+            placeholder="お問い合わせ内容をご記入ください"
+            maxLength={2000}
+            rows={6}
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none resize-none"
+          />
+          <p className="text-xs text-gray-400 mt-1 text-right">{form.body.length}/2000</p>
         </div>
-      </div>
 
-      <div className="text-center">
-        <Link href="/" className="text-sm text-green-600 hover:underline font-medium">
-          ← トップページに戻る
-        </Link>
+        {error && (
+          <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">{error}</div>
+        )}
+
+        <button
+          onClick={handleSubmit}
+          disabled={loading || !form.name || !form.email || !form.subject || !form.body}
+          className="w-full py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 disabled:opacity-40 transition-colors"
+        >
+          {loading ? "送信中..." : "送信する"}
+        </button>
       </div>
     </div>
   );

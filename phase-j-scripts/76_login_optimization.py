@@ -1,11 +1,23 @@
+#!/usr/bin/env python3
+"""
+Task #76: ログイン画面の最適化
+- パスワードリセット機能
+- エラーメッセージ改善
+- UIデザイン改善
+- パスワード表示/非表示トグル
+"""
+
+import os
+
+LOGIN_PAGE = '''\
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-function LoginPageInner() {
+export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -262,12 +274,23 @@ function LoginPageInner() {
     </div>
   );
 }
+'''
 
+def run():
+    with open("src/app/login/page.tsx", "w") as f:
+        f.write(LOGIN_PAGE)
+    print("  ✅ src/app/login/page.tsx 最適化")
 
-export default function LoginPage() {
-  return (
-    <Suspense>
-      <LoginPageInner />
-    </Suspense>
-  );
-}
+    print("\n🏁 Task #76 完了")
+    print("  改善内容:")
+    print("  - パスワードリセット機能追加")
+    print("  - パスワード表示/非表示トグル")
+    print("  - エラーメッセージ日本語化")
+    print("  - OAuth エラー表示対応")
+    print("  - Enterキーでログイン")
+    print("  - ローディングスピナー")
+    print("  - グラデーション背景")
+    print("  - 利用規約リンク追加")
+
+if __name__ == "__main__":
+    run()

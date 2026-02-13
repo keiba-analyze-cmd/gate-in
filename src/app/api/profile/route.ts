@@ -15,7 +15,7 @@ export async function PATCH(request: Request) {
   if (!rl.ok) return rateLimitResponse();
 
   const body = await request.json();
-  const allowedFields = ["display_name", "bio"];
+  const allowedFields = ["display_name", "bio", "gender", "age_group", "horse_racing_exp", "favorite_course"];
   const updates: Record<string, any> = {};
 
   for (const field of allowedFields) {
