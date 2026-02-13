@@ -1,3 +1,4 @@
+import { createNotification } from "@/lib/notify";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
@@ -38,6 +39,20 @@ export async function POST(request: Request, { params }: Props) {
       user_id: user.id,
       emoji_type,
     });
+
+    const { data: comment } = await supabase.from("comments").select("user_id, race_id").eq("id", commentId).single();
+
+    // リアクション通知（自分自身は除外）
+    if (comment && comment.user_id !== user.id) {
+      const emojiLabel: Record<string, string> = { target: "🎯的中", brain: "🧠なるほど", thumbsup: "👍いいね" };
+      await createNotification({
+        userId: comment.user_id,
+        type: "reaction",
+        title: "リアクション",
+        body: `あなたのコメントに${emojiLabel[emoji_type] ?? emoji_type}がつきました`,
+        link: `/races/${comment.race_id}`,
+      });
+    }
     return NextResponse.json({ action: "added" });
   }
 }

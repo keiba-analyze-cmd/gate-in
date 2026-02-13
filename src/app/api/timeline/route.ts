@@ -1,5 +1,6 @@
 import { rateLimit, rateLimitResponse } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/admin";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -22,28 +23,78 @@ export async function GET(request: Request) {
   const blockedIds = new Set(blockedUsers?.map((b) => b.blocked_id) ?? []);
   const targetIds = [user.id, ...followingIds.filter((id) => !blockedIds.has(id))];
 
+  const admin = createAdminClient();
+
   let voteItems: any[] = [];
   if (filter === "all" || filter === "vote") {
-    let q = supabase.from("votes")
-      .select("id, user_id, race_id, status, earned_points, is_perfect, settled_at, created_at, profiles(display_name, avatar_url, rank_id), races(name, grade, course_name)")
-      .in("user_id", targetIds).neq("status", "pending").order("settled_at", { ascending: false }).limit(limit);
-    if (cursor) q = q.lt("settled_at", cursor);
-    const { data } = await q;
-    voteItems = (data ?? []).map((v) => ({ type: "vote_result", id: `vote-${v.id}`, user: v.profiles, user_id: v.user_id, race: v.races, race_id: v.race_id, earned_points: v.earned_points, is_perfect: v.is_perfect, status: v.status, timestamp: v.settled_at ?? v.created_at }));
+    // settled votes（結果確定済み）
+    let settledQ = admin.from("votes")
+      .select("id, user_id, race_id, status, earned_points, is_perfect, settled_at, created_at, profiles(display_name, avatar_url, rank_id), races(name, grade, course_name), vote_picks(pick_type, race_entries(post_number, horses(name)))")
+      .in("user_id", targetIds).neq("status", "pending")
+      .order("settled_at", { ascending: false }).limit(limit);
+    if (cursor) settledQ = settledQ.lt("settled_at", cursor);
+    const { data: settled } = await settledQ;
+
+    const settledItems = (settled ?? []).map((v: any) => ({
+      type: "vote_result", id: `vote-${v.id}`, user: v.profiles, user_id: v.user_id,
+      race: v.races, race_id: v.race_id, earned_points: v.earned_points,
+      is_perfect: v.is_perfect, status: v.status,
+      picks: formatPicks(v.vote_picks),
+      timestamp: v.settled_at ?? v.created_at,
+    }));
+
+    // pending votes（投票直後）
+    let pendingQ = admin.from("votes")
+      .select("id, user_id, race_id, status, created_at, profiles(display_name, avatar_url, rank_id), races(name, grade, course_name), vote_picks(pick_type, race_entries(post_number, horses(name)))")
+      .in("user_id", targetIds).eq("status", "pending")
+      .order("created_at", { ascending: false }).limit(limit);
+    if (cursor) pendingQ = pendingQ.lt("created_at", cursor);
+    const { data: pending } = await pendingQ;
+
+    const pendingItems = (pending ?? []).map((v: any) => ({
+      type: "vote_submitted", id: `voted-${v.id}`, user: v.profiles, user_id: v.user_id,
+      race: v.races, race_id: v.race_id,
+      picks: formatPicks(v.vote_picks),
+      timestamp: v.created_at,
+    }));
+
+    voteItems = [...settledItems, ...pendingItems];
   }
 
   let commentItems: any[] = [];
   if (filter === "all" || filter === "comment") {
     let q = supabase.from("comments")
       .select("id, user_id, race_id, body, sentiment, created_at, profiles(display_name, avatar_url, rank_id), races(name, grade, course_name)")
-      .in("user_id", targetIds).is("parent_id", null).eq("is_deleted", false).order("created_at", { ascending: false }).limit(limit);
+      .in("user_id", targetIds).is("parent_id", null).eq("is_deleted", false)
+      .order("created_at", { ascending: false }).limit(limit);
     if (cursor) q = q.lt("created_at", cursor);
     const { data } = await q;
-    commentItems = (data ?? []).map((c) => ({ type: "comment", id: `comment-${c.id}`, comment_id: c.id, user: c.profiles, user_id: c.user_id, race: c.races, race_id: c.race_id, body: c.body, sentiment: c.sentiment, timestamp: c.created_at }));
+    commentItems = (data ?? []).map((c) => ({
+      type: "comment", id: `comment-${c.id}`, comment_id: c.id, user: c.profiles,
+      user_id: c.user_id, race: c.races, race_id: c.race_id, body: c.body,
+      sentiment: c.sentiment, timestamp: c.created_at,
+    }));
   }
 
-  const allItems = [...voteItems, ...commentItems].filter((item) => !blockedIds.has(item.user_id))
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, limit);
+  const allItems = [...voteItems, ...commentItems]
+    .filter((item) => !blockedIds.has(item.user_id))
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    .slice(0, limit);
+
   const newCursor = allItems.length === limit ? allItems[allItems.length - 1].timestamp : null;
   return NextResponse.json({ items: allItems, next_cursor: newCursor });
+}
+
+function formatPicks(votePicks: any[]): { pick_type: string; post_number: number; horse_name: string }[] {
+  if (!votePicks) return [];
+  return votePicks
+    .map((p: any) => ({
+      pick_type: p.pick_type,
+      post_number: (p.race_entries as any)?.post_number ?? 0,
+      horse_name: (p.race_entries as any)?.horses?.name ?? "不明",
+    }))
+    .sort((a: any, b: any) => {
+      const order: Record<string, number> = { win: 0, place: 1, danger: 2 };
+      return (order[a.pick_type] ?? 9) - (order[b.pick_type] ?? 9);
+    });
 }

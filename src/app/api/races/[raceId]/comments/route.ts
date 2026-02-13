@@ -1,3 +1,4 @@
+import { createNotification } from "@/lib/notify";
 import { rateLimit, rateLimitResponse } from "@/lib/rate-limit";
 import { validateComment } from "@/lib/validation";
 import { createClient } from "@/lib/supabase/server";
@@ -56,5 +57,24 @@ export async function POST(request: Request, { params }: Props) {
     .select("*, profiles(display_name, avatar_url, rank_id)").single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // 返信通知（parent_idがある場合）
+  if (body.parent_id) {
+    const { data: parentComment } = await supabase
+      .from("comments")
+      .select("user_id, race_id")
+      .eq("id", body.parent_id)
+      .single();
+    if (parentComment && parentComment.user_id !== user.id) {
+      const { createNotification: notify } = await import("@/lib/notify");
+      await notify({
+        userId: parentComment.user_id,
+        type: "reply",
+        title: "コメントに返信",
+        body: `あなたのコメントに返信がありました: ${body.body.trim().slice(0, 50)}`,
+        link: `/races/${raceId}`,
+      });
+    }
+  }
   return NextResponse.json(data, { status: 201 });
 }

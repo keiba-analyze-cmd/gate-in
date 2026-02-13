@@ -5,6 +5,7 @@ import AdminRaceCreateForm from "@/components/admin/AdminRaceCreateForm";
 import AdminScrapeForm from "@/components/admin/AdminScrapeForm";
 import AdminInquiries from "@/components/admin/AdminInquiries";
 import AdminComments from "@/components/admin/AdminComments";
+import AdminDashboard from "@/components/admin/AdminDashboard";
 
 type Props = {
   searchParams: Promise<{ tab?: string }>;
