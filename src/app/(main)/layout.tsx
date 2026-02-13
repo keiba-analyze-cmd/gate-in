@@ -1,4 +1,6 @@
 import Header from "@/components/layout/Header";
+import { ToastProvider } from "@/components/ui/Toast";
+import WelcomeModal from "@/components/onboarding/WelcomeModal";
 import BottomNav from "@/components/layout/BottomNav";
 import Footer from "@/components/layout/Footer";
 
@@ -7,7 +9,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     <div className="min-h-screen bg-gray-50">
       <Header />
       <main className="max-w-5xl mx-auto px-4 py-5 pb-24 md:pb-5 animate-fade-in">
-        {children}
+        <ToastProvider><WelcomeModal />{children}</ToastProvider>
       </main>
       <Footer />
       <BottomNav />

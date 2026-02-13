@@ -1,3 +1,5 @@
+export const revalidate = 60; // 60秒キャッシュ
+
 import { createClient } from "@/lib/supabase/server";
 import RaceCard from "@/components/races/RaceCard";
 import DateFilter from "@/components/races/DateFilter";

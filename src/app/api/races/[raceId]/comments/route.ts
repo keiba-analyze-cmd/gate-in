@@ -1,3 +1,5 @@
+import { rateLimit, rateLimitResponse } from "@/lib/rate-limit";
+import { validateComment } from "@/lib/validation";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
@@ -64,15 +66,16 @@ export async function POST(request: Request, { params }: Props) {
     return NextResponse.json({ error: "ログインが必要です" }, { status: 401 });
   }
 
+  // レート制限（1分あたり10コメントまで）
+  const rl = rateLimit(`comments:${user.id}`, { limit: 10, windowMs: 60_000 });
+  if (!rl.ok) return rateLimitResponse();
+
   const body = await request.json();
   const { body: commentBody, sentiment, parent_id } = body;
 
-  if (!commentBody || commentBody.trim().length === 0) {
-    return NextResponse.json({ error: "コメントを入力してください" }, { status: 400 });
-  }
-
-  if (commentBody.length > 500) {
-    return NextResponse.json({ error: "500文字以内で入力してください" }, { status: 400 });
+  const validation = validateComment(commentBody);
+  if (!validation.ok) {
+    return NextResponse.json({ error: validation.error }, { status: 400 });
   }
 
   const { data, error } = await supabase

@@ -1,3 +1,5 @@
+export const revalidate = 120; // 2分キャッシュ
+
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import RankingTabs from "@/components/rankings/RankingTabs";

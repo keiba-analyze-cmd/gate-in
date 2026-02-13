@@ -1,3 +1,4 @@
+import { rateLimit, rateLimitResponse } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/admin";
 import { NextResponse } from "next/server";
@@ -15,6 +16,10 @@ export async function GET(request: Request, { params }: Props) {
   if (!user) {
     return NextResponse.json({ error: "ログインが必要です" }, { status: 401 });
   }
+
+  // レート制限
+  const rl = rateLimit(`votes:${user.id}`, { limit: 60, windowMs: 60_000 });
+  if (!rl.ok) return rateLimitResponse();
 
   // 集計にはAdmin clientを使用（RLSバイパスで全投票を集計）
   const admin = createAdminClient();

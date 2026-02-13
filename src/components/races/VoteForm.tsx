@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/Toast";
 
 type Entry = {
   id: string;
@@ -31,7 +32,9 @@ export default function VoteForm({ raceId, entries }: Props) {
   const [activeTab, setActiveTab] = useState<"win" | "place" | "danger">("win");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showConfirm, setShowConfirm] = useState(false);
   const router = useRouter();
+  const { showToast } = useToast();
   const supabase = createClient();
 
   const togglePlace = (id: string) => {
@@ -42,11 +45,16 @@ export default function VoteForm({ raceId, entries }: Props) {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleConfirmOpen = () => {
     if (!winPick) {
       setError("1着予想を選択してください");
       return;
     }
+    setShowConfirm(true);
+  };
+
+  const handleSubmit = async () => {
+    setShowConfirm(false);
     setLoading(true);
     setError("");
 
@@ -84,6 +92,7 @@ export default function VoteForm({ raceId, entries }: Props) {
       return;
     }
 
+    showToast("投票が完了しました！🎉");
     router.refresh();
   };
 
@@ -218,13 +227,71 @@ export default function VoteForm({ raceId, entries }: Props) {
         )}
 
         <button
-          onClick={handleSubmit}
+          onClick={handleConfirmOpen}
           disabled={!winPick || loading}
           className="w-full py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-colors disabled:opacity-40 disabled:hover:bg-green-600"
         >
           {loading ? "投票中..." : "🗳 この予想で投票する"}
         </button>
       </div>
+
+      {/* 確認モーダル */}
+      {showConfirm && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowConfirm(false)}>
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">📋 投票内容の確認</h3>
+            <div className="space-y-3 mb-6">
+              {winPick && (() => {
+                const e = entries.find((x) => x.id === winPick);
+                return e ? (
+                  <div className="flex items-center gap-2 bg-red-50 rounded-lg p-3">
+                    <span className="text-xs font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded">◎ 1着</span>
+                    <span className="w-6 h-6 rounded-full bg-gray-800 text-white flex items-center justify-center text-xs font-bold">{e.post_number}</span>
+                    <span className="font-bold text-gray-800">{e.horses?.name}</span>
+                  </div>
+                ) : null;
+              })()}
+              {placePicks.map((id) => {
+                const e = entries.find((x) => x.id === id);
+                return e ? (
+                  <div key={id} className="flex items-center gap-2 bg-blue-50 rounded-lg p-3">
+                    <span className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded">○ 複勝</span>
+                    <span className="w-6 h-6 rounded-full bg-gray-800 text-white flex items-center justify-center text-xs font-bold">{e.post_number}</span>
+                    <span className="font-bold text-gray-800">{e.horses?.name}</span>
+                  </div>
+                ) : null;
+              })}
+              {dangerPick && (() => {
+                const e = entries.find((x) => x.id === dangerPick);
+                return e ? (
+                  <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-3">
+                    <span className="text-xs font-bold text-gray-600 bg-gray-200 px-2 py-0.5 rounded">△ 危険</span>
+                    <span className="w-6 h-6 rounded-full bg-gray-800 text-white flex items-center justify-center text-xs font-bold">{e.post_number}</span>
+                    <span className="font-bold text-gray-800">{e.horses?.name}</span>
+                  </div>
+                ) : null;
+              })()}
+              {!dangerPick && placePicks.length === 0 && (
+                <p className="text-xs text-gray-400 text-center">※ 複勝・危険馬は未選択です（任意）</p>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="flex-1 py-3 border border-gray-200 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                戻る
+              </button>
+              <button
+                onClick={handleSubmit}
+                className="flex-1 py-3 bg-green-600 text-white rounded-xl text-sm font-bold hover:bg-green-700 transition-colors"
+              >
+                投票する
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

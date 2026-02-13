@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { getRank } from "@/lib/constants/ranks";
 import LogoutButton from "@/components/LogoutButton";
@@ -82,7 +83,7 @@ export default async function Header() {
                 title="マイページ"
               >
                 {profile.avatar_url ? (
-                  <img src={profile.avatar_url} alt="" className="w-7 h-7 rounded-full border border-gray-200" />
+                  <Image src={profile.avatar_url} alt="" width={28} height={28} className="w-7 h-7 rounded-full border border-gray-200" />
                 ) : (
                   <div className="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center text-xs border border-green-200">
                     {rank?.icon ?? "🏇"}
