@@ -101,7 +101,7 @@ export default async function HomePage() {
   // 盛り上がりコメント
   const { data: hotComments } = await supabase
     .from("comments")
-    .select("id, body, sentiment, profiles(display_name, rank_id)")
+    .select("id, user_id, body, sentiment, profiles(display_name, rank_id)")
     .is("parent_id", null)
     .eq("is_deleted", false)
     .order("created_at", { ascending: false })
@@ -113,6 +113,27 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-5">
+      {/* ====== 👤 クイックアクセス ====== */}
+      {user && (
+        <div className="flex gap-2">
+          <Link href="/mypage" className="flex-1 bg-white rounded-xl border border-gray-200 p-3 flex items-center gap-3 hover:border-green-300 transition-colors">
+            <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-lg">🏇</div>
+            <div className="min-w-0">
+              <div className="text-xs text-gray-400">マイページ</div>
+              <div className="text-sm font-bold text-gray-800 truncate">プロフィール・成績</div>
+            </div>
+            <span className="text-gray-300 ml-auto">›</span>
+          </Link>
+          <Link href="/mypage/points" className="bg-white rounded-xl border border-gray-200 p-3 flex items-center gap-2 hover:border-green-300 transition-colors shrink-0">
+            <span className="text-lg">💰</span>
+            <div>
+              <div className="text-xs text-gray-400">ポイント</div>
+              <div className="text-xs font-bold text-gray-700">履歴</div>
+            </div>
+          </Link>
+        </div>
+      )}
+
       {/* ====== 🔥 注目レースヒーロー ====== */}
       {featuredRace && (
         <Link href={`/races/${featuredRace.id}`} className="block">
@@ -261,10 +282,10 @@ export default async function HomePage() {
                 very_positive: "🔥", positive: "👍", negative: "🤔", very_negative: "⚠️",
               };
               return (
-                <div key={comment.id} className="px-4 py-3">
-                  <div className="flex items-center gap-2 mb-1.5">
+                <div key={comment.id} className="px-4 py-3 hover:bg-gray-50 transition-colors">
+                  <Link href={`/users/${comment.user_id}`} className="flex items-center gap-2 mb-1.5 group">
                     <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-[10px]">👤</div>
-                    <span className="text-xs font-bold text-gray-900">
+                    <span className="text-xs font-bold text-gray-900 group-hover:text-green-600">
                       {(comment.profiles as any)?.display_name ?? "匿名"}
                     </span>
                     {rank && (
@@ -275,7 +296,7 @@ export default async function HomePage() {
                     {comment.sentiment && (
                       <span className="text-[10px]">{sentimentIcon[comment.sentiment]}</span>
                     )}
-                  </div>
+                  </Link>
                   <p className="text-xs text-gray-700 ml-8 line-clamp-2">{comment.body}</p>
                 </div>
               );

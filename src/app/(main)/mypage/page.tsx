@@ -113,17 +113,17 @@ export default async function MyPage() {
           </div>
         </div>
 
-        {/* ポイント表示 */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-white/10 rounded-xl p-3 text-center">
+        {/* ポイント表示（タップでポイント履歴へ） */}
+        <Link href="/mypage/points" className="grid grid-cols-2 gap-3 group">
+          <div className="bg-white/10 rounded-xl p-3 text-center group-hover:bg-white/20 transition-colors">
             <div className="text-2xl font-black">{profile.cumulative_points.toLocaleString()}</div>
             <div className="text-xs text-green-100 font-medium">累計ポイント</div>
           </div>
-          <div className="bg-white/10 rounded-xl p-3 text-center">
+          <div className="bg-white/10 rounded-xl p-3 text-center group-hover:bg-white/20 transition-colors">
             <div className="text-2xl font-black">{monthlyTotal.toLocaleString()}</div>
-            <div className="text-xs text-green-100 font-medium">今月のポイント</div>
+            <div className="text-xs text-green-100 font-medium">今月のポイント ›</div>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* ====== 統計: 2段レイアウト ====== */}

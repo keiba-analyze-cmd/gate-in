@@ -122,16 +122,16 @@ export default async function UserProfilePage({ params }: Props) {
 
         {/* ====== 統計: 2段レイアウト ====== */}
 
-        {/* 1段目: フォロー + フォロワー */}
+        {/* 1段目: フォロー + フォロワー（タップで一覧へ） */}
         <div className="grid grid-cols-2 gap-2 mb-2">
-          <div className="bg-gray-50 rounded-xl p-3 text-center border border-gray-100">
+          <Link href={`/users/${userId}/follows?tab=following`} className="bg-gray-50 rounded-xl p-3 text-center border border-gray-100 hover:border-green-300 transition-colors">
             <div className="text-xl font-black text-gray-900">{followingCount ?? 0}</div>
             <div className="text-xs font-medium text-gray-600">フォロー</div>
-          </div>
-          <div className="bg-gray-50 rounded-xl p-3 text-center border border-gray-100">
+          </Link>
+          <Link href={`/users/${userId}/follows?tab=followers`} className="bg-gray-50 rounded-xl p-3 text-center border border-gray-100 hover:border-green-300 transition-colors">
             <div className="text-xl font-black text-gray-900">{followerCount ?? 0}</div>
             <div className="text-xs font-medium text-gray-600">フォロワー</div>
-          </div>
+          </Link>
         </div>
 
         {/* 2段目: 投票数 + 1着率 + 複勝率 + 連続的中 */}
