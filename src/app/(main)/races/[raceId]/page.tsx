@@ -121,7 +121,7 @@ export default async function RaceDetailPage({ params }: Props) {
           {postTime && <span>🕐 {postTime} 発走</span>}
           {race.track_condition && <span>馬場: {race.track_condition}</span>}
           <span>投票: {totalVotes ?? 0}人</span>
-            {race.start_time && <RaceCountdown startTime={race.start_time} raceDate={race.race_date} status={race.status} />}
+            {race.post_time && <RaceCountdown startTime={race.post_time} raceDate={race.race_date} status={race.status} />}
         </div>
       </div>
 
