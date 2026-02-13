@@ -30,55 +30,6 @@ export default async function HomePage() {
   const featuredRaces = openRaces?.filter((r) => r.grade) ?? [];
   const otherRaces = openRaces?.filter((r) => !r.grade) ?? [];
 
-  // 今月の大会
-  const now = new Date();
-  const yearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-  const { data: contest } = await supabase
-    .from("contests")
-    .select("*")
-    .eq("year_month", yearMonth)
-    .eq("status", "active")
-    .maybeSingle();
-
-  // 自分の大会エントリー
-  let myContestEntry: any = null;
-  let contestEntryCount = 0;
-  if (contest && user) {
-    const { data } = await supabase
-      .from("contest_entries")
-      .select("*")
-      .eq("contest_id", contest.id)
-      .eq("user_id", user.id)
-      .maybeSingle();
-    myContestEntry = data;
-
-    if (myContestEntry) {
-      const { count } = await supabase
-        .from("contest_entries")
-        .select("*", { count: "exact", head: true })
-        .eq("contest_id", contest.id)
-        .gt("total_points", myContestEntry.total_points);
-      myContestEntry.ranking = (count ?? 0) + 1;
-    }
-
-    const { count: ec } = await supabase
-      .from("contest_entries")
-      .select("*", { count: "exact", head: true })
-      .eq("contest_id", contest.id);
-    contestEntryCount = ec ?? 0;
-  }
-
-  // 大会上位3名
-  let top3: any[] = [];
-  if (contest) {
-    const { data } = await supabase
-      .from("contest_entries")
-      .select("total_points, profiles(display_name)")
-      .eq("contest_id", contest.id)
-      .order("total_points", { ascending: false })
-      .limit(3);
-    top3 = data ?? [];
-  }
 
   // 最近の結果
   const { data: recentResults } = await supabase
@@ -97,9 +48,6 @@ export default async function HomePage() {
     .order("created_at", { ascending: false })
     .limit(3);
 
-  const monthLabel = `${now.getMonth() + 1}月`;
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-  const daysLeft = Math.max(0, Math.ceil((endOfMonth.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
 
   // 未ログイン → ランディングページ
   if (!user) {
@@ -153,88 +101,23 @@ export default async function HomePage() {
       )}
 
       {/* ====== 🏆 月間大会バナー ====== */}
-      {contest && (
-        <Link href="/contest" className="block">
-          <div className="rounded-2xl overflow-hidden border-2 border-yellow-400">
-            <div
-              className="px-4 py-3 text-white"
-              style={{ background: "linear-gradient(135deg, #eab308 0%, #ca8a04 100%)" }}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">🏆</span>
-                  <div>
-                    <div className="text-sm font-black">{monthLabel} 予想大会</div>
-                    <div className="text-[10px] text-white/80 font-medium">
-                      {contest.start_date}〜{contest.end_date} | 残り{daysLeft}日
-                    </div>
-                  </div>
-                </div>
-                {myContestEntry && (
-                  <div className="text-right">
-                    <div className="text-[10px] text-white/80">あなたの順位</div>
-                    <div className="text-xl font-black">
-                      {myContestEntry.ranking}
-                      <span className="text-xs">位</span>
-                      <span className="text-[10px] text-white/70 ml-1">/ {contestEntryCount}人</span>
-                    </div>
-                  </div>
-                )}
+      <Link href="/contest" className="block">
+        <div className="rounded-2xl overflow-hidden border-2 border-purple-300 bg-gradient-to-br from-purple-600 to-purple-500 px-5 py-4 text-white">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🏆</span>
+              <div>
+                <div className="text-sm font-black">月間予想大会</div>
+                <div className="text-xs text-purple-200 font-medium">近日開催予定！</div>
               </div>
             </div>
-            <div className="bg-yellow-50 px-4 py-3">
-              <div className="flex items-center justify-between mb-2">
-                <div>
-                  <div className="text-[11px] font-bold text-gray-700">今月の累計ポイント</div>
-                  <div className="text-xl font-black text-gray-900">
-                    {myContestEntry?.total_points?.toLocaleString() ?? 0}
-                    <span className="text-xs text-gray-500 ml-0.5">P</span>
-                  </div>
-                </div>
-                {myContestEntry && top3[2] && myContestEntry.ranking > 3 && (
-                  <div className="text-right">
-                    <div className="text-[10px] text-gray-600">3位まであと</div>
-                    <div className="text-base font-black text-orange-600">
-                      {(top3[2]?.total_points ?? 0) - myContestEntry.total_points + 1}P
-                    </div>
-                  </div>
-                )}
-              </div>
-              {top3.length > 0 && (
-                <div className="flex gap-1.5 mb-2">
-                  {["🥇", "🥈", "🥉"].map((medal, i) => {
-                    const entry = top3[i];
-                    if (!entry) return null;
-                    return (
-                      <div key={i} className="flex-1 bg-white rounded-lg p-1.5 text-center">
-                        <div className="text-sm">{medal}</div>
-                        <div className="text-[10px] font-bold text-gray-800 truncate">
-                          {(entry.profiles as any)?.display_name ?? "---"}
-                        </div>
-                        <div className="text-[10px] font-black text-green-600">
-                          {entry.total_points.toLocaleString()}P
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-              <div className="flex flex-wrap gap-1 justify-center">
-                <span className="text-[10px] font-bold text-yellow-700 bg-yellow-200/60 px-2 py-0.5 rounded-full">
-                  🎁 1位: Amazon ¥10,000
-                </span>
-                <span className="text-[10px] font-medium text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">
-                  2位: ¥5,000
-                </span>
-                <span className="text-[10px] font-medium text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">
-                  3位: ¥3,000
-                </span>
-              </div>
+            <div className="text-right">
+              <div className="text-xs text-purple-200">賞品</div>
+              <div className="text-sm font-black">Amazonギフト券</div>
             </div>
           </div>
-        </Link>
-      )}
-
+        </div>
+      </Link>
       {/* ====== 🔥 投票受付中のレース ====== */}
       {otherRaces.length > 0 && (
         <section>
