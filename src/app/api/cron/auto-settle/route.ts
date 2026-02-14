@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/admin";
-import { createClient } from "@/lib/supabase/server";
+
 import { load } from "cheerio";
 import iconv from "iconv-lite";
 import { settleRace } from "@/lib/services/settle-race";
@@ -185,8 +185,8 @@ export async function GET(request: Request) {
       }
 
       // 清算（ポイント計算）
-      const supabase = await createClient();
-      const settleResult = await settleRace(supabase, race.id);
+      
+      const settleResult = await settleRace(admin, race.id);
 
       results.push({
         race_id: race.id, name: race.name,
