@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getRank } from "@/lib/constants/ranks";
 import RaceCard from "@/components/races/RaceCard";
 import LandingHero from "@/components/landing/LandingHero";
+import NextRaceByVenue from "@/components/races/NextRaceByVenue";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -18,17 +19,45 @@ export default async function HomePage() {
     votedRaceIds = new Set((myVotes ?? []).map((v) => v.race_id));
   }
 
-  // 投票受付中のレース
+  // 投票受付中のレース（全件取得して競馬場ごとに分類）
   const { data: openRaces } = await supabase
     .from("races")
     .select("*")
     .eq("status", "voting_open")
-    .order("race_date", { ascending: true })
-    .limit(6);
+    .order("post_time", { ascending: true })
+    .limit(100);
 
   // 今週の重賞レース（grade付きを全て表示）
   const featuredRaces = openRaces?.filter((r) => r.grade) ?? [];
-  const otherRaces = openRaces?.filter((r) => !r.grade) ?? [];
+
+  // 競馬場ごとに最も発走が近いレースを1つずつ抽出
+  const now = new Date();
+  const venueNextRaces: { course_name: string; race: any }[] = [];
+  const venueMap = new Map<string, any>();
+  for (const race of openRaces ?? []) {
+    if (!race.post_time || !race.course_name) continue;
+    // まだ締切前のレースを優先（発走2分前）
+    const deadline = new Date(race.post_time).getTime() - 2 * 60 * 1000;
+    const existing = venueMap.get(race.course_name);
+    if (!existing) {
+      venueMap.set(race.course_name, race);
+    } else {
+      // まだ締切前のものがあればそちらを優先、なければ最も近いものを保持
+      const existingDeadline = new Date(existing.post_time).getTime() - 2 * 60 * 1000;
+      const existingOpen = now.getTime() < existingDeadline;
+      const thisOpen = now.getTime() < deadline;
+      if (thisOpen && !existingOpen) {
+        venueMap.set(race.course_name, race);
+      } else if (thisOpen && existingOpen && new Date(race.post_time) < new Date(existing.post_time)) {
+        venueMap.set(race.course_name, race);
+      }
+    }
+  }
+  for (const [course_name, race] of venueMap) {
+    venueNextRaces.push({ course_name, race });
+  }
+  // 発走時間順にソート
+  venueNextRaces.sort((a, b) => new Date(a.race.post_time).getTime() - new Date(b.race.post_time).getTime());
 
 
   // 最近の結果
@@ -118,20 +147,16 @@ export default async function HomePage() {
           </div>
         </div>
       </Link>
-      {/* ====== 🔥 投票受付中のレース ====== */}
-      {otherRaces.length > 0 && (
+      {/* ====== 🔥 投票受付中のレース（競馬場別） ====== */}
+      {venueNextRaces.length > 0 && (
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-black text-gray-900">🔥 投票受付中のレース</h2>
+            <h2 className="text-sm font-black text-gray-900">🔥 投票受付中</h2>
             <Link href="/races" className="text-xs text-blue-600 font-bold hover:underline">
               すべて見る →
             </Link>
           </div>
-          <div className="space-y-2">
-            {otherRaces.map((race) => (
-              <RaceCard key={race.id} race={race} voted={votedRaceIds.has(race.id)} />
-            ))}
-          </div>
+          <NextRaceByVenue venues={venueNextRaces} />
         </section>
       )}
 
