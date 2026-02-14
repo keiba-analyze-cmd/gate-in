@@ -2,6 +2,10 @@ import { updateSession } from "@/lib/supabase/middleware";
 import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
+  // Cronリクエストはセッション不要なのでスキップ
+  if (request.nextUrl.pathname.startsWith("/api/cron/")) {
+    return;
+  }
   return await updateSession(request);
 }
 
