@@ -13,7 +13,7 @@ type Props = {
     id: string;
     user: { display_name: string; avatar_url: string | null; rank_id: string } | null;
     user_id: string;
-    race: { name: string; grade: string | null; course_name: string } | null;
+    race: { name: string; grade: string | null; course_name: string; race_number?: number | null; race_date?: string } | null;
     race_id: string;
     earned_points?: number;
     is_perfect?: boolean;

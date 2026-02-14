@@ -29,7 +29,7 @@ export async function GET(request: Request) {
   if (filter === "all" || filter === "vote") {
     // settled votes（結果確定済み）
     let settledQ = admin.from("votes")
-      .select("id, user_id, race_id, status, earned_points, is_perfect, settled_at, created_at, profiles(display_name, avatar_url, rank_id), races(name, grade, course_name), vote_picks(pick_type, race_entries(post_number, horses(name)))")
+      .select("id, user_id, race_id, status, earned_points, is_perfect, settled_at, created_at, profiles(display_name, avatar_url, rank_id), races(name, grade, course_name, race_number, race_date), vote_picks(pick_type, race_entries(post_number, horses(name)))")
       .in("user_id", targetIds).neq("status", "pending")
       .order("settled_at", { ascending: false }).limit(limit);
     if (cursor) settledQ = settledQ.lt("settled_at", cursor);
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
 
     // pending votes（投票直後）
     let pendingQ = admin.from("votes")
-      .select("id, user_id, race_id, status, created_at, profiles(display_name, avatar_url, rank_id), races(name, grade, course_name), vote_picks(pick_type, race_entries(post_number, horses(name)))")
+      .select("id, user_id, race_id, status, created_at, profiles(display_name, avatar_url, rank_id), races(name, grade, course_name, race_number, race_date), vote_picks(pick_type, race_entries(post_number, horses(name)))")
       .in("user_id", targetIds).eq("status", "pending")
       .order("created_at", { ascending: false }).limit(limit);
     if (cursor) pendingQ = pendingQ.lt("created_at", cursor);

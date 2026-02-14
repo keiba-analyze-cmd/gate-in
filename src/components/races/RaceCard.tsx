@@ -1,4 +1,5 @@
 import Link from "next/link";
+import RaceCardCountdown from "./RaceCardCountdown";
 
 type Props = {
   race: {
@@ -9,8 +10,11 @@ type Props = {
     grade: string | null;
     status: string;
     race_number?: number | null;
-    distance?: string | null;
+    distance?: number | null;
     start_time?: string | null;
+    track_type?: string | null;
+    head_count?: number | null;
+    post_time?: string | null;
   };
   voted?: boolean;
 };
@@ -35,7 +39,6 @@ export default function RaceCard({ race, voted }: Props) {
 
   return (
     <Link href={`/races/${race.id}`} className="bg-white rounded-2xl border border-gray-200 flex items-center gap-3 px-4 py-3 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer relative">
-      {/* 投票済タグ */}
       {voted && (
         <span className="absolute -top-2 -left-1 bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm rotate-[-3deg] z-10">
           ✅ 投票済
@@ -54,14 +57,20 @@ export default function RaceCard({ race, voted }: Props) {
 
       <div className="flex-1 min-w-0">
         <div className="text-sm font-bold text-gray-900 truncate">{race.name}</div>
-        <div className="text-[11px] text-gray-500 font-medium flex items-center gap-1.5">
+        <div className="text-[11px] text-gray-500 font-medium flex items-center gap-1 flex-wrap">
           <span>{race.course_name}</span>
           <span className="text-gray-300">|</span>
-          <span>{race.distance}</span>
-          {race.start_time && (
+          <span>{race.track_type}{race.distance}m</span>
+          {race.head_count != null && race.head_count > 0 && (
             <>
               <span className="text-gray-300">|</span>
-              <span>{race.start_time}</span>
+              <span>{race.head_count}頭</span>
+            </>
+          )}
+          {race.post_time && race.status === "voting_open" && (
+            <>
+              <span className="text-gray-300">|</span>
+              <RaceCardCountdown postTime={race.post_time} />
             </>
           )}
         </div>

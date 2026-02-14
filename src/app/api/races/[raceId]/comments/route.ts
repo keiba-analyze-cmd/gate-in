@@ -11,6 +11,7 @@ export async function GET(request: Request, { params }: Props) {
   const supabase = await createClient();
   const { searchParams } = new URL(request.url);
   const cursor = searchParams.get("cursor");
+  const parentId = searchParams.get("parent_id");
   const limit = 20;
 
   const { data: { user: currentUser } } = await supabase.auth.getUser();
@@ -22,8 +23,9 @@ export async function GET(request: Request, { params }: Props) {
 
   let query = supabase.from("comments")
     .select("*, profiles(display_name, avatar_url, rank_id), comment_reactions(emoji_type, user_id)")
-    .eq("race_id", raceId).is("parent_id", null).eq("is_deleted", false).eq("is_hidden", false)
-    .order("created_at", { ascending: false }).limit(limit);
+    .eq("race_id", raceId).eq("is_deleted", false).eq("is_hidden", false);
+  if (parentId) { query = query.eq("parent_id", parentId); } else { query = query.is("parent_id", null); }
+  query = query.order("created_at", { ascending: false }).limit(limit);
   if (cursor) query = query.lt("created_at", cursor);
 
   const { data: comments, error } = await query;

@@ -41,7 +41,7 @@ export default async function RaceListPage({ searchParams }: Props) {
     .from("races")
     .select("*")
     .eq("race_date", selectedDate)
-    .order("race_number", { ascending: true });
+    .order("post_time", { ascending: true });
 
   if (params.course) {
     query = query.eq("course_name", params.course);

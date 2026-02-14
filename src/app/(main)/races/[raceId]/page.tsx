@@ -23,71 +23,56 @@ export default async function RaceDetailPage({ params }: Props) {
 
   if (!user) redirect("/login");
 
-  // レース情報
   const { data: race, error } = await supabase
-    .from("races")
-    .select("*")
-    .eq("id", raceId)
-    .single();
+    .from("races").select("*").eq("id", raceId).single();
 
   if (!race || error) notFound();
 
-  // 出馬表
   const { data: entries } = await supabase
     .from("race_entries")
     .select("*, horses(id, name, sex, sire, trainer, stable_area, career_record)")
-    .eq("race_id", raceId)
-    .eq("is_scratched", false)
+    .eq("race_id", raceId).eq("is_scratched", false)
     .order("post_number", { ascending: true });
 
-  // 自分の投票
   const { data: myVote } = await supabase
     .from("votes")
     .select("*, vote_picks(*, race_entries(post_number, horses(name)))")
-    .eq("race_id", raceId)
-    .eq("user_id", user.id)
-    .maybeSingle();
+    .eq("race_id", raceId).eq("user_id", user.id).maybeSingle();
 
-  // 投票集計（全ユーザー分をカウント）
   const { createAdminClient } = await import("@/lib/admin");
   const adminDb = createAdminClient();
   const { count: totalVotes } = await adminDb
-    .from("votes")
-    .select("*", { count: "exact", head: true })
-    .eq("race_id", raceId);
+    .from("votes").select("*", { count: "exact", head: true }).eq("race_id", raceId);
 
-  // レース結果（finished の場合）
   let results = null;
   let payouts = null;
   if (race.status === "finished") {
     const { data: r } = await supabase
       .from("race_results")
       .select("*, race_entries(post_number, jockey, odds, popularity, horses(name))")
-      .eq("race_id", raceId)
-      .order("finish_position", { ascending: true });
+      .eq("race_id", raceId).order("finish_position", { ascending: true });
     results = r;
-
-    const { data: p } = await supabase
-      .from("payouts")
-      .select("*")
-      .eq("race_id", raceId);
+    const { data: p } = await supabase.from("payouts").select("*").eq("race_id", raceId);
     payouts = p;
   }
 
   const gradeColor = getGradeColor(race.grade);
   const postTime = race.post_time
-    ? new Date(race.post_time).toLocaleTimeString("ja-JP", { timeZone: "Asia/Tokyo",
-        hour: "2-digit",
-        minute: "2-digit",
+    ? new Date(race.post_time).toLocaleTimeString("ja-JP", {
+        timeZone: "Asia/Tokyo", hour: "2-digit", minute: "2-digit",
       })
     : null;
 
-  const isVotable = race.status === "voting_open" && !myVote;
+  // Fix 1: 発走2分前を過ぎたら投票不可
+  const now = new Date();
+  const postTimeDate = race.post_time ? new Date(race.post_time) : null;
+  const isBeforeDeadline = postTimeDate
+    ? now.getTime() < postTimeDate.getTime() - 2 * 60 * 1000
+    : true;
+  const isVotable = race.status === "voting_open" && !myVote && isBeforeDeadline;
   const hasVoted = !!myVote;
   const isFinished = race.status === "finished";
 
-
-  // JSON-LD 構造化データ
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SportsEvent",
@@ -103,11 +88,7 @@ export default async function RaceDetailPage({ params }: Props) {
     },
     sport: "Horse Racing",
     url: `https://gate-in.jp/races/${raceId}`,
-    organizer: {
-      "@type": "Organization",
-      name: "ゲートイン！",
-      url: "https://gate-in.jp",
-    },
+    organizer: { "@type": "Organization", name: "ゲートイン！", url: "https://gate-in.jp" },
     ...(isFinished && results && results.length > 0 ? {
       competitor: results.slice(0, 3).map((r: any) => ({
         "@type": "Person",
@@ -120,20 +101,16 @@ export default async function RaceDetailPage({ params }: Props) {
   return (
     <div className="space-y-4">
       <JsonLd data={jsonLd} />
-      {/* パンくずリスト */}
       <div className="text-sm text-gray-400">
         <Link href="/races" className="hover:text-green-600">レース一覧</Link>
         <span className="mx-2">›</span>
         <span className="text-gray-600">{race.name}</span>
       </div>
 
-      {/* レースヘッダー */}
       <div className="bg-white rounded-2xl border border-gray-100 p-5">
         <div className="flex items-center gap-3 mb-3">
           {race.grade && (
-            <span className={`text-sm font-bold px-3 py-1 rounded ${gradeColor}`}>
-              {race.grade}
-            </span>
+            <span className={`text-sm font-bold px-3 py-1 rounded ${gradeColor}`}>{race.grade}</span>
           )}
           <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
             isVotable ? "bg-green-100 text-green-700"
@@ -144,6 +121,7 @@ export default async function RaceDetailPage({ params }: Props) {
             {isVotable ? "🗳 投票受付中"
               : isFinished ? "📊 結果確定"
               : hasVoted ? "✅ 投票済み"
+              : !isBeforeDeadline ? "⏰ 締切済み"
               : "準備中"}
           </span>
         </div>
@@ -155,29 +133,24 @@ export default async function RaceDetailPage({ params }: Props) {
           {postTime && <span>🕐 {postTime} 発走</span>}
           {race.track_condition && <span>馬場: {race.track_condition}</span>}
           <span>投票: {totalVotes ?? 0}人</span>
-            {race.post_time && <RaceCountdown startTime={race.post_time} raceDate={race.race_date} status={race.status} />}
+          {race.post_time && <RaceCountdown startTime={race.post_time} raceDate={race.race_date} status={race.status} />}
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* ====== メインエリア ====== */}
         <div className="lg:col-span-2 space-y-4">
-          {/* レース結果（finished の場合） */}
           {isFinished && results && (
             <RaceResultTable results={results} payouts={payouts} myVote={myVote} />
           )}
 
-          {/* 投票フォーム（投票可能な場合） */}
           {isVotable && entries && (
             <VoteForm raceId={race.id} entries={entries} />
           )}
 
-          {/* みんなの予想分布（投票済み or 結果確定の場合） */}
           {(hasVoted || isFinished) && (
             <VoteDistribution raceId={race.id} />
           )}
 
-          {/* 出馬表（投票済み or 結果確定） */}
           {!isVotable && entries && (
             <div className="bg-white rounded-2xl border border-gray-100 p-5">
               <h2 className="font-bold text-gray-800 mb-3">📋 出馬表</h2>
@@ -185,20 +158,16 @@ export default async function RaceDetailPage({ params }: Props) {
             </div>
           )}
 
-          {/* 投票変更・取消（投票済み & 発走前） */}
           {hasVoted && myVote && race.status === "voting_open" && entries && (
             <VoteEditForm
-              raceId={race.id}
-              entries={entries}
+              raceId={race.id} entries={entries}
               existingPicks={(myVote.vote_picks ?? []).map((p: any) => ({
-                pick_type: p.pick_type,
-                race_entry_id: p.race_entry_id,
+                pick_type: p.pick_type, race_entry_id: p.race_entry_id,
               }))}
               postTime={race.post_time}
             />
           )}
 
-          {/* SNSシェア */}
           {hasVoted && myVote && (() => {
             const picks = myVote.vote_picks ?? [];
             const winPick = picks.find((p: any) => p.pick_type === "win");
@@ -222,53 +191,49 @@ export default async function RaceDetailPage({ params }: Props) {
             );
           })()}
 
-          {/* コメント掲示板 */}
-          <CommentSection raceId={race.id} currentUserId={user.id} />
+          {/* Fix 5: コメント欄は投票済み or 結果確定の場合のみ */}
+          {(hasVoted || isFinished) && (
+            <CommentSection raceId={race.id} currentUserId={user.id} />
+          )}
         </div>
 
-        {/* ====== サイドバー ====== */}
         <div className="space-y-4">
-          {/* 投票済みの場合：自分の予想 */}
           {hasVoted && myVote && (
             <VoteSummary vote={myVote} isFinished={isFinished} />
           )}
-
-          {/* 投票状況サマリー（投票済みの場合） */}
           {(hasVoted || isFinished) && (
             <VoteStats raceId={race.id} totalVotes={totalVotes ?? 0} />
           )}
-
-          {/* ポイントルール */}
           <div className="bg-white rounded-2xl border border-gray-100 p-5">
             <h3 className="font-bold text-gray-800 mb-3">🎯 獲得ポイント目安</h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between py-1.5 border-b border-gray-50">
                 <span className="text-gray-600">1着的中（1番人気）</span>
-                <span className="font-bold text-green-600">+50P</span>
+                <span className="font-bold text-green-600">+30P</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-gray-50">
-                <span className="text-gray-600">1着的中（2〜3番人気）</span>
-                <span className="font-bold text-green-600">+100P</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-gray-50">
-                <span className="text-gray-600">1着的中（4〜6番人気）</span>
-                <span className="font-bold text-green-600">+200P</span>
+                <span className="text-gray-600">1着的中（4〜5番人気）</span>
+                <span className="font-bold text-green-600">+80P</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-gray-50">
                 <span className="text-gray-600">1着的中（10番人気〜）</span>
-                <span className="font-bold text-green-600">+500P</span>
+                <span className="font-bold text-green-600">+300P</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-gray-50">
                 <span className="text-gray-600">複勝的中（1頭あたり）</span>
-                <span className="font-bold text-blue-600">+30P</span>
+                <span className="font-bold text-blue-600">+20P</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-gray-50">
-                <span className="text-gray-600">危険馬的中</span>
-                <span className="font-bold text-orange-600">+10P</span>
+                <span className="text-gray-600">危険馬的中（1番人気）</span>
+                <span className="font-bold text-orange-600">+50P</span>
+              </div>
+              <div className="flex justify-between py-1.5 border-b border-gray-50">
+                <span className="text-gray-600">G1ボーナス（各的中）</span>
+                <span className="font-bold text-purple-600">+30P</span>
               </div>
               <div className="flex justify-between py-1.5">
                 <span className="text-gray-600">完全的中ボーナス</span>
-                <span className="font-bold text-yellow-600">+300P</span>
+                <span className="font-bold text-yellow-600">+200P</span>
               </div>
             </div>
             <Link href="/guide/points" className="block text-center text-xs text-green-600 font-bold mt-3 hover:underline">
@@ -281,28 +246,18 @@ export default async function RaceDetailPage({ params }: Props) {
   );
 }
 
-// 投票状況サマリーカード（サーバーコンポーネント）
 async function VoteStats({ raceId, totalVotes }: { raceId: string; totalVotes: number }) {
   const { createAdminClient: createAdmin } = await import("@/lib/admin");
   const adminStats = createAdmin();
-
-  // 投票者のランク分布を取得
   const { data: voterProfiles } = await adminStats
-    .from("votes")
-    .select("user_id, profiles(rank_id)")
-    .eq("race_id", raceId);
+    .from("votes").select("user_id, profiles(rank_id)").eq("race_id", raceId);
 
-  // ランク帯ごとの集計
   const tierCounts: Record<string, number> = {};
   for (const v of voterProfiles ?? []) {
     const rankId = (v.profiles as any)?.rank_id ?? "beginner_1";
-    const tier = rankId.startsWith("master") || rankId === "legend"
-      ? "マスター以上"
-      : rankId.startsWith("advanced")
-      ? "上級予想士"
-      : rankId.startsWith("forecaster")
-      ? "予想士"
-      : "ビギナー";
+    const tier = rankId.startsWith("master") || rankId === "legend" ? "マスター以上"
+      : rankId.startsWith("advanced") ? "上級予想士"
+      : rankId.startsWith("forecaster") ? "予想士" : "ビギナー";
     tierCounts[tier] = (tierCounts[tier] ?? 0) + 1;
   }
 
@@ -327,20 +282,12 @@ async function VoteStats({ raceId, totalVotes }: { raceId: string; totalVotes: n
           const pct = totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
           return (
             <div key={tier.name} className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">
-                <span className="mr-1">{tier.icon}</span>
-                {tier.name}
-              </span>
+              <span className="text-gray-600"><span className="mr-1">{tier.icon}</span>{tier.name}</span>
               <div className="flex items-center gap-2">
                 <div className="w-20 h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-green-400 rounded-full"
-                    style={{ width: `${pct}%` }}
-                  />
+                  <div className="h-full bg-green-400 rounded-full" style={{ width: `${pct}%` }} />
                 </div>
-                <span className="text-xs text-gray-500 w-14 text-right">
-                  {count}人 ({pct}%)
-                </span>
+                <span className="text-xs text-gray-500 w-14 text-right">{count}人 ({pct}%)</span>
               </div>
             </div>
           );
