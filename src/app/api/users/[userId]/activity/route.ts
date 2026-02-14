@@ -16,12 +16,12 @@ export async function GET(request: Request, { params }: Props) {
 
   const admin = createAdminClient();
 
-  // 投票（settled + pending）
+  // 投票（created_atで統一して管理）
   let votesQ = admin.from("votes")
-    .select("id, user_id, race_id, status, earned_points, is_perfect, settled_at, created_at, races(name, grade, course_name, race_number, race_date), vote_picks(pick_type, race_entries(post_number, horses(name)))")
+    .select("id, user_id, race_id, status, earned_points, is_perfect, created_at, races(name, grade, course_name, race_number, race_date), vote_picks(pick_type, race_entries(post_number, horses(name)))")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
-    .limit(limit + 1);
+    .limit(limit * 2);
   if (cursor) votesQ = votesQ.lt("created_at", cursor);
   const { data: votes } = await votesQ;
 
@@ -34,17 +34,17 @@ export async function GET(request: Request, { params }: Props) {
     is_perfect: v.is_perfect,
     status: v.status,
     picks: formatPicks(v.vote_picks),
-    timestamp: v.settled_at ?? v.created_at,
+    timestamp: v.created_at,
   }));
 
-  // コメント（トップレベルのみ）
+  // コメント
   let commentsQ = admin.from("comments")
     .select("id, user_id, race_id, body, sentiment, created_at, races(name, grade, course_name, race_number, race_date)")
     .eq("user_id", userId)
     .is("parent_id", null)
     .eq("is_deleted", false)
     .order("created_at", { ascending: false })
-    .limit(limit + 1);
+    .limit(limit * 2);
   if (cursor) commentsQ = commentsQ.lt("created_at", cursor);
   const { data: comments } = await commentsQ;
 
@@ -58,9 +58,15 @@ export async function GET(request: Request, { params }: Props) {
     timestamp: c.created_at,
   }));
 
+  // IDで重複排除してからマージ
+  const seen = new Set<string>();
   const allItems = [...voteItems, ...commentItems]
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-    .slice(0, limit + 1);
+    .filter((item) => {
+      if (seen.has(item.id)) return false;
+      seen.add(item.id);
+      return true;
+    });
 
   const hasMore = allItems.length > limit;
   const items = allItems.slice(0, limit);
