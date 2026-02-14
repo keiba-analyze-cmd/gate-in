@@ -90,7 +90,7 @@ export default function CommentItem({ comment, currentUserId, raceId }: Props) {
     if (showReplies && !loadingReplies) { setShowReplies(false); return; }
     setLoadingReplies(true);
     try {
-      const res = await fetch(`/api/races/${raceId}/comments?parent_id=${comment.id}`);
+      const res = await fetch(`/api/races/${raceId}/comments?parent_id=${comment.id}&order=asc`);
       if (res.ok) {
         const data = await res.json();
         setReplies(data.comments ?? []);

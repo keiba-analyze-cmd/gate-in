@@ -91,6 +91,11 @@ export default function TimelineItem({ item }: Props) {
             <Link href={`/races/${item.race_id}`} className="text-sm font-bold text-gray-800 hover:text-green-600">
               {item.race?.name}
             </Link>
+            {item.race?.race_date && (
+              <span className="text-[11px] text-gray-400">
+                {item.race.course_name}{item.race.race_number ? ` ${item.race.race_number}R` : ""}
+              </span>
+            )}
           </div>
           {item.picks && item.picks.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
@@ -116,6 +121,11 @@ export default function TimelineItem({ item }: Props) {
               <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${gradeColor}`}>{item.race.grade}</span>
             )}
             <Link href={`/races/${item.race_id}`} className="text-sm font-bold text-gray-800 hover:text-green-600">{item.race?.name}</Link>
+            {item.race?.race_date && (
+              <span className="text-[11px] text-gray-400">
+                {item.race.course_name}{item.race.race_number ? ` ${item.race.race_number}R` : ""}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2 mb-2">
             {(item.earned_points ?? 0) > 0 && <span className="text-sm font-bold text-green-600">+{item.earned_points} P</span>}
@@ -146,6 +156,11 @@ export default function TimelineItem({ item }: Props) {
               <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${gradeColor}`}>{item.race.grade}</span>
             )}
             <Link href={`/races/${item.race_id}`} className="text-sm font-bold text-gray-800 hover:text-green-600">{item.race?.name}</Link>
+            {item.race?.race_date && (
+              <span className="text-[11px] text-gray-400">
+                {item.race.course_name}{item.race.race_number ? ` ${item.race.race_number}R` : ""}
+              </span>
+            )}
             {item.sentiment && <span className="text-xs text-gray-400">{SENTIMENT_LABEL[item.sentiment]}</span>}
           </div>
           <p className="text-sm text-gray-600 line-clamp-2">{item.body}</p>
