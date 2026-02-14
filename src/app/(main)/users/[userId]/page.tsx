@@ -5,6 +5,7 @@ import { getRank, getNextRank } from "@/lib/constants/ranks";
 import FollowButton from "@/components/social/FollowButton";
 import BlockButton from "@/components/social/BlockButton";
 import Link from "next/link";
+import UserActivityFeed from "@/components/social/UserActivityFeed";
 
 type Props = {
   params: Promise<{ userId: string }>;
@@ -182,34 +183,8 @@ export default async function UserProfilePage({ params }: Props) {
         </div>
       )}
 
-      {/* 最近の結果 */}
-      {recentVotes && recentVotes.length > 0 && (
-        <div className="bg-white rounded-2xl border border-gray-200 p-5">
-          <h2 className="font-black text-gray-900 mb-3">📊 最近の投票結果</h2>
-          <div className="space-y-2">
-            {recentVotes.map((vote) => (
-              <Link
-                key={vote.id}
-                href={`/races/${vote.race_id}`}
-                className="flex items-center gap-3 bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-colors border border-gray-100"
-              >
-                {(vote.races as any)?.grade && (
-                  <span className="text-xs font-black px-1.5 py-0.5 rounded bg-green-100 text-green-700">
-                    {(vote.races as any).grade}
-                  </span>
-                )}
-                <span className="text-sm font-bold text-gray-800 flex-1">{(vote.races as any)?.name}</span>
-                <span className={`text-xs font-black ${
-                  vote.status === "settled_hit" ? "text-green-600" : "text-gray-500"
-                }`}>
-                  {vote.status === "settled_hit" ? `🎯 +${vote.earned_points}P` : "ハズレ"}
-                </span>
-                {vote.is_perfect && <span className="text-xs">💎</span>}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* アクティビティ */}
+      <UserActivityFeed userId={userId} />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-export const revalidate = 60; // 60秒キャッシュ
+export const revalidate = 60;
 
 import { createClient } from "@/lib/supabase/server";
 import RaceCard from "@/components/races/RaceCard";
@@ -15,125 +15,156 @@ export default async function RaceListPage({ searchParams }: Props) {
   const params = await searchParams;
   const supabase = await createClient();
 
-  // ユーザーの投票済みレースを取得
   const { data: { user } } = await supabase.auth.getUser();
-  let votedRaceIds = new Set<string>();
+
+  // 投票＋結果情報を取得
+  type VoteInfo = { voted: boolean; result: "none" | "pending" | "hit" | "miss" };
+  const voteMap = new Map<string, VoteInfo>();
   if (user) {
     const { data: myVotes } = await supabase
       .from("votes")
-      .select("race_id")
+      .select("race_id, status, earned_points")
       .eq("user_id", user.id);
-    votedRaceIds = new Set((myVotes ?? []).map((v) => v.race_id));
+    for (const v of myVotes ?? []) {
+      voteMap.set(v.race_id, {
+        voted: true,
+        result: v.status === "pending" ? "pending"
+          : v.status === "settled_hit" ? "hit"
+          : v.status !== "pending" ? "miss"
+          : "none",
+      });
+    }
   }
 
-  // 日付一覧を取得（直近2週間のレースがある日）
+  // 日付一覧
   const { data: dateDays } = await supabase
-    .from("races")
-    .select("race_date")
-    .order("race_date", { ascending: false })
-    .limit(100);
-
+    .from("races").select("race_date")
+    .order("race_date", { ascending: false }).limit(100);
   const uniqueDates = [...new Set(dateDays?.map((d) => d.race_date) ?? [])];
   const selectedDate = params.date ?? uniqueDates[0] ?? "";
 
-  // 選択日のレースを取得
-  let query = supabase
-    .from("races")
-    .select("*")
+  // レース取得
+  let query = supabase.from("races").select("*")
     .eq("race_date", selectedDate)
     .order("post_time", { ascending: true });
-
-  if (params.course) {
-    query = query.eq("course_name", params.course);
-  }
-  if (params.grade) {
-    query = query.eq("grade", params.grade);
-  }
+  if (params.course) query = query.eq("course_name", params.course);
+  if (params.grade) query = query.eq("grade", params.grade);
 
   const { data: races } = await query;
 
-  // キーワード検索（レース名でフィルター）
   let filteredRaces = races ?? [];
   if (params.q) {
     const q = params.q.toLowerCase();
     filteredRaces = filteredRaces.filter((r) =>
-      r.name.toLowerCase().includes(q) ||
-      (r.course_name ?? "").toLowerCase().includes(q)
+      r.name.toLowerCase().includes(q) || (r.course_name ?? "").toLowerCase().includes(q)
     );
   }
 
-  // その日の競馬場一覧
+  // 競馬場一覧
   const { data: allRacesForDay } = await supabase
-    .from("races")
-    .select("course_name")
-    .eq("race_date", selectedDate);
+    .from("races").select("course_name").eq("race_date", selectedDate);
   const uniqueCourses = [...new Set(allRacesForDay?.map((r) => r.course_name) ?? [])];
 
-  // グレード別に分類
-  const gradeRaces = filteredRaces.filter((r) => r.grade);
-  const normalRaces = filteredRaces.filter((r) => !r.grade);
+  // 現在時刻で締切判定
+  const now = new Date();
+  const isDeadlinePassed = (race: any): boolean => {
+    if (!race.post_time) return false;
+    const deadline = new Date(race.post_time).getTime() - 2 * 60 * 1000;
+    return now.getTime() > deadline;
+  };
+
+  // セクション分け
+  const gradeOpen: typeof filteredRaces = [];
+  const gradeClosed: typeof filteredRaces = [];
+  const gradeFinished: typeof filteredRaces = [];
+  const normalOpen: typeof filteredRaces = [];
+  const normalClosed: typeof filteredRaces = [];
+  const normalFinished: typeof filteredRaces = [];
+
+  for (const race of filteredRaces) {
+    const finished = race.status === "finished";
+    const closed = !finished && (race.status === "voting_closed" || isDeadlinePassed(race));
+    const isGrade = !!race.grade;
+
+    if (finished) {
+      (isGrade ? gradeFinished : normalFinished).push(race);
+    } else if (closed) {
+      (isGrade ? gradeClosed : normalClosed).push(race);
+    } else {
+      (isGrade ? gradeOpen : normalOpen).push(race);
+    }
+  }
+
+  const openRaces = [...gradeOpen, ...normalOpen];
+  const closedRaces = [...gradeClosed, ...normalClosed];
+  const finishedRaces = [...gradeFinished, ...normalFinished];
+
+  const getVoteResult = (raceId: string) => voteMap.get(raceId)?.result ?? "none";
+  const isVoted = (raceId: string) => voteMap.has(raceId);
+
+  const renderRaceCards = (list: typeof filteredRaces, section: "open" | "closed" | "finished") => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      {list.map((race) => (
+        <RaceCard
+          key={race.id}
+          race={race}
+          voted={isVoted(race.id)}
+          voteResult={section === "finished" ? getVoteResult(race.id) : "none"}
+          isDeadlinePassed={section !== "open"}
+        />
+      ))}
+    </div>
+  );
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between"><h1 className="text-xl font-bold text-gray-800">🏇 レース一覧</h1><a href="/races/calendar" className="text-sm text-green-600 hover:text-green-700 font-bold bg-green-50 px-3 py-1.5 rounded-lg border border-green-200">📅 カレンダー</a></div>
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-bold text-gray-800">🏇 レース一覧</h1>
+        <a href="/races/calendar" className="text-sm text-green-600 hover:text-green-700 font-bold bg-green-50 px-3 py-1.5 rounded-lg border border-green-200">📅 カレンダー</a>
+      </div>
 
-      {/* 検索バー */}
-      <RaceSearchBar
-        initialQuery={params.q ?? ""}
-        date={selectedDate}
-        course={params.course ?? ""}
-        grade={params.grade ?? ""}
-      />
-
-      {/* 日付フィルター */}
+      <RaceSearchBar initialQuery={params.q ?? ""} date={selectedDate} course={params.course ?? ""} grade={params.grade ?? ""} />
       <DateFilter dates={uniqueDates} selected={selectedDate} course={params.course} />
+      <CourseFilter courses={uniqueCourses} selected={params.course ?? ""} date={selectedDate} />
+      <GradeFilter selected={params.grade ?? ""} date={selectedDate} course={params.course ?? ""} />
 
-      {/* 競馬場フィルター */}
-      <CourseFilter
-        courses={uniqueCourses}
-        selected={params.course ?? ""}
-        date={selectedDate}
-      />
-
-      {/* グレードフィルター */}
-      <GradeFilter
-        selected={params.grade ?? ""}
-        date={selectedDate}
-        course={params.course ?? ""}
-      />
-
-      {/* 検索結果表示 */}
       {params.q && (
-        <div className="text-sm text-gray-500">
-          「{params.q}」の検索結果: {filteredRaces.length}件
-        </div>
+        <div className="text-sm text-gray-500">「{params.q}」の検索結果: {filteredRaces.length}件</div>
       )}
 
-      {/* 重賞・特別レース */}
-      {gradeRaces.length > 0 && (
+      {/* 🗳 受付中 */}
+      {openRaces.length > 0 && (
         <section>
-          <h2 className="text-sm font-bold text-gray-600 mb-2">🏆 重賞・特別</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {gradeRaces.map((race) => (
-              <RaceCard key={race.id} race={race} voted={votedRaceIds.has(race.id)} />
-            ))}
+          <div className="flex items-center gap-2 mb-2">
+            <h2 className="text-sm font-bold text-green-700">🗳 受付中</h2>
+            <span className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full font-medium">{openRaces.length}件</span>
           </div>
+          {renderRaceCards(openRaces, "open")}
         </section>
       )}
 
-      {/* 一般レース */}
-      {normalRaces.length > 0 && (
+      {/* ⏰ 投票締切 */}
+      {closedRaces.length > 0 && (
         <section>
-          <h2 className="text-sm font-bold text-gray-600 mb-2">📋 一般レース</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {normalRaces.map((race) => (
-              <RaceCard key={race.id} race={race} voted={votedRaceIds.has(race.id)} />
-            ))}
+          <div className="flex items-center gap-2 mb-2">
+            <h2 className="text-sm font-bold text-orange-600">⏰ 投票締切</h2>
+            <span className="text-xs text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full font-medium">{closedRaces.length}件</span>
           </div>
+          {renderRaceCards(closedRaces, "closed")}
         </section>
       )}
 
-      {/* レースがない場合 */}
+      {/* 📊 結果確定 */}
+      {finishedRaces.length > 0 && (
+        <section>
+          <div className="flex items-center gap-2 mb-2">
+            <h2 className="text-sm font-bold text-gray-600">📊 結果確定</h2>
+            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full font-medium">{finishedRaces.length}件</span>
+          </div>
+          {renderRaceCards(finishedRaces, "finished")}
+        </section>
+      )}
+
       {filteredRaces.length === 0 && (
         <div className="bg-white rounded-xl p-12 text-center text-gray-400">
           <div className="text-4xl mb-3">🏇</div>
