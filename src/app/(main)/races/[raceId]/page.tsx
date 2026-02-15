@@ -206,33 +206,34 @@ export default async function RaceDetailPage({ params }: Props) {
           )}
           <div className="bg-white rounded-2xl border border-gray-100 p-5">
             <h3 className="font-bold text-gray-800 mb-3">🎯 獲得ポイント目安</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between py-1.5 border-b border-gray-50">
-                <span className="text-gray-600">1着的中（1番人気）</span>
-                <span className="font-bold text-green-600">+30P</span>
+            <p className="text-xs text-gray-400 mb-2">※オッズ連動（高配当ほど高ポイント）</p>
+            <div className="space-y-1.5 text-sm">
+              <div className="flex justify-between py-1 border-b border-gray-50">
+                <span className="text-gray-600">◎ 単勝的中</span>
+                <span className="font-bold text-red-500">20〜250P</span>
               </div>
-              <div className="flex justify-between py-1.5 border-b border-gray-50">
-                <span className="text-gray-600">1着的中（4〜5番人気）</span>
-                <span className="font-bold text-green-600">+80P</span>
+              <div className="flex justify-between py-1 border-b border-gray-50">
+                <span className="text-gray-600">○ 複勝的中</span>
+                <span className="font-bold text-blue-500">10〜60P</span>
               </div>
-              <div className="flex justify-between py-1.5 border-b border-gray-50">
-                <span className="text-gray-600">1着的中（10番人気〜）</span>
-                <span className="font-bold text-green-600">+300P</span>
+              <div className="flex justify-between py-1 border-b border-gray-50">
+                <span className="text-gray-600">🎫 馬連的中</span>
+                <span className="font-bold text-green-600">30〜280P</span>
               </div>
-              <div className="flex justify-between py-1.5 border-b border-gray-50">
-                <span className="text-gray-600">複勝的中（1頭あたり）</span>
-                <span className="font-bold text-blue-600">+20P</span>
+              <div className="flex justify-between py-1 border-b border-gray-50">
+                <span className="text-gray-600">🎟️ ワイド的中</span>
+                <span className="font-bold text-green-600">15〜90P</span>
               </div>
-              <div className="flex justify-between py-1.5 border-b border-gray-50">
-                <span className="text-gray-600">危険馬的中（1番人気）</span>
-                <span className="font-bold text-orange-600">+50P</span>
+              <div className="flex justify-between py-1 border-b border-gray-50">
+                <span className="text-gray-600">🎰 三連複的中</span>
+                <span className="font-bold text-purple-600">20〜300P</span>
               </div>
-              <div className="flex justify-between py-1.5 border-b border-gray-50">
-                <span className="text-gray-600">G1ボーナス（各的中）</span>
-                <span className="font-bold text-purple-600">+30P</span>
+              <div className="flex justify-between py-1 border-b border-gray-50">
+                <span className="text-gray-600">⚠️ 危険馬的中</span>
+                <span className="font-bold text-orange-500">10〜50P</span>
               </div>
-              <div className="flex justify-between py-1.5">
-                <span className="text-gray-600">完全的中ボーナス</span>
+              <div className="flex justify-between py-1">
+                <span className="text-gray-600">💎 完全的中ボーナス</span>
                 <span className="font-bold text-yellow-600">+200P</span>
               </div>
             </div>
