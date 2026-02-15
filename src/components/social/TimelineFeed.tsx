@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import TimelineItem from "./TimelineItem";
+import { useTheme } from "@/contexts/ThemeContext";
 
 type TimelineEntry = {
   type: string;
@@ -19,6 +20,7 @@ type TimelineEntry = {
 };
 
 export default function TimelineFeed() {
+  const { isDark } = useTheme();
   const [items, setItems] = useState<TimelineEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
@@ -53,18 +55,25 @@ export default function TimelineFeed() {
     { key: "comment", label: "💬 コメント" },
   ];
 
+  const tabActive = isDark ? "bg-amber-500 text-slate-900" : "bg-green-600 text-white";
+  const tabInactive = isDark 
+    ? "bg-slate-800 text-slate-300 border border-slate-700 hover:border-amber-500/50" 
+    : "bg-white text-gray-600 border border-gray-200 hover:border-green-300";
+  const cardBg = isDark ? "bg-slate-900" : "bg-white";
+  const textMuted = isDark ? "text-slate-400" : "text-gray-400";
+  const btnStyle = isDark 
+    ? "bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700" 
+    : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-200";
+
   return (
     <div>
-      {/* フィルター */}
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-4 overflow-x-auto pb-1 scrollbar-hide">
         {filters.map((f) => (
           <button
             key={f.key}
             onClick={() => setFilter(f.key)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-              filter === f.key
-                ? "bg-green-600 text-white"
-                : "bg-white text-gray-600 border border-gray-200 hover:border-green-300"
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
+              filter === f.key ? tabActive : tabInactive
             }`}
           >
             {f.label}
@@ -72,32 +81,29 @@ export default function TimelineFeed() {
         ))}
       </div>
 
-      {/* アイテムリスト */}
       {loading ? (
-        <div className="bg-white rounded-xl p-8 text-center text-gray-400 text-sm">
+        <div className={`${cardBg} rounded-xl p-8 text-center text-sm ${textMuted}`}>
           読み込み中...
         </div>
       ) : items.length === 0 ? (
-        <div className="bg-white rounded-xl p-8 text-center text-gray-400 text-sm">
-          まだアクティビティがありません
+        <div className={`${cardBg} rounded-xl p-8 text-center text-sm ${textMuted}`}>
+          <div className="text-3xl mb-2">📭</div>
+          まだ投稿がありません
         </div>
       ) : (
         <div className="space-y-3">
           {items.map((item) => (
-            <TimelineItem key={item.id} item={item} />
+            <TimelineItem key={`${item.type}-${item.id}`} item={item} />
           ))}
-        </div>
-      )}
 
-      {/* もっと読む */}
-      {nextCursor && (
-        <div className="text-center mt-4">
-          <button
-            onClick={() => fetchItems(nextCursor)}
-            className="text-sm text-green-600 hover:underline"
-          >
-            もっと読む
-          </button>
+          {nextCursor && (
+            <button
+              onClick={() => fetchItems(nextCursor)}
+              className={`w-full py-3 rounded-xl text-sm font-medium transition-colors ${btnStyle}`}
+            >
+              もっと見る
+            </button>
+          )}
         </div>
       )}
     </div>

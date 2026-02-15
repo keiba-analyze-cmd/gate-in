@@ -39,13 +39,11 @@ export default async function HomePage() {
   const venueMap = new Map<string, any>();
   for (const race of openRaces ?? []) {
     if (!race.post_time || !race.course_name) continue;
-    // まだ締切前のレースを優先（発走2分前）
     const deadline = new Date(race.post_time).getTime() - 2 * 60 * 1000;
     const existing = venueMap.get(race.course_name);
     if (!existing) {
       venueMap.set(race.course_name, race);
     } else {
-      // まだ締切前のものがあればそちらを優先、なければ最も近いものを保持
       const existingDeadline = new Date(existing.post_time).getTime() - 2 * 60 * 1000;
       const existingOpen = now.getTime() < existingDeadline;
       const thisOpen = now.getTime() < deadline;
@@ -59,9 +57,7 @@ export default async function HomePage() {
   for (const [course_name, race] of venueMap) {
     venueNextRaces.push({ course_name, race });
   }
-  // 発走時間順にソート
   venueNextRaces.sort((a, b) => new Date(a.race.post_time).getTime() - new Date(b.race.post_time).getTime());
-
 
   // 最近の結果
   const { data: recentResults } = await supabase
@@ -71,9 +67,6 @@ export default async function HomePage() {
     .order("race_date", { ascending: false })
     .limit(3);
 
-  
-
-
   // 未ログイン → ランディングページ
   if (!user) {
     return <LandingHero openRaces={openRaces ?? []} />;
@@ -81,7 +74,7 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-5">
-      {/* ====== 🔥 今週の重賞 ====== */}
+      {/* ====== 🏆 今週の重賞 ====== */}
       {featuredRaces.length > 0 && (
         <section>
           <h2 className="text-sm font-black text-gray-900 mb-3">🏆 今週の重賞</h2>
@@ -143,6 +136,10 @@ export default async function HomePage() {
           </div>
         </div>
       </Link>
+
+      {/* ====== 🥇 週間MVP ====== */}
+      <WeeklyMVPBanner />
+
       {/* ====== 🔥 投票受付中のレース（競馬場別） ====== */}
       {venueNextRaces.length > 0 && (
         <section>
@@ -160,6 +157,25 @@ export default async function HomePage() {
       <section>
         <FollowingVotes />
       </section>
+
+      {/* ====== 📚 競馬道場への誘導 ====== */}
+      <Link href="/dojo" className="block">
+        <div className="rounded-2xl overflow-hidden border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 px-5 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">📚</span>
+              <div>
+                <div className="text-sm font-black text-gray-900">競馬道場</div>
+                <div className="text-xs text-gray-600 font-medium">クイズ＆記事で競馬力UP！</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">NEW</span>
+              <span className="text-amber-600 font-bold">→</span>
+            </div>
+          </div>
+        </div>
+      </Link>
 
       {/* ====== 📊 最近の結果 ====== */}
       {recentResults && recentResults.length > 0 && (

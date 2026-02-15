@@ -4,8 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { getRank } from "@/lib/constants/ranks";
-import LikeButton from "./LikeButton";
-import CopyVoteButton from "./CopyVoteButton";
+import { useTheme } from "@/contexts/ThemeContext";
 
 type Pick = { pick_type: string; post_number: number; horse_name: string };
 
@@ -34,14 +33,8 @@ const SENTIMENT_LABEL: Record<string, string> = {
   very_positive: "🔥 超注目", positive: "👍 推し", negative: "🤔 微妙", very_negative: "⚠️ 危険",
 };
 
-const PICK_STYLE: Record<string, { mark: string; bg: string; text: string }> = {
-  win: { mark: "◎", bg: "bg-red-100", text: "text-red-700" },
-  place: { mark: "○", bg: "bg-blue-100", text: "text-blue-700" },
-  back: { mark: "△", bg: "bg-yellow-100", text: "text-yellow-700" },
-  danger: { mark: "⚠️", bg: "bg-gray-200", text: "text-gray-700" },
-};
-
 export default function TimelineItem({ item }: Props) {
+  const { isDark } = useTheme();
   const rank = item.user ? getRank(item.user.rank_id) : null;
   const timeAgo = getTimeAgo(item.timestamp);
   const [showReply, setShowReply] = useState(false);
@@ -50,11 +43,30 @@ export default function TimelineItem({ item }: Props) {
   const [replySent, setReplySent] = useState(false);
 
   const isHit = item.status === "settled_hit";
+
+  // ダークモード対応スタイル
+  const cardBg = isDark ? "bg-slate-900 border-slate-700" : "bg-white border-gray-100";
+  const textPrimary = isDark ? "text-slate-100" : "text-gray-800";
+  const textSecondary = isDark ? "text-slate-400" : "text-gray-500";
+  const textMuted = isDark ? "text-slate-500" : "text-gray-300";
+  const hoverColor = isDark ? "hover:text-amber-400" : "hover:text-green-600";
+  const avatarBg = isDark ? "bg-slate-700" : "bg-green-100";
+  const borderColor = isDark ? "border-slate-700" : "border-gray-50";
+  const inputBg = isDark ? "bg-slate-800 border-slate-600 text-slate-100" : "border-gray-200";
+  const btnBg = isDark ? "bg-amber-500 hover:bg-amber-600" : "bg-green-600 hover:bg-green-700";
+
   const gradeColor = item.race?.grade
-    ? item.race.grade === "G1" ? "bg-yellow-100 text-yellow-800"
-    : item.race.grade === "G2" ? "bg-red-100 text-red-700"
-    : item.race.grade === "G3" ? "bg-green-100 text-green-700"
-    : "bg-gray-100 text-gray-600" : "";
+    ? item.race.grade === "G1" ? (isDark ? "bg-yellow-500/20 text-yellow-400" : "bg-yellow-100 text-yellow-800")
+    : item.race.grade === "G2" ? (isDark ? "bg-red-500/20 text-red-400" : "bg-red-100 text-red-700")
+    : item.race.grade === "G3" ? (isDark ? "bg-green-500/20 text-green-400" : "bg-green-100 text-green-700")
+    : (isDark ? "bg-slate-700 text-slate-300" : "bg-gray-100 text-gray-600") : "";
+
+  const PICK_STYLE: Record<string, { mark: string; bg: string; text: string }> = {
+    win: { mark: "◎", bg: isDark ? "bg-red-500/20" : "bg-red-100", text: isDark ? "text-red-400" : "text-red-700" },
+    place: { mark: "○", bg: isDark ? "bg-blue-500/20" : "bg-blue-100", text: isDark ? "text-blue-400" : "text-blue-700" },
+    back: { mark: "△", bg: isDark ? "bg-yellow-500/20" : "bg-yellow-100", text: isDark ? "text-yellow-400" : "text-yellow-700" },
+    danger: { mark: "⚠️", bg: isDark ? "bg-slate-700" : "bg-gray-200", text: isDark ? "text-slate-300" : "text-gray-700" },
+  };
 
   const handleReply = async () => {
     if (!replyText.trim() || sending) return;
@@ -69,60 +81,63 @@ export default function TimelineItem({ item }: Props) {
     setSending(false);
   };
 
+  const renderPicks = () => {
+    if (!item.picks || item.picks.length === 0) return null;
+    const nonBackPicks = item.picks.filter(p => p.pick_type !== "back");
+    const backPicks = item.picks.filter(p => p.pick_type === "back");
+    return (
+      <div className="flex flex-wrap gap-1.5">
+        {nonBackPicks.map((pick, i) => {
+          const style = PICK_STYLE[pick.pick_type] ?? PICK_STYLE.win;
+          return (
+            <span key={i} className={`${style.bg} ${style.text} text-xs px-2 py-1 rounded-full font-medium`}>
+              {style.mark} {pick.post_number} {pick.horse_name}
+            </span>
+          );
+        })}
+        {backPicks.length > 0 && (
+          <span className={`${PICK_STYLE.back.bg} ${PICK_STYLE.back.text} text-xs px-2 py-1 rounded-full font-medium`}>
+            △ {backPicks.map(p => p.post_number).join(",")}
+          </span>
+        )}
+      </div>
+    );
+  };
+
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-4">
+    <div className={`rounded-xl border p-4 ${cardBg}`}>
       {/* ヘッダー */}
       <div className="flex items-center gap-2 mb-2">
         <Link href={`/users/${item.user_id}`} className="flex items-center gap-2 group">
           {item.user?.avatar_url ? (
             <Image width={32} height={32} src={item.user.avatar_url} alt="" className="w-8 h-8 rounded-full" unoptimized />
           ) : (
-            <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-sm">🏇</div>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${avatarBg}`}>🏇</div>
           )}
-          <span className="text-sm font-bold text-gray-800 group-hover:text-green-600">{item.user?.display_name ?? "匿名"}</span>
+          <span className={`text-sm font-bold ${textPrimary} group-${hoverColor}`}>{item.user?.display_name ?? "匿名"}</span>
         </Link>
-        {rank && <span className="text-xs text-gray-400">{rank.icon}</span>}
-        <span className="text-xs text-gray-300 ml-auto">{timeAgo}</span>
+        {rank && <span className={`text-xs ${textMuted}`}>{rank.icon}</span>}
+        <span className={`text-xs ml-auto ${textMuted}`}>{timeAgo}</span>
       </div>
 
       {/* 投票した（pending） */}
       {item.type === "vote_submitted" && (
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs text-gray-500">🗳 投票しました</span>
+            <span className={`text-xs ${textSecondary}`}>🗳 投票しました</span>
             {item.race?.grade && (
               <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${gradeColor}`}>{item.race.grade}</span>
             )}
-            <Link href={`/races/${item.race_id}`} className="text-sm font-bold text-gray-800 hover:text-green-600">
+            <Link href={`/races/${item.race_id}`} className={`text-sm font-bold ${textPrimary} ${hoverColor}`}>
               {item.race?.name}
             </Link>
             {item.race?.race_date && (
-              <span className="text-[11px] text-gray-400">
+              <span className={`text-[11px] ${textMuted}`}>
                 {item.race.course_name}{item.race.race_number ? ` ${item.race.race_number}R` : ""}
               </span>
             )}
           </div>
-          {item.picks && item.picks.length > 0 && (() => {
-            const nonBackPicks = item.picks.filter(p => p.pick_type !== "back");
-            const backPicks = item.picks.filter(p => p.pick_type === "back");
-            return (
-              <div className="flex flex-wrap gap-1.5">
-                {nonBackPicks.map((pick, i) => {
-                  const style = PICK_STYLE[pick.pick_type] ?? PICK_STYLE.win;
-                  return (
-                    <span key={i} className={`${style.bg} ${style.text} text-xs px-2 py-1 rounded-full font-medium`}>
-                      {style.mark} {pick.post_number} {pick.horse_name}
-                    </span>
-                  );
-                })}
-                {backPicks.length > 0 && (
-                  <span className="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full font-medium">
-                    △ {backPicks.map(p => p.post_number).join(",")}
-                  </span>
-                )}
-              </div>
-            );
-          })()}
+          {renderPicks()}
         </div>
       )}
 
@@ -130,43 +145,23 @@ export default function TimelineItem({ item }: Props) {
       {item.type === "vote_result" && (
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs text-gray-500">{isHit ? "🎯 的中！" : "📊 結果"}</span>
+            <span className={`text-xs ${textSecondary}`}>{isHit ? "🎯 的中！" : "📊 結果"}</span>
             {item.race?.grade && (
               <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${gradeColor}`}>{item.race.grade}</span>
             )}
-            <Link href={`/races/${item.race_id}`} className="text-sm font-bold text-gray-800 hover:text-green-600">{item.race?.name}</Link>
+            <Link href={`/races/${item.race_id}`} className={`text-sm font-bold ${textPrimary} ${hoverColor}`}>{item.race?.name}</Link>
             {item.race?.race_date && (
-              <span className="text-[11px] text-gray-400">
+              <span className={`text-[11px] ${textMuted}`}>
                 {item.race.course_name}{item.race.race_number ? ` ${item.race.race_number}R` : ""}
               </span>
             )}
           </div>
           <div className="flex items-center gap-2 mb-2">
-            {(item.earned_points ?? 0) > 0 && <span className="text-sm font-bold text-green-600">+{item.earned_points} P</span>}
-            {item.is_perfect && <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">💎 完全的中</span>}
-            {!isHit && <span className="text-xs text-gray-400">ハズレ</span>}
+            {(item.earned_points ?? 0) > 0 && <span className={`text-sm font-bold ${isDark ? "text-green-400" : "text-green-600"}`}>+{item.earned_points} P</span>}
+            {item.is_perfect && <span className={`text-xs px-2 py-0.5 rounded-full ${isDark ? "bg-yellow-500/20 text-yellow-400" : "bg-yellow-100 text-yellow-700"}`}>💎 完全的中</span>}
+            {!isHit && <span className={`text-xs ${textMuted}`}>ハズレ</span>}
           </div>
-          {item.picks && item.picks.length > 0 && (() => {
-            const nonBackPicks = item.picks.filter(p => p.pick_type !== "back");
-            const backPicks = item.picks.filter(p => p.pick_type === "back");
-            return (
-              <div className="flex flex-wrap gap-1.5">
-                {nonBackPicks.map((pick, i) => {
-                  const style = PICK_STYLE[pick.pick_type] ?? PICK_STYLE.win;
-                  return (
-                    <span key={i} className={`${style.bg} ${style.text} text-xs px-2 py-1 rounded-full font-medium`}>
-                      {style.mark} {pick.post_number} {pick.horse_name}
-                    </span>
-                  );
-                })}
-                {backPicks.length > 0 && (
-                  <span className="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full font-medium">
-                    △ {backPicks.map(p => p.post_number).join(",")}
-                  </span>
-                )}
-              </div>
-            );
-          })()}
+          {renderPicks()}
         </div>
       )}
 
@@ -174,42 +169,42 @@ export default function TimelineItem({ item }: Props) {
       {item.type === "comment" && (
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs text-gray-500">💬 コメント</span>
+            <span className={`text-xs ${textSecondary}`}>💬 コメント</span>
             {item.race?.grade && (
               <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${gradeColor}`}>{item.race.grade}</span>
             )}
-            <Link href={`/races/${item.race_id}`} className="text-sm font-bold text-gray-800 hover:text-green-600">{item.race?.name}</Link>
+            <Link href={`/races/${item.race_id}`} className={`text-sm font-bold ${textPrimary} ${hoverColor}`}>{item.race?.name}</Link>
             {item.race?.race_date && (
-              <span className="text-[11px] text-gray-400">
+              <span className={`text-[11px] ${textMuted}`}>
                 {item.race.course_name}{item.race.race_number ? ` ${item.race.race_number}R` : ""}
               </span>
             )}
-            {item.sentiment && <span className="text-xs text-gray-400">{SENTIMENT_LABEL[item.sentiment]}</span>}
+            {item.sentiment && <span className={`text-xs ${textMuted}`}>{SENTIMENT_LABEL[item.sentiment]}</span>}
           </div>
-          <p className="text-sm text-gray-600 line-clamp-2">{item.body}</p>
+          <p className={`text-sm line-clamp-2 ${isDark ? "text-slate-300" : "text-gray-600"}`}>{item.body}</p>
         </div>
       )}
 
-      {/* アクションバー（コメント・投票結果共通） */}
+      {/* アクションバー */}
       {(item.type === "comment" || item.type === "vote_result" || item.type === "vote_submitted") && (
-        <div className="mt-2 pt-2 border-t border-gray-50 flex items-center gap-3">
+        <div className={`mt-2 pt-2 border-t flex items-center gap-3 ${borderColor}`}>
           {item.type === "comment" && (
             <button onClick={() => setShowReply(!showReply)}
-              className="text-xs text-gray-400 hover:text-green-600 transition-colors flex items-center gap-1">💬 返信</button>
+              className={`text-xs transition-colors flex items-center gap-1 ${textMuted} ${hoverColor}`}>💬 返信</button>
           )}
           <Link href={`/races/${item.race_id}`}
-            className="text-xs text-gray-400 hover:text-green-600 transition-colors flex items-center gap-1">📄 レースを見る</Link>
-          {replySent && <span className="text-xs text-green-500 ml-auto">✅ 返信しました</span>}
+            className={`text-xs transition-colors flex items-center gap-1 ${textMuted} ${hoverColor}`}>📄 レースを見る</Link>
+          {replySent && <span className={`text-xs ml-auto ${isDark ? "text-green-400" : "text-green-500"}`}>✅ 返信しました</span>}
         </div>
       )}
 
       {showReply && (
         <div className="mt-3 flex gap-2">
           <input type="text" value={replyText} onChange={(e) => setReplyText(e.target.value)} placeholder="返信を入力..." maxLength={500}
-            className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className={`flex-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:border-transparent ${inputBg} ${isDark ? "focus:ring-amber-500" : "focus:ring-green-500"}`}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleReply(); } }} />
           <button onClick={handleReply} disabled={!replyText.trim() || sending}
-            className="px-4 py-2 bg-green-600 text-white text-sm font-bold rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors shrink-0">
+            className={`px-4 py-2 text-white text-sm font-bold rounded-lg disabled:opacity-50 transition-colors shrink-0 ${btnBg}`}>
             {sending ? "..." : "送信"}</button>
         </div>
       )}

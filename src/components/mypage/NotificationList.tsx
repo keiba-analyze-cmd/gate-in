@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTheme } from "@/contexts/ThemeContext";
 
 type Notification = {
   id: string;
@@ -14,6 +15,7 @@ type Notification = {
 };
 
 export default function NotificationList() {
+  const { isDark } = useTheme();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -51,52 +53,50 @@ export default function NotificationList() {
     system: "📢",
   };
 
+  const cardBg = isDark ? "bg-slate-900 border-slate-700" : "bg-white border-gray-100";
+  const textPrimary = isDark ? "text-slate-100" : "text-gray-900";
+  const textSecondary = isDark ? "text-slate-400" : "text-gray-500";
+  const textMuted = isDark ? "text-slate-500" : "text-gray-400";
+  const hoverBg = isDark ? "hover:bg-slate-800" : "hover:bg-gray-50";
+  const borderColor = isDark ? "border-slate-700" : "border-gray-50";
+  const unreadBg = isDark ? "bg-amber-500/10" : "bg-green-50";
+  const linkColor = isDark ? "text-amber-400 hover:underline" : "text-green-600 hover:underline";
+
   if (loading) {
-    return <div className="bg-white rounded-xl p-8 text-center text-gray-400 text-sm">読み込み中...</div>;
+    return <div className={`${cardBg} rounded-xl p-8 text-center text-sm ${textMuted}`}>読み込み中...</div>;
   }
 
   return (
     <div>
       {unreadCount > 0 && (
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm text-gray-500">{unreadCount}件の未読</span>
-          <button
-            onClick={markAllRead}
-            className="text-xs text-green-600 hover:underline"
-          >
+          <span className={`text-sm ${textSecondary}`}>{unreadCount}件の未読</span>
+          <button onClick={markAllRead} className={`text-xs ${linkColor}`}>
             すべて既読にする
           </button>
         </div>
       )}
 
-      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+      <div className={`rounded-2xl border overflow-hidden ${cardBg}`}>
         {notifications.length === 0 ? (
-          <div className="p-8 text-center text-gray-400 text-sm">
+          <div className={`p-8 text-center text-sm ${textMuted}`}>
             通知はまだありません
           </div>
         ) : (
           notifications.map((notif) => {
             const content = (
-              <div className={`flex items-start gap-3 px-5 py-4 border-b border-gray-50 last:border-0 transition-colors ${
-                !notif.is_read ? "bg-green-50/50" : "hover:bg-gray-50"
-              }`}>
-                <span className="text-xl mt-0.5">{typeIcon[notif.type] ?? "📌"}</span>
+              <div className={`flex items-start gap-3 px-5 py-4 border-b last:border-0 transition-colors ${borderColor} ${hoverBg} ${!notif.is_read ? unreadBg : ""}`}>
+                <span className="text-xl shrink-0">{typeIcon[notif.type] ?? "📌"}</span>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-gray-800">{notif.title}</span>
-                    {!notif.is_read && (
-                      <span className="w-2 h-2 bg-green-500 rounded-full shrink-0" />
-                    )}
+                  <div className={`text-sm font-bold ${textPrimary}`}>{notif.title}</div>
+                  {notif.body && <div className={`text-xs mt-0.5 ${textSecondary}`}>{notif.body}</div>}
+                  <div className={`text-[10px] mt-1 ${textMuted}`}>
+                    {new Date(notif.created_at).toLocaleString("ja-JP", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                   </div>
-                  {notif.body && (
-                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{notif.body}</p>
-                  )}
-                  <span className="text-xs text-gray-300 mt-1 block">
-                    {new Date(notif.created_at).toLocaleDateString("ja-JP", {
-                      month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
-                    })}
-                  </span>
                 </div>
+                {!notif.is_read && (
+                  <span className={`w-2 h-2 rounded-full shrink-0 mt-2 ${isDark ? "bg-amber-500" : "bg-green-500"}`} />
+                )}
               </div>
             );
 

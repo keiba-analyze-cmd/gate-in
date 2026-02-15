@@ -10,6 +10,16 @@
     --gold-light: #fefce8;
   }
 
+  /* ダークモード用CSS変数 */
+  .dark {
+    --primary: #f59e0b;
+    --primary-light: rgba(245, 158, 11, 0.1);
+    --accent: #f59e0b;
+    --accent-light: rgba(245, 158, 11, 0.1);
+    --gold: #fbbf24;
+    --gold-light: rgba(251, 191, 36, 0.1);
+  }
+
   html {
     -webkit-tap-highlight-color: transparent;
   }
@@ -22,11 +32,19 @@
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
+  /* ダークモード時のbody */
+  .dark body {
+    background-color: #020617;
+    color: #f1f5f9;
+  }
+
   ::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 99px; }
+
+  .dark ::-webkit-scrollbar-thumb { background: #475569; }
 }
 
-/* カスタムユーティリティ（@apply を使わない） */
+/* カスタムユーティリティ */
 .font-num {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
@@ -36,6 +54,11 @@
   padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
 }
 
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* アニメーション */
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out;
 }
@@ -49,6 +72,73 @@
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
 .animate-slide-up {
   animation: slide-up 0.3s ease-out;
+}
+
+/* 5段階的中ランク - グラデーション */
+.hit-rank-s {
+  background: linear-gradient(135deg, #fef3c7 0%, #fcd34d 50%, #f59e0b 100%);
+  background-size: 200% 200%;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ダークモード用のカードホバー */
+.dark .card-hover:hover {
+  background-color: rgba(51, 65, 85, 0.5);
+  border-color: #475569;
+}
+
+/* テーマトグルスイッチ */
+.theme-toggle {
+  position: relative;
+  width: 56px;
+  height: 28px;
+  border-radius: 9999px;
+  transition: background-color 0.2s;
+}
+
+.theme-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 9999px;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.dark .theme-toggle-thumb {
+  transform: translateX(28px);
+}
+
+/* スクロールバー非表示（横スクロール用） */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* グレードバッジのグラデーション */
+.grade-g1 {
+  background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+}
+
+.grade-g2 {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+}
+
+.grade-g3 {
+  background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
 }

@@ -39,7 +39,7 @@ import CookieConsent from "@/components/CookieConsent";
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
-      
+      <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -54,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             }),
           }}
         />
+      </head>
       <body>
         <StagingBanner />
         <GoogleAnalytics />

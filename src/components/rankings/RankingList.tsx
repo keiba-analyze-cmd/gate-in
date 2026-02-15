@@ -1,131 +1,99 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { getRank } from "@/lib/constants/ranks";
+import { useTheme } from "@/contexts/ThemeContext";
 
-type RankingEntry = {
-  rank: number;
-  id: string;
+type RankingUser = {
+  user_id: string;
   display_name: string;
   avatar_url: string | null;
   rank_id: string;
-  cumulative_points?: number;
+  points?: number;
   monthly_points?: number;
-  total_votes?: number;
+  cumulative_points?: number;
   win_hits?: number;
-  hit_rate?: number;
-  best_streak?: number;
-  current_streak?: number;
+  total_votes?: number;
 };
 
 type Props = {
-  rankings: RankingEntry[];
-  type: string;
+  rankings: RankingUser[];
   currentUserId: string;
+  type: string;
 };
 
-const MEDAL = ["🥇", "🥈", "🥉"];
+export default function RankingList({ rankings, currentUserId, type }: Props) {
+  const { isDark } = useTheme();
 
-export default function RankingList({ rankings, type, currentUserId }: Props) {
-  // 上位3名を特別表示
-  const top3 = rankings.slice(0, 3);
-  const rest = rankings.slice(3);
+  const cardBg = isDark ? "bg-slate-900 border-slate-700" : "bg-white border-gray-100";
+  const textPrimary = isDark ? "text-slate-100" : "text-gray-900";
+  const textSecondary = isDark ? "text-slate-400" : "text-gray-500";
+  const hoverBg = isDark ? "hover:bg-slate-800" : "hover:bg-gray-50";
+  const borderColor = isDark ? "border-slate-700" : "border-gray-50";
+  const highlightBg = isDark ? "bg-amber-500/10 border-amber-500/30" : "bg-green-50 border-green-200";
+
+  const getValue = (user: RankingUser) => {
+    if (type === "monthly") return user.monthly_points ?? user.points ?? 0;
+    if (type === "cumulative") return user.cumulative_points ?? user.points ?? 0;
+    if (type === "hit_rate") return user.win_hits ?? 0;
+    return user.points ?? 0;
+  };
+
+  const getLabel = (user: RankingUser) => {
+    if (type === "hit_rate") {
+      const rate = user.total_votes ? Math.round((user.win_hits! / user.total_votes) * 100) : 0;
+      return `${user.win_hits}回 (${rate}%)`;
+    }
+    return `${getValue(user).toLocaleString()}P`;
+  };
+
+  const getMedalEmoji = (index: number) => {
+    if (index === 0) return "🥇";
+    if (index === 1) return "🥈";
+    if (index === 2) return "🥉";
+    return null;
+  };
 
   return (
-    <div className="space-y-3">
-      {/* 🏆 トップ3 */}
-      {top3.length > 0 && (
-        <div className="grid grid-cols-3 gap-2">
-          {[1, 0, 2].map((idx) => {
-            const entry = top3[idx];
-            if (!entry) return <div key={idx} />;
-            const userRank = getRank(entry.rank_id);
-            const isMe = entry.id === currentUserId;
-            return (
-              <Link
-                key={entry.id}
-                href={`/users/${entry.id}`}
-                className={`bg-white rounded-2xl border p-4 text-center transition-all hover:shadow-md ${
-                  idx === 0 ? "border-yellow-300 bg-yellow-50/50 -mt-2 pb-6" :
-                  idx === 1 ? "border-gray-200" :
-                  "border-orange-200 bg-orange-50/30"
-                } ${isMe ? "ring-2 ring-green-400" : ""}`}
-              >
-                <div className="text-2xl mb-1">{MEDAL[entry.rank - 1]}</div>
-                {entry.avatar_url ? (
-                  <img src={entry.avatar_url} alt="" className={`mx-auto rounded-full mb-2 ${idx === 0 ? "w-16 h-16" : "w-12 h-12"}`} />
-                ) : (
-                  <div className={`mx-auto rounded-full bg-green-100 flex items-center justify-center mb-2 ${idx === 0 ? "w-16 h-16 text-2xl" : "w-12 h-12 text-lg"}`}>🏇</div>
-                )}
-                <div className="text-sm font-bold text-gray-800 truncate">{entry.display_name}</div>
-                <div className="text-xs text-gray-400">{userRank.icon} {userRank.name}</div>
-                <div className="text-lg font-bold text-green-600 mt-1">
-                  {getValueDisplay(entry, type)}
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      )}
+    <div className={`rounded-2xl border overflow-hidden ${cardBg}`}>
+      {rankings.map((user, index) => {
+        const rank = getRank(user.rank_id);
+        const isMe = user.user_id === currentUserId;
+        const medal = getMedalEmoji(index);
 
-      {/* 4位以降 */}
-      {rest.length > 0 && (
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-          {rest.map((entry) => {
-            const userRank = getRank(entry.rank_id);
-            const isMe = entry.id === currentUserId;
-            return (
-              <Link
-                key={entry.id}
-                href={`/users/${entry.id}`}
-                className={`flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors ${
-                  isMe ? "bg-green-50/50" : ""
-                }`}
-              >
-                <span className={`w-8 text-center text-sm font-bold ${
-                  entry.rank <= 10 ? "text-green-600" : "text-gray-400"
-                }`}>
-                  {entry.rank}
-                </span>
-                {entry.avatar_url ? (
-                  <Image width={32} height={32} src={entry.avatar_url} alt="" className="w-9 h-9 rounded-full" unoptimized />
-                ) : (
-                  <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-sm">🏇</div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-bold text-gray-800 truncate">
-                    {entry.display_name}
-                    {isMe && <span className="text-xs text-green-600 ml-1">（あなた）</span>}
-                  </div>
-                  <div className="text-xs text-gray-400">{userRank.icon} {userRank.name}</div>
-                </div>
-                <div className="text-right shrink-0">
-                  <div className="text-sm font-bold text-green-600">
-                    {getValueDisplay(entry, type)}
-                  </div>
-                  {type !== "streak" && entry.hit_rate !== undefined && (
-                    <div className="text-xs text-gray-400">的中率 {entry.hit_rate}%</div>
-                  )}
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      )}
+        return (
+          <Link
+            key={user.user_id}
+            href={`/users/${user.user_id}`}
+            className={`flex items-center gap-3 px-4 py-3 border-b last:border-0 transition-colors ${borderColor} ${hoverBg} ${isMe ? highlightBg : ""}`}
+          >
+            <div className={`w-8 text-center font-black ${index < 3 ? "text-lg" : `text-sm ${textSecondary}`}`}>
+              {medal ?? index + 1}
+            </div>
+
+            {user.avatar_url ? (
+              <Image src={user.avatar_url} alt="" width={36} height={36} className="w-9 h-9 rounded-full" unoptimized />
+            ) : (
+              <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm ${isDark ? "bg-slate-700" : "bg-gray-100"}`}>
+                {rank.icon}
+              </div>
+            )}
+
+            <div className="flex-1 min-w-0">
+              <div className={`text-sm font-bold truncate ${textPrimary}`}>
+                {user.display_name}
+                {isMe && <span className={`ml-1 text-xs ${isDark ? "text-amber-400" : "text-green-600"}`}>👈 あなた</span>}
+              </div>
+              <div className={`text-xs ${textSecondary}`}>{rank.icon} {rank.name}</div>
+            </div>
+
+            <div className={`text-sm font-black ${isDark ? "text-amber-400" : "text-green-600"}`}>
+              {getLabel(user)}
+            </div>
+          </Link>
+        );
+      })}
     </div>
   );
-}
-
-function getValueDisplay(entry: any, type: string): string {
-  switch (type) {
-    case "monthly":
-      return `${entry.monthly_points?.toLocaleString() ?? 0} P`;
-    case "cumulative":
-      return `${entry.cumulative_points?.toLocaleString() ?? 0} P`;
-    case "hit_rate":
-      return `${entry.win_hits ?? 0}回的中`;
-    case "streak":
-      return `${entry.best_streak ?? 0}連続`;
-    default:
-      return "";
-  }
 }

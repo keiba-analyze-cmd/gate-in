@@ -2,40 +2,33 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const NAV_ITEMS = [
-  { href: "/", icon: "🏠", label: "トップ", match: /^\/$/ },
-  { href: "/races", icon: "🏇", label: "レース", match: /^\/races/ },
-  { href: "/rankings", icon: "🏆", label: "ランキング", match: /^\/(rankings|contest)/ },
-  { href: "/timeline", icon: "📰", label: "TL", match: /^\/timeline/ },
-  { href: "/mypage", icon: "👤", label: "マイ", match: /^\/(mypage|users|notifications)/ },
+  { id: 'home', href: '/', icon: '🏠', label: 'トップ', match: /^\/$/ },
+  { id: 'races', href: '/races', icon: '🏇', label: 'レース', match: /^\/races/ },
+  { id: 'timeline', href: '/timeline', icon: '📰', label: 'TL', match: /^\/timeline/ },
+  { id: 'dojo', href: '/dojo', icon: '📚', label: '道場', match: /^\/dojo/ },
+  { id: 'rankings', href: '/rankings', icon: '🏆', label: 'ランキング', match: /^\/(rankings|contest)/ },
 ];
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const { isDark } = useTheme();
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 safe-area-bottom">
+    <nav className={`md:hidden fixed bottom-0 left-0 right-0 z-50 border-t transition-colors ${isDark ? "bg-slate-900 border-slate-800" : "bg-white border-gray-200"} safe-area-bottom`}>
       <div className="flex">
         {NAV_ITEMS.map((item) => {
           const isActive = item.match.test(pathname);
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex-1 flex flex-col items-center py-1.5 transition-colors ${
-                isActive ? "text-green-600" : "text-gray-400"
-              }`}
-            >
+            <Link key={item.id} href={item.href} className={`flex-1 flex flex-col items-center py-1.5 transition-colors ${isActive ? (isDark ? "text-amber-400" : "text-green-600") : (isDark ? "text-slate-500" : "text-gray-400")}`}>
               <span className="text-lg leading-none">{item.icon}</span>
-              <span className={`text-[10px] mt-0.5 ${isActive ? "font-bold" : ""}`}>
-                {item.label}
-              </span>
+              <span className={`text-[10px] mt-0.5 ${isActive ? "font-bold" : ""}`}>{item.label}</span>
             </Link>
           );
         })}
       </div>
-      {/* iPhoneのSafeArea対応 */}
       <div className="h-[env(safe-area-inset-bottom)]" />
     </nav>
   );

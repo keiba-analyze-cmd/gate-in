@@ -1,5 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import RaceCardCountdown from "./RaceCardCountdown";
+import { calculateHitRank, getHitRankStyle, HIT_RANKS, type HitRank } from "@/lib/constants/hit-ranks";
+import { useTheme } from "@/contexts/ThemeContext";
+
+type VotePick = {
+  pick_type: string;
+  is_hit: boolean | null;
+};
 
 type Props = {
   race: {
@@ -18,6 +27,11 @@ type Props = {
   };
   voted?: boolean;
   voteResult?: "none" | "pending" | "hit" | "miss";
+  vote?: {
+    status: string;
+    is_perfect?: boolean;
+    vote_picks?: VotePick[];
+  } | null;
   isDeadlinePassed?: boolean;
 };
 
@@ -29,59 +43,97 @@ const GRADE_STYLES: Record<string, { bg: string; text: string }> = {
   L: { bg: "bg-blue-600", text: "text-white" },
 };
 
-export default function RaceCard({ race, voted, voteResult = "none", isDeadlinePassed }: Props) {
+export default function RaceCard({ race, voted, voteResult = "none", vote, isDeadlinePassed }: Props) {
+  const { isDark } = useTheme();
   const grade = race.grade ? GRADE_STYLES[race.grade] ?? { bg: "bg-gray-500", text: "text-white" } : null;
   const isFinished = race.status === "finished";
 
+  // 5段階的中ランクを計算
+  let hitRank: HitRank = null;
+  if (isFinished && vote) {
+    hitRank = calculateHitRank(vote);
+  } else if (isFinished && voteResult !== "none") {
+    if (voteResult === "hit") hitRank = "A";
+    else if (voteResult === "miss") hitRank = "D";
+  }
+
+  const rankConfig = hitRank ? HIT_RANKS[hitRank] : null;
+
   // ステータスラベル
   const statusInfo = isFinished
-    ? { label: "確定", color: "text-gray-500 font-bold" }
+    ? { label: "確定", color: isDark ? "text-slate-400 font-bold" : "text-gray-500 font-bold" }
     : isDeadlinePassed
-    ? { label: "締切", color: "text-orange-500 font-bold" }
+    ? { label: "締切", color: isDark ? "text-orange-400 font-bold" : "text-orange-500 font-bold" }
     : race.status === "voting_open"
-    ? { label: "受付中", color: "text-green-600 font-black" }
-    : { label: "締切", color: "text-yellow-600 font-bold" };
+    ? { label: "受付中", color: isDark ? "text-green-400 font-black" : "text-green-600 font-black" }
+    : { label: "締切", color: isDark ? "text-yellow-400 font-bold" : "text-yellow-600 font-bold" };
 
-  // 結果確定済みレースのカード色
-  const cardStyle = isFinished
-    ? voteResult === "hit"
-      ? "border-green-300 bg-green-50/60"
-      : voteResult === "miss"
-      ? "border-gray-200 bg-gray-50/80"
-      : "border-gray-200 bg-gray-50/50"
-    : "border-gray-200 bg-white";
+  // カードスタイル（5段階色分け + ダークモード）
+  const getCardStyle = () => {
+    if (!isFinished) {
+      return isDark ? "border-slate-700 bg-slate-900" : "border-gray-200 bg-white";
+    }
+    if (!voted) {
+      return isDark ? "border-slate-700 bg-slate-900/50" : "border-gray-200 bg-gray-50/50";
+    }
+    
+    if (hitRank) {
+      const style = getHitRankStyle(hitRank, isDark, true);
+      return `${style.border} ${style.bg}`;
+    }
+    
+    return isDark ? "border-slate-700 bg-slate-900/50" : "border-gray-200 bg-gray-50/50";
+  };
 
-  // 結果バッジ
-  const resultBadge = isFinished
-    ? voteResult === "hit"
-      ? { label: "🎯 的中", color: "text-green-600" }
-      : voteResult === "miss"
-      ? { label: "ハズレ", color: "text-gray-400" }
-      : voteResult === "none" && !voted
-      ? { label: "未投票", color: "text-gray-300" }
-      : null
-    : null;
+  // 結果バッジ（5段階表示）
+  const renderResultBadge = () => {
+    if (!isFinished) return null;
+    
+    if (!voted) {
+      return <span className={`text-[10px] font-medium ${isDark ? "text-slate-500" : "text-gray-300"}`}>未投票</span>;
+    }
+
+    if (rankConfig) {
+      const badgeBg = isDark ? rankConfig.darkBadgeBg : rankConfig.badgeBg;
+      const badgeText = isDark ? rankConfig.darkBadgeText : rankConfig.badgeText;
+      return (
+        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${badgeBg} ${badgeText}`}>
+          {rankConfig.emoji} {rankConfig.name}
+        </span>
+      );
+    }
+
+    return null;
+  };
+
+  const textPrimary = isDark ? "text-slate-100" : "text-gray-900";
+  const textSecondary = isDark ? "text-slate-400" : "text-gray-500";
 
   return (
     <Link href={`/races/${race.id}`}
-      className={`rounded-2xl border flex items-center gap-3 px-4 py-3 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer relative ${cardStyle}`}>
+      className={`rounded-2xl border flex items-center gap-3 px-4 py-3 hover:shadow-md transition-all cursor-pointer relative ${getCardStyle()} ${isDark ? "hover:border-slate-600" : "hover:border-gray-300"}`}>
 
       {/* 的中マーク */}
-      {voteResult === "hit" && (
+      {hitRank === "S" && (
+        <span className="absolute -top-2 -right-1 bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm rotate-[3deg] z-10">
+          🎊 パーフェクト!
+        </span>
+      )}
+      {hitRank === "A" && (
         <span className="absolute -top-2 -right-1 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm rotate-[3deg] z-10">
           🎯 的中!
         </span>
       )}
 
       {voted && !isFinished && (
-        <span className="absolute -top-2 -left-1 bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm rotate-[-3deg] z-10">
+        <span className={`absolute -top-2 -left-1 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm rotate-[-3deg] z-10 ${isDark ? "bg-amber-500" : "bg-green-600"}`}>
           ✅ 投票済
         </span>
       )}
 
       {/* ハズレの左ドット */}
-      {voteResult === "miss" && (
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-red-300 rounded-r-full" />
+      {hitRank === "D" && (
+        <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full ${isDark ? "bg-slate-600" : "bg-gray-300"}`} />
       )}
 
       {grade ? (
@@ -89,26 +141,26 @@ export default function RaceCard({ race, voted, voteResult = "none", isDeadlineP
           {race.grade}
         </span>
       ) : (
-        <span className="bg-gray-200 text-gray-700 text-[11px] font-bold px-2 py-1 rounded-md min-w-[32px] text-center">
+        <span className={`text-[11px] font-bold px-2 py-1 rounded-md min-w-[32px] text-center ${isDark ? "bg-slate-700 text-slate-300" : "bg-gray-200 text-gray-700"}`}>
           {race.race_number ? `${race.race_number}R` : "一般"}
         </span>
       )}
 
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-bold text-gray-900 truncate">{race.name}</div>
-        <div className="text-[11px] text-gray-500 font-medium flex items-center gap-1 flex-wrap">
+        <div className={`text-sm font-bold truncate ${textPrimary}`}>{race.name}</div>
+        <div className={`text-[11px] font-medium flex items-center gap-1 flex-wrap ${textSecondary}`}>
           <span>{race.course_name}</span>
-          <span className="text-gray-300">|</span>
+          <span className={isDark ? "text-slate-600" : "text-gray-300"}>|</span>
           <span>{race.track_type}{race.distance}m</span>
           {race.head_count != null && race.head_count > 0 && (
             <>
-              <span className="text-gray-300">|</span>
+              <span className={isDark ? "text-slate-600" : "text-gray-300"}>|</span>
               <span>{race.head_count}頭</span>
             </>
           )}
           {race.post_time && race.status === "voting_open" && !isDeadlinePassed && (
             <>
-              <span className="text-gray-300">|</span>
+              <span className={isDark ? "text-slate-600" : "text-gray-300"}>|</span>
               <RaceCardCountdown postTime={race.post_time} />
             </>
           )}
@@ -119,14 +171,10 @@ export default function RaceCard({ race, voted, voteResult = "none", isDeadlineP
         <span className={`text-[11px] ${statusInfo.color}`}>
           {statusInfo.label}
         </span>
-        {resultBadge && (
-          <span className={`text-[10px] font-medium ${resultBadge.color}`}>
-            {resultBadge.label}
-          </span>
-        )}
+        {renderResultBadge()}
       </div>
 
-      <span className="text-gray-400 text-sm font-bold">›</span>
+      <span className={`text-sm font-bold ${isDark ? "text-slate-500" : "text-gray-400"}`}>›</span>
     </Link>
   );
 }

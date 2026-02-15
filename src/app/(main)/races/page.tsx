@@ -1,11 +1,7 @@
 export const revalidate = 60;
 
 import { createClient } from "@/lib/supabase/server";
-import RaceCard from "@/components/races/RaceCard";
-import DateFilter from "@/components/races/DateFilter";
-import CourseFilter from "@/components/races/CourseFilter";
-import GradeFilter from "@/components/races/GradeFilter";
-import RaceSearchBar from "@/components/races/RaceSearchBar";
+import RaceListClient from "./RaceListClient";
 
 type Props = {
   searchParams: Promise<{ date?: string; course?: string; grade?: string; q?: string }>;
@@ -99,78 +95,29 @@ export default async function RaceListPage({ searchParams }: Props) {
   const closedRaces = [...gradeClosed, ...normalClosed];
   const finishedRaces = [...gradeFinished, ...normalFinished];
 
-  const getVoteResult = (raceId: string) => voteMap.get(raceId)?.result ?? "none";
-  const isVoted = (raceId: string) => voteMap.has(raceId);
-
-  const renderRaceCards = (list: typeof filteredRaces, section: "open" | "closed" | "finished") => (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      {list.map((race) => (
-        <RaceCard
-          key={race.id}
-          race={race}
-          voted={isVoted(race.id)}
-          voteResult={section === "finished" ? getVoteResult(race.id) : "none"}
-          isDeadlinePassed={section !== "open"}
-        />
-      ))}
-    </div>
-  );
+  // voteMapをオブジェクトに変換
+  const voteResults: Record<string, "pending" | "hit" | "miss"> = {};
+  const votedRaceIds: string[] = [];
+  for (const [raceId, info] of voteMap) {
+    votedRaceIds.push(raceId);
+    if (info.result !== "none") {
+      voteResults[raceId] = info.result;
+    }
+  }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-800">🏇 レース一覧</h1>
-        <a href="/races/calendar" className="text-sm text-green-600 hover:text-green-700 font-bold bg-green-50 px-3 py-1.5 rounded-lg border border-green-200">📅 カレンダー</a>
-      </div>
-
-      <RaceSearchBar initialQuery={params.q ?? ""} date={selectedDate} course={params.course ?? ""} grade={params.grade ?? ""} />
-      <DateFilter dates={uniqueDates} selected={selectedDate} course={params.course} />
-      <CourseFilter courses={uniqueCourses} selected={params.course ?? ""} date={selectedDate} />
-      <GradeFilter selected={params.grade ?? ""} date={selectedDate} course={params.course ?? ""} />
-
-      {params.q && (
-        <div className="text-sm text-gray-500">「{params.q}」の検索結果: {filteredRaces.length}件</div>
-      )}
-
-      {/* 🗳 受付中 */}
-      {openRaces.length > 0 && (
-        <section>
-          <div className="flex items-center gap-2 mb-2">
-            <h2 className="text-sm font-bold text-green-700">🗳 受付中</h2>
-            <span className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full font-medium">{openRaces.length}件</span>
-          </div>
-          {renderRaceCards(openRaces, "open")}
-        </section>
-      )}
-
-      {/* ⏰ 投票締切 */}
-      {closedRaces.length > 0 && (
-        <section>
-          <div className="flex items-center gap-2 mb-2">
-            <h2 className="text-sm font-bold text-orange-600">⏰ 投票締切</h2>
-            <span className="text-xs text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full font-medium">{closedRaces.length}件</span>
-          </div>
-          {renderRaceCards(closedRaces, "closed")}
-        </section>
-      )}
-
-      {/* 📊 結果確定 */}
-      {finishedRaces.length > 0 && (
-        <section>
-          <div className="flex items-center gap-2 mb-2">
-            <h2 className="text-sm font-bold text-gray-600">📊 結果確定</h2>
-            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full font-medium">{finishedRaces.length}件</span>
-          </div>
-          {renderRaceCards(finishedRaces, "finished")}
-        </section>
-      )}
-
-      {filteredRaces.length === 0 && (
-        <div className="bg-white rounded-xl p-12 text-center text-gray-400">
-          <div className="text-4xl mb-3">🏇</div>
-          <p>{params.q ? `「${params.q}」に一致するレースがありません` : "この日のレースはありません"}</p>
-        </div>
-      )}
-    </div>
+    <RaceListClient
+      openRaces={openRaces}
+      closedRaces={closedRaces}
+      finishedRaces={finishedRaces}
+      votedRaceIds={votedRaceIds}
+      voteResults={voteResults}
+      uniqueDates={uniqueDates}
+      uniqueCourses={uniqueCourses}
+      selectedDate={selectedDate}
+      selectedCourse={params.course ?? ""}
+      selectedGrade={params.grade ?? ""}
+      searchQuery={params.q ?? ""}
+    />
   );
 }

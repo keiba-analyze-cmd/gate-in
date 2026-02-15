@@ -1,8 +1,8 @@
-export const revalidate = 120; // 2分キャッシュ
+export const revalidate = 120;
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import RankingTabs from "@/components/rankings/RankingTabs";
+import RankingsClient from "./RankingsClient";
 
 export default async function RankingsPage() {
   const supabase = await createClient();
@@ -10,10 +10,5 @@ export default async function RankingsPage() {
 
   if (!user) redirect("/login");
 
-  return (
-    <div className="max-w-2xl mx-auto space-y-4">
-      <h1 className="text-xl font-bold text-gray-800">🏆 ランキング</h1>
-      <RankingTabs currentUserId={user.id} />
-    </div>
-  );
+  return <RankingsClient currentUserId={user.id} />;
 }
