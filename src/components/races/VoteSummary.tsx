@@ -1,3 +1,7 @@
+"use client";
+
+import { useTheme } from "@/contexts/ThemeContext";
+
 type Props = {
   vote: {
     status: string;
@@ -5,146 +9,68 @@ type Props = {
     is_perfect: boolean;
     vote_picks: {
       pick_type: string;
-      is_hit: boolean | null;
-      points_earned: number;
-      race_entries: {
-        post_number: number;
-        horses: { name: string } | null;
-      } | null;
+      hit_type: string | null;
+      earned_points: number;
+      race_entries: { post_number: number; horses: { name: string } | null } | null;
     }[];
   };
   isFinished: boolean;
 };
 
 export default function VoteSummary({ vote, isFinished }: Props) {
-  const winPick = (vote.vote_picks ?? []).find((p) => p.pick_type === "win");
-  const placePicks = (vote.vote_picks ?? []).filter((p) => p.pick_type === "place");
-  const backPicks = (vote.vote_picks ?? []).filter((p) => p.pick_type === "back");
-  const dangerPick = (vote.vote_picks ?? []).find((p) => p.pick_type === "danger");
+  const { isDark } = useTheme();
+
+  const cardBg = isDark ? "bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-green-500/30" : "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200";
+  const textPrimary = isDark ? "text-slate-100" : "text-gray-900";
+  const textSecondary = isDark ? "text-slate-400" : "text-gray-600";
 
   const isHit = vote.status === "settled_hit";
+  const picks = vote.vote_picks ?? [];
+
+  const PICK_LABELS: Record<string, { label: string; color: string }> = {
+    win: { label: "◎ 1着", color: "text-red-500" },
+    place: { label: "○ 複勝", color: "text-blue-500" },
+    back: { label: "△ 抑え", color: isDark ? "text-yellow-400" : "text-yellow-600" },
+    danger: { label: "⚠️ 危険", color: textSecondary },
+  };
 
   return (
-    <div className={`rounded-2xl border p-5 ${
-      isFinished && isHit
-        ? "bg-green-50 border-green-200"
-        : isFinished
-        ? "bg-gray-50 border-gray-200"
-        : "bg-white border-gray-100"
-    }`}>
+    <div className={`rounded-2xl border p-5 ${cardBg}`}>
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-bold text-gray-800">🗳 あなたの予想</h3>
+        <h3 className={`font-bold ${textPrimary}`}>📦 あなたの予想</h3>
         {isFinished && (
-          <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
-            isHit ? "bg-green-200 text-green-800" : "bg-gray-200 text-gray-600"
-          }`}>
-            {isHit ? "🎉 的中！" : "ハズレ"}
+          <span className={`text-xs font-bold px-2 py-1 rounded-full ${isHit ? (isDark ? "bg-green-500/20 text-green-400" : "bg-green-100 text-green-700") : (isDark ? "bg-slate-700 text-slate-400" : "bg-gray-100 text-gray-500")}`}>
+            {isHit ? "🎉 的中！" : "😢 ハズレ"}
           </span>
         )}
       </div>
 
-      <div className="space-y-2.5">
-        {/* 1着予想 */}
-        {winPick && (
-          <PickRow
-            label="◎ 1着"
-            labelColor="text-red-600"
-            name={winPick.race_entries?.horses?.name ?? ""}
-            number={winPick.race_entries?.post_number}
-            isHit={winPick.is_hit}
-            points={winPick.points_earned}
-            isFinished={isFinished}
-          />
-        )}
-
-        {/* 複勝予想 */}
-        {placePicks.map((pick, i) => (
-          <PickRow
-            key={i}
-            label="○ 複勝"
-            labelColor="text-blue-600"
-            name={pick.race_entries?.horses?.name ?? ""}
-            number={pick.race_entries?.post_number}
-            isHit={pick.is_hit}
-            points={pick.points_earned}
-            isFinished={isFinished}
-          />
-        ))}
-
-        {/* 抑え馬 */}
-        {backPicks.map((pick, i) => (
-          <PickRow
-            key={`back-${i}`}
-            label="△ 抑え"
-            labelColor="text-yellow-600"
-            name={pick.race_entries?.horses?.name ?? ""}
-            number={pick.race_entries?.post_number}
-            isHit={pick.is_hit}
-            points={pick.points_earned}
-            isFinished={isFinished}
-          />
-        ))}
-
-        {/* 危険馬 */}
-        {dangerPick && (
-          <PickRow
-            label="⚠️ 危険"
-            labelColor="text-gray-500"
-            name={dangerPick.race_entries?.horses?.name ?? ""}
-            number={dangerPick.race_entries?.post_number}
-            isHit={dangerPick.is_hit}
-            points={dangerPick.points_earned}
-            isFinished={isFinished}
-          />
-        )}
+      <div className="space-y-2">
+        {picks.map((pick, i) => {
+          const style = PICK_LABELS[pick.pick_type] ?? PICK_LABELS.back;
+          const hitPoints = pick.earned_points > 0;
+          const pointsText = hitPoints ? `✓ +${pick.earned_points}P` : "×";
+          return (
+            <div key={i} className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className={`text-sm font-bold ${style.color}`}>{style.label}</span>
+                <span className={textPrimary}>{pick.race_entries?.post_number} {pick.race_entries?.horses?.name ?? "不明"}</span>
+              </div>
+              {isFinished && (
+                <span className={`text-sm font-bold ${hitPoints ? (isDark ? "text-green-400" : "text-green-600") : (isDark ? "bg-red-500/20 text-red-400 px-2 py-0.5 rounded" : "bg-red-100 text-red-500 px-2 py-0.5 rounded")}`}>
+                  {pointsText}
+                </span>
+              )}
+            </div>
+          );
+        })}
       </div>
 
-      {/* 合計ポイント */}
       {isFinished && (
-        <div className="mt-4 pt-3 border-t border-gray-200">
-          <div className="flex items-center justify-between">
-            <span className="font-bold text-gray-700">獲得ポイント</span>
-            <span className={`text-xl font-bold ${
-              vote.earned_points > 0 ? "text-green-600" : "text-gray-400"
-            }`}>
-              +{vote.earned_points} P
-            </span>
-          </div>
-          {vote.is_perfect && (
-            <div className="mt-2 bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-2 rounded-lg text-center">
-              💎 完全的中ボーナス +300P
-            </div>
-          )}
+        <div className={`mt-4 pt-3 border-t flex items-center justify-between ${isDark ? "border-green-500/30" : "border-green-200"}`}>
+          <span className={`font-bold ${textPrimary}`}>獲得ポイント</span>
+          <span className={`text-xl font-black ${isDark ? "text-green-400" : "text-green-600"}`}>+{vote.earned_points} P</span>
         </div>
-      )}
-    </div>
-  );
-}
-
-function PickRow({
-  label, labelColor, name, number, isHit, points, isFinished,
-}: {
-  label: string;
-  labelColor: string;
-  name: string;
-  number?: number;
-  isHit: boolean | null;
-  points: number;
-  isFinished: boolean;
-}) {
-  return (
-    <div className="flex items-center gap-3">
-      <span className={`text-xs font-bold w-14 ${labelColor}`}>{label}</span>
-      <span className="text-sm font-medium text-gray-800 flex-1">
-        {number && <span className="text-gray-400 mr-1">{number}</span>}
-        {name}
-      </span>
-      {isFinished && isHit !== null && (
-        <span className={`text-xs font-bold px-2 py-0.5 rounded ${
-          isHit ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"
-        }`}>
-          {isHit ? `✓ +${points}P` : "✗"}
-        </span>
       )}
     </div>
   );

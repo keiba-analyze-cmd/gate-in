@@ -4,202 +4,105 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { getRank } from "@/lib/constants/ranks";
+import { useTheme } from "@/contexts/ThemeContext";
 
-type LikedVote = {
+type VoteItem = {
   vote_id: string;
   user_id: string;
-  race_id: string;
+  display_name: string;
+  avatar_url: string | null;
+  rank_id: string;
   like_count: number;
-  status: string;
+  race_name: string;
+  race_id: string;
+  course_name: string;
   earned_points: number;
-  is_perfect: boolean;
-  user: {
-    display_name: string;
-    avatar_url: string | null;
-    rank_id: string;
-  };
-  race: {
-    name: string;
-    grade: string | null;
-    course_name: string;
-    race_date: string;
-  };
+  status: string;
   picks: { pick_type: string; post_number: number; horse_name: string }[];
 };
 
-const PICK_STYLE: Record<string, { mark: string; bg: string; text: string }> = {
-  win: { mark: "◎", bg: "bg-red-100", text: "text-red-700" },
-  place: { mark: "○", bg: "bg-blue-100", text: "text-blue-700" },
-  back: { mark: "△", bg: "bg-yellow-100", text: "text-yellow-700" },
-  danger: { mark: "⚠️", bg: "bg-gray-200", text: "text-gray-700" },
-};
-
 export default function LikeRankingList() {
-  const [period, setPeriod] = useState<"today" | "week" | "month">("week");
-  const [votes, setVotes] = useState<LikedVote[]>([]);
+  const { isDark } = useTheme();
+  const [votes, setVotes] = useState<VoteItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [period, setPeriod] = useState<"today" | "week" | "month">("week");
+
+  const cardBg = isDark ? "bg-slate-900 border-slate-700" : "bg-white border-gray-100";
+  const textPrimary = isDark ? "text-slate-100" : "text-gray-900";
+  const textMuted = isDark ? "text-slate-500" : "text-gray-400";
+  const chipActive = isDark ? "bg-amber-500 text-slate-900" : "bg-green-600 text-white";
+  const chipInactive = isDark ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-white text-gray-600 border-gray-200";
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/rankings/likes?period=${period}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setVotes(data.votes ?? []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    fetch(`/api/rankings/likes?period=${period}`).then(r => r.json()).then(d => { setVotes(d.votes ?? []); setLoading(false); });
   }, [period]);
+
+  const PICK_STYLE: Record<string, { mark: string; bg: string; text: string }> = {
+    win: { mark: "◎", bg: isDark ? "bg-red-500/20" : "bg-red-100", text: isDark ? "text-red-400" : "text-red-700" },
+    place: { mark: "○", bg: isDark ? "bg-blue-500/20" : "bg-blue-100", text: isDark ? "text-blue-400" : "text-blue-700" },
+    back: { mark: "△", bg: isDark ? "bg-yellow-500/20" : "bg-yellow-100", text: isDark ? "text-yellow-400" : "text-yellow-700" },
+    danger: { mark: "⚠️", bg: isDark ? "bg-slate-700" : "bg-gray-200", text: isDark ? "text-slate-300" : "text-gray-700" },
+  };
+
+  const getMedal = (i: number) => i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : null;
+
+  if (loading) return <div className={`rounded-2xl border p-8 text-center ${cardBg} ${textMuted}`}>読み込み中...</div>;
 
   return (
     <div>
-      {/* 期間フィルター */}
+      <p className={`text-xs mb-3 ${textMuted}`}>いいねが多い予想ランキング</p>
       <div className="flex gap-2 mb-4">
-        {[
-          { key: "today" as const, label: "今日" },
-          { key: "week" as const, label: "今週" },
-          { key: "month" as const, label: "今月" },
-        ].map((p) => (
-          <button
-            key={p.key}
-            onClick={() => setPeriod(p.key)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-              period === p.key
-                ? "bg-orange-500 text-white"
-                : "bg-white text-gray-600 border border-gray-200 hover:border-orange-300"
-            }`}
-          >
-            {p.label}
+        {(["today", "week", "month"] as const).map(p => (
+          <button key={p} onClick={() => setPeriod(p)}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${period === p ? chipActive : chipInactive}`}>
+            {p === "today" ? "今日" : p === "week" ? "今週" : "今月"}
           </button>
         ))}
       </div>
 
-      {/* リスト */}
-      {loading ? (
-        <div className="bg-white rounded-xl p-8 text-center text-gray-400 text-sm">
-          読み込み中...
-        </div>
-      ) : votes.length === 0 ? (
-        <div className="bg-white rounded-xl p-8 text-center text-gray-400 text-sm">
-          この期間にいいねされた予想がありません
-        </div>
+      {votes.length === 0 ? (
+        <div className={`rounded-2xl border p-8 text-center ${cardBg} ${textMuted}`}>まだデータがありません</div>
       ) : (
         <div className="space-y-3">
-          {votes.map((vote, index) => (
-            <VoteCard key={vote.vote_id} vote={vote} rank={index + 1} />
-          ))}
+          {votes.map((v, i) => {
+            const rank = getRank(v.rank_id);
+            const medal = getMedal(i);
+            const isHit = v.status === "settled_hit";
+            return (
+              <div key={v.vote_id} className={`rounded-2xl border p-4 ${cardBg}`}>
+                <div className="flex items-center gap-3 mb-2">
+                  {medal && <span className={`w-8 h-8 rounded-full flex items-center justify-center text-lg ${isDark ? "bg-slate-800" : "bg-gray-100"}`}>{medal}</span>}
+                  <Link href={`/users/${v.user_id}`} className="flex items-center gap-2 group">
+                    {v.avatar_url ? (
+                      <Image src={v.avatar_url} alt="" width={28} height={28} className="w-7 h-7 rounded-full" unoptimized />
+                    ) : (
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs ${isDark ? "bg-slate-700" : "bg-gray-100"}`}>🏇</div>
+                    )}
+                    <span className={`text-sm font-bold ${textPrimary}`}>{v.display_name}</span>
+                  </Link>
+                  {rank && <span className={`text-xs ${textMuted}`}>{rank.icon}</span>}
+                  {isHit && <span className={`text-xs px-2 py-0.5 rounded-full ${isDark ? "bg-green-500/20 text-green-400" : "bg-green-100 text-green-700"}`}>的中</span>}
+                  <span className="ml-auto text-lg">❤️ {v.like_count}</span>
+                </div>
+                <Link href={`/races/${v.race_id}`} className={`block mb-2 ${textPrimary} font-bold hover:underline`}>{v.race_name} <span className={`text-xs font-normal ${textMuted}`}>{v.course_name}</span></Link>
+                <div className="flex flex-wrap gap-1.5">
+                  {v.picks.filter(p => p.pick_type !== "back").map((pick, j) => {
+                    const style = PICK_STYLE[pick.pick_type] ?? PICK_STYLE.win;
+                    return <span key={j} className={`${style.bg} ${style.text} text-xs px-2 py-0.5 rounded-full font-medium`}>{style.mark} {pick.post_number} {pick.horse_name}</span>;
+                  })}
+                  {v.picks.filter(p => p.pick_type === "back").length > 0 && (
+                    <span className={`${PICK_STYLE.back.bg} ${PICK_STYLE.back.text} text-xs px-2 py-0.5 rounded-full font-medium`}>
+                      △ {v.picks.filter(p => p.pick_type === "back").map(p => p.post_number).join(",")}
+                    </span>
+                  )}
+                </div>
+                {v.earned_points > 0 && <div className={`mt-2 text-sm font-bold ${isDark ? "text-green-400" : "text-green-600"}`}>+{v.earned_points}P</div>}
+              </div>
+            );
+          })}
         </div>
       )}
-    </div>
-  );
-}
-
-function VoteCard({ vote, rank }: { vote: LikedVote; rank: number }) {
-  const userRank = getRank(vote.user.rank_id);
-  const isHit = vote.status === "settled_hit";
-
-  const gradeColor = vote.race.grade
-    ? vote.race.grade === "G1" ? "bg-yellow-100 text-yellow-800"
-    : vote.race.grade === "G2" ? "bg-red-100 text-red-700"
-    : vote.race.grade === "G3" ? "bg-green-100 text-green-700"
-    : "bg-gray-100 text-gray-600" : "";
-
-  const nonBackPicks = vote.picks.filter(p => p.pick_type !== "back");
-  const backPicks = vote.picks.filter(p => p.pick_type === "back");
-
-  const rankBadge = rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : `${rank}`;
-  const rankBg = rank === 1 ? "bg-yellow-100 text-yellow-700" 
-    : rank === 2 ? "bg-gray-100 text-gray-600" 
-    : rank === 3 ? "bg-orange-100 text-orange-700" 
-    : "bg-gray-50 text-gray-500";
-
-  return (
-    <div className="bg-white rounded-xl border border-gray-100 p-4">
-      <div className="flex items-start gap-3">
-        {/* 順位 */}
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${rankBg}`}>
-          {rankBadge}
-        </div>
-
-        <div className="flex-1 min-w-0">
-          {/* ユーザー情報 */}
-          <div className="flex items-center gap-2 mb-2">
-            <Link href={`/users/${vote.user_id}`} className="flex items-center gap-2 group">
-              {vote.user.avatar_url ? (
-                <Image
-                  src={vote.user.avatar_url}
-                  alt=""
-                  width={24}
-                  height={24}
-                  className="w-6 h-6 rounded-full"
-                  unoptimized
-                />
-              ) : (
-                <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-xs">🏇</div>
-              )}
-              <span className="text-sm font-bold text-gray-800 group-hover:text-green-600">
-                {vote.user.display_name}
-              </span>
-            </Link>
-            {userRank && <span className="text-xs text-gray-400">{userRank.icon}</span>}
-            {isHit && <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">的中</span>}
-          </div>
-
-          {/* レース情報 */}
-          <Link href={`/races/${vote.race_id}`} className="block mb-2 group">
-            <div className="flex items-center gap-2 flex-wrap">
-              {vote.race.grade && (
-                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${gradeColor}`}>
-                  {vote.race.grade}
-                </span>
-              )}
-              <span className="text-sm font-bold text-gray-800 group-hover:text-green-600">
-                {vote.race.name}
-              </span>
-              <span className="text-[10px] text-gray-400">{vote.race.course_name}</span>
-            </div>
-          </Link>
-
-          {/* 予想内容 */}
-          <div className="flex flex-wrap gap-1.5 mb-2">
-            {nonBackPicks.map((pick, i) => {
-              const style = PICK_STYLE[pick.pick_type] ?? PICK_STYLE.win;
-              return (
-                <span
-                  key={i}
-                  className={`${style.bg} ${style.text} text-[11px] px-2 py-0.5 rounded-full font-medium`}
-                >
-                  {style.mark} {pick.post_number} {pick.horse_name}
-                </span>
-              );
-            })}
-            {backPicks.length > 0 && (
-              <span className="bg-yellow-100 text-yellow-700 text-[11px] px-2 py-0.5 rounded-full font-medium">
-                △ {backPicks.map(p => p.post_number).join(",")}
-              </span>
-            )}
-          </div>
-
-          {/* 結果 */}
-          <div className="flex items-center gap-2">
-            {vote.status !== "pending" && (
-              <>
-                {isHit && vote.earned_points > 0 && (
-                  <span className="text-xs font-bold text-green-600">+{vote.earned_points}P</span>
-                )}
-                {vote.is_perfect && <span className="text-xs">💎</span>}
-              </>
-            )}
-            {vote.status === "pending" && (
-              <span className="text-xs text-yellow-600">結果待ち</span>
-            )}
-          </div>
-        </div>
-
-        {/* いいね数 */}
-        <div className="text-right shrink-0">
-          <div className="text-pink-500 font-bold text-lg">❤️ {vote.like_count}</div>
-        </div>
-      </div>
     </div>
   );
 }
