@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { getRank } from "@/lib/constants/ranks";
+import LikeButton from "./LikeButton";
 
 type Pick = { pick_type: string; post_number: number; horse_name: string };
 
@@ -11,6 +12,8 @@ type Props = {
   item: {
     type: string;
     id: string;
+    vote_id?: string;
+    like_count?: number;
     user: { display_name: string; avatar_url: string | null; rank_id: string } | null;
     user_id: string;
     race: { name: string; grade: string | null; course_name: string; race_number?: number | null; race_date?: string } | null;

@@ -20,7 +20,7 @@ export default async function UserProfilePage({ params }: Props) {
 
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("*")
+    .select("*, featured_badge:badges!profiles_featured_badge_id_fkey(id, name, icon)")
     .eq("id", userId)
     .single();
 
