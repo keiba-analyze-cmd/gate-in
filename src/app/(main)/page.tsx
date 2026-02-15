@@ -5,6 +5,8 @@ import RaceCard from "@/components/races/RaceCard";
 import LandingHero from "@/components/landing/LandingHero";
 import NextRaceByVenue from "@/components/races/NextRaceByVenue";
 import FollowingVotes from "@/components/social/FollowingVotes";
+import PopularVotesSection from "@/components/social/PopularVotesSection";
+import WeeklyMVPBanner from "@/components/social/WeeklyMVPBanner";
 
 export default async function HomePage() {
   const supabase = await createClient();
