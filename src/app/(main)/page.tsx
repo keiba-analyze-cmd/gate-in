@@ -4,6 +4,7 @@ import { getRank } from "@/lib/constants/ranks";
 import RaceCard from "@/components/races/RaceCard";
 import LandingHero from "@/components/landing/LandingHero";
 import NextRaceByVenue from "@/components/races/NextRaceByVenue";
+import FollowingVotes from "@/components/social/FollowingVotes";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -68,14 +69,7 @@ export default async function HomePage() {
     .order("race_date", { ascending: false })
     .limit(3);
 
-  // 盛り上がりコメント
-  const { data: hotComments } = await supabase
-    .from("comments")
-    .select("id, user_id, body, sentiment, profiles(display_name, rank_id)")
-    .is("parent_id", null)
-    .eq("is_deleted", false)
-    .order("created_at", { ascending: false })
-    .limit(3);
+  
 
 
   // 未ログイン → ランディングページ
@@ -160,39 +154,10 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ====== 💬 盛り上がりコメント ====== */}
-      {hotComments && hotComments.length > 0 && (
-        <section>
-          <h2 className="text-sm font-black text-gray-900 mb-3">💬 盛り上がりコメント</h2>
-          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden divide-y divide-gray-100">
-            {hotComments.map((comment) => {
-              const rank = comment.profiles ? getRank((comment.profiles as any).rank_id) : null;
-              const sentimentIcon: Record<string, string> = {
-                very_positive: "🔥", positive: "👍", negative: "🤔", very_negative: "⚠️",
-              };
-              return (
-                <div key={comment.id} className="px-4 py-3 hover:bg-gray-50 transition-colors">
-                  <Link href={`/users/${comment.user_id}`} className="flex items-center gap-2 mb-1.5 group">
-                    <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-[10px]">👤</div>
-                    <span className="text-xs font-bold text-gray-900 group-hover:text-green-600">
-                      {(comment.profiles as any)?.display_name ?? "匿名"}
-                    </span>
-                    {rank && (
-                      <span className="text-[10px] text-yellow-700 bg-yellow-50 px-1.5 py-0.5 rounded-full font-bold">
-                        {rank.icon} {rank.name}
-                      </span>
-                    )}
-                    {comment.sentiment && (
-                      <span className="text-[10px]">{sentimentIcon[comment.sentiment]}</span>
-                    )}
-                  </Link>
-                  <p className="text-xs text-gray-700 ml-8 line-clamp-2">{comment.body}</p>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
+      {/* ====== 👥 フォロー中の予想 ====== */}
+      <section>
+        <FollowingVotes />
+      </section>
 
       {/* ====== 📊 最近の結果 ====== */}
       {recentResults && recentResults.length > 0 && (
