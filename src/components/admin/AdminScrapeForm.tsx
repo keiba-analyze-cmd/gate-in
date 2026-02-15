@@ -59,6 +59,32 @@ export default function AdminScrapeForm() {
   const [scraping, setScraping] = useState(false);
   const [scrapeProgress, setScrapeProgress] = useState({ current: 0, total: 0, message: "" });
 
+  // ── オッズ更新用 ──
+  const [updatingOdds, setUpdatingOdds] = useState(false);
+  const [oddsResult, setOddsResult] = useState<{ message: string; results: any[] } | null>(null);
+
+  // ── オッズ更新 ──
+  const handleUpdateOdds = async () => {
+    setUpdatingOdds(true);
+    setOddsResult(null);
+    setError("");
+
+    try {
+      const res = await fetch("/api/admin/scrape-odds", { method: "POST" });
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || "オッズ更新に失敗しました");
+      }
+      
+      setOddsResult(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "オッズ更新に失敗しました");
+    } finally {
+      setUpdatingOdds(false);
+    }
+  };
+
   // ── GUI上でスクレイピング → プレビュー表示 ──
   const handleScrapeAndPreview = async (downloadOnly: boolean = false) => {
     setScraping(true);

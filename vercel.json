@@ -7,6 +7,10 @@
     {
       "path": "/api/cron/update-entries",
       "schedule": "*/30 0-8 * * 0,6"
+    },
+    {
+      "path": "/api/admin/scrape-odds",
+      "schedule": "*/15 0-8 * * 0,6"
     }
   ]
 }
