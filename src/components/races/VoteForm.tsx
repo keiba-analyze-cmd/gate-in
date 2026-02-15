@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
+import Link from "next/link";
 
 type Entry = {
   id: string;
@@ -13,6 +14,13 @@ type Entry = {
   odds: number | null;
   popularity: number | null;
   horses: { id: string; name: string; sex: string; sire: string | null } | null;
+};
+
+type CopySource = {
+  vote_id: string;
+  user_id: string;
+  user_name: string;
+  picks: { pick_type: string; race_entry_id: string }[];
 };
 
 type Props = { raceId: string; entries: Entry[] };
@@ -26,9 +34,43 @@ export default function VoteForm({ raceId, entries }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
+  const [copySource, setCopySource] = useState<CopySource | null>(null);
+  const [loadingCopy, setLoadingCopy] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { showToast } = useToast();
   const supabase = createClient();
+
+  // URLパラメータから乗っかり元を取得
+  useEffect(() => {
+    const copyFromVoteId = searchParams.get("copy_from");
+    if (copyFromVoteId) {
+      loadCopySource(copyFromVoteId);
+    }
+  }, [searchParams]);
+
+  const loadCopySource = async (voteId: string) => {
+    setLoadingCopy(true);
+    try {
+      const res = await fetch(`/api/votes/${voteId}/copy`);
+      if (res.ok) {
+        const data = await res.json();
+        setCopySource(data);
+        
+        // picksをプリセット
+        const winEntry = data.picks.find((p: any) => p.pick_type === "win");
+        const placeEntries = data.picks.filter((p: any) => p.pick_type === "place");
+        const backEntries = data.picks.filter((p: any) => p.pick_type === "back");
+        const dangerEntry = data.picks.find((p: any) => p.pick_type === "danger");
+        
+        if (winEntry) setWinPick(winEntry.race_entry_id);
+        setPlacePicks(placeEntries.map((p: any) => p.race_entry_id));
+        setBackPicks(backEntries.map((p: any) => p.race_entry_id));
+        if (dangerEntry) setDangerPick(dangerEntry.race_entry_id);
+      }
+    } catch {}
+    setLoadingCopy(false);
+  };
 
   // 他タブで選択済みかチェック
   const isUsedInOtherTab = (entryId: string): string | null => {
@@ -59,9 +101,25 @@ export default function VoteForm({ raceId, entries }: Props) {
     setLoading(true);
     setError("");
 
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setError("ログインが必要です");
+      setLoading(false);
+      return;
+    }
+
+    // 乗っかり元がある場合はcopied_from_vote_idを含める
+    const voteData: any = {
+      user_id: user.id,
+      race_id: raceId,
+    };
+    if (copySource) {
+      voteData.copied_from_vote_id = copySource.vote_id;
+    }
+
     const { data: vote, error: voteErr } = await supabase
       .from("votes")
-      .insert({ user_id: (await supabase.auth.getUser()).data.user!.id, race_id: raceId })
+      .insert(voteData)
       .select().single();
 
     if (voteErr || !vote) {
@@ -84,8 +142,30 @@ export default function VoteForm({ raceId, entries }: Props) {
       return;
     }
 
-    showToast("投票が完了しました！🎉");
+    // 乗っかり元がある場合、通知を送信
+    if (copySource) {
+      await fetch("/api/votes/copy-notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          original_vote_id: copySource.vote_id,
+          original_user_id: copySource.user_id,
+        }),
+      });
+    }
+
+    showToast(copySource ? "乗っかり投票が完了しました！🚀" : "投票が完了しました！🎉");
     router.refresh();
+  };
+
+  const clearCopySource = () => {
+    setCopySource(null);
+    setWinPick(null);
+    setPlacePicks([]);
+    setBackPicks([]);
+    setDangerPick(null);
+    // URLからcopy_fromパラメータを削除
+    router.replace(`/races/${raceId}`);
   };
 
   const tabs = [
@@ -95,7 +175,6 @@ export default function VoteForm({ raceId, entries }: Props) {
     { key: "danger" as const, label: "⚠️ 危険馬", required: false, desc: "0〜1頭" },
   ];
 
-  // 選択された馬の表示マーク
   const getMarkDisplay = (tab: "win" | "place" | "back" | "danger") => {
     switch (tab) {
       case "win": return { mark: "◎", color: "text-red-500" };
@@ -105,7 +184,6 @@ export default function VoteForm({ raceId, entries }: Props) {
     }
   };
 
-  // 選択スタイル
   const getSelectedStyle = (tab: "win" | "place" | "back" | "danger") => {
     switch (tab) {
       case "win": return "bg-red-50 border-2 border-red-300";
@@ -115,8 +193,39 @@ export default function VoteForm({ raceId, entries }: Props) {
     }
   };
 
+  if (loadingCopy) {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
+        <div className="text-gray-400 text-sm">予想を読み込み中...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+      {/* 乗っかり元の表示 */}
+      {copySource && (
+        <div className="bg-blue-50 border-b border-blue-100 px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-blue-600 text-sm">🚀</span>
+              <span className="text-sm text-blue-700">
+                <Link href={`/users/${copySource.user_id}`} className="font-bold hover:underline">
+                  {copySource.user_name}
+                </Link>
+                さんの予想をベースにしています
+              </span>
+            </div>
+            <button
+              onClick={clearCopySource}
+              className="text-xs text-blue-500 hover:text-blue-700"
+            >
+              クリア
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="flex border-b border-gray-100">
         {tabs.map((tab) => (
           <button key={tab.key} onClick={() => setActiveTab(tab.key)}
@@ -198,14 +307,21 @@ export default function VoteForm({ raceId, entries }: Props) {
         {error && <div className="text-sm text-red-600 bg-red-50 p-2 rounded-lg mb-3">{error}</div>}
         <button onClick={handleConfirmOpen} disabled={!winPick || loading}
           className="w-full py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-colors disabled:opacity-40 disabled:hover:bg-green-600">
-          {loading ? "投票中..." : "🗳 この予想で投票する"}
+          {loading ? "投票中..." : copySource ? "🚀 この予想で乗っかる" : "🗳 この予想で投票する"}
         </button>
       </div>
 
       {showConfirm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowConfirm(false)}>
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">📋 投票内容の確認</h3>
+            <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">
+              {copySource ? "🚀 乗っかり確認" : "📋 投票内容の確認"}
+            </h3>
+            {copySource && (
+              <div className="text-xs text-blue-600 text-center mb-3">
+                {copySource.user_name}さんの予想をベースにしています
+              </div>
+            )}
             <div className="space-y-3 mb-6 max-h-80 overflow-y-auto">
               {winPick && (() => { const e = entries.find((x) => x.id === winPick); return e ? (
                 <div className="flex items-center gap-2 bg-red-50 rounded-lg p-3">
@@ -237,7 +353,9 @@ export default function VoteForm({ raceId, entries }: Props) {
             </div>
             <div className="flex gap-2">
               <button onClick={() => setShowConfirm(false)} className="flex-1 py-3 border border-gray-200 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50 transition-colors">戻る</button>
-              <button onClick={handleSubmit} className="flex-1 py-3 bg-green-600 text-white rounded-xl text-sm font-bold hover:bg-green-700 transition-colors">投票する</button>
+              <button onClick={handleSubmit} className="flex-1 py-3 bg-green-600 text-white rounded-xl text-sm font-bold hover:bg-green-700 transition-colors">
+                {copySource ? "乗っかる" : "投票する"}
+              </button>
             </div>
           </div>
         </div>

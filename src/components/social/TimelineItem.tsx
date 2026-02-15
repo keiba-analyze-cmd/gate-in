@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getRank } from "@/lib/constants/ranks";
 import LikeButton from "./LikeButton";
+import CopyVoteButton from "./CopyVoteButton";
 
 type Pick = { pick_type: string; post_number: number; horse_name: string };
 
