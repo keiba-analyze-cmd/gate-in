@@ -64,7 +64,7 @@ export default function RankingList({ rankings, currentUserId, type }: Props) {
 
         return (
           <Link
-            key={user.user_id}
+            key={`${user.user_id}-${index}`}
             href={`/users/${user.user_id}`}
             className={`flex items-center gap-3 px-4 py-3 border-b last:border-0 transition-colors ${borderColor} ${hoverBg} ${isMe ? highlightBg : ""}`}
           >
