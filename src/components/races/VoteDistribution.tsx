@@ -17,6 +17,7 @@ type VoteData = { [key: string]: any;
   total_votes: number;
   win_distribution: DistributionItem[];
   place_distribution: DistributionItem[];
+  back_distribution: DistributionItem[];
   danger_distribution: DistributionItem[];
 };
 
@@ -27,7 +28,7 @@ type Props = {
 export default function VoteDistribution({ raceId }: Props) {
   const [data, setData] = useState<VoteData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"win" | "place" | "danger">("win");
+  const [activeTab, setActiveTab] = useState<"win" | "place" | "back" | "danger">("win");
   const supabase = createClient();
 
   const fetchData = async () => {
@@ -90,7 +91,8 @@ export default function VoteDistribution({ raceId }: Props) {
   const tabs = [
     { key: "win" as const, label: "◎ 1着予想", data: data.win_distribution ?? data.win ?? [], color: "red" },
     { key: "place" as const, label: "○ 複勝予想", data: data.place_distribution ?? data.place ?? [], color: "blue" },
-    { key: "danger" as const, label: "△ 危険馬", data: data.danger_distribution ?? data.danger ?? [], color: "gray" },
+    { key: "back" as const, label: "△ 抑え", data: data.back_distribution ?? data.back ?? [], color: "yellow" },
+    { key: "danger" as const, label: "⚠️ 危険馬", data: data.danger_distribution ?? data.danger ?? [], color: "gray" },
   ];
 
   const activeData = tabs.find((t) => t.key === activeTab);
@@ -169,6 +171,7 @@ function VoteBar({
   const barColors: Record<string, { bg: string; fill: string; text: string }> = {
     red: { bg: "bg-red-50", fill: "bg-red-400", text: "text-red-700" },
     blue: { bg: "bg-blue-50", fill: "bg-blue-400", text: "text-blue-700" },
+    yellow: { bg: "bg-yellow-50", fill: "bg-yellow-400", text: "text-yellow-700" },
     gray: { bg: "bg-gray-100", fill: "bg-gray-400", text: "text-gray-700" },
   };
 

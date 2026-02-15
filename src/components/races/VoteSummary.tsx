@@ -19,6 +19,7 @@ type Props = {
 export default function VoteSummary({ vote, isFinished }: Props) {
   const winPick = (vote.vote_picks ?? []).find((p) => p.pick_type === "win");
   const placePicks = (vote.vote_picks ?? []).filter((p) => p.pick_type === "place");
+  const backPicks = (vote.vote_picks ?? []).filter((p) => p.pick_type === "back");
   const dangerPick = (vote.vote_picks ?? []).find((p) => p.pick_type === "danger");
 
   const isHit = vote.status === "settled_hit";
@@ -70,10 +71,24 @@ export default function VoteSummary({ vote, isFinished }: Props) {
           />
         ))}
 
+        {/* 抑え馬 */}
+        {backPicks.map((pick, i) => (
+          <PickRow
+            key={`back-${i}`}
+            label="△ 抑え"
+            labelColor="text-yellow-600"
+            name={pick.race_entries?.horses?.name ?? ""}
+            number={pick.race_entries?.post_number}
+            isHit={pick.is_hit}
+            points={pick.points_earned}
+            isFinished={isFinished}
+          />
+        ))}
+
         {/* 危険馬 */}
         {dangerPick && (
           <PickRow
-            label="△ 危険"
+            label="⚠️ 危険"
             labelColor="text-gray-500"
             name={dangerPick.race_entries?.horses?.name ?? ""}
             number={dangerPick.race_entries?.post_number}

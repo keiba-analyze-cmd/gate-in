@@ -19,46 +19,112 @@ export default function PointsGuidePage() {
       {/* 基本ルール */}
       <Section title="📋 基本ルール">
         <p className="text-sm text-gray-600 mb-3">
-          各レースで「1着予想（本命）」「複勝予想（相手）」「危険馬」を選んで投票。
+          各レースで「1着予想（本命）」「複勝予想（相手）」「抑え」「危険馬」を選んで投票。
           レース確定後に自動で採点され、ポイントが加算されます。
         </p>
         <div className="bg-green-50 rounded-xl p-4 text-sm text-green-800">
           <strong>投票ルール：</strong>
           <ul className="mt-2 space-y-1 list-disc list-inside">
-            <li>1着予想（◎）… 必須、1頭選択</li>
-            <li>複勝予想（○）… 任意、最大2頭</li>
-            <li>危険馬（△）… 任意、最大1頭</li>
+            <li>◎ 1着予想（本命）… 必須、1頭選択</li>
+            <li>○ 複勝予想（相手）… 任意、最大2頭</li>
+            <li>△ 抑え … 任意、最大5頭</li>
+            <li>⚠️ 危険馬 … 任意、最大1頭</li>
             <li>締切：発走2分前まで</li>
           </ul>
         </div>
       </Section>
 
       {/* ポイント計算 */}
-      <Section title="💰 ポイント計算">
-        <h3 className="text-sm font-bold text-gray-700 mb-2">◎ 1着的中（人気別）</h3>
-        <p className="text-xs text-gray-500 mb-2">大穴を的中させるほど高ポイント！</p>
+      <Section title="💰 ポイント計算（オッズ連動）">
+        <p className="text-xs text-gray-500 mb-4">
+          すべてのポイントは実際のオッズに連動！高配当を当てるほど高ポイント獲得！
+        </p>
+
+        <h3 className="text-sm font-bold text-gray-700 mb-2">◎ 単勝的中（1着予想）</h3>
         <Table
-          headers={["条件", "獲得ポイント"]}
+          headers={["オッズ", "獲得ポイント"]}
           rows={[
-            ["1番人気", "+30P"],
-            ["2〜3番人気", "+50P"],
-            ["4〜5番人気", "+80P"],
-            ["6〜7番人気", "+120P"],
-            ["8〜9番人気", "+200P"],
-            ["10番人気〜", "+300P"],
+            ["〜1.9倍", "+20P"],
+            ["2.0〜3.9倍", "+40P"],
+            ["4.0〜6.9倍", "+60P"],
+            ["7.0〜14.9倍", "+100P"],
+            ["15.0〜29.9倍", "+150P"],
+            ["30.0倍〜", "+250P"],
           ]}
         />
 
-        <h3 className="text-sm font-bold text-gray-700 mt-4 mb-2">○ 複勝的中</h3>
+        <h3 className="text-sm font-bold text-gray-700 mt-4 mb-2">○ 複勝的中（3着以内）</h3>
         <Table
-          headers={["条件", "獲得ポイント"]}
+          headers={["オッズ", "獲得ポイント"]}
           rows={[
-            ["3着以内に入った場合（1頭あたり）", "+20P"],
+            ["〜1.4倍", "+10P"],
+            ["1.5〜2.4倍", "+15P"],
+            ["2.5〜3.9倍", "+25P"],
+            ["4.0〜6.9倍", "+40P"],
+            ["7.0倍〜", "+60P"],
           ]}
         />
 
-        <h3 className="text-sm font-bold text-gray-700 mt-4 mb-2">△ 危険馬的中（人気別）</h3>
-        <p className="text-xs text-gray-500 mb-2">人気馬を危険視して着外なら高評価！</p>
+        <h3 className="text-sm font-bold text-gray-700 mt-4 mb-2">🎫 馬連的中（◎○が1-2着）</h3>
+        <p className="text-xs text-gray-500 mb-2">◎と○が1着・2着（順不同）で的中</p>
+        <Table
+          headers={["オッズ", "獲得ポイント"]}
+          rows={[
+            ["〜9.9倍", "+30P"],
+            ["10〜29.9倍", "+50P"],
+            ["30〜59.9倍", "+80P"],
+            ["60〜99.9倍", "+120P"],
+            ["100〜299.9倍", "+180P"],
+            ["300倍〜", "+280P"],
+          ]}
+        />
+
+        <h3 className="text-sm font-bold text-gray-700 mt-4 mb-2">🎟️ ワイド的中（◎○が3着以内）</h3>
+        <p className="text-xs text-gray-500 mb-2">◎と○が両方とも3着以内で的中（複数組み合わせ可）</p>
+        <Table
+          headers={["オッズ", "獲得ポイント"]}
+          rows={[
+            ["〜2.9倍", "+15P"],
+            ["3〜5.9倍", "+25P"],
+            ["6〜9.9倍", "+40P"],
+            ["10〜19.9倍", "+60P"],
+            ["20倍〜", "+90P"],
+          ]}
+        />
+
+        <h3 className="text-sm font-bold text-gray-700 mt-4 mb-2">🎰 三連複的中</h3>
+        <p className="text-xs text-gray-500 mb-2">◎○○、◎○△、◎△△が1-2-3着（順不同）で的中</p>
+        <Table
+          headers={["オッズ", "獲得ポイント"]}
+          rows={[
+            ["〜9.9倍", "+20P"],
+            ["10〜49.9倍", "+50P"],
+            ["50〜99.9倍", "+80P"],
+            ["100〜299.9倍", "+120P"],
+            ["300〜999.9倍", "+180P"],
+            ["1000倍〜", "+300P"],
+          ]}
+        />
+
+        <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-sm">
+          <strong className="text-yellow-800">△ 抑えと倍率</strong>
+          <p className="text-xs text-yellow-700 mt-1 mb-2">
+            △（抑え）を使うと三連複の当たりやすさは上がりますが、ポイントに倍率がかかります
+          </p>
+          <div className="space-y-1 text-yellow-700 text-xs">
+            <div className="flex justify-between"><span>△ 1頭</span><span>×1.0（そのまま）</span></div>
+            <div className="flex justify-between"><span>△ 2頭</span><span>×0.8</span></div>
+            <div className="flex justify-between"><span>△ 3頭</span><span>×0.6</span></div>
+            <div className="flex justify-between"><span>△ 4頭</span><span>×0.4</span></div>
+            <div className="flex justify-between"><span>△ 5頭</span><span>×0.2</span></div>
+          </div>
+          <p className="text-xs text-yellow-600 mt-2">
+            ※ 馬連・ワイドは◎○のみで判定（△は対象外）
+          </p>
+        </div>
+
+        <h3 className="text-sm font-bold text-gray-700 mt-4 mb-2">⚠️ 危険馬的中（人気別）</h3>
+        <p className="text-xs text-gray-500 mb-2">人気馬を危険視して着外（4着以下）なら高評価！</p>
         <Table
           headers={["危険視した馬の人気", "獲得ポイント"]}
           rows={[
@@ -83,11 +149,11 @@ export default function PointsGuidePage() {
           </div>
         </div>
 
-        <div className="mt-3 bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-sm">
-          <strong className="text-yellow-800">⚡ ボーナスポイント</strong>
-          <div className="mt-2 space-y-1.5 text-yellow-700">
+        <div className="mt-3 bg-purple-50 border border-purple-200 rounded-xl p-4 text-sm">
+          <strong className="text-purple-800">⚡ ボーナスポイント</strong>
+          <div className="mt-2 space-y-1.5 text-purple-700">
             <div className="flex justify-between">
-              <span>💎 完全的中（◎○△すべて的中）</span><span className="font-bold">+200P</span>
+              <span>💎 完全的中（◎○⚠️すべて的中）</span><span className="font-bold">+200P</span>
             </div>
             <div className="flex justify-between">
               <span>🔥 3連続的中ボーナス</span><span className="font-bold">+50P</span>
@@ -96,23 +162,52 @@ export default function PointsGuidePage() {
         </div>
 
         <div className="mt-3 bg-gray-50 rounded-xl p-4 text-sm text-gray-600">
-          <strong>計算例：</strong>G1レースで5番人気を◎にして1着的中した場合
-          <div className="mt-2 text-gray-800">
-            1着的中（5番人気）<span className="text-green-600 font-bold ml-1">+80P</span> ＋ G1ボーナス <span className="text-green-600 font-bold">+30P</span> ＝ <span className="text-green-700 font-bold">110P</span>
+          <strong>計算例：</strong>G2レースで◎（8倍）が1着、○が2着（馬連35倍）
+          <div className="mt-2 text-gray-800 space-y-1">
+            <div>単勝的中（8倍）<span className="text-green-600 font-bold ml-1">+100P</span> ＋ G2ボーナス <span className="text-green-600 font-bold">+15P</span></div>
+            <div>馬連的中（35倍）<span className="text-green-600 font-bold ml-1">+80P</span> ＋ G2ボーナス <span className="text-green-600 font-bold">+15P</span></div>
+            <div className="pt-1 border-t border-gray-200">合計 <span className="text-green-700 font-bold">210P</span></div>
           </div>
         </div>
       </Section>
 
-      {/* 危険馬の説明 */}
-      <Section title="△ 危険馬とは？">
-        <p className="text-sm text-gray-600 mb-3">
-          「人気はあるが着外になりそうな馬」を指名する、ゲートイン！独自のシステムです。
-          指名した馬が4着以下（着外）になった場合にポイントを獲得できます。
-        </p>
-        <div className="bg-orange-50 rounded-xl p-4 text-sm text-orange-800">
-          <strong>ポイント：</strong>人気が高い馬ほど着外時のポイントが高くなります。
-          1番人気を危険視して的中すれば+50P！逆に、人気薄の馬を危険視してもポイントは少なめです。
-          「この馬は過大評価されている」という目利き力が試されます。
+      {/* 印の説明 */}
+      <Section title="🏇 印の説明">
+        <div className="space-y-4">
+          <div className="flex items-start gap-3">
+            <span className="text-lg">◎</span>
+            <div>
+              <div className="font-bold text-gray-800">本命（1着予想）</div>
+              <p className="text-sm text-gray-600">1着になると予想する馬。必須選択。</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <span className="text-lg">○</span>
+            <div>
+              <div className="font-bold text-gray-800">相手（複勝予想）</div>
+              <p className="text-sm text-gray-600">3着以内に入ると予想する馬。馬連・ワイド・三連複の判定に使用。</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <span className="text-lg">△</span>
+            <div>
+              <div className="font-bold text-gray-800">抑え</div>
+              <p className="text-sm text-gray-600">
+                押さえておきたい馬。三連複の判定に使用。
+                数を増やすと的中しやすくなりますが、倍率でポイントが減ります。
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <span className="text-lg">⚠️</span>
+            <div>
+              <div className="font-bold text-gray-800">危険馬</div>
+              <p className="text-sm text-gray-600">
+                人気はあるが着外になりそうな馬。4着以下でポイント獲得。
+                人気馬ほど高ポイント！
+              </p>
+            </div>
+          </div>
         </div>
       </Section>
 
@@ -172,8 +267,9 @@ export default function PointsGuidePage() {
           <FAQ q="ポイントは減ることはありますか？" a="いいえ。ハズレてもポイントは減りません。累計ポイントは増え続けます。" />
           <FAQ q="投票を変更できますか？" a="発走2分前まで変更・取り消しが可能です。" />
           <FAQ q="月間ポイントと累計ポイントの違いは？" a="月間ポイントは毎月1日にリセットされ、月間ランキングに使用されます。累計ポイントはリセットされず、ランクの計算に使用されます。" />
-          <FAQ q="完全的中とは？" a="1着予想・複勝予想・危険馬の全てが的中した場合に達成です。+200Pのボーナスが付きます。" />
-          <FAQ q="グレードボーナスはいつ加算されますか？" a="G1〜OPレースで◎○△のいずれかが的中するたびに、各的中ポイントにグレード分が上乗せされます。" />
+          <FAQ q="完全的中とは？" a="1着予想（◎）・複勝予想（○）・危険馬（⚠️）の全てが的中した場合に達成です。+200Pのボーナスが付きます。" />
+          <FAQ q="△（抑え）を増やすとどうなりますか？" a="三連複が当たりやすくなりますが、獲得ポイントに倍率（0.2〜1.0）がかかります。絞るほど高リターン、広げるほど安定だが低リターンです。" />
+          <FAQ q="馬連・ワイドに△は使えますか？" a="いいえ。馬連・ワイドは◎と○の組み合わせのみで判定されます。△は三連複のみに影響します。" />
         </div>
       </Section>
     </div>
