@@ -98,18 +98,27 @@ export default function TimelineItem({ item }: Props) {
               </span>
             )}
           </div>
-          {item.picks && item.picks.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {item.picks.map((pick, i) => {
-                const style = PICK_STYLE[pick.pick_type] ?? PICK_STYLE.win;
-                return (
-                  <span key={i} className={`${style.bg} ${style.text} text-xs px-2 py-1 rounded-full font-medium`}>
-                    {style.mark} {pick.post_number} {pick.horse_name}
+          {item.picks && item.picks.length > 0 && (() => {
+            const nonBackPicks = item.picks.filter(p => p.pick_type !== "back");
+            const backPicks = item.picks.filter(p => p.pick_type === "back");
+            return (
+              <div className="flex flex-wrap gap-1.5">
+                {nonBackPicks.map((pick, i) => {
+                  const style = PICK_STYLE[pick.pick_type] ?? PICK_STYLE.win;
+                  return (
+                    <span key={i} className={`${style.bg} ${style.text} text-xs px-2 py-1 rounded-full font-medium`}>
+                      {style.mark} {pick.post_number} {pick.horse_name}
+                    </span>
+                  );
+                })}
+                {backPicks.length > 0 && (
+                  <span className="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full font-medium">
+                    △ {backPicks.map(p => p.post_number).join(",")}
                   </span>
-                );
-              })}
-            </div>
-          )}
+                )}
+              </div>
+            );
+          })()}
         </div>
       )}
 
@@ -133,18 +142,27 @@ export default function TimelineItem({ item }: Props) {
             {item.is_perfect && <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">💎 完全的中</span>}
             {!isHit && <span className="text-xs text-gray-400">ハズレ</span>}
           </div>
-          {item.picks && item.picks.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {item.picks.map((pick, i) => {
-                const style = PICK_STYLE[pick.pick_type] ?? PICK_STYLE.win;
-                return (
-                  <span key={i} className={`${style.bg} ${style.text} text-xs px-2 py-1 rounded-full font-medium`}>
-                    {style.mark} {pick.post_number} {pick.horse_name}
+          {item.picks && item.picks.length > 0 && (() => {
+            const nonBackPicks = item.picks.filter(p => p.pick_type !== "back");
+            const backPicks = item.picks.filter(p => p.pick_type === "back");
+            return (
+              <div className="flex flex-wrap gap-1.5">
+                {nonBackPicks.map((pick, i) => {
+                  const style = PICK_STYLE[pick.pick_type] ?? PICK_STYLE.win;
+                  return (
+                    <span key={i} className={`${style.bg} ${style.text} text-xs px-2 py-1 rounded-full font-medium`}>
+                      {style.mark} {pick.post_number} {pick.horse_name}
+                    </span>
+                  );
+                })}
+                {backPicks.length > 0 && (
+                  <span className="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full font-medium">
+                    △ {backPicks.map(p => p.post_number).join(",")}
                   </span>
-                );
-              })}
-            </div>
-          )}
+                )}
+              </div>
+            );
+          })()}
         </div>
       )}
 

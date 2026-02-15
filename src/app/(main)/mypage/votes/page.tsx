@@ -78,6 +78,7 @@ export default async function VoteHistoryPage({ searchParams }: Props) {
             const picks = vote.vote_picks ?? [];
             const winPick = picks.find((p: any) => p.pick_type === "win");
             const placePicks = picks.filter((p: any) => p.pick_type === "place");
+            const backPicks = picks.filter((p: any) => p.pick_type === "back");
             const dangerPick = picks.find((p: any) => p.pick_type === "danger");
 
             return (
@@ -125,9 +126,14 @@ export default async function VoteHistoryPage({ searchParams }: Props) {
                       {p.is_hit ? " ✓" : ""}
                     </span>
                   ))}
+                  {backPicks.length > 0 && (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700">
+                      △ {backPicks.map((p: any) => p.race_entries?.post_number).join(",")}
+                    </span>
+                  )}
                   {dangerPick && (
                     <span className={`text-xs px-2 py-0.5 rounded-full ${dangerPick.is_hit ? "bg-gray-200 text-gray-700 font-bold" : "bg-gray-100 text-gray-400"}`}>
-                      △ {dangerPick.race_entries?.post_number}.{(dangerPick.race_entries?.horses as any)?.name}
+                      ⚠️ {dangerPick.race_entries?.post_number}.{(dangerPick.race_entries?.horses as any)?.name}
                       {dangerPick.is_hit ? " ✓" : ""}
                     </span>
                   )}

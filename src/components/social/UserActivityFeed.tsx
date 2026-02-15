@@ -119,18 +119,27 @@ function ActivityCard({ item }: { item: ActivityItem }) {
       )}
 
       {/* 投票内容 */}
-      {(item.type === "vote_submitted" || item.type === "vote_result") && item.picks && item.picks.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mb-1">
-          {item.picks.map((pick, i) => {
-            const style = PICK_STYLE[pick.pick_type] ?? PICK_STYLE.win;
-            return (
-              <span key={i} className={`${style.bg} ${style.text} text-[11px] px-2 py-0.5 rounded-full font-medium`}>
-                {style.mark} {pick.post_number} {pick.horse_name}
+      {(item.type === "vote_submitted" || item.type === "vote_result") && item.picks && item.picks.length > 0 && (() => {
+        const nonBackPicks = item.picks.filter(p => p.pick_type !== "back");
+        const backPicks = item.picks.filter(p => p.pick_type === "back");
+        return (
+          <div className="flex flex-wrap gap-1.5 mb-1">
+            {nonBackPicks.map((pick, i) => {
+              const style = PICK_STYLE[pick.pick_type] ?? PICK_STYLE.win;
+              return (
+                <span key={i} className={`${style.bg} ${style.text} text-[11px] px-2 py-0.5 rounded-full font-medium`}>
+                  {style.mark} {pick.post_number} {pick.horse_name}
+                </span>
+              );
+            })}
+            {backPicks.length > 0 && (
+              <span className="bg-yellow-100 text-yellow-700 text-[11px] px-2 py-0.5 rounded-full font-medium">
+                △ {backPicks.map(p => p.post_number).join(",")}
               </span>
-            );
-          })}
-        </div>
-      )}
+            )}
+          </div>
+        );
+      })()}
 
       {/* 結果ポイント */}
       {item.type === "vote_result" && (
