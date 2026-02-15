@@ -1,7 +1,17 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { checkAndGrantBadges } from "@/lib/badges";
 import { checkRankUp } from "@/lib/rank-check";
-import { getWinPoints, getDangerPoints, getGradeBonus, POINT_RULES } from "@/lib/constants/ranks";
+import {
+  getWinPointsByOdds,
+  getPlacePointsByOdds,
+  getQuinellaPointsByOdds,
+  getWidePointsByOdds,
+  getTrioPointsByOdds,
+  getBackMultiplier,
+  getDangerPoints,
+  getGradeBonus,
+  POINT_RULES,
+} from "@/lib/constants/ranks";
 
 type SettleResult = {
   success: boolean;
@@ -40,23 +50,52 @@ export async function settleRace(
     return { success: false, settled_votes: 0, total_points_awarded: 0, errors: ["レース結果が登録されていません"] };
   }
 
-  const winnerEntryId = results.find((r) => r.finish_position === 1)?.race_entry_id;
-  const winnerPopularity = results.find((r) => r.finish_position === 1)?.race_entries?.popularity ?? 1;
-  const top3EntryIds = results.filter((r) => r.finish_position <= 3).map((r) => r.race_entry_id);
+  // 3. 払戻情報を取得
+  const { data: payouts } = await supabase
+    .from("payouts")
+    .select("*")
+    .eq("race_id", raceId);
+
+  // 払戻情報をマップ化
+  const payoutMap = new Map<string, { combination: string; payout_amount: number }[]>();
+  for (const p of payouts ?? []) {
+    if (!payoutMap.has(p.bet_type)) payoutMap.set(p.bet_type, []);
+    payoutMap.get(p.bet_type)!.push({ combination: p.combination, payout_amount: p.payout_amount });
+  }
+
+  // 結果情報を整理
+  const winner = results.find((r) => r.finish_position === 1);
+  const winnerEntryId = winner?.race_entry_id;
+  const winnerOdds = winner?.race_entries?.odds ?? 1;
+  const winnerPopularity = winner?.race_entries?.popularity ?? 1;
+
+  const top3 = results.filter((r) => r.finish_position <= 3);
+  const top3EntryIds = top3.map((r) => r.race_entry_id);
+  const top3PostNumbers = top3.map((r) => r.race_entries?.post_number).filter(Boolean).sort((a, b) => a - b);
+
+  // 1着・2着の馬番（馬連用）
+  const first = results.find((r) => r.finish_position === 1);
+  const second = results.find((r) => r.finish_position === 2);
+  const firstPostNum = first?.race_entries?.post_number;
+  const secondPostNum = second?.race_entries?.post_number;
 
   if (!winnerEntryId) {
     return { success: false, settled_votes: 0, total_points_awarded: 0, errors: ["1着が見つかりません"] };
   }
 
-  // 危険馬の人気をマップ化
-  const entryPopularityMap = new Map<string, number>();
+  // エントリー情報をマップ化
+  const entryMap = new Map<string, { post_number: number; odds: number | null; popularity: number | null }>();
   for (const r of results) {
-    if (r.race_entries?.popularity) {
-      entryPopularityMap.set(r.race_entry_id, r.race_entries.popularity);
+    if (r.race_entries) {
+      entryMap.set(r.race_entry_id, {
+        post_number: r.race_entries.post_number,
+        odds: r.race_entries.odds,
+        popularity: r.race_entries.popularity,
+      });
     }
   }
 
-  // 3. 全投票を取得（pending のみ）
+  // 4. 全投票を取得（pending のみ）
   const { data: votes, error: votesErr } = await supabase
     .from("votes").select("*, vote_picks(*)").eq("race_id", raceId).eq("status", "pending");
 
@@ -69,7 +108,7 @@ export async function settleRace(
     return { success: true, settled_votes: 0, total_points_awarded: 0, errors: [] };
   }
 
-  // 4. 各投票のポイント計算
+  // 5. 各投票のポイント計算
   for (const vote of votes) {
     try {
       let votePoints = 0;
@@ -81,11 +120,18 @@ export async function settleRace(
 
       const picks = vote.vote_picks ?? [];
 
-      // --- 1着的中判定 ---
+      // 各タイプのpickを取得
       const winPick = picks.find((p: any) => p.pick_type === "win");
+      const placePicks = picks.filter((p: any) => p.pick_type === "place");
+      const backPicks = picks.filter((p: any) => p.pick_type === "back");
+      const dangerPickItem = picks.find((p: any) => p.pick_type === "danger");
+
+      const backCount = backPicks.length;
+
+      // --- 単勝的中判定（オッズ連動）---
       if (winPick) {
         if (winPick.race_entry_id === winnerEntryId) {
-          const basePts = getWinPoints(winnerPopularity);
+          const basePts = getWinPointsByOdds(winnerOdds);
           const pts = basePts + gradeBonus;
           votePoints += pts;
           winHit = true;
@@ -95,7 +141,7 @@ export async function settleRace(
           transactions.push({
             reason: "win_hit",
             amount: pts,
-            description: `1着的中（${winnerPopularity}番人気）+${basePts}P${gradeLabel}`,
+            description: `単勝的中（${winnerOdds}倍）+${basePts}P${gradeLabel}`,
           });
 
           await supabase.from("vote_picks")
@@ -106,11 +152,17 @@ export async function settleRace(
         }
       }
 
-      // --- 複勝的中判定 ---
-      const placePicks = picks.filter((p: any) => p.pick_type === "place");
+      // --- 複勝的中判定（オッズ連動）---
       for (const pp of placePicks) {
         if (top3EntryIds.includes(pp.race_entry_id)) {
-          const pts = POINT_RULES.place + gradeBonus;
+          // 複勝払戻からオッズを取得
+          const entryInfo = entryMap.get(pp.race_entry_id);
+          const postNum = entryInfo?.post_number;
+          const placePayout = payoutMap.get("place")?.find(p => p.combination === String(postNum));
+          const placeOdds = placePayout ? placePayout.payout_amount / 100 : 1.5; // 払戻/100でオッズ近似
+
+          const basePts = getPlacePointsByOdds(placeOdds);
+          const pts = basePts + gradeBonus;
           votePoints += pts;
           anyHit = true;
 
@@ -118,7 +170,7 @@ export async function settleRace(
           transactions.push({
             reason: "place_hit",
             amount: pts,
-            description: `複勝的中 +${POINT_RULES.place}P${gradeLabel}`,
+            description: `複勝的中（${placeOdds.toFixed(1)}倍）+${basePts}P${gradeLabel}`,
           });
           await supabase.from("vote_picks")
             .update({ is_hit: true, points_earned: pts }).eq("id", pp.id);
@@ -130,12 +182,133 @@ export async function settleRace(
       }
       if (placePicks.length === 0) allPlaceHit = false;
 
+      // --- 馬連的中判定（◎○が1-2着）---
+      if (winPick && placePicks.length > 0 && firstPostNum && secondPostNum) {
+        const winPostNum = entryMap.get(winPick.race_entry_id)?.post_number;
+        
+        for (const pp of placePicks) {
+          const placePostNum = entryMap.get(pp.race_entry_id)?.post_number;
+          
+          // ◎○が1-2着（順不同）
+          const isQuinellaHit = 
+            (winPostNum === firstPostNum && placePostNum === secondPostNum) ||
+            (winPostNum === secondPostNum && placePostNum === firstPostNum);
+          
+          if (isQuinellaHit) {
+            // 馬連払戻からオッズを取得
+            const combo = [winPostNum, placePostNum].sort((a, b) => a! - b!).join("-");
+            const quinellaPayout = payoutMap.get("quinella")?.find(p => 
+              p.combination.replace(/[ー－]/g, "-") === combo
+            );
+            const quinellaOdds = quinellaPayout ? quinellaPayout.payout_amount / 100 : 10;
+
+            const basePts = getQuinellaPointsByOdds(quinellaOdds);
+            const pts = basePts + gradeBonus;
+            votePoints += pts;
+            anyHit = true;
+
+            const gradeLabel = gradeBonus > 0 ? `（${race.grade}+${gradeBonus}）` : "";
+            transactions.push({
+              reason: "quinella_hit",
+              amount: pts,
+              description: `馬連的中（${quinellaOdds.toFixed(1)}倍）+${basePts}P${gradeLabel}`,
+            });
+            break; // 馬連は1回のみ
+          }
+        }
+      }
+
+      // --- ワイド的中判定（◎○が3着以内）---
+      if (winPick && placePicks.length > 0) {
+        const winInTop3 = top3EntryIds.includes(winPick.race_entry_id);
+        const winPostNum = entryMap.get(winPick.race_entry_id)?.post_number;
+
+        for (const pp of placePicks) {
+          const placeInTop3 = top3EntryIds.includes(pp.race_entry_id);
+          const placePostNum = entryMap.get(pp.race_entry_id)?.post_number;
+
+          if (winInTop3 && placeInTop3 && winPostNum && placePostNum) {
+            // ワイド払戻からオッズを取得
+            const combo = [winPostNum, placePostNum].sort((a, b) => a - b).join("-");
+            const widePayout = payoutMap.get("wide")?.find(p => 
+              p.combination.replace(/[ー－]/g, "-") === combo
+            );
+            const wideOdds = widePayout ? widePayout.payout_amount / 100 : 3;
+
+            const basePts = getWidePointsByOdds(wideOdds);
+            const pts = basePts + gradeBonus;
+            votePoints += pts;
+            anyHit = true;
+
+            const gradeLabel = gradeBonus > 0 ? `（${race.grade}+${gradeBonus}）` : "";
+            transactions.push({
+              reason: "wide_hit",
+              amount: pts,
+              description: `ワイド的中（${wideOdds.toFixed(1)}倍）+${basePts}P${gradeLabel}`,
+            });
+          }
+        }
+      }
+
+      // --- 三連複的中判定（◎○○/◎○△/◎△△が1-2-3着）---
+      if (winPick && top3PostNumbers.length === 3) {
+        const winInTop3 = top3EntryIds.includes(winPick.race_entry_id);
+        
+        if (winInTop3) {
+          // ◎以外の3着以内のエントリーを取得
+          const otherTop3 = top3EntryIds.filter(id => id !== winPick.race_entry_id);
+          
+          // ○で的中した馬
+          const placeHitsInTop3 = placePicks.filter((pp: any) => otherTop3.includes(pp.race_entry_id));
+          // △で的中した馬
+          const backHitsInTop3 = backPicks.filter((bp: any) => otherTop3.includes(bp.race_entry_id));
+
+          // 三連複的中条件: ◎が3着以内 + 残り2頭が○または△で的中
+          const totalHits = placeHitsInTop3.length + backHitsInTop3.length;
+          
+          if (totalHits >= 2) {
+            // 三連複払戻からオッズを取得
+            const trioCombination = top3PostNumbers.join("-");
+            const trioPayout = payoutMap.get("trio")?.find(p => 
+              p.combination.replace(/[ー－]/g, "-").split("-").sort().join("-") === trioCombination
+            );
+            const trioOdds = trioPayout ? trioPayout.payout_amount / 100 : 30;
+
+            let basePts = getTrioPointsByOdds(trioOdds);
+            
+            // △が含まれる場合は倍率適用
+            if (backHitsInTop3.length > 0) {
+              const multiplier = getBackMultiplier(backCount);
+              basePts = Math.floor(basePts * multiplier);
+            }
+
+            const pts = basePts + gradeBonus;
+            votePoints += pts;
+            anyHit = true;
+
+            const gradeLabel = gradeBonus > 0 ? `（${race.grade}+${gradeBonus}）` : "";
+            const backLabel = backHitsInTop3.length > 0 ? `（△${backCount}頭×${getBackMultiplier(backCount)}）` : "";
+            transactions.push({
+              reason: "trio_hit",
+              amount: pts,
+              description: `三連複的中（${trioOdds.toFixed(1)}倍）+${basePts}P${backLabel}${gradeLabel}`,
+            });
+          }
+        }
+      }
+
+      // --- △（抑え）のis_hit更新 ---
+      for (const bp of backPicks) {
+        const isHit = top3EntryIds.includes(bp.race_entry_id);
+        await supabase.from("vote_picks")
+          .update({ is_hit: isHit, points_earned: 0 }).eq("id", bp.id);
+      }
+
       // --- 危険馬的中判定（人気別ポイント）---
-      const dangerPickItem = picks.find((p: any) => p.pick_type === "danger");
       if (dangerPickItem) {
         const dangerFinish = results.find((r) => r.race_entry_id === dangerPickItem.race_entry_id);
         if (dangerFinish && dangerFinish.finish_position > 3) {
-          const dangerPop = entryPopularityMap.get(dangerPickItem.race_entry_id) ?? 99;
+          const dangerPop = entryMap.get(dangerPickItem.race_entry_id)?.popularity ?? 99;
           const basePts = getDangerPoints(dangerPop);
           const pts = basePts + gradeBonus;
           votePoints += pts;
@@ -143,10 +316,11 @@ export async function settleRace(
           anyHit = true;
 
           const gradeLabel = gradeBonus > 0 ? `（${race.grade}+${gradeBonus}）` : "";
+          const popLabel = dangerPop !== 99 ? `${dangerPop}番人気` : "人気不明";
           transactions.push({
             reason: "danger_hit",
             amount: pts,
-            description: `危険馬的中（${dangerPop}番人気）+${basePts}P${gradeLabel}`,
+            description: `危険馬的中（${popLabel}）+${basePts}P${gradeLabel}`,
           });
           await supabase.from("vote_picks")
             .update({ is_hit: true, points_earned: pts }).eq("id", dangerPickItem.id);
@@ -192,14 +366,14 @@ export async function settleRace(
         await supabase.from("profiles").update({ current_streak: 0 }).eq("id", vote.user_id);
       }
 
-      // 5. 投票ステータスを更新
+      // 6. 投票ステータスを更新
       const status = anyHit ? "settled_hit" : "settled_miss";
       await supabase.from("votes").update({
         status, earned_points: votePoints, is_perfect: isPerfect,
         settled_at: new Date().toISOString(),
       }).eq("id", vote.id);
 
-      // 6. ポイント履歴を登録
+      // 7. ポイント履歴を登録
       if (transactions.length > 0) {
         await supabase.from("points_transactions").insert(
           transactions.map((tx) => ({
@@ -209,7 +383,7 @@ export async function settleRace(
         );
       }
 
-      // 7. プロフィールのポイント・的中数を更新
+      // 8. プロフィールのポイント・的中数を更新
       const { data: currentProfile } = await supabase
         .from("profiles")
         .select("cumulative_points, monthly_points, total_votes, win_hits, place_hits, danger_hits")
@@ -228,7 +402,7 @@ export async function settleRace(
         }).eq("id", vote.user_id);
       }
 
-      // 8. 大会エントリーを更新
+      // 9. 大会エントリーを更新
       const now = new Date();
       const yearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
@@ -257,12 +431,12 @@ export async function settleRace(
         }
       }
 
-      // 8.5 バッジ自動付与チェック
+      // 10. バッジ自動付与チェック
       const isUpset = winHit && winnerPopularity >= 10;
       const isG1Win = winHit && race.grade === "G1";
       await checkAndGrantBadges(vote.user_id, { isPerfect, isUpset, isG1Win });
 
-      // 8.6 ランクアップチェック & 通知
+      // 11. ランクアップチェック & 通知
       await checkRankUp(vote.user_id);
 
       settledVotes++;
@@ -272,7 +446,7 @@ export async function settleRace(
     }
   }
 
-  // 9. レースステータスを finished に更新
+  // 12. レースステータスを finished に更新
   await supabase.from("races").update({ status: "finished" }).eq("id", raceId);
 
   return { success: errors.length === 0, settled_votes: settledVotes, total_points_awarded: totalPointsAwarded, errors };

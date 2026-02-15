@@ -1,4 +1,35 @@
-"use client";
+#!/usr/bin/env python3
+"""
+VoteForm.tsx に△（抑え）タブを追加するスクリプト
+
+変更内容:
+- backPicks state追加（0〜5頭）
+- タブに「△ 抑え」追加
+- 危険馬マーク△→⚠️に変更
+- 投票送信時にback picksも送信
+
+使用方法:
+  mv ~/Downloads/update_vote_form.py ~/gate-in/scripts/
+  cd ~/gate-in && python3 scripts/update_vote_form.py
+"""
+
+from pathlib import Path
+
+def main():
+    script_dir = Path(__file__).parent
+    if script_dir.name == "scripts":
+        project_root = script_dir.parent
+    else:
+        project_root = Path.cwd()
+    
+    file_path = project_root / "src" / "components" / "races" / "VoteForm.tsx"
+    
+    if not file_path.exists():
+        print(f"❌ ファイルが見つかりません: {file_path}")
+        return False
+    
+    # 新しいVoteForm.tsxの内容
+    new_content = '''"use client";
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -245,3 +276,18 @@ export default function VoteForm({ raceId, entries }: Props) {
     </div>
   );
 }
+'''
+
+    file_path.write_text(new_content, encoding="utf-8")
+    print("✅ VoteForm.tsx を更新しました")
+    print("")
+    print("📝 変更内容:")
+    print("   - △抑えタブを追加（0〜5頭選択可）")
+    print("   - 危険馬マークを⚠️に変更")
+    print("   - backPicks stateを追加")
+    print("   - 確認モーダルに抑え馬を表示")
+    return True
+
+
+if __name__ == "__main__":
+    main()

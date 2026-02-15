@@ -97,6 +97,7 @@ export async function GET(request: Request, { params }: Props) {
     total_votes: totalVotes,
     win: aggregate("win"),
     place: aggregate("place"),
+    back: aggregate("back"),
     danger: aggregate("danger"),
     rank_distribution: rankCounts,
   });
@@ -170,9 +171,10 @@ export async function PUT(
   }
 
   const body = await request.json();
-  const { winPick, placePicks, dangerPick } = body as {
+  const { winPick, placePicks, backPicks, dangerPick } = body as {
     winPick: string;
     placePicks: string[];
+    backPicks?: string[];
     dangerPick: string | null;
   };
 
@@ -220,6 +222,11 @@ export async function PUT(
     ...placePicks.map((id: string) => ({
       vote_id: vote.id,
       pick_type: "place",
+      race_entry_id: id,
+    })),
+    ...(backPicks ?? []).map((id: string) => ({
+      vote_id: vote.id,
+      pick_type: "back",
       race_entry_id: id,
     })),
     ...(dangerPick
