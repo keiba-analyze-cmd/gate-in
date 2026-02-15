@@ -48,7 +48,8 @@ export default function TimelineFeed() {
 
   const filters = [
     { key: "all", label: "すべて" },
-    { key: "vote", label: "🗳 投票結果" },
+    { key: "hit", label: "🎯 的中報告" },
+    { key: "vote", label: "🗳 みんなの予想" },
     { key: "comment", label: "💬 コメント" },
   ];
 

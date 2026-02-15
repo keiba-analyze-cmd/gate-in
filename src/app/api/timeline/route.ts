@@ -26,16 +26,17 @@ export async function GET(request: Request) {
   const admin = createAdminClient();
 
   let voteItems: any[] = [];
-  if (filter === "all" || filter === "vote") {
-    // settled votes（結果確定済み）
-    let settledQ = admin.from("votes")
-      .select("id, user_id, race_id, status, earned_points, is_perfect, settled_at, created_at, profiles(display_name, avatar_url, rank_id), races(name, grade, course_name, race_number, race_date), vote_picks(pick_type, race_entries(post_number, horses(name)))")
-      .in("user_id", targetIds).neq("status", "pending")
-      .order("settled_at", { ascending: false }).limit(limit);
-    if (cursor) settledQ = settledQ.lt("settled_at", cursor);
-    const { data: settled } = await settledQ;
 
-    const settledItems = (settled ?? []).map((v: any) => ({
+  // 的中報告（settled_hit のみ）
+  if (filter === "all" || filter === "hit") {
+    let hitQ = admin.from("votes")
+      .select("id, user_id, race_id, status, earned_points, is_perfect, settled_at, created_at, profiles(display_name, avatar_url, rank_id), races(name, grade, course_name, race_number, race_date), vote_picks(pick_type, race_entries(post_number, horses(name)))")
+      .in("user_id", targetIds).eq("status", "settled_hit")
+      .order("settled_at", { ascending: false }).limit(limit);
+    if (cursor) hitQ = hitQ.lt("settled_at", cursor);
+    const { data: hits } = await hitQ;
+
+    const hitItems = (hits ?? []).map((v: any) => ({
       type: "vote_result", id: `vote-${v.id}`, user: v.profiles, user_id: v.user_id,
       race: v.races, race_id: v.race_id, earned_points: v.earned_points,
       is_perfect: v.is_perfect, status: v.status,
@@ -43,7 +44,11 @@ export async function GET(request: Request) {
       timestamp: v.settled_at ?? v.created_at,
     }));
 
-    // pending votes（投票直後）
+    voteItems = [...voteItems, ...hitItems];
+  }
+
+  // みんなの予想（pending のみ）
+  if (filter === "all" || filter === "vote") {
     let pendingQ = admin.from("votes")
       .select("id, user_id, race_id, status, created_at, profiles(display_name, avatar_url, rank_id), races(name, grade, course_name, race_number, race_date), vote_picks(pick_type, race_entries(post_number, horses(name)))")
       .in("user_id", targetIds).eq("status", "pending")
@@ -58,7 +63,7 @@ export async function GET(request: Request) {
       timestamp: v.created_at,
     }));
 
-    voteItems = [...settledItems, ...pendingItems];
+    voteItems = [...voteItems, ...pendingItems];
   }
 
   let commentItems: any[] = [];
