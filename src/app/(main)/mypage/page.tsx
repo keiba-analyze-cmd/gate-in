@@ -156,7 +156,9 @@ export default async function MyPage() {
         <MenuItem href="/mypage/badges" icon="🏅" label="バッジコレクション" desc={`${badgeCount ?? 0}個獲得`} />
         <MenuItem href="/notifications" icon="🔔" label="通知" desc="お知らせ一覧" />
         <MenuItem href="/mypage/notification-settings" icon="⚙️" label="通知設定" desc="通知のON/OFF" />
-        <MenuItem href="/timeline" icon="📰" label="タイムライン" desc="フォロー中のアクティビティ" />
+        <MenuItem href="/mypage/newspaper" icon="📰" label="My競馬新聞設定" desc="表示する予想家を選ぶ" />
+        <MenuItem href="/mypage/diagnosis" icon="🎯" label="予想スタイル診断" desc="あなたの予想傾向を分析" />
+        <MenuItem href="/timeline" icon="📱" label="タイムライン" desc="フォロー中のアクティビティ" />
         <MenuItem href={`/users/${user.id}`} icon="👤" label="公開プロフィール" desc="他の人から見えるページ" />
         <MenuItem href="/mypage/delete" icon="🚪" label="退会" desc="アカウントの削除" />
       </div>
