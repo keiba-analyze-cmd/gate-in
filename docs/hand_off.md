@@ -48,6 +48,31 @@
 - `profiles.featured_badge_id`で管理
 - `/mypage/badges`から設定
 
+#### 5. いいね機能
+- 予想に❤️いいねを付けられる
+- いいね数がカウント表示される
+- いいねされると通知が届く
+- `vote_likes`テーブルで管理
+
+#### 6. フォロー中の予想（TOP画面）
+- TOPページの「盛り上がりコメント」→「フォロー中の予想」に変更
+- フォローしているユーザーの最新10件を表示
+
+#### 7. タイムライン改修
+- タブを分離：すべて / 🎯的中報告 / 🗳みんなの予想 / 💬コメント
+- 的中報告（settled_hit）と投票（pending）を明確に分離
+
+---
+
+## 印の体系（最新版）
+
+| 印 | 名称 | 用途 | 選択数 | 表示色 |
+|----|------|------|:------:|--------|
+| ◎ | 本命 | 単勝・馬連・三連複 | 1頭（必須） | 赤 |
+| ○ | 相手 | 複勝・馬連・ワイド・三連複 | 0〜2頭 | 青 |
+| △ | 抑え | 三連複のみ | 0〜5頭 | 黄 |
+| ⚠️ | 危険馬 | 着外予想 | 0〜1頭 | グレー |
+
 ---
 
 ## DB変更履歴（2026-02-15）
@@ -69,6 +94,20 @@ INSERT INTO badges (id, name, icon, description, category, condition) VALUES
   ('trio_100', '三連複ハンター', '🎰', '三連複100倍以上を的中させた', 'ticket', '{"type": "trio_odds", "min": 100}'),
   ('trio_1000', 'ミリオンショット', '👑', '三連複1000倍以上を的中させた', 'ticket', '{"type": "trio_odds", "min": 1000}'),
   ('odds_30', '大穴スナイパー', '🎯', '単勝30倍以上を的中させた', 'ticket', '{"type": "win_odds", "min": 30}');
+
+-- いいねテーブル
+CREATE TABLE vote_likes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  vote_id UUID NOT NULL REFERENCES votes(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id, vote_id)
+);
+ALTER TABLE votes ADD COLUMN like_count INT DEFAULT 0;
+
+-- いいねカウント用RPC関数
+CREATE FUNCTION increment_vote_like_count(vote_id_param UUID) ...
+CREATE FUNCTION decrement_vote_like_count(vote_id_param UUID) ...
 ```
 
 ---
@@ -84,43 +123,26 @@ INSERT INTO badges (id, name, icon, description, category, condition) VALUES
 - `src/components/races/VoteForm.tsx` - 投票フォーム（△タブ含む）
 - `src/components/races/VoteEditForm.tsx` - 投票編集フォーム
 - `src/components/races/VoteSummary.tsx` - 投票結果表示
+- `src/components/races/HorseList.tsx` - 出馬表（△表示対応）
 - `src/app/api/races/[raceId]/votes/route.ts` - 投票API
 
 ### 表示関連
 - `src/components/social/TimelineItem.tsx` - タイムライン表示
+- `src/components/social/TimelineFeed.tsx` - タイムラインフィード
 - `src/components/social/UserActivityFeed.tsx` - ユーザーアクティビティ
+- `src/components/social/FollowingVotes.tsx` - フォロー中の予想
+- `src/components/social/LikeButton.tsx` - いいねボタン
 - `src/components/races/VoteDistribution.tsx` - 投票分布
 
-### ガイド
-- `src/app/(main)/guide/points/page.tsx` - ポイントルール詳細
+### API
+- `src/app/api/votes/[voteId]/like/route.ts` - いいねAPI
+- `src/app/api/timeline/following/route.ts` - フォロー中の予想取得
+- `src/app/api/profile/featured-badge/route.ts` - お気に入りバッジ設定
 
-### バッジ
+### ガイド・バッジ
+- `src/app/(main)/guide/points/page.tsx` - ポイントルール詳細
 - `src/app/(main)/mypage/badges/page.tsx` - バッジコレクション
 - `src/app/(main)/mypage/badges/BadgeGrid.tsx` - お気に入り選択UI
-- `src/app/api/profile/featured-badge/route.ts` - お気に入り設定API
-
----
-
-## 印の体系
-
-| 印 | 名称 | 用途 | 選択数 |
-|----|------|------|:------:|
-| ◎ | 本命 | 単勝・馬連・三連複 | 1頭（必須） |
-| ○ | 相手 | 複勝・馬連・ワイド・三連複 | 0〜2頭 |
-| △ | 抑え | 三連複のみ | 0〜5頭 |
-| ⚠️ | 危険馬 | 着外予想 | 0〜1頭 |
-
----
-
-## 既知の課題・注意点
-
-1. **危険馬の人気取得**
-   - 結果取得時に人気・オッズを更新するよう修正済み
-   - 人気不明の場合は「人気不明」と表示
-
-2. **払戻情報の取得**
-   - `payouts`テーブルから馬連・ワイド・三連複のオッズを取得
-   - 払戻がない場合はデフォルト値を使用
 
 ---
 
@@ -141,8 +163,9 @@ git push origin main
 
 ## 次回以降の候補タスク
 
+- [ ] プロフィールページでお気に入りバッジを表示
+- [ ] タイムラインにいいねボタン追加
 - [ ] UI刷新（モダンなデザインへ）
 - [ ] プッシュ通知の実装
 - [ ] SNSシェア機能の強化
 - [ ] 予想AIアシスタント機能
-- [ ] 過去データ分析機能
