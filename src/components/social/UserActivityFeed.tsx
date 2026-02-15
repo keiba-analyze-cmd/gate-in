@@ -21,7 +21,8 @@ type ActivityItem = {
 const PICK_STYLE: Record<string, { mark: string; bg: string; text: string }> = {
   win: { mark: "◎", bg: "bg-red-100", text: "text-red-700" },
   place: { mark: "○", bg: "bg-blue-100", text: "text-blue-700" },
-  danger: { mark: "△", bg: "bg-gray-200", text: "text-gray-700" },
+  back: { mark: "△", bg: "bg-yellow-100", text: "text-yellow-700" },
+  danger: { mark: "⚠️", bg: "bg-gray-200", text: "text-gray-700" },
 };
 
 export default function UserActivityFeed({ userId }: { userId: string }) {
