@@ -27,6 +27,7 @@ type Props = {
 export default function HorseList({ entries, myVote, results }: Props) {
   const winPickId = myVote?.vote_picks?.find((p: any) => p.pick_type === "win")?.race_entry_id;
   const placePickIds = myVote?.vote_picks?.filter((p: any) => p.pick_type === "place").map((p: any) => p.race_entry_id) ?? [];
+  const backPickIds = myVote?.vote_picks?.filter((p: any) => p.pick_type === "back").map((p: any) => p.race_entry_id) ?? [];
   const dangerPickId = myVote?.vote_picks?.find((p: any) => p.pick_type === "danger")?.race_entry_id;
 
   return (
@@ -45,6 +46,7 @@ export default function HorseList({ entries, myVote, results }: Props) {
       {entries.map((entry) => {
         const isWin = entry.id === winPickId;
         const isPlace = placePickIds.includes(entry.id);
+        const isBack = backPickIds.includes(entry.id);
         const isDanger = entry.id === dangerPickId;
         const result = results?.find((r: any) => r.race_entry_id === entry.id);
 
@@ -60,6 +62,8 @@ export default function HorseList({ entries, myVote, results }: Props) {
                 ? "bg-red-50 border border-red-100"
                 : isPlace
                 ? "bg-blue-50 border border-blue-100"
+                : isBack
+                ? "bg-yellow-50 border border-yellow-100"
                 : isDanger
                 ? "bg-gray-100 border border-gray-200"
                 : "bg-gray-50"
@@ -126,7 +130,8 @@ export default function HorseList({ entries, myVote, results }: Props) {
               )}
               {isWin && <span className="text-xs font-bold text-red-600 ml-1">◎</span>}
               {isPlace && <span className="text-xs font-bold text-blue-600 ml-1">○</span>}
-              {isDanger && <span className="text-xs font-bold text-gray-500 ml-1">△</span>}
+              {isBack && <span className="text-xs font-bold text-yellow-600 ml-1">△</span>}
+              {isDanger && <span className="text-xs font-bold text-gray-500 ml-1">⚠️</span>}
             </div>
           </div>
         );

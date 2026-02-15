@@ -90,7 +90,7 @@ export default function VoteDistribution({ raceId }: Props) {
 
   const tabs = [
     { key: "win" as const, label: "◎ 1着予想", data: data.win_distribution ?? data.win ?? [], color: "red" },
-    { key: "place" as const, label: "○ 複勝予想", data: data.place_distribution ?? data.place ?? [], color: "blue" },
+    { key: "place" as const, label: "○ 相手", data: data.place_distribution ?? data.place ?? [], color: "blue" },
     { key: "back" as const, label: "△ 抑え", data: data.back_distribution ?? data.back ?? [], color: "yellow" },
     { key: "danger" as const, label: "⚠️ 危険馬", data: data.danger_distribution ?? data.danger ?? [], color: "gray" },
   ];
