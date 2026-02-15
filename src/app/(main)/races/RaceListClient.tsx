@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import RaceCard from "@/components/races/RaceCard";
 import { useTheme } from "@/contexts/ThemeContext";
+import { getWeekRaceDates, getSaturdayOfWeek, formatDateString, formatWeekRange, addDays } from "@/lib/dateUtils";
 
 type Race = {
   id: string;
@@ -41,6 +42,20 @@ export default function RaceListClient({
   const { isDark } = useTheme();
   const router = useRouter();
 
+  const currentDate = new Date(selectedDate + "T00:00:00+09:00");
+  const currentWeekStart = getSaturdayOfWeek(currentDate);
+  const weekDates = getWeekRaceDates(currentWeekStart);
+  
+  const prevWeekSat = addDays(currentWeekStart, -7);
+  const nextWeekSat = addDays(currentWeekStart, 7);
+  const prevWeekSatStr = formatDateString(prevWeekSat);
+  const prevWeekSunStr = formatDateString(addDays(prevWeekSat, 1));
+  const nextWeekSatStr = formatDateString(nextWeekSat);
+  const nextWeekSunStr = formatDateString(addDays(nextWeekSat, 1));
+  
+  const hasPrevWeek = uniqueDates.includes(prevWeekSatStr) || uniqueDates.includes(prevWeekSunStr);
+  const hasNextWeek = uniqueDates.includes(nextWeekSatStr) || uniqueDates.includes(nextWeekSunStr);
+
   const textPrimary = isDark ? "text-slate-100" : "text-gray-900";
   const textSecondary = isDark ? "text-slate-400" : "text-gray-500";
   const inputClass = isDark 
@@ -60,12 +75,19 @@ export default function RaceListClient({
     return `/races?${url.toString()}`;
   };
 
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr + "T00:00:00+09:00");
+  const formatDayTab = (date: Date) => {
     const month = date.getMonth() + 1;
     const day = date.getDate();
-    const weekday = ["日", "月", "火", "水", "木", "金", "土"][date.getDay()];
-    return { display: `${month}/${day}`, weekday };
+    const dayNames = ["日曜", "月曜", "火曜", "水曜", "木曜", "金曜", "土曜"];
+    return `${dayNames[date.getDay()]} ${month}/${day}`;
+  };
+
+  const handleWeekChange = (direction: "prev" | "next") => {
+    const targetWeekSat = direction === "prev" ? prevWeekSat : nextWeekSat;
+    const satStr = formatDateString(targetWeekSat);
+    const sunStr = formatDateString(addDays(targetWeekSat, 1));
+    const targetDate = uniqueDates.includes(satStr) ? satStr : sunStr;
+    router.push(buildUrl({ date: targetDate }));
   };
 
   const getVoteResult = (raceId: string) => voteResults[raceId] ?? "none";
@@ -99,6 +121,62 @@ export default function RaceListClient({
         </Link>
       </div>
 
+      {/* 週スライダー */}
+      <div className="flex items-center justify-center gap-3">
+        <button
+          onClick={() => hasPrevWeek && handleWeekChange("prev")}
+          disabled={!hasPrevWeek}
+          className={`w-10 h-10 flex items-center justify-center rounded-full text-xl font-bold transition-all ${
+            hasPrevWeek
+              ? isDark ? "bg-slate-700 hover:bg-slate-600 text-slate-300" : "bg-gray-100 hover:bg-gray-200 text-gray-600"
+              : isDark ? "bg-slate-800 text-slate-600 cursor-not-allowed" : "bg-gray-50 text-gray-300 cursor-not-allowed"
+          }`}
+        >
+          ‹
+        </button>
+        <span className={`font-bold text-base min-w-[160px] text-center ${textPrimary}`}>
+          {formatWeekRange(currentWeekStart)}
+        </span>
+        <button
+          onClick={() => hasNextWeek && handleWeekChange("next")}
+          disabled={!hasNextWeek}
+          className={`w-10 h-10 flex items-center justify-center rounded-full text-xl font-bold transition-all ${
+            hasNextWeek
+              ? isDark ? "bg-slate-700 hover:bg-slate-600 text-slate-300" : "bg-gray-100 hover:bg-gray-200 text-gray-600"
+              : isDark ? "bg-slate-800 text-slate-600 cursor-not-allowed" : "bg-gray-50 text-gray-300 cursor-not-allowed"
+          }`}
+        >
+          ›
+        </button>
+      </div>
+
+      {/* 日付タブ（土曜→日曜の順） */}
+      <div className="flex gap-2 justify-center">
+        {weekDates.map((date) => {
+          const dateStr = formatDateString(date);
+          const hasData = uniqueDates.includes(dateStr);
+          const isSelected = dateStr === selectedDate;
+          
+          if (!hasData) {
+            return (
+              <span key={dateStr} className={`px-5 py-2 rounded-full text-sm font-medium ${isDark ? "bg-slate-800 text-slate-600" : "bg-gray-100 text-gray-400"}`}>
+                {formatDayTab(date)}
+              </span>
+            );
+          }
+          
+          return (
+            <Link
+              key={dateStr}
+              href={buildUrl({ date: dateStr, course: selectedCourse, grade: selectedGrade, q: searchQuery || undefined })}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${isSelected ? chipActive + " font-bold" : chipInactive}`}
+            >
+              {formatDayTab(date)}
+            </Link>
+          );
+        })}
+      </div>
+
       {/* 検索 */}
       <div className={`relative rounded-xl border ${inputClass}`}>
         <span className="absolute left-3 top-1/2 -translate-y-1/2">🔍</span>
@@ -116,38 +194,14 @@ export default function RaceListClient({
         />
       </div>
 
-      {/* 日付フィルター */}
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-        {uniqueDates.slice(0, 7).map((date) => {
-          const { display, weekday } = formatDate(date);
-          const isSelected = date === selectedDate;
-          return (
-            <Link
-              key={date}
-              href={buildUrl({ date, course: selectedCourse, grade: selectedGrade, q: searchQuery || undefined })}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold text-center transition-colors shrink-0 ${isSelected ? chipActive : chipInactive}`}
-            >
-              <div>{display}</div>
-              <div className="text-[10px]">{weekday}</div>
-            </Link>
-          );
-        })}
-      </div>
-
       {/* 競馬場フィルター */}
       <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-        <Link
-          href={buildUrl({ date: selectedDate, grade: selectedGrade, q: searchQuery || undefined })}
-          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors shrink-0 ${!selectedCourse ? chipActive : chipInactive}`}
-        >
+        <span className={`text-xs shrink-0 self-center ${textSecondary}`}>競馬場:</span>
+        <Link href={buildUrl({ date: selectedDate, grade: selectedGrade, q: searchQuery || undefined })} className={`px-3 py-1.5 rounded-full text-xs font-bold transition-colors shrink-0 ${!selectedCourse ? chipActive : chipInactive}`}>
           全て
         </Link>
         {uniqueCourses.map((course) => (
-          <Link
-            key={course}
-            href={buildUrl({ date: selectedDate, course, grade: selectedGrade, q: searchQuery || undefined })}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors shrink-0 ${selectedCourse === course ? chipActive : chipInactive}`}
-          >
+          <Link key={course} href={buildUrl({ date: selectedDate, course, grade: selectedGrade, q: searchQuery || undefined })} className={`px-3 py-1.5 rounded-full text-xs font-bold transition-colors shrink-0 ${selectedCourse === course ? chipActive : chipInactive}`}>
             {course}
           </Link>
         ))}
@@ -155,18 +209,12 @@ export default function RaceListClient({
 
       {/* グレードフィルター */}
       <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-        <Link
-          href={buildUrl({ date: selectedDate, course: selectedCourse, q: searchQuery || undefined })}
-          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors shrink-0 ${!selectedGrade ? chipActive : chipInactive}`}
-        >
+        <span className={`text-xs shrink-0 self-center ${textSecondary}`}>グレード:</span>
+        <Link href={buildUrl({ date: selectedDate, course: selectedCourse, q: searchQuery || undefined })} className={`px-3 py-1.5 rounded-full text-xs font-bold transition-colors shrink-0 ${!selectedGrade ? chipActive : chipInactive}`}>
           全て
         </Link>
         {grades.map((grade) => (
-          <Link
-            key={grade}
-            href={buildUrl({ date: selectedDate, course: selectedCourse, grade, q: searchQuery || undefined })}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors shrink-0 ${selectedGrade === grade ? chipActive : chipInactive}`}
-          >
+          <Link key={grade} href={buildUrl({ date: selectedDate, course: selectedCourse, grade, q: searchQuery || undefined })} className={`px-3 py-1.5 rounded-full text-xs font-bold transition-colors shrink-0 ${selectedGrade === grade ? chipActive : chipInactive}`}>
             {grade === "L" ? "Listed" : grade}
           </Link>
         ))}
@@ -176,7 +224,6 @@ export default function RaceListClient({
         <div className={`text-sm ${textSecondary}`}>「{searchQuery}」の検索結果: {openRaces.length + closedRaces.length + finishedRaces.length}件</div>
       )}
 
-      {/* 🗳 受付中 */}
       {openRaces.length > 0 && (
         <section>
           <div className="flex items-center gap-2 mb-2">
@@ -187,7 +234,6 @@ export default function RaceListClient({
         </section>
       )}
 
-      {/* ⏰ 投票締切 */}
       {closedRaces.length > 0 && (
         <section>
           <div className="flex items-center gap-2 mb-2">
@@ -198,7 +244,6 @@ export default function RaceListClient({
         </section>
       )}
 
-      {/* 📊 結果確定 */}
       {finishedRaces.length > 0 && (
         <section>
           <div className="flex items-center gap-2 mb-2">

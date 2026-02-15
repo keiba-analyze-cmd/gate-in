@@ -2,6 +2,7 @@ export const revalidate = 60;
 
 import { createClient } from "@/lib/supabase/server";
 import RaceListClient from "./RaceListClient";
+import { getDefaultRaceDate, formatDateString } from "@/lib/dateUtils";
 
 type Props = {
   searchParams: Promise<{ date?: string; course?: string; grade?: string; q?: string }>;
@@ -13,7 +14,6 @@ export default async function RaceListPage({ searchParams }: Props) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  // 投票＋結果情報を取得
   type VoteInfo = { voted: boolean; result: "none" | "pending" | "hit" | "miss" };
   const voteMap = new Map<string, VoteInfo>();
   if (user) {
@@ -32,14 +32,22 @@ export default async function RaceListPage({ searchParams }: Props) {
     }
   }
 
-  // 日付一覧
   const { data: dateDays } = await supabase
     .from("races").select("race_date")
     .order("race_date", { ascending: false }).limit(100);
   const uniqueDates = [...new Set(dateDays?.map((d) => d.race_date) ?? [])];
-  const selectedDate = params.date ?? uniqueDates[0] ?? "";
 
-  // レース取得
+  let selectedDate: string = params.date ?? "";
+  if (!selectedDate) {
+    const defaultDate = getDefaultRaceDate();
+    const defaultDateStr = formatDateString(defaultDate);
+    if (uniqueDates.includes(defaultDateStr)) {
+      selectedDate = defaultDateStr;
+    } else {
+      selectedDate = uniqueDates[0] ?? "";
+    }
+  }
+
   let query = supabase.from("races").select("*")
     .eq("race_date", selectedDate)
     .order("post_time", { ascending: true });
@@ -56,12 +64,10 @@ export default async function RaceListPage({ searchParams }: Props) {
     );
   }
 
-  // 競馬場一覧
   const { data: allRacesForDay } = await supabase
     .from("races").select("course_name").eq("race_date", selectedDate);
   const uniqueCourses = [...new Set(allRacesForDay?.map((r) => r.course_name) ?? [])];
 
-  // 現在時刻で締切判定
   const now = new Date();
   const isDeadlinePassed = (race: any): boolean => {
     if (!race.post_time) return false;
@@ -69,7 +75,6 @@ export default async function RaceListPage({ searchParams }: Props) {
     return now.getTime() > deadline;
   };
 
-  // セクション分け
   const gradeOpen: typeof filteredRaces = [];
   const gradeClosed: typeof filteredRaces = [];
   const gradeFinished: typeof filteredRaces = [];
@@ -95,7 +100,6 @@ export default async function RaceListPage({ searchParams }: Props) {
   const closedRaces = [...gradeClosed, ...normalClosed];
   const finishedRaces = [...gradeFinished, ...normalFinished];
 
-  // voteMapをオブジェクトに変換
   const voteResults: Record<string, "pending" | "hit" | "miss"> = {};
   const votedRaceIds: string[] = [];
   for (const [raceId, info] of voteMap) {
