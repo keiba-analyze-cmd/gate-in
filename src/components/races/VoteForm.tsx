@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
+import { useTheme } from "@/contexts/ThemeContext";
 import Link from "next/link";
 
 type Entry = {
@@ -26,6 +27,7 @@ type CopySource = {
 type Props = { raceId: string; entries: Entry[] };
 
 export default function VoteForm({ raceId, entries }: Props) {
+  const { isDark } = useTheme();
   const [winPick, setWinPick] = useState<string | null>(null);
   const [placePicks, setPlacePicks] = useState<string[]>([]);
   const [backPicks, setBackPicks] = useState<string[]>([]);
@@ -41,7 +43,14 @@ export default function VoteForm({ raceId, entries }: Props) {
   const { showToast } = useToast();
   const supabase = createClient();
 
-  // URLパラメータから乗っかり元を取得
+  // スタイル定義
+  const cardBg = isDark ? "bg-slate-900 border-slate-700" : "bg-white border-gray-100";
+  const textPrimary = isDark ? "text-slate-100" : "text-gray-800";
+  const textSecondary = isDark ? "text-slate-400" : "text-gray-500";
+  const textMuted = isDark ? "text-slate-500" : "text-gray-400";
+  const borderColor = isDark ? "border-slate-700" : "border-gray-100";
+  const btnPrimary = isDark ? "bg-amber-500 hover:bg-amber-600 text-slate-900" : "bg-green-600 hover:bg-green-700 text-white";
+
   useEffect(() => {
     const copyFromVoteId = searchParams.get("copy_from");
     if (copyFromVoteId) {
@@ -56,13 +65,10 @@ export default function VoteForm({ raceId, entries }: Props) {
       if (res.ok) {
         const data = await res.json();
         setCopySource(data);
-        
-        // picksをプリセット
         const winEntry = data.picks.find((p: any) => p.pick_type === "win");
         const placeEntries = data.picks.filter((p: any) => p.pick_type === "place");
         const backEntries = data.picks.filter((p: any) => p.pick_type === "back");
         const dangerEntry = data.picks.find((p: any) => p.pick_type === "danger");
-        
         if (winEntry) setWinPick(winEntry.race_entry_id);
         setPlacePicks(placeEntries.map((p: any) => p.race_entry_id));
         setBackPicks(backEntries.map((p: any) => p.race_entry_id));
@@ -72,7 +78,6 @@ export default function VoteForm({ raceId, entries }: Props) {
     setLoadingCopy(false);
   };
 
-  // 他タブで選択済みかチェック
   const isUsedInOtherTab = (entryId: string): string | null => {
     if (activeTab !== "win" && winPick === entryId) return "◎";
     if (activeTab !== "place" && placePicks.includes(entryId)) return "○";
@@ -108,20 +113,10 @@ export default function VoteForm({ raceId, entries }: Props) {
       return;
     }
 
-    // 乗っかり元がある場合はcopied_from_vote_idを含める
-    const voteData: any = {
-      user_id: user.id,
-      race_id: raceId,
-    };
-    if (copySource) {
-      voteData.copied_from_vote_id = copySource.vote_id;
-    }
+    const voteData: any = { user_id: user.id, race_id: raceId };
+    if (copySource) voteData.copied_from_vote_id = copySource.vote_id;
 
-    const { data: vote, error: voteErr } = await supabase
-      .from("votes")
-      .insert(voteData)
-      .select().single();
-
+    const { data: vote, error: voteErr } = await supabase.from("votes").insert(voteData).select().single();
     if (voteErr || !vote) {
       setError("投票に失敗しました: " + (voteErr?.message ?? ""));
       setLoading(false);
@@ -142,15 +137,11 @@ export default function VoteForm({ raceId, entries }: Props) {
       return;
     }
 
-    // 乗っかり元がある場合、通知を送信
     if (copySource) {
       await fetch("/api/votes/copy-notify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          original_vote_id: copySource.vote_id,
-          original_user_id: copySource.user_id,
-        }),
+        body: JSON.stringify({ original_vote_id: copySource.vote_id, original_user_id: copySource.user_id }),
       });
     }
 
@@ -164,7 +155,6 @@ export default function VoteForm({ raceId, entries }: Props) {
     setPlacePicks([]);
     setBackPicks([]);
     setDangerPick(null);
-    // URLからcopy_fromパラメータを削除
     router.replace(`/races/${raceId}`);
   };
 
@@ -179,12 +169,20 @@ export default function VoteForm({ raceId, entries }: Props) {
     switch (tab) {
       case "win": return { mark: "◎", color: "text-red-500" };
       case "place": return { mark: "○", color: "text-blue-500" };
-      case "back": return { mark: "△", color: "text-yellow-600" };
-      case "danger": return { mark: "⚠️", color: "text-gray-500" };
+      case "back": return { mark: "△", color: isDark ? "text-yellow-400" : "text-yellow-600" };
+      case "danger": return { mark: "⚠️", color: textSecondary };
     }
   };
 
   const getSelectedStyle = (tab: "win" | "place" | "back" | "danger") => {
+    if (isDark) {
+      switch (tab) {
+        case "win": return "bg-red-500/20 border-2 border-red-500/50";
+        case "place": return "bg-blue-500/20 border-2 border-blue-500/50";
+        case "back": return "bg-yellow-500/20 border-2 border-yellow-500/50";
+        case "danger": return "bg-slate-700 border-2 border-slate-500";
+      }
+    }
     switch (tab) {
       case "win": return "bg-red-50 border-2 border-red-300";
       case "place": return "bg-blue-50 border-2 border-blue-300";
@@ -193,48 +191,51 @@ export default function VoteForm({ raceId, entries }: Props) {
     }
   };
 
+  const getTabStyle = (tabKey: string) => {
+    if (activeTab === tabKey) {
+      return isDark ? "text-amber-400 bg-slate-800" : "text-green-600 bg-green-50";
+    }
+    return isDark ? "text-slate-400 hover:text-slate-200" : "text-gray-500 hover:text-gray-700";
+  };
+
   if (loadingCopy) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
-        <div className="text-gray-400 text-sm">予想を読み込み中...</div>
+      <div className={`rounded-2xl border p-8 text-center ${cardBg}`}>
+        <div className={`text-sm ${textMuted}`}>予想を読み込み中...</div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-      {/* 乗っかり元の表示 */}
+    <div className={`rounded-2xl border overflow-hidden ${cardBg}`}>
+      <div className={`p-4 border-b ${borderColor}`}>
+        <h2 className={`font-bold ${textPrimary}`}>🗳 予想を投票する</h2>
+        <p className={`text-xs mt-1 ${textMuted}`}>1着予想（必須）+ 複勝・抑え・危険馬（任意）</p>
+      </div>
+
       {copySource && (
-        <div className="bg-blue-50 border-b border-blue-100 px-4 py-3">
+        <div className={`p-4 border-b ${isDark ? "bg-blue-500/10 border-blue-500/30" : "bg-blue-50 border-blue-100"}`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-blue-600 text-sm">🚀</span>
-              <span className="text-sm text-blue-700">
-                <Link href={`/users/${copySource.user_id}`} className="font-bold hover:underline">
-                  {copySource.user_name}
-                </Link>
-                さんの予想をベースにしています
+              <span className="text-lg">🚀</span>
+              <span className={`text-sm font-medium ${isDark ? "text-blue-400" : "text-blue-700"}`}>
+                {copySource.user_name}さんの予想をベースにしています
               </span>
             </div>
-            <button
-              onClick={clearCopySource}
-              className="text-xs text-blue-500 hover:text-blue-700"
-            >
+            <button onClick={clearCopySource} className={`text-xs ${isDark ? "text-blue-400 hover:text-blue-300" : "text-blue-500 hover:text-blue-700"}`}>
               クリア
             </button>
           </div>
         </div>
       )}
 
-      <div className="flex border-b border-gray-100">
+      <div className={`flex border-b ${borderColor}`}>
         {tabs.map((tab) => (
           <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-            className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
-              activeTab === tab.key ? "text-green-600 bg-green-50" : "text-gray-500 hover:text-gray-700"
-            }`}>
+            className={`flex-1 py-3 text-sm font-medium transition-colors relative ${getTabStyle(tab.key)}`}>
             {tab.label}
-            <span className="block text-xs font-normal text-gray-400">{tab.desc}</span>
-            {activeTab === tab.key && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-600" />}
+            <span className={`block text-xs font-normal ${textMuted}`}>{tab.desc}</span>
+            {activeTab === tab.key && <div className={`absolute bottom-0 left-0 right-0 h-0.5 ${isDark ? "bg-amber-500" : "bg-green-600"}`} />}
           </button>
         ))}
       </div>
@@ -250,8 +251,11 @@ export default function VoteForm({ raceId, entries }: Props) {
           const isMaxPlace = activeTab === "place" && placePicks.length >= 2 && !isSelected;
           const isMaxBack = activeTab === "back" && backPicks.length >= 5 && !isSelected;
           const isDisabled = !!usedIn || isMaxPlace || isMaxBack;
-
           const { mark, color } = getMarkDisplay(activeTab);
+
+          const defaultStyle = isDark
+            ? "bg-slate-800 border-2 border-transparent hover:border-slate-600"
+            : "bg-gray-50 border-2 border-transparent hover:border-gray-200";
 
           return (
             <button key={entry.id}
@@ -264,96 +268,93 @@ export default function VoteForm({ raceId, entries }: Props) {
               }}
               disabled={isDisabled}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${
-                isSelected
-                  ? getSelectedStyle(activeTab)
-                  : usedIn ? "bg-gray-50 border-2 border-transparent opacity-30"
-                  : "bg-gray-50 border-2 border-transparent hover:border-gray-200"
+                isSelected ? getSelectedStyle(activeTab)
+                : usedIn ? `${isDark ? "bg-slate-800" : "bg-gray-50"} border-2 border-transparent opacity-30`
+                : defaultStyle
               } ${(isMaxPlace || isMaxBack) ? "opacity-40" : ""}`}
             >
-              <span className="w-8 h-8 rounded-full bg-gray-800 text-white flex items-center justify-center text-sm font-bold shrink-0">
+              <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${isDark ? "bg-slate-600 text-slate-100" : "bg-gray-800 text-white"}`}>
                 {entry.post_number}
               </span>
               <div className="flex-1 min-w-0">
-                <div className="font-bold text-gray-800 truncate">
+                <div className={`font-bold truncate ${textPrimary}`}>
                   {entry.horses?.name}
-                  {usedIn && <span className="text-[10px] text-gray-400 font-normal ml-1">（{usedIn}で選択中）</span>}
+                  {usedIn && <span className={`text-[10px] font-normal ml-1 ${textMuted}`}>（{usedIn}で選択中）</span>}
                 </div>
-                <div className="text-xs text-gray-400">
+                <div className={`text-xs ${textMuted}`}>
                   {entry.jockey}{entry.horses?.sire && ` / ${entry.horses.sire}`}
                 </div>
               </div>
               <div className="text-right shrink-0">
-                {entry.odds && <span className="font-bold text-gray-700">{entry.odds}</span>}
-                {entry.popularity && <div className="text-xs text-gray-400">{entry.popularity}人気</div>}
+                {entry.odds && <span className={`font-bold ${isDark ? "text-slate-200" : "text-gray-700"}`}>{entry.odds}</span>}
+                {entry.popularity && <div className={`text-xs ${textMuted}`}>{entry.popularity}人気</div>}
               </div>
               <div className="w-6 shrink-0 text-center">
-                {isSelected && (
-                  <span className={`text-lg ${color}`}>{mark}</span>
-                )}
+                {isSelected && <span className={`text-lg ${color}`}>{mark}</span>}
               </div>
             </button>
           );
         })}
       </div>
 
-      <div className="border-t border-gray-100 p-4 bg-gray-50">
+      <div className={`border-t p-4 ${isDark ? "bg-slate-800 border-slate-700" : "bg-gray-50 border-gray-100"}`}>
         <div className="flex flex-wrap gap-2 mb-3 min-h-[28px]">
-          {winPick && <span className="bg-red-100 text-red-700 text-xs px-2.5 py-1 rounded-full font-medium">◎ {entries.find((e) => e.id === winPick)?.horses?.name}</span>}
-          {placePicks.map((id) => <span key={id} className="bg-blue-100 text-blue-700 text-xs px-2.5 py-1 rounded-full font-medium">○ {entries.find((e) => e.id === id)?.horses?.name}</span>)}
-          {backPicks.map((id) => <span key={id} className="bg-yellow-100 text-yellow-700 text-xs px-2.5 py-1 rounded-full font-medium">△ {entries.find((e) => e.id === id)?.horses?.name}</span>)}
-          {dangerPick && <span className="bg-gray-200 text-gray-700 text-xs px-2.5 py-1 rounded-full font-medium">⚠️ {entries.find((e) => e.id === dangerPick)?.horses?.name}</span>}
-          {!winPick && !placePicks.length && !backPicks.length && !dangerPick && <span className="text-xs text-gray-400">馬を選択してください</span>}
+          {winPick && <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${isDark ? "bg-red-500/20 text-red-400" : "bg-red-100 text-red-700"}`}>◎ {entries.find((e) => e.id === winPick)?.horses?.name}</span>}
+          {placePicks.map((id) => <span key={id} className={`text-xs px-2.5 py-1 rounded-full font-medium ${isDark ? "bg-blue-500/20 text-blue-400" : "bg-blue-100 text-blue-700"}`}>○ {entries.find((e) => e.id === id)?.horses?.name}</span>)}
+          {backPicks.map((id) => <span key={id} className={`text-xs px-2.5 py-1 rounded-full font-medium ${isDark ? "bg-yellow-500/20 text-yellow-400" : "bg-yellow-100 text-yellow-700"}`}>△ {entries.find((e) => e.id === id)?.horses?.name}</span>)}
+          {dangerPick && <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${isDark ? "bg-slate-700 text-slate-300" : "bg-gray-200 text-gray-700"}`}>⚠️ {entries.find((e) => e.id === dangerPick)?.horses?.name}</span>}
+          {!winPick && !placePicks.length && !backPicks.length && !dangerPick && <span className={`text-xs ${textMuted}`}>馬を選択してください</span>}
         </div>
-        {error && <div className="text-sm text-red-600 bg-red-50 p-2 rounded-lg mb-3">{error}</div>}
+        {error && <div className={`text-sm p-2 rounded-lg mb-3 ${isDark ? "text-red-400 bg-red-500/10" : "text-red-600 bg-red-50"}`}>{error}</div>}
         <button onClick={handleConfirmOpen} disabled={!winPick || loading}
-          className="w-full py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-colors disabled:opacity-40 disabled:hover:bg-green-600">
+          className={`w-full py-3 font-bold rounded-xl transition-colors disabled:opacity-40 ${btnPrimary}`}>
           {loading ? "投票中..." : copySource ? "🚀 この予想で乗っかる" : "🗳 この予想で投票する"}
         </button>
       </div>
 
       {showConfirm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowConfirm(false)}>
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">
+          <div className={`rounded-2xl p-6 max-w-sm w-full shadow-xl ${isDark ? "bg-slate-900" : "bg-white"}`} onClick={(e) => e.stopPropagation()}>
+            <h3 className={`text-lg font-bold mb-4 text-center ${textPrimary}`}>
               {copySource ? "🚀 乗っかり確認" : "📋 投票内容の確認"}
             </h3>
             {copySource && (
-              <div className="text-xs text-blue-600 text-center mb-3">
+              <div className={`text-xs text-center mb-3 ${isDark ? "text-blue-400" : "text-blue-600"}`}>
                 {copySource.user_name}さんの予想をベースにしています
               </div>
             )}
             <div className="space-y-3 mb-6 max-h-80 overflow-y-auto">
               {winPick && (() => { const e = entries.find((x) => x.id === winPick); return e ? (
-                <div className="flex items-center gap-2 bg-red-50 rounded-lg p-3">
-                  <span className="text-xs font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded">◎ 1着</span>
-                  <span className="w-6 h-6 rounded-full bg-gray-800 text-white flex items-center justify-center text-xs font-bold">{e.post_number}</span>
-                  <span className="font-bold text-gray-800">{e.horses?.name}</span>
+                <div className={`flex items-center gap-2 rounded-lg p-3 ${isDark ? "bg-red-500/10" : "bg-red-50"}`}>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${isDark ? "bg-red-500/20 text-red-400" : "bg-red-100 text-red-600"}`}>◎ 1着</span>
+                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${isDark ? "bg-slate-600 text-slate-100" : "bg-gray-800 text-white"}`}>{e.post_number}</span>
+                  <span className={`font-bold ${textPrimary}`}>{e.horses?.name}</span>
                 </div>) : null; })()}
               {placePicks.map((id) => { const e = entries.find((x) => x.id === id); return e ? (
-                <div key={id} className="flex items-center gap-2 bg-blue-50 rounded-lg p-3">
-                  <span className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded">○ 複勝</span>
-                  <span className="w-6 h-6 rounded-full bg-gray-800 text-white flex items-center justify-center text-xs font-bold">{e.post_number}</span>
-                  <span className="font-bold text-gray-800">{e.horses?.name}</span>
+                <div key={id} className={`flex items-center gap-2 rounded-lg p-3 ${isDark ? "bg-blue-500/10" : "bg-blue-50"}`}>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${isDark ? "bg-blue-500/20 text-blue-400" : "bg-blue-100 text-blue-600"}`}>○ 複勝</span>
+                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${isDark ? "bg-slate-600 text-slate-100" : "bg-gray-800 text-white"}`}>{e.post_number}</span>
+                  <span className={`font-bold ${textPrimary}`}>{e.horses?.name}</span>
                 </div>) : null; })}
               {backPicks.map((id) => { const e = entries.find((x) => x.id === id); return e ? (
-                <div key={id} className="flex items-center gap-2 bg-yellow-50 rounded-lg p-3">
-                  <span className="text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-0.5 rounded">△ 抑え</span>
-                  <span className="w-6 h-6 rounded-full bg-gray-800 text-white flex items-center justify-center text-xs font-bold">{e.post_number}</span>
-                  <span className="font-bold text-gray-800">{e.horses?.name}</span>
+                <div key={id} className={`flex items-center gap-2 rounded-lg p-3 ${isDark ? "bg-yellow-500/10" : "bg-yellow-50"}`}>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${isDark ? "bg-yellow-500/20 text-yellow-400" : "bg-yellow-100 text-yellow-600"}`}>△ 抑え</span>
+                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${isDark ? "bg-slate-600 text-slate-100" : "bg-gray-800 text-white"}`}>{e.post_number}</span>
+                  <span className={`font-bold ${textPrimary}`}>{e.horses?.name}</span>
                 </div>) : null; })}
               {dangerPick && (() => { const e = entries.find((x) => x.id === dangerPick); return e ? (
-                <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-3">
-                  <span className="text-xs font-bold text-gray-600 bg-gray-200 px-2 py-0.5 rounded">⚠️ 危険</span>
-                  <span className="w-6 h-6 rounded-full bg-gray-800 text-white flex items-center justify-center text-xs font-bold">{e.post_number}</span>
-                  <span className="font-bold text-gray-800">{e.horses?.name}</span>
+                <div className={`flex items-center gap-2 rounded-lg p-3 ${isDark ? "bg-slate-800" : "bg-gray-50"}`}>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${isDark ? "bg-slate-700 text-slate-300" : "bg-gray-200 text-gray-600"}`}>⚠️ 危険</span>
+                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${isDark ? "bg-slate-600 text-slate-100" : "bg-gray-800 text-white"}`}>{e.post_number}</span>
+                  <span className={`font-bold ${textPrimary}`}>{e.horses?.name}</span>
                 </div>) : null; })()}
               {!dangerPick && placePicks.length === 0 && backPicks.length === 0 && (
-                <p className="text-xs text-gray-400 text-center">※ 複勝・抑え・危険馬は未選択です（任意）</p>
+                <p className={`text-xs text-center ${textMuted}`}>※ 複勝・抑え・危険馬は未選択です（任意）</p>
               )}
             </div>
             <div className="flex gap-2">
-              <button onClick={() => setShowConfirm(false)} className="flex-1 py-3 border border-gray-200 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50 transition-colors">戻る</button>
-              <button onClick={handleSubmit} className="flex-1 py-3 bg-green-600 text-white rounded-xl text-sm font-bold hover:bg-green-700 transition-colors">
+              <button onClick={() => setShowConfirm(false)} className={`flex-1 py-3 border rounded-xl text-sm font-bold transition-colors ${isDark ? "border-slate-600 text-slate-300 hover:bg-slate-800" : "border-gray-200 text-gray-600 hover:bg-gray-50"}`}>戻る</button>
+              <button onClick={handleSubmit} className={`flex-1 py-3 rounded-xl text-sm font-bold transition-colors ${btnPrimary}`}>
                 {copySource ? "乗っかる" : "投票する"}
               </button>
             </div>
