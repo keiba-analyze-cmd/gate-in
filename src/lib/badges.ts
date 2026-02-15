@@ -1,16 +1,5 @@
 import { createAdminClient } from "@/lib/admin";
 
-type ProfileStats = {
-  user_id: string;
-  total_votes: number;
-  win_hits: number;
-  place_hits: number;
-  current_streak: number;
-  best_streak: number;
-  rank_id: string;
-  cumulative_points: number;
-};
-
 /**
  * バッジ自動付与チェック
  * 投票精算後に呼び出し、条件を満たしたバッジを付与する
@@ -21,6 +10,11 @@ export async function checkAndGrantBadges(
     isPerfect?: boolean;
     isUpset?: boolean;       // 10番人気以下的中
     isG1Win?: boolean;       // G1で1着的中
+    // 馬券系（オッズ）
+    winOdds?: number;        // 単勝オッズ（的中時）
+    quinellaOdds?: number;   // 馬連オッズ（的中時）
+    wideCount?: number;      // 今回のワイド的中回数
+    trioOdds?: number;       // 三連複オッズ（的中時）
   }
 ): Promise<string[]> {
   const admin = createAdminClient();
@@ -48,6 +42,13 @@ export async function checkAndGrantBadges(
     .select("*", { count: "exact", head: true })
     .eq("user_id", userId)
     .eq("is_perfect", true);
+
+  // ワイド的中回数を集計（points_transactionsから）
+  const { count: wideHitCount } = await admin
+    .from("points_transactions")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .eq("reason", "wide_hit");
 
   // 付与対象を判定
   const toGrant: string[] = [];
@@ -86,6 +87,36 @@ export async function checkAndGrantBadges(
   // 特殊系
   if (extra?.isUpset)  check("big_upset",  true);
   if (extra?.isG1Win)  check("g1_winner",  true);
+
+  // === 馬券バッジ ===
+  // 単勝30倍以上
+  if (extra?.winOdds && extra.winOdds >= 30) {
+    check("odds_30", true);
+  }
+
+  // 馬連100倍以上
+  if (extra?.quinellaOdds && extra.quinellaOdds >= 100) {
+    check("quinella_100", true);
+  }
+
+  // 馬連300倍以上
+  if (extra?.quinellaOdds && extra.quinellaOdds >= 300) {
+    check("quinella_300", true);
+  }
+
+  // 三連複100倍以上
+  if (extra?.trioOdds && extra.trioOdds >= 100) {
+    check("trio_100", true);
+  }
+
+  // 三連複1000倍以上
+  if (extra?.trioOdds && extra.trioOdds >= 1000) {
+    check("trio_1000", true);
+  }
+
+  // ワイド10回的中
+  const totalWideHits = (wideHitCount ?? 0) + (extra?.wideCount ?? 0);
+  check("wide_10", totalWideHits >= 10);
 
   // 一括挿入
   if (toGrant.length > 0) {

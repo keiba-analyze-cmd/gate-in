@@ -118,6 +118,12 @@ export async function settleRace(
       let allPlaceHit = true;
       let dangerHit = false;
 
+      // 馬券バッジ用のオッズ記録
+      let hitWinOdds: number | undefined;
+      let hitQuinellaOdds: number | undefined;
+      let hitWideCount = 0;
+      let hitTrioOdds: number | undefined;
+
       const picks = vote.vote_picks ?? [];
 
       // 各タイプのpickを取得
@@ -136,6 +142,7 @@ export async function settleRace(
           votePoints += pts;
           winHit = true;
           anyHit = true;
+          hitWinOdds = winnerOdds; // バッジ用に記録
 
           const gradeLabel = gradeBonus > 0 ? `（${race.grade}+${gradeBonus}）` : "";
           transactions.push({
@@ -206,6 +213,7 @@ export async function settleRace(
             const pts = basePts + gradeBonus;
             votePoints += pts;
             anyHit = true;
+            hitQuinellaOdds = quinellaOdds; // バッジ用に記録
 
             const gradeLabel = gradeBonus > 0 ? `（${race.grade}+${gradeBonus}）` : "";
             transactions.push({
@@ -239,6 +247,7 @@ export async function settleRace(
             const pts = basePts + gradeBonus;
             votePoints += pts;
             anyHit = true;
+            hitWideCount++; // バッジ用にカウント
 
             const gradeLabel = gradeBonus > 0 ? `（${race.grade}+${gradeBonus}）` : "";
             transactions.push({
@@ -285,6 +294,7 @@ export async function settleRace(
             const pts = basePts + gradeBonus;
             votePoints += pts;
             anyHit = true;
+            hitTrioOdds = trioOdds; // バッジ用に記録
 
             const gradeLabel = gradeBonus > 0 ? `（${race.grade}+${gradeBonus}）` : "";
             const backLabel = backHitsInTop3.length > 0 ? `（△${backCount}頭×${getBackMultiplier(backCount)}）` : "";
@@ -434,7 +444,15 @@ export async function settleRace(
       // 10. バッジ自動付与チェック
       const isUpset = winHit && winnerPopularity >= 10;
       const isG1Win = winHit && race.grade === "G1";
-      await checkAndGrantBadges(vote.user_id, { isPerfect, isUpset, isG1Win });
+      await checkAndGrantBadges(vote.user_id, {
+        isPerfect,
+        isUpset,
+        isG1Win,
+        winOdds: hitWinOdds,
+        quinellaOdds: hitQuinellaOdds,
+        wideCount: hitWideCount,
+        trioOdds: hitTrioOdds,
+      });
 
       // 11. ランクアップチェック & 通知
       await checkRankUp(vote.user_id);

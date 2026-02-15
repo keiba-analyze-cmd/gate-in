@@ -2,11 +2,19 @@ import BackLink from "@/components/ui/BackLink";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import BadgeGrid from "./BadgeGrid";
 
 export default async function BadgesPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
+
+  // プロフィール（お気に入りバッジ含む）
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("featured_badge_id")
+    .eq("id", user.id)
+    .single();
 
   // 全バッジマスタ
   const { data: allBadges } = await supabase
@@ -28,6 +36,7 @@ export default async function BadgesPage() {
   const categories = [
     { key: "milestone", label: "🎫 マイルストーン", desc: "投票回数で獲得" },
     { key: "achievement", label: "🎯 アチーブメント", desc: "的中実績で獲得" },
+    { key: "ticket", label: "🎰 馬券マスター", desc: "馬券的中で獲得" },
     { key: "streak", label: "🔥 連続記録", desc: "連続的中で獲得" },
     { key: "rank", label: "👑 ランク", desc: "ランク到達で獲得" },
     { key: "special", label: "🦄 スペシャル", desc: "特別な条件で獲得" },
@@ -35,6 +44,15 @@ export default async function BadgesPage() {
 
   const earned = (userBadges ?? []).length;
   const total = (allBadges ?? []).length;
+
+  // お気に入りバッジ情報
+  const featuredBadgeId = profile?.featured_badge_id;
+  const featuredBadge = featuredBadgeId 
+    ? (allBadges ?? []).find(b => b.id === featuredBadgeId)
+    : null;
+
+  // 獲得済みバッジのリスト（お気に入り設定用）
+  const earnedBadges = (allBadges ?? []).filter(b => earnedMap.has(b.id));
 
   return (
     <div className="max-w-2xl mx-auto space-y-4">
@@ -53,6 +71,13 @@ export default async function BadgesPage() {
         </div>
       </div>
 
+      {/* お気に入りバッジ設定 */}
+      <BadgeGrid 
+        earnedBadges={earnedBadges}
+        featuredBadgeId={featuredBadgeId}
+        featuredBadge={featuredBadge}
+      />
+
       {categories.map((cat) => {
         const badges = (allBadges ?? []).filter((b) => b.category === cat.key);
         if (badges.length === 0) return null;
@@ -64,16 +89,21 @@ export default async function BadgesPage() {
               {badges.map((badge) => {
                 const isEarned = earnedMap.has(badge.id);
                 const earnedAt = earnedMap.get(badge.id);
+                const isFeatured = badge.id === featuredBadgeId;
                 return (
                   <div
                     key={badge.id}
                     className={`flex items-center gap-3 p-3 rounded-xl border ${
+                      isFeatured ? "bg-yellow-50 border-yellow-300 ring-2 ring-yellow-200" :
                       isEarned ? "bg-green-50 border-green-200" : "bg-gray-50 border-gray-100 opacity-50"
                     }`}
                   >
                     <span className="text-2xl">{isEarned ? badge.icon : "🔒"}</span>
                     <div className="flex-1">
-                      <div className="font-bold text-sm text-gray-800">{badge.name}</div>
+                      <div className="font-bold text-sm text-gray-800 flex items-center gap-2">
+                        {badge.name}
+                        {isFeatured && <span className="text-xs bg-yellow-200 text-yellow-800 px-1.5 py-0.5 rounded">表示中</span>}
+                      </div>
                       <div className="text-xs text-gray-500">{badge.description}</div>
                     </div>
                     {isEarned && earnedAt && (
