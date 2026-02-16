@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { getRank } from "@/lib/constants/ranks";
 import RaceCard from "@/components/races/RaceCard";
-import LandingHero from "@/components/landing/LandingHero";
+import LandingPage from "@/components/landing/LandingPage";
 import NextRaceByVenue from "@/components/races/NextRaceByVenue";
 import FollowingVotes from "@/components/social/FollowingVotes";
 import PopularVotesSection from "@/components/social/PopularVotesSection";
@@ -69,7 +69,18 @@ export default async function HomePage() {
 
   // 未ログイン → ランディングページ
   if (!user) {
-    return <LandingHero openRaces={openRaces ?? []} />;
+    // 実績数字を取得
+    const { count: racesCount } = await supabase.from("races").select("*", { count: "exact", head: true });
+    const { count: horsesCount } = await supabase.from("horses").select("*", { count: "exact", head: true });
+    const { count: votesCount } = await supabase.from("votes").select("*", { count: "exact", head: true });
+    
+    const stats = {
+      races: racesCount ?? 0,
+      horses: horsesCount ?? 0,
+      votes: votesCount ?? 0,
+    };
+    
+    return <LandingPage openRaces={openRaces ?? []} stats={stats} />;
   }
 
   return (
