@@ -1,4 +1,5 @@
-import { Metadata } from "next";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 import DojoClient from "./DojoClient";
 import {
   getQuizCategories,
@@ -7,34 +8,23 @@ import {
   getQuizQuestions,
 } from "@/lib/microcms";
 
-export const metadata: Metadata = {
-  title: "競馬道場 | クイズで学ぶ競馬知識",
-  description:
-    "競馬の血統・コース攻略・騎手・調教の知識をカテゴリ別に学べる競馬道場。クイズで理解度をチェックしながら、競馬の実力を磨きましょう。",
-  alternates: {
-    canonical: "https://gate-in.jp/dojo",
-  },
-};
-
-// ★ 認証チェックを削除 → 道場コンテンツもクローラーがアクセス可能に
-// ★ ユーザーIDはオプショナルに（未ログインでも閲覧可能）
 export default async function DojoPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/login");
+
   // MicroCMSからデータ取得（並列実行、個別にエラーハンドリング）
   const [quizCategories, articlesData, articleCategories] = await Promise.all([
     getQuizCategories().catch(() => []),
-    getArticles({ limit: 100 }).catch(() => ({
-      contents: [],
-      totalCount: 0,
-      offset: 0,
-      limit: 100,
-    })),
+    getArticles({ limit: 100 }).catch(() => ({ contents: [], totalCount: 0, offset: 0, limit: 100 })),
     getArticleCategories().catch(() => []),
   ]);
 
   // 各クイズカテゴリの問題数を取得
-  const safeQuizCategories = Array.isArray(quizCategories)
-    ? quizCategories
-    : [];
+  const safeQuizCategories = Array.isArray(quizCategories) ? quizCategories : [];
   const categoriesWithCount = await Promise.all(
     safeQuizCategories.map(async (cat) => {
       const questions = await getQuizQuestions({
@@ -54,12 +44,13 @@ export default async function DojoPage() {
     })
   );
 
-  // クイズカテゴリのIDセット
+  // クイズカテゴリのIDセット（記事のカテゴリと一致するものがあるかチェック用）
   const quizCategoryIds = new Set(safeQuizCategories.map((c) => c.id));
 
-  // 記事データをシリアライズ
+  // 記事データをシリアライズ可能な形に変換
   const articles = articlesData.contents.map((article) => {
     const categoryId = article.category?.id || "";
+    // 記事カテゴリIDと一致するクイズカテゴリが存在する場合のみクイズ連携
     const hasMatchingQuiz = quizCategoryIds.has(categoryId);
     return {
       id: article.id,
@@ -76,9 +67,7 @@ export default async function DojoPage() {
   });
 
   // 記事カテゴリをシリアライズ
-  const artCategories = (
-    Array.isArray(articleCategories) ? articleCategories : []
-  ).map((cat) => ({
+  const artCategories = (Array.isArray(articleCategories) ? articleCategories : []).map((cat) => ({
     id: cat.id,
     name: cat.name,
     icon: cat.icon || "",
@@ -87,7 +76,7 @@ export default async function DojoPage() {
 
   return (
     <DojoClient
-      userId=""
+      userId={user.id}
       quizCategories={categoriesWithCount}
       articles={articles}
       articleCategories={artCategories}

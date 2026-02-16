@@ -1,159 +1,254 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import { useTheme } from "@/contexts/ThemeContext";
 
 type Props = {
   articleId: string;
   title: string;
-  category: string;
+  emoji: string;
+  categoryId: string;
+  categoryName: string;
+  categoryIcon: string;
   readTime: number;
   content: string;
-  relatedQuiz?: string;
+  hasQuiz: boolean;
+  quizCategoryId?: string;
+  tags: string[];
+  publishedAt: string;
 };
 
-export default function ArticleDetailClient({ articleId, title, category, readTime, content, relatedQuiz }: Props) {
+function processArticleHtml(html: string, isDark: boolean): string {
+  let processed = html;
+
+  // 馬券のポイント ハイライトボックス
+  processed = processed.replace(
+    /<p>(<strong>(?:💡\s*)?馬券のポイント[：:]<\/strong>)([\s\S]*?)<\/p>/g,
+    (_match, label, content) => {
+      const bgStyle = isDark
+        ? "background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(249,115,22,0.1)); border: 1px solid rgba(245,158,11,0.3); color: #fde68a;"
+        : "background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(5,150,105,0.05)); border: 1px solid rgba(16,185,129,0.3); color: #065f46;";
+      return `<div style="${bgStyle} border-radius: 12px; padding: 16px; margin: 16px 0; font-size: 14px; line-height: 1.7;">${label}${content}</div>`;
+    }
+  );
+
+  // テーブルスタイル
+  const tableBorder = isDark ? "#334155" : "#e5e7eb";
+  const headerBg = isDark ? "#1e293b" : "#f1f5f9";
+  const headerColor = isDark ? "#e2e8f0" : "#1e293b";
+  const cellColor = isDark ? "#cbd5e1" : "#475569";
+  const cellBorder = isDark ? "#1e293b" : "#f1f5f9";
+  const rowEvenBg = isDark
+    ? "rgba(245,158,11,0.05)"
+    : "rgba(16,185,129,0.05)";
+
+  processed = processed.replace(
+    /<table>([\s\S]*?)<\/table>/g,
+    (_match, tableInner) => {
+      let inner: string = tableInner;
+
+      // ヘッダー行（th を含む tr）
+      inner = inner.replace(
+        /<tr>([\s\S]*?)<\/tr>/g,
+        (trMatch: string, trInner: string) => {
+          if (/<th[\s>]/.test(trInner)) {
+            let thIdx = 0;
+            const styledTh = trInner.replace(
+              /<th([^>]*)>/g,
+              (_m: string, attrs: string) => {
+                const align = thIdx === 0 ? "left" : "center";
+                thIdx++;
+                return `<th${attrs} style="padding: 10px 14px; text-align: ${align}; font-weight: 700; font-size: 12px; color: ${headerColor}; border-bottom: 2px solid ${tableBorder}; white-space: nowrap;">`;
+              }
+            );
+            return `<tr style="background: ${headerBg};">${styledTh}</tr>`;
+          }
+          return trMatch;
+        }
+      );
+
+      // データ行
+      let dataRowIdx = 0;
+      inner = inner.replace(
+        /<tr>([\s\S]*?)<\/tr>/g,
+        (trMatch: string, trInner: string) => {
+          if (trMatch.includes('style="background:')) return trMatch;
+          if (!/<td[\s>]/.test(trInner)) return trMatch;
+
+          dataRowIdx++;
+          const bgStyle =
+            dataRowIdx % 2 === 0
+              ? ` style="background: ${rowEvenBg};"`
+              : "";
+
+          let tdIdx = 0;
+          const styledTd = trInner.replace(
+            /<td([^>]*)>/g,
+            (_m: string, attrs: string) => {
+              const align = tdIdx === 0 ? "left" : "center";
+              tdIdx++;
+              return `<td${attrs} style="padding: 10px 14px; text-align: ${align}; color: ${cellColor}; border-bottom: 1px solid ${cellBorder}; white-space: nowrap;">`;
+            }
+          );
+
+          return `<tr${bgStyle}>${styledTd}</tr>`;
+        }
+      );
+
+      return `<div style="overflow-x: auto; margin: 16px 0; border-radius: 12px; border: 1px solid ${tableBorder};"><table style="width: 100%; border-collapse: collapse; font-size: 13px;">${inner}</table></div>`;
+    }
+  );
+
+  return processed;
+}
+
+export default function ArticleDetailClient({
+  articleId,
+  title,
+  emoji,
+  categoryId,
+  categoryName,
+  categoryIcon,
+  readTime,
+  content,
+  hasQuiz,
+  quizCategoryId,
+  tags,
+  publishedAt,
+}: Props) {
   const { isDark } = useTheme();
 
-  const cardBg = isDark ? "bg-slate-900 border-slate-700" : "bg-white border-gray-200";
+  const cardBg = isDark
+    ? "bg-slate-900 border-slate-700"
+    : "bg-white border-gray-200";
   const textPrimary = isDark ? "text-slate-100" : "text-gray-900";
   const textSecondary = isDark ? "text-slate-400" : "text-gray-500";
   const textMuted = isDark ? "text-slate-500" : "text-gray-400";
-  const accentColor = isDark ? "text-amber-400" : "text-green-600";
-  const btnPrimary = isDark ? "bg-amber-500 hover:bg-amber-400 text-slate-900" : "bg-green-600 hover:bg-green-700 text-white";
+  const btnPrimary = isDark
+    ? "bg-amber-500 hover:bg-amber-400 text-slate-900"
+    : "bg-green-600 hover:bg-green-700 text-white";
 
-  // 簡易Markdownパーサー
-  const renderContent = (text: string) => {
-    const lines = text.trim().split("\n");
-    const elements: React.ReactNode[] = [];
-    let inTable = false;
-    let tableRows: string[][] = [];
+  const formattedDate = new Date(publishedAt).toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
-    lines.forEach((line, i) => {
-      // 見出し
-      if (line.startsWith("## ")) {
-        elements.push(
-          <h2 key={i} className={`text-lg font-black mt-6 mb-3 ${textPrimary}`}>
-            {line.replace("## ", "")}
-          </h2>
-        );
-      } else if (line.startsWith("### ")) {
-        elements.push(
-          <h3 key={i} className={`text-base font-bold mt-4 mb-2 ${textPrimary}`}>
-            {line.replace("### ", "")}
-          </h3>
-        );
-      }
-      // リスト
-      else if (line.startsWith("- **")) {
-        const match = line.match(/- \*\*(.+?)\*\*: (.+)/);
-        if (match) {
-          elements.push(
-            <div key={i} className={`flex gap-2 mb-2 ${textSecondary}`}>
-              <span className={accentColor}>•</span>
-              <span><strong className={textPrimary}>{match[1]}</strong>: {match[2]}</span>
-            </div>
-          );
-        }
-      } else if (line.startsWith("- ")) {
-        elements.push(
-          <div key={i} className={`flex gap-2 mb-1 ${textSecondary}`}>
-            <span className={accentColor}>•</span>
-            <span>{line.replace("- ", "")}</span>
-          </div>
-        );
-      }
-      // 番号リスト
-      else if (/^\d+\. \*\*/.test(line)) {
-        const match = line.match(/(\d+)\. \*\*(.+?)\*\* - (.+)/);
-        if (match) {
-          elements.push(
-            <div key={i} className={`flex gap-2 mb-2 ${textSecondary}`}>
-              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${isDark ? "bg-amber-500/20 text-amber-400" : "bg-green-100 text-green-700"}`}>
-                {match[1]}
-              </span>
-              <span><strong className={textPrimary}>{match[2]}</strong> - {match[3]}</span>
-            </div>
-          );
-        }
-      }
-      // テーブル
-      else if (line.startsWith("|")) {
-        if (!inTable) {
-          inTable = true;
-          tableRows = [];
-        }
-        if (!line.includes("---")) {
-          tableRows.push(line.split("|").filter(Boolean).map(s => s.trim()));
-        }
-      } else if (inTable && !line.startsWith("|")) {
-        inTable = false;
-        if (tableRows.length > 0) {
-          elements.push(
-            <div key={`table-${i}`} className={`overflow-x-auto my-4 rounded-xl border ${isDark ? "border-slate-700" : "border-gray-200"}`}>
-              <table className="w-full text-sm">
-                <thead className={isDark ? "bg-slate-800" : "bg-gray-50"}>
-                  <tr>
-                    {tableRows[0].map((cell, ci) => (
-                      <th key={ci} className={`px-4 py-2 text-left font-bold ${textPrimary}`}>{cell}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {tableRows.slice(1).map((row, ri) => (
-                    <tr key={ri} className={isDark ? "border-t border-slate-700" : "border-t border-gray-100"}>
-                      {row.map((cell, ci) => (
-                        <td key={ci} className={`px-4 py-2 ${textSecondary}`}>{cell}</td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          );
-        }
-      }
-      // 通常段落
-      else if (line.trim() && !line.startsWith("|")) {
-        elements.push(
-          <p key={i} className={`mb-3 leading-relaxed ${textSecondary}`}>
-            {line}
-          </p>
-        );
-      }
-    });
-
-    return elements;
-  };
+  const processedContent = useMemo(
+    () => processArticleHtml(content, isDark),
+    [content, isDark]
+  );
 
   return (
     <div className="max-w-2xl mx-auto space-y-4">
-      <Link href="/dojo/articles" className={`text-sm ${textMuted}`}>← 記事一覧に戻る</Link>
+      <Link href="/dojo/articles" className={`text-sm ${textMuted}`}>
+        ← 記事一覧に戻る
+      </Link>
 
       <div className={`rounded-2xl border p-6 ${cardBg}`}>
-        <div className="flex items-center gap-2 mb-3">
-          <span className={`text-xs px-2 py-0.5 rounded-full ${isDark ? "bg-slate-700 text-slate-300" : "bg-gray-100 text-gray-600"}`}>
-            {category}
+        {/* メタ情報 */}
+        <div className="flex items-center gap-2 mb-3 flex-wrap">
+          {categoryName && (
+            <span
+              className={`text-xs px-2 py-0.5 rounded-full ${
+                isDark
+                  ? "bg-slate-700 text-slate-300"
+                  : "bg-gray-100 text-gray-600"
+              }`}
+            >
+              {categoryIcon} {categoryName}
+            </span>
+          )}
+          <span className={`text-xs ${textMuted}`}>
+            📖 {readTime}分で読める
           </span>
-          <span className={`text-xs ${textMuted}`}>📖 {readTime}分で読める</span>
+          <span className={`text-xs ${textMuted}`}>📅 {formattedDate}</span>
         </div>
-        <h1 className={`text-xl font-black mb-6 ${textPrimary}`}>{title}</h1>
 
-        <div className="article-content">
-          {renderContent(content)}
+        {/* タイトル */}
+        <div className="flex items-start gap-3 mb-6">
+          <span className="text-3xl shrink-0">{emoji}</span>
+          <h1 className={`text-xl font-black ${textPrimary}`}>{title}</h1>
         </div>
+
+        {/* 本文 */}
+        <div
+          className={`
+            article-content prose max-w-none
+            ${isDark ? "prose-invert" : ""}
+            
+            [&_h2]:text-lg [&_h2]:font-black [&_h2]:mt-8 [&_h2]:mb-4
+            ${isDark ? "[&_h2]:text-slate-100" : "[&_h2]:text-gray-900"}
+            
+            [&_h3]:text-base [&_h3]:font-bold [&_h3]:mt-6 [&_h3]:mb-3
+            ${isDark ? "[&_h3]:text-slate-100" : "[&_h3]:text-gray-900"}
+            
+            [&_p]:text-sm [&_p]:leading-relaxed [&_p]:mb-4
+            ${isDark ? "[&_p]:text-slate-300" : "[&_p]:text-gray-700"}
+            
+            [&_strong]:font-bold
+            ${isDark ? "[&_strong]:text-slate-100" : "[&_strong]:text-gray-900"}
+            
+            [&_a]:underline
+            ${isDark ? "[&_a]:text-amber-400" : "[&_a]:text-green-600"}
+            
+            [&_blockquote]:border-l-4 [&_blockquote]:pl-4 [&_blockquote]:py-2 [&_blockquote]:my-4 [&_blockquote]:rounded-r-xl
+            ${
+              isDark
+                ? "[&_blockquote]:border-amber-500 [&_blockquote]:bg-slate-800/50"
+                : "[&_blockquote]:border-green-500 [&_blockquote]:bg-gray-50"
+            }
+            
+            [&_ul]:my-3 [&_ul]:pl-4 [&_li]:mb-1 [&_li]:text-sm
+            ${isDark ? "[&_li]:text-slate-300" : "[&_li]:text-gray-700"}
+            
+            [&_ol]:my-3 [&_ol]:pl-4
+          `}
+          dangerouslySetInnerHTML={{ __html: processedContent }}
+        />
       </div>
 
-      {/* 関連クイズCTA */}
-      {relatedQuiz && (
-        <div className={`rounded-2xl border p-5 ${isDark ? "bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-amber-500/30" : "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200"}`}>
+      {/* タグ */}
+      {tags.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className={`text-xs px-3 py-1.5 rounded-full font-medium ${
+                isDark
+                  ? "bg-slate-800 text-slate-300"
+                  : "bg-gray-100 text-gray-700"
+              }`}
+            >
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* クイズCTA — 対応するクイズカテゴリがある場合のみ表示 */}
+      {hasQuiz && quizCategoryId && (
+        <div
+          className={`rounded-2xl border p-5 ${
+            isDark
+              ? "bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-amber-500/30"
+              : "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200"
+          }`}
+        >
           <div className="flex items-center justify-between">
             <div>
-              <h3 className={`font-bold ${textPrimary}`}>🧠 理解度をチェック！</h3>
-              <p className={`text-sm ${textSecondary}`}>この記事に関連するクイズに挑戦</p>
+              <h3 className={`font-bold ${textPrimary}`}>
+                🧠 理解度をチェック！
+              </h3>
+              <p className={`text-sm ${textSecondary}`}>
+                この記事に関連するクイズに挑戦
+              </p>
             </div>
-            <Link href={`/dojo/quiz/${relatedQuiz}`} className={`px-4 py-2 rounded-xl font-bold text-sm ${btnPrimary}`}>
+            <Link
+              href={`/dojo/quiz/${quizCategoryId}`}
+              className={`px-4 py-2 rounded-xl font-bold text-sm ${btnPrimary}`}
+            >
               クイズに挑戦 →
             </Link>
           </div>
@@ -161,10 +256,20 @@ export default function ArticleDetailClient({ articleId, title, category, readTi
       )}
 
       <div className="flex gap-2">
-        <Link href="/dojo/articles" className={`flex-1 py-3 rounded-xl font-bold text-center border transition-colors ${isDark ? "border-slate-600 text-slate-300 hover:bg-slate-800" : "border-gray-200 text-gray-600 hover:bg-gray-50"}`}>
+        <Link
+          href="/dojo/articles"
+          className={`flex-1 py-3 rounded-xl font-bold text-center border transition-colors ${
+            isDark
+              ? "border-slate-600 text-slate-300 hover:bg-slate-800"
+              : "border-gray-200 text-gray-600 hover:bg-gray-50"
+          }`}
+        >
           他の記事を読む
         </Link>
-        <Link href="/dojo" className={`flex-1 py-3 rounded-xl font-bold text-center ${btnPrimary}`}>
+        <Link
+          href="/dojo"
+          className={`flex-1 py-3 rounded-xl font-bold text-center ${btnPrimary}`}
+        >
           道場トップへ
         </Link>
       </div>

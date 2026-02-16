@@ -1,15 +1,23 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import CategoryQuizClient from "./CategoryQuizClient";
+import { getQuizQuestions } from "@/lib/microcms";
 
-const CATEGORIES: Record<string, { name: string; icon: string; description: string }> = {
-  basics: { name: "競馬の基礎", icon: "📚", description: "初心者向け基本知識" },
-  jockeys: { name: "騎手", icon: "🏇", description: "騎手に関する問題" },
-  trainers: { name: "調教師", icon: "👨‍🏫", description: "調教師に関する問題" },
-  courses: { name: "競馬場", icon: "🏟️", description: "コースの特徴など" },
-  history: { name: "競馬の歴史", icon: "📜", description: "名馬・名レースの歴史" },
-  betting: { name: "馬券の種類", icon: "🎫", description: "馬券の買い方と配当" },
-};
+async function getQuizCategoryById(categoryId: string) {
+  try {
+    const res = await fetch(
+      `https://${process.env.MICROCMS_SERVICE_DOMAIN}.microcms.io/api/v1/quiz-categories/${categoryId}`,
+      {
+        headers: { "X-MICROCMS-API-KEY": process.env.MICROCMS_API_KEY! },
+        next: { revalidate: 60 },
+      }
+    );
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
 
 type Props = {
   params: Promise<{ categoryId: string }>;
@@ -18,12 +26,29 @@ type Props = {
 export default async function CategoryQuizPage({ params }: Props) {
   const { categoryId } = await params;
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) redirect("/login");
 
-  const category = CATEGORIES[categoryId];
+  const [category, questionsData] = await Promise.all([
+    getQuizCategoryById(categoryId),
+    getQuizQuestions({ categoryId, limit: 100 }),
+  ]);
+
   if (!category) notFound();
+
+  // クライアントに渡す形式に変換
+  const questions = questionsData.contents.map((q) => ({
+    id: q.id,
+    question: q.question,
+    options: [q.choice1, q.choice2, q.choice3, q.choice4].filter(
+      Boolean
+    ) as string[],
+    correctIndex: q.correctIndex - 1, // MicroCMSは1始まり → 0始まりに変換
+    explanation: q.explanation || "",
+  }));
 
   return (
     <CategoryQuizClient
@@ -31,6 +56,7 @@ export default async function CategoryQuizPage({ params }: Props) {
       categoryId={categoryId}
       categoryName={category.name}
       categoryIcon={category.icon}
+      questions={questions}
     />
   );
 }

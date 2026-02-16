@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     default: "ゲートイン！ | 競馬予想で腕試し",
     template: "%s | ゲートイン！",
   },
-  description: "競馬予想SNS&競馬学習プラットフォーム。本命・対抗・危険馬を予想してポイントを稼ごう！血統やコース攻略などの知識もクイズで楽しく学べる。",
+  description: "みんなの予想で腕試し！本命・対抗・危険馬を予想してポイントを稼ごう。月間ランキング上位者にはAmazonギフト券をプレゼント！",
   icons: { icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏇</text></svg>" },
   metadataBase: new URL("https://gate-in.jp"),
   openGraph: {
@@ -18,7 +18,6 @@ export const metadata: Metadata = {
     type: "website",
     images: [{ url: "/api/og?title=ゲートイン！", width: 1200, height: 630 }],
   },
-  verification: { google: "6bhGEFMP9Ks_vGaFch0SVAJz45i_9Yn7ZuvzZKwUpS8" },
   twitter: {
     card: "summary_large_image",
     title: "ゲートイン！ | 競馬予想で腕試し",

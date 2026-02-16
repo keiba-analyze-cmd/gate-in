@@ -1,95 +1,133 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
+import { Metadata } from "next";
 import ArticleDetailClient from "./ArticleDetailClient";
-
-const ARTICLES: Record<string, { title: string; category: string; readTime: number; content: string; relatedQuiz?: string }> = {
-  "1": {
-    title: "初心者必見！競馬の基本ルール",
-    category: "入門",
-    readTime: 5,
-    relatedQuiz: "basics",
-    content: `
-## 競馬とは
-
-競馬は、騎手が馬に騎乗してレースを行い、その着順を競うスポーツです。日本では主にJRA（日本中央競馬会）と地方競馬で開催されています。
-
-## レースの流れ
-
-1. **パドック** - レース前に馬の状態を確認できる
-2. **返し馬** - コースに入って馬を温める
-3. **ゲートイン** - スタートゲートに入る
-4. **スタート** - ゲートが開いてレース開始
-5. **ゴール** - 先頭で決勝線を通過した馬が勝利
-
-## 馬券の基本
-
-馬券は100円から購入可能です。主な種類として：
-
-- **単勝**: 1着を当てる（初心者におすすめ）
-- **複勝**: 3着以内を当てる（的中しやすい）
-- **馬連**: 1-2着の組み合わせを当てる
-- **ワイド**: 3着以内の2頭の組み合わせを当てる
-
-## 競馬場の種類
-
-JRAは全国10場の競馬場を運営しています。それぞれコースの特徴が異なり、予想する上で重要なポイントになります。
-    `
-  },
-  "2": {
-    title: "馬券の種類と買い方完全ガイド",
-    category: "馬券",
-    readTime: 8,
-    relatedQuiz: "betting",
-    content: `
-## 馬券の種類一覧
-
-### 単勝・複勝（シンプル系）
-
-| 種類 | 内容 | 的中率 | 配当 |
-|------|------|--------|------|
-| 単勝 | 1着を当てる | 低め | 高め |
-| 複勝 | 3着以内を当てる | 高め | 低め |
-
-### 連勝系（2頭以上の組み合わせ）
-
-- **馬連**: 1-2着の組み合わせ（順不同）
-- **馬単**: 1-2着を順番通りに当てる
-- **ワイド**: 3着以内の2頭の組み合わせ
-
-### 三連系（3頭の組み合わせ）
-
-- **三連複**: 1-2-3着を順不同で当てる
-- **三連単**: 1-2-3着を順番通りに当てる（高配当）
-
-## 買い方のコツ
-
-初心者は単勝・複勝から始めて、慣れてきたらワイドや馬連に挑戦するのがおすすめです。
-    `
-  },
-};
+import JsonLd from "@/components/seo/JsonLd";
+import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import { getArticleById, getQuizCategories } from "@/lib/microcms";
 
 type Props = {
   params: Promise<{ articleId: string }>;
 };
 
+// ★ HTMLタグ除去ヘルパー
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+}
+
+// ★ 動的メタデータ生成（SEO最重要）
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { articleId } = await params;
+  try {
+    const article = await getArticleById(articleId);
+    const title = article.title;
+    const description =
+      article.excerpt || stripHtml(article.content).substring(0, 120) + "…";
+    const ogImage = article.thumbnail?.url || "/api/og?title=" + encodeURIComponent(article.title);
+
+    return {
+      title,
+      description,
+      openGraph: {
+        title: `${title}｜ゲートイン！`,
+        description,
+        type: "article",
+        url: `https://gate-in.jp/dojo/articles/${articleId}`,
+        images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
+        siteName: "ゲートイン！",
+        locale: "ja_JP",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: `${title}｜ゲートイン！`,
+        description,
+        images: [ogImage],
+      },
+      alternates: {
+        canonical: `https://gate-in.jp/dojo/articles/${articleId}`,
+      },
+    };
+  } catch {
+    return {
+      title: "記事",
+      description: "競馬の知識を楽しく学べるメディア「ゲートイン！」の記事です。",
+    };
+  }
+}
+
+// ★ 認証チェックを削除 → Googleクローラーが記事を読めるようになる
 export default async function ArticleDetailPage({ params }: Props) {
   const { articleId } = await params;
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login");
-
-  const article = ARTICLES[articleId];
+  let article;
+  try {
+    article = await getArticleById(articleId);
+  } catch {
+    notFound();
+  }
   if (!article) notFound();
 
+  // クイズカテゴリとの照合
+  const quizCategories = await getQuizCategories();
+  const quizCategoryIds = new Set(quizCategories.map((c) => c.id));
+  const categoryId = article.category?.id || "";
+  const hasMatchingQuiz = quizCategoryIds.has(categoryId);
+
+  // パンくずリスト
+  const breadcrumbItems = [
+    { name: "ホーム", href: "/" },
+    { name: "道場", href: "/dojo" },
+    ...(article.category
+      ? [{ name: article.category.name, href: `/dojo/articles?category=${categoryId}` }]
+      : []),
+    { name: article.title },
+  ];
+
+  // Article 構造化データ
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.excerpt || stripHtml(article.content).substring(0, 160),
+    image: article.thumbnail?.url || "https://gate-in.jp/icon.png",
+    datePublished: article.publishedAt || article.createdAt,
+    dateModified: article.updatedAt,
+    author: {
+      "@type": "Organization",
+      name: "ゲートイン！",
+      url: "https://gate-in.jp",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "ゲートイン！",
+      url: "https://gate-in.jp",
+      logo: { "@type": "ImageObject", url: "https://gate-in.jp/icon.png" },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://gate-in.jp/dojo/articles/${articleId}`,
+    },
+  };
+
   return (
-    <ArticleDetailClient
-      articleId={articleId}
-      title={article.title}
-      category={article.category}
-      readTime={article.readTime}
-      content={article.content}
-      relatedQuiz={article.relatedQuiz}
-    />
+    <>
+      <JsonLd data={articleJsonLd} />
+      <div className="max-w-2xl mx-auto mb-3">
+        <Breadcrumbs items={breadcrumbItems} />
+      </div>
+      <ArticleDetailClient
+          articleId={article.id}
+          title={article.title}
+          emoji={article.emoji || "📖"}
+          categoryId={categoryId}
+          categoryName={article.category?.name || ""}
+          categoryIcon={article.category?.icon || ""}
+          readTime={article.readTime || 5}
+          content={article.content}
+          hasQuiz={hasMatchingQuiz}
+          quizCategoryId={hasMatchingQuiz ? categoryId : undefined}
+          tags={article.tags?.map((t) => t.name) || []}
+          publishedAt={article.publishedAt || article.createdAt}
+        />
+    </>
   );
 }

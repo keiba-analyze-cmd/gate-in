@@ -15,13 +15,6 @@ type QuizCategoryData = {
   questionCount: number;
 };
 
-type ArticleCategoryData = {
-  id: string;
-  name: string;
-  icon: string;
-  order: number;
-};
-
 type ArticleData = {
   id: string;
   title: string;
@@ -29,7 +22,6 @@ type ArticleData = {
   emoji: string;
   excerpt: string;
   readTime: number;
-  categoryId: string;
   categoryName: string;
   categoryIcon: string;
   hasQuiz: boolean;
@@ -39,28 +31,17 @@ type Props = {
   userId: string;
   quizCategories: QuizCategoryData[];
   articles: ArticleData[];
-  articleCategories: ArticleCategoryData[];
 };
 
-export default function DojoClient({
-  userId,
-  quizCategories,
-  articles,
-  articleCategories,
-}: Props) {
+export default function DojoClient({ userId, quizCategories, articles }: Props) {
   const { isDark } = useTheme();
   const [activeTab, setActiveTab] = useState<"quiz" | "articles">("quiz");
-  const [selectedArticleCat, setSelectedArticleCat] = useState<string>("all");
 
-  const cardBg = isDark
-    ? "bg-slate-900 border-slate-700"
-    : "bg-white border-gray-200";
+  const cardBg = isDark ? "bg-slate-900 border-slate-700" : "bg-white border-gray-200";
   const textPrimary = isDark ? "text-slate-100" : "text-gray-900";
   const textSecondary = isDark ? "text-slate-400" : "text-gray-500";
   const textMuted = isDark ? "text-slate-500" : "text-gray-400";
-  const tabActive = isDark
-    ? "bg-amber-500 text-slate-900"
-    : "bg-green-600 text-white";
+  const tabActive = isDark ? "bg-amber-500 text-slate-900" : "bg-green-600 text-white";
   const tabInactive = isDark
     ? "bg-slate-800 text-slate-300 border border-slate-700 hover:border-amber-500/50"
     : "bg-white text-gray-600 border border-gray-200 hover:border-green-300";
@@ -68,25 +49,6 @@ export default function DojoClient({
   const highlightBg = isDark
     ? "bg-gradient-to-br from-amber-500/20 to-orange-500/20 border-amber-500/30"
     : "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200";
-
-  // カテゴリフィルター用のスタイル
-  const catActive = isDark
-    ? "bg-amber-500/20 text-amber-400 border-amber-500/50"
-    : "bg-green-100 text-green-700 border-green-300";
-  const catInactive = isDark
-    ? "bg-slate-800 text-slate-400 border-slate-700 hover:border-slate-500"
-    : "bg-gray-50 text-gray-500 border-gray-200 hover:border-gray-300";
-
-  // 記事をカテゴリでフィルタリング
-  const filteredArticles =
-    selectedArticleCat === "all"
-      ? articles
-      : articles.filter((a) => a.categoryId === selectedArticleCat);
-
-  // カテゴリをorderでソート
-  const sortedArticleCategories = [...articleCategories].sort(
-    (a, b) => a.order - b.order
-  );
 
   return (
     <div className="max-w-2xl mx-auto space-y-4">
@@ -112,9 +74,7 @@ export default function DojoClient({
             <span className="text-2xl">🔥</span>
             <div>
               <h2 className={`font-black ${textPrimary}`}>今日のチャレンジ</h2>
-              <p className={`text-xs ${textSecondary}`}>
-                毎日5問のクイズに挑戦！
-              </p>
+              <p className={`text-xs ${textSecondary}`}>毎日5問のクイズに挑戦！</p>
             </div>
           </div>
           <div className="text-right">
@@ -160,9 +120,7 @@ export default function DojoClient({
       {/* クイズタブ */}
       {activeTab === "quiz" && (
         <div className="space-y-3">
-          <p className={`text-sm ${textSecondary}`}>
-            カテゴリを選んで検定に挑戦しよう！
-          </p>
+          <p className={`text-sm ${textSecondary}`}>カテゴリを選んで検定に挑戦しよう！</p>
           {quizCategories.length === 0 ? (
             <div className={`rounded-2xl border p-8 text-center ${cardBg}`}>
               <span className="text-4xl">📝</span>
@@ -177,22 +135,14 @@ export default function DojoClient({
                   key={cat.id}
                   href={`/dojo/quiz/${cat.id}`}
                   className={`rounded-2xl border p-4 transition-all hover:shadow-md ${cardBg} ${
-                    isDark
-                      ? "hover:border-amber-500/50"
-                      : "hover:border-green-300"
+                    isDark ? "hover:border-amber-500/50" : "hover:border-green-300"
                   }`}
                 >
                   <div className="text-3xl mb-2">{cat.icon}</div>
-                  <h3 className={`font-bold text-sm ${textPrimary}`}>
-                    {cat.name}
-                  </h3>
-                  <p className={`text-xs mt-1 ${textMuted}`}>
-                    {cat.description}
-                  </p>
+                  <h3 className={`font-bold text-sm ${textPrimary}`}>{cat.name}</h3>
+                  <p className={`text-xs mt-1 ${textMuted}`}>{cat.description}</p>
                   <div className="flex items-center justify-between mt-3">
-                    <span className={`text-xs ${textSecondary}`}>
-                      {cat.questionCount}問
-                    </span>
+                    <span className={`text-xs ${textSecondary}`}>{cat.questionCount}問</span>
                   </div>
                 </Link>
               ))}
@@ -204,65 +154,32 @@ export default function DojoClient({
       {/* 記事タブ */}
       {activeTab === "articles" && (
         <div className="space-y-3">
-          {/* カテゴリフィルター */}
-          <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-            <button
-              onClick={() => setSelectedArticleCat("all")}
-              className={`shrink-0 text-xs font-bold px-3 py-1.5 rounded-full border transition-colors ${
-                selectedArticleCat === "all" ? catActive : catInactive
-              }`}
-            >
-              すべて
-            </button>
-            {sortedArticleCategories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedArticleCat(cat.id)}
-                className={`shrink-0 text-xs font-bold px-3 py-1.5 rounded-full border transition-colors ${
-                  selectedArticleCat === cat.id ? catActive : catInactive
-                }`}
-              >
-                {cat.icon} {cat.name}
-              </button>
-            ))}
-          </div>
-
-          {/* 記事件数 */}
-          <p className={`text-xs ${textMuted}`}>
-            {filteredArticles.length}件の記事
-          </p>
-
-          {filteredArticles.length === 0 ? (
+          <p className={`text-sm ${textSecondary}`}>競馬の知識を深める記事</p>
+          {articles.length === 0 ? (
             <div className={`rounded-2xl border p-8 text-center ${cardBg}`}>
               <span className="text-4xl">📰</span>
               <p className={`mt-3 text-sm ${textSecondary}`}>
-                この カテゴリの記事を準備中です...
+                記事を準備中です...
               </p>
             </div>
           ) : (
             <div className={`rounded-2xl border overflow-hidden ${cardBg}`}>
-              {filteredArticles.map((article, index) => (
+              {articles.map((article, index) => (
                 <Link
                   key={article.id}
-                  href={`/dojo/articles/${article.id}`}
+                  href={`/dojo/articles/${article.slug}`}
                   className={`flex items-center gap-4 px-5 py-4 transition-colors ${
-                    index !== filteredArticles.length - 1
-                      ? `border-b ${
-                          isDark ? "border-slate-700" : "border-gray-100"
-                        }`
+                    index !== articles.length - 1
+                      ? `border-b ${isDark ? "border-slate-700" : "border-gray-100"}`
                       : ""
                   } ${isDark ? "hover:bg-slate-800" : "hover:bg-gray-50"}`}
                 >
                   <span className="text-3xl">{article.emoji}</span>
                   <div className="flex-1 min-w-0">
-                    <h3
-                      className={`font-bold text-sm truncate ${textPrimary}`}
-                    >
+                    <h3 className={`font-bold text-sm truncate ${textPrimary}`}>
                       {article.title}
                     </h3>
-                    <div
-                      className={`flex items-center gap-2 mt-1 ${textMuted}`}
-                    >
+                    <div className={`flex items-center gap-2 mt-1 ${textMuted}`}>
                       <span
                         className={`text-xs px-2 py-0.5 rounded-full ${
                           isDark ? "bg-slate-700" : "bg-gray-100"
@@ -270,21 +187,23 @@ export default function DojoClient({
                       >
                         {article.categoryIcon} {article.categoryName}
                       </span>
-                      <span className="text-xs">
-                        📖 {article.readTime}分
-                      </span>
+                      <span className="text-xs">📖 {article.readTime}分</span>
                       {article.hasQuiz && (
                         <span className="text-xs">🎯 クイズ付き</span>
                       )}
                     </div>
                   </div>
-                  <span className={isDark ? "text-slate-500" : "text-gray-400"}>
-                    ›
-                  </span>
+                  <span className={isDark ? "text-slate-500" : "text-gray-400"}>›</span>
                 </Link>
               ))}
             </div>
           )}
+          <Link
+            href="/dojo/articles"
+            className={`block text-center text-sm font-bold py-3 ${accentColor}`}
+          >
+            すべての記事を見る →
+          </Link>
         </div>
       )}
 

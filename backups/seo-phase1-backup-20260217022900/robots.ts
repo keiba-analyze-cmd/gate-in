@@ -6,15 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: [
-          "/api/",
-          "/admin/",
-          "/mypage/",
-          "/auth/",
-          "/login",
-          "/settings",
-          "/onboarding",
-        ],
+        disallow: ["/api/", "/admin/", "/mypage/", "/auth/"],
       },
     ],
     sitemap: "https://gate-in.jp/sitemap.xml",
