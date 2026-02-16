@@ -6,6 +6,7 @@ import Image from "next/image";
 import { getRank } from "@/lib/constants/ranks";
 import { useTheme } from "@/contexts/ThemeContext";
 import VerifiedBadge from "@/components/ui/VerifiedBadge";
+import LikeButton from "@/components/social/LikeButton";
 
 type Pick = { pick_type: string; post_number: number; horse_name: string };
 
@@ -15,6 +16,7 @@ type Props = {
     id: string;
     vote_id?: string;
     like_count?: number;
+    is_liked?: boolean;
     user: { display_name: string; avatar_url: string | null; rank_id: string; is_verified?: boolean } | null;
     user_id: string;
     race: { name: string; grade: string | null; course_name: string; race_number?: number | null; race_date?: string } | null;
@@ -196,6 +198,11 @@ export default function TimelineItem({ item }: Props) {
           )}
           <Link href={`/races/${item.race_id}`}
             className={`text-xs transition-colors flex items-center gap-1 ${textMuted} ${hoverColor}`}>📄 レースを見る</Link>
+          {item.vote_id && (
+            <div className="ml-auto">
+              <LikeButton voteId={item.vote_id} initialCount={item.like_count ?? 0} initialLiked={item.is_liked ?? false} />
+            </div>
+          )}
           {replySent && <span className={`text-xs ml-auto ${isDark ? "text-green-400" : "text-green-500"}`}>✅ 返信しました</span>}
         </div>
       )}

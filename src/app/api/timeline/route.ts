@@ -83,10 +83,26 @@ export async function GET(request: Request) {
     }));
   }
 
-  const allItems = [...voteItems, ...commentItems]
+  let allItems = [...voteItems, ...commentItems]
     .filter((item) => !blockedIds.has(item.user_id))
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     .slice(0, limit);
+
+  // ユーザーがいいねしているかどうかを取得
+  const voteIds = allItems.filter(item => item.vote_id).map(item => item.vote_id);
+  if (voteIds.length > 0) {
+    const { data: userLikes } = await supabase
+      .from("vote_likes")
+      .select("vote_id")
+      .eq("user_id", user.id)
+      .in("vote_id", voteIds);
+    
+    const likedVoteIds = new Set(userLikes?.map(l => l.vote_id) ?? []);
+    allItems = allItems.map(item => ({
+      ...item,
+      is_liked: item.vote_id ? likedVoteIds.has(item.vote_id) : false,
+    }));
+  }
 
   const newCursor = allItems.length === limit ? allItems[allItems.length - 1].timestamp : null;
   return NextResponse.json({ items: allItems, next_cursor: newCursor });
@@ -101,7 +117,7 @@ function formatPicks(votePicks: any[]): { pick_type: string; post_number: number
       horse_name: (p.race_entries as any)?.horses?.name ?? "不明",
     }))
     .sort((a: any, b: any) => {
-      const order: Record<string, number> = { win: 0, place: 1, danger: 2 };
+      const order: Record<string, number> = { win: 0, place: 1, back: 2, danger: 3 };
       return (order[a.pick_type] ?? 9) - (order[b.pick_type] ?? 9);
     });
 }

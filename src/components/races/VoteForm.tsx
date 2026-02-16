@@ -145,6 +145,13 @@ export default function VoteForm({ raceId, entries }: Props) {
       });
     }
 
+    // My新聞メンバーに通知（バックグラウンドで実行）
+    fetch("/api/votes/notify-newspaper", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ race_id: raceId }),
+    }).catch(() => {});
+
     showToast(copySource ? "乗っかり投票が完了しました！🚀" : "投票が完了しました！🎉");
     router.refresh();
   };

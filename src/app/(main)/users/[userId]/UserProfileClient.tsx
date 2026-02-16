@@ -64,9 +64,14 @@ export default function UserProfileClient({
               {profile.display_name}
               {isVerified && <VerifiedBadge size="md" />}
             </h1>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className={`text-xs font-medium ${textSecondary}`}>{rank.icon} {rank.name}</span>
               <span className={`text-xs font-black ${accentColor}`}>{profile.cumulative_points}P</span>
+              {profile.featured_badge && (
+                <span className={`text-xs px-2 py-0.5 rounded-full ${isDark ? "bg-slate-700" : "bg-gray-100"}`} title={profile.featured_badge.name}>
+                  {profile.featured_badge.icon} {profile.featured_badge.name}
+                </span>
+              )}
             </div>
           </div>
           {!isOwnProfile && (
