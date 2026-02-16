@@ -1,0 +1,34 @@
+{
+  "apiFields": [
+    {
+      "idValue": "name",
+      "name": "カテゴリ名",
+      "kind": "text"
+    },
+    {
+      "idValue": "slug",
+      "name": "スラッグ",
+      "kind": "text"
+    },
+    {
+      "idValue": "icon",
+      "name": "アイコン絵文字",
+      "kind": "text"
+    },
+    {
+      "idValue": "description",
+      "name": "説明",
+      "kind": "textArea"
+    },
+    {
+      "idValue": "color",
+      "name": "カラー",
+      "kind": "text"
+    },
+    {
+      "idValue": "order",
+      "name": "表示順",
+      "kind": "number"
+    }
+  ]
+}

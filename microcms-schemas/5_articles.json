@@ -1,0 +1,54 @@
+{
+  "apiFields": [
+    {
+      "idValue": "title",
+      "name": "タイトル",
+      "kind": "text"
+    },
+    {
+      "idValue": "slug",
+      "name": "スラッグ",
+      "kind": "text"
+    },
+    {
+      "idValue": "thumbnail",
+      "name": "サムネイル画像",
+      "kind": "media"
+    },
+    {
+      "idValue": "emoji",
+      "name": "アイコン絵文字",
+      "kind": "text"
+    },
+    {
+      "idValue": "excerpt",
+      "name": "概要",
+      "kind": "textArea"
+    },
+    {
+      "idValue": "content",
+      "name": "本文",
+      "kind": "richEditorV2"
+    },
+    {
+      "idValue": "readTime",
+      "name": "読了時間",
+      "kind": "number"
+    },
+    {
+      "idValue": "hasQuiz",
+      "name": "クイズ付き",
+      "kind": "boolean"
+    },
+    {
+      "idValue": "isPremium",
+      "name": "プレミアム記事",
+      "kind": "boolean"
+    },
+    {
+      "idValue": "publishedAt",
+      "name": "公開日",
+      "kind": "date"
+    }
+  ]
+}

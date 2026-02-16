@@ -1,0 +1,14 @@
+{
+  "apiFields": [
+    {
+      "idValue": "name",
+      "name": "タグ名",
+      "kind": "text"
+    },
+    {
+      "idValue": "slug",
+      "name": "スラッグ",
+      "kind": "text"
+    }
+  ]
+}

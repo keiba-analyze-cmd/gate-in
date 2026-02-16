@@ -1,0 +1,44 @@
+{
+  "apiFields": [
+    {
+      "idValue": "question",
+      "name": "問題文",
+      "kind": "textArea"
+    },
+    {
+      "idValue": "choice1",
+      "name": "選択肢1",
+      "kind": "text"
+    },
+    {
+      "idValue": "choice2",
+      "name": "選択肢2",
+      "kind": "text"
+    },
+    {
+      "idValue": "choice3",
+      "name": "選択肢3",
+      "kind": "text"
+    },
+    {
+      "idValue": "choice4",
+      "name": "選択肢4",
+      "kind": "text"
+    },
+    {
+      "idValue": "correctIndex",
+      "name": "正解番号",
+      "kind": "number"
+    },
+    {
+      "idValue": "explanation",
+      "name": "解説",
+      "kind": "richEditorV2"
+    },
+    {
+      "idValue": "order",
+      "name": "表示順",
+      "kind": "number"
+    }
+  ]
+}
