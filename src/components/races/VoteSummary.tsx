@@ -1,6 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
+import confetti from "canvas-confetti";
+import dynamic from "next/dynamic";
+
+const HitShareCard = dynamic(() => import("@/components/share/HitShareCard"), { ssr: false });
 
 type Transaction = {
   reason: string;
@@ -9,6 +14,13 @@ type Transaction = {
 };
 
 type Props = {
+  raceInfo?: {
+    name: string;
+    date: string;
+    courseName: string;
+    grade?: string | null;
+  };
+  userName?: string;
   vote: {
     status: string;
     earned_points: number;
@@ -24,8 +36,75 @@ type Props = {
   transactions?: Transaction[] | null;
 };
 
-export default function VoteSummary({ vote, isFinished, transactions }: Props) {
+// 紙吹雪アニメーション
+function fireConfetti(isPerfect: boolean) {
+  const duration = isPerfect ? 4000 : 2500;
+  const end = Date.now() + duration;
+
+  const colors = isPerfect 
+    ? ['#FFD700', '#FFA500', '#FF6347', '#00FF00', '#00CED1', '#FF69B4']
+    : ['#22c55e', '#16a34a', '#15803d', '#fbbf24', '#f59e0b'];
+
+  (function frame() {
+    confetti({
+      particleCount: isPerfect ? 7 : 4,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0, y: 0.7 },
+      colors: colors,
+    });
+    confetti({
+      particleCount: isPerfect ? 7 : 4,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1, y: 0.7 },
+      colors: colors,
+    });
+
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  }());
+
+  // 完全的中の場合は追加で大きな紙吹雪
+  if (isPerfect) {
+    setTimeout(() => {
+      confetti({
+        particleCount: 100,
+        spread: 100,
+        origin: { x: 0.5, y: 0.5 },
+        colors: colors,
+      });
+    }, 500);
+  }
+}
+
+export default function VoteSummary({ vote, isFinished, transactions, raceInfo, userName }: Props) {
   const { isDark } = useTheme();
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const [showBigPoints, setShowBigPoints] = useState(false);
+  const [showShareCard, setShowShareCard] = useState(false);
+
+  const isHit = vote.status === "settled_hit";
+  const isPerfect = vote.is_perfect;
+
+  // 的中時のアニメーション発火
+  useEffect(() => {
+    if (isFinished && isHit && !hasAnimated) {
+      setHasAnimated(true);
+      
+      // 少し遅延させてから紙吹雪
+      setTimeout(() => {
+        fireConfetti(isPerfect);
+        setShowBigPoints(true);
+      }, 300);
+
+      // バイブレーション（対応端末のみ）
+      if (navigator.vibrate) {
+        navigator.vibrate(isPerfect ? [100, 50, 100, 50, 200] : [100, 50, 100]);
+      }
+    }
+  }, [isFinished, isHit, isPerfect, hasAnimated]);
 
   const cardBg = isDark 
     ? "bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-green-500/30" 
@@ -34,7 +113,6 @@ export default function VoteSummary({ vote, isFinished, transactions }: Props) {
   const textSecondary = isDark ? "text-slate-400" : "text-gray-600";
   const borderColor = isDark ? "border-green-500/30" : "border-green-200";
 
-  const isHit = vote.status === "settled_hit";
   const picks = vote.vote_picks ?? [];
 
   const PICK_LABELS: Record<string, { label: string; color: string }> = {
@@ -117,7 +195,6 @@ export default function VoteSummary({ vote, isFinished, transactions }: Props) {
   if (winPick) {
     const winTx = transactionMap.get("win_hit")?.[0];
     const placeTx = transactionMap.get("place_hit")?.[0];
-    // 単勝が外れて、複勝が的中の場合
     if (!winTx) {
       betResults.push({
         label: "複勝",
@@ -130,7 +207,7 @@ export default function VoteSummary({ vote, isFinished, transactions }: Props) {
     }
   }
 
-  // 対抗（○が3着以内）- ポイントなし、的中状況のみ表示
+  // 対抗（○が3着以内）
   if (placePicks.length > 0) {
     const hitCount = placePicks.filter(p => p.is_hit).length;
     betResults.push({
@@ -138,7 +215,7 @@ export default function VoteSummary({ vote, isFinished, transactions }: Props) {
       icon: "○",
       color: "blue",
       isHit: hitCount > 0,
-      points: 0, // ポイントなし
+      points: 0,
       detail: `${hitCount}/${placePicks.length}的中`,
     });
   }
@@ -158,7 +235,7 @@ export default function VoteSummary({ vote, isFinished, transactions }: Props) {
     });
   }
 
-  // ワイド（複数の場合あり）
+  // ワイド
   if (winPick && placePicks.length > 0) {
     const txs = transactionMap.get("wide_hit") ?? [];
     const totalWidePoints = txs.reduce((sum, tx) => sum + tx.amount, 0);
@@ -228,17 +305,30 @@ export default function VoteSummary({ vote, isFinished, transactions }: Props) {
   }
 
   return (
-    <div className={`rounded-2xl border p-5 ${cardBg}`}>
+    <div className={`rounded-2xl border p-5 ${cardBg} ${isHit ? "ring-2 ring-green-500/50" : ""} transition-all`}>
+      {/* 的中ヘッダー */}
       <div className="flex items-center justify-between mb-3">
         <h3 className={`font-bold ${textPrimary}`}>📊 馬券結果</h3>
         <span className={`text-xs font-bold px-2 py-1 rounded-full ${
           isHit 
             ? (isDark ? "bg-green-500/20 text-green-400" : "bg-green-100 text-green-700") 
             : (isDark ? "bg-slate-700 text-slate-400" : "bg-gray-100 text-gray-500")
-        }`}>
-          {isHit ? "🎉 的中！" : "😢 ハズレ"}
+        } ${isHit && showBigPoints ? "animate-bounce" : ""}`}>
+          {isHit ? (isPerfect ? "💎 完全的中！" : "🎉 的中！") : "😢 ハズレ"}
         </span>
       </div>
+
+      {/* 大きなポイント表示（的中時のみ） */}
+      {isHit && showBigPoints && (
+        <div className={`text-center py-4 mb-4 rounded-xl ${isDark ? "bg-green-500/20" : "bg-green-100"} animate-pulse`}>
+          <div className={`text-4xl font-black ${isDark ? "text-green-400" : "text-green-600"}`}>
+            +{vote.earned_points} P
+          </div>
+          <div className={`text-sm ${isDark ? "text-green-300" : "text-green-700"} mt-1`}>
+            {isPerfect ? "🎊 パーフェクト！おめでとう！" : "おめでとうございます！🎉"}
+          </div>
+        </div>
+      )}
 
       {/* 馬券種ごとの結果 */}
       <div className="space-y-2">
@@ -252,7 +342,6 @@ export default function VoteSummary({ vote, isFinished, transactions }: Props) {
               )}
             </div>
             {bet.label === "対抗" ? (
-              // 対抗はポイントなし、的中状況のみ
               <span className={`text-sm ${bet.isHit ? (isDark ? "text-blue-400" : "text-blue-600") : (isDark ? "text-red-400" : "text-red-500")}`}>
                 {bet.isHit ? "✓" : "×"}
               </span>
@@ -265,13 +354,45 @@ export default function VoteSummary({ vote, isFinished, transactions }: Props) {
         ))}
       </div>
 
-      {/* 合計ポイント */}
-      <div className={`mt-4 pt-3 border-t flex items-center justify-between ${borderColor}`}>
-        <span className={`font-bold ${textPrimary}`}>獲得ポイント</span>
-        <span className={`text-xl font-black ${isDark ? "text-green-400" : "text-green-600"}`}>
-          +{vote.earned_points} P
-        </span>
-      </div>
+      {/* 合計ポイント（大きな表示がない場合） */}
+      {(!isHit || !showBigPoints) && (
+        <div className={`mt-4 pt-3 border-t flex items-center justify-between ${borderColor}`}>
+          <span className={`font-bold ${textPrimary}`}>獲得ポイント</span>
+          <span className={`text-xl font-black ${isHit ? (isDark ? "text-green-400" : "text-green-600") : (isDark ? "text-slate-500" : "text-gray-400")}`}>
+            {isHit ? `+${vote.earned_points} P` : "0 P"}
+          </span>
+        </div>
+      )}
+
+      {/* シェアボタン（的中時のみ） */}
+      {isHit && raceInfo && (
+        <button
+          onClick={() => setShowShareCard(true)}
+          className={`mt-4 w-full py-3 rounded-xl font-bold transition-colors ${
+            isDark 
+              ? "bg-amber-500 text-slate-900 hover:bg-amber-400" 
+              : "bg-green-600 text-white hover:bg-green-700"
+          }`}
+        >
+          📸 的中報告をシェア
+        </button>
+      )}
+
+      {/* シェアカードモーダル */}
+      {showShareCard && raceInfo && (
+        <HitShareCard
+          raceName={raceInfo.name}
+          raceDate={raceInfo.date}
+          courseName={raceInfo.courseName}
+          grade={raceInfo.grade}
+          earnedPoints={vote.earned_points}
+          isPerfect={isPerfect}
+          winPick={winPick ? { postNumber: winPick.race_entries?.post_number ?? 0, horseName: winPick.race_entries?.horses?.name ?? "不明" } : undefined}
+          placePicks={placePicks.filter(p => p.is_hit).map(p => ({ postNumber: p.race_entries?.post_number ?? 0, horseName: p.race_entries?.horses?.name ?? "不明" }))}
+          userName={userName ?? "ゲスト"}
+          onClose={() => setShowShareCard(false)}
+        />
+      )}
     </div>
   );
 }
