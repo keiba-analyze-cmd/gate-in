@@ -5,12 +5,14 @@ import { useTheme } from "@/contexts/ThemeContext";
 import FollowButton from "@/components/social/FollowButton";
 import BlockButton from "@/components/social/BlockButton";
 import UserActivityFeed from "@/components/social/UserActivityFeed";
+import VerifiedBadge from "@/components/ui/VerifiedBadge";
 
 type Rank = { id: string; name: string; icon: string; threshold: number };
 
 type Props = {
   profile: any;
   rank: Rank;
+  isVerified: boolean;
   nextRank: Rank | null;
   isOwnProfile: boolean;
   isFollowing: boolean;
@@ -26,7 +28,7 @@ type Props = {
 
 export default function UserProfileClient({
   profile, rank, nextRank, isOwnProfile, isFollowing, isBlocked,
-  followingCount, followerCount, userBadges, winRate, placeRate, progressToNext, userId
+  followingCount, followerCount, userBadges, winRate, placeRate, progressToNext, userId, isVerified
 }: Props) {
   const { isDark } = useTheme();
 
@@ -58,7 +60,10 @@ export default function UserProfileClient({
             <div className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl ${avatarBg}`}>🏇</div>
           )}
           <div className="flex-1 min-w-0">
-            <h1 className={`text-lg font-black truncate ${textPrimary}`}>{profile.display_name}</h1>
+            <h1 className={`text-lg font-black truncate flex items-center gap-1 ${textPrimary}`}>
+              {profile.display_name}
+              {isVerified && <VerifiedBadge size="md" />}
+            </h1>
             <div className="flex items-center gap-2">
               <span className={`text-xs font-medium ${textSecondary}`}>{rank.icon} {rank.name}</span>
               <span className={`text-xs font-black ${accentColor}`}>{profile.cumulative_points}P</span>

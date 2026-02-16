@@ -30,7 +30,7 @@ export async function GET(request: Request) {
   // 的中報告（settled_hit のみ）
   if (filter === "all" || filter === "hit") {
     let hitQ = admin.from("votes")
-      .select("id, user_id, race_id, status, earned_points, is_perfect, like_count, copy_count, settled_at, created_at, profiles(display_name, avatar_url, rank_id), races(name, grade, course_name, race_number, race_date), vote_picks(pick_type, race_entries(post_number, horses(name)))")
+      .select("id, user_id, race_id, status, earned_points, is_perfect, like_count, copy_count, settled_at, created_at, profiles(display_name, avatar_url, rank_id, is_verified), races(name, grade, course_name, race_number, race_date), vote_picks(pick_type, race_entries(post_number, horses(name)))")
       .in("user_id", targetIds).eq("status", "settled_hit")
       .order("settled_at", { ascending: false }).limit(limit);
     if (cursor) hitQ = hitQ.lt("settled_at", cursor);
@@ -51,7 +51,7 @@ export async function GET(request: Request) {
   // みんなの予想（pending のみ）
   if (filter === "all" || filter === "vote") {
     let pendingQ = admin.from("votes")
-      .select("id, user_id, race_id, status, like_count, copy_count, created_at, profiles(display_name, avatar_url, rank_id), races(name, grade, course_name, race_number, race_date), vote_picks(pick_type, race_entries(post_number, horses(name)))")
+      .select("id, user_id, race_id, status, like_count, copy_count, created_at, profiles(display_name, avatar_url, rank_id, is_verified), races(name, grade, course_name, race_number, race_date), vote_picks(pick_type, race_entries(post_number, horses(name)))")
       .in("user_id", targetIds).eq("status", "pending")
       .order("created_at", { ascending: false }).limit(limit);
     if (cursor) pendingQ = pendingQ.lt("created_at", cursor);
@@ -71,7 +71,7 @@ export async function GET(request: Request) {
   let commentItems: any[] = [];
   if (filter === "all" || filter === "comment") {
     let q = supabase.from("comments")
-      .select("id, user_id, race_id, body, sentiment, created_at, profiles(display_name, avatar_url, rank_id), races(name, grade, course_name)")
+      .select("id, user_id, race_id, body, sentiment, created_at, profiles(display_name, avatar_url, rank_id, is_verified), races(name, grade, course_name)")
       .in("user_id", targetIds).is("parent_id", null).eq("is_deleted", false)
       .order("created_at", { ascending: false }).limit(limit);
     if (cursor) q = q.lt("created_at", cursor);

@@ -59,6 +59,7 @@ export default async function UserProfilePage({ params }: Props) {
       placeRate={placeRate}
       progressToNext={progressToNext}
       userId={userId}
+      isVerified={profile.is_verified ?? false}
     />
   );
 }

@@ -7,7 +7,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 type TimelineEntry = {
   type: string;
   id: string;
-  user: { display_name: string; avatar_url: string | null; rank_id: string } | null;
+  user: { display_name: string; avatar_url: string | null; rank_id: string; is_verified?: boolean } | null;
   user_id: string;
   race: { name: string; grade: string | null; course_name: string } | null;
   race_id: string;

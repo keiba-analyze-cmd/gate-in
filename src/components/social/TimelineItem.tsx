@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getRank } from "@/lib/constants/ranks";
 import { useTheme } from "@/contexts/ThemeContext";
+import VerifiedBadge from "@/components/ui/VerifiedBadge";
 
 type Pick = { pick_type: string; post_number: number; horse_name: string };
 
@@ -14,7 +15,7 @@ type Props = {
     id: string;
     vote_id?: string;
     like_count?: number;
-    user: { display_name: string; avatar_url: string | null; rank_id: string } | null;
+    user: { display_name: string; avatar_url: string | null; rank_id: string; is_verified?: boolean } | null;
     user_id: string;
     race: { name: string; grade: string | null; course_name: string; race_number?: number | null; race_date?: string } | null;
     race_id: string;
@@ -115,6 +116,7 @@ export default function TimelineItem({ item }: Props) {
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${avatarBg}`}>🏇</div>
           )}
           <span className={`text-sm font-bold ${textPrimary} group-${hoverColor}`}>{item.user?.display_name ?? "匿名"}</span>
+          {item.user?.is_verified && <VerifiedBadge size="sm" />}
         </Link>
         {rank && <span className={`text-xs ${textMuted}`}>{rank.icon}</span>}
         <span className={`text-xs ml-auto ${textMuted}`}>{timeAgo}</span>
