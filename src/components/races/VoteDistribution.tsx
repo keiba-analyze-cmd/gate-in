@@ -27,9 +27,11 @@ export default function VoteDistribution({ raceId }: Props) {
   const barBg = isDark ? "bg-slate-700" : "bg-gray-200";
 
   useEffect(() => {
-    fetch(`/api/races/${raceId}/distribution`)
+    // 修正: /distribution → /votes
+    fetch(`/api/races/${raceId}/votes`)
       .then(res => res.json())
       .then(setData)
+      .catch(() => setData(null))
       .finally(() => setLoading(false));
   }, [raceId]);
 
@@ -48,7 +50,7 @@ export default function VoteDistribution({ raceId }: Props) {
   };
 
   if (loading) return <div className={`rounded-2xl border p-8 text-center ${cardBg} ${textMuted}`}>読み込み中...</div>;
-  if (!data) return null;
+  if (!data) return <div className={`rounded-2xl border p-8 text-center ${cardBg} ${textMuted}`}>データを取得できませんでした</div>;
 
   return (
     <div className={`rounded-2xl border overflow-hidden ${cardBg}`}>
