@@ -24,7 +24,7 @@ export default function LandingHero({ openRaces }: { openRaces: Race[] }) {
             <span className="text-yellow-300">腕試し！</span>
           </h1>
           <p className="text-green-100 text-sm sm:text-base mb-6 max-w-md mx-auto leading-relaxed">
-            レースの1着・複勝・危険馬を予想してポイントを稼ごう。<br />
+            本命・対抗・危険馬を予想してポイントを稼ごう。<br />
             月間ランキング上位者にはAmazonギフト券をプレゼント！
           </p>
           <Link
@@ -41,7 +41,7 @@ export default function LandingHero({ openRaces }: { openRaces: Race[] }) {
         <h2 className="text-center text-lg font-black text-gray-800 mb-6">ゲートイン！の特徴</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { icon: "🎯", title: "3つの予想", desc: "1着・複勝・危険馬を予想。的中でポイントゲット！" },
+            { icon: "🎯", title: "3つの予想", desc: "本命・対抗・危険馬を予想。的中でポイントゲット！" },
             { icon: "🏆", title: "月間大会", desc: "毎月ランキングを競い合い、上位者には豪華景品！" },
             { icon: "👥", title: "みんなの予想", desc: "フォローした仲間の予想やコメントをタイムラインでチェック。" },
           ].map((f) => (
@@ -60,7 +60,7 @@ export default function LandingHero({ openRaces }: { openRaces: Race[] }) {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
           {[
             { label: "1着的中", points: "50〜500P", color: "text-green-600" },
-            { label: "複勝的中", points: "30P/頭", color: "text-blue-600" },
+            { label: "対抗的中（○）", points: "馬連等で加算", color: "text-blue-600" },
             { label: "危険馬的中", points: "10P", color: "text-orange-600" },
             { label: "完全的中", points: "+300Pボーナス", color: "text-yellow-600" },
           ].map((p) => (

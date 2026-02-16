@@ -153,7 +153,7 @@ export default function VoteEditForm({ raceId, entries, existingPicks, postTime 
 
   const tabs = [
     { key: "win" as const, label: "◎ 1着予想", desc: "1頭選択" },
-    { key: "place" as const, label: "○ 複勝予想", desc: "0〜2頭" },
+    { key: "place" as const, label: "○ 対抗", desc: "0〜2頭" },
     { key: "back" as const, label: "△ 抑え", desc: "0〜5頭" },
     { key: "danger" as const, label: "⚠️ 危険馬", desc: "0〜1頭" },
   ];
@@ -310,7 +310,7 @@ export default function VoteEditForm({ raceId, entries, existingPicks, postTime 
                 const e = entries.find((x) => x.id === id);
                 return e ? (
                   <div key={id} className="flex items-center gap-2 bg-blue-50 rounded-lg p-3">
-                    <span className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded">○ 複勝</span>
+                    <span className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded">○ 対抗</span>
                     <span className="w-6 h-6 rounded-full bg-gray-800 text-white flex items-center justify-center text-xs font-bold">{e.post_number}</span>
                     <span className="font-bold text-gray-800">{e.horses?.name}</span>
                   </div>
@@ -337,7 +337,7 @@ export default function VoteEditForm({ raceId, entries, existingPicks, postTime 
                 ) : null;
               })()}
               {!dangerPick && placePicks.length === 0 && backPicks.length === 0 && (
-                <p className="text-xs text-gray-400 text-center">※ 複勝・抑え・危険馬は未選択です（任意）</p>
+                <p className="text-xs text-gray-400 text-center">※ 対抗・抑え・危険馬は未選択です（任意）</p>
               )}
             </div>
             <div className="flex gap-2">

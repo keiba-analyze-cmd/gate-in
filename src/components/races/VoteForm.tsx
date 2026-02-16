@@ -160,7 +160,7 @@ export default function VoteForm({ raceId, entries }: Props) {
 
   const tabs = [
     { key: "win" as const, label: "◎ 1着予想", required: true, desc: "1頭選択" },
-    { key: "place" as const, label: "○ 複勝予想", required: false, desc: "0〜2頭" },
+    { key: "place" as const, label: "○ 対抗", required: false, desc: "0〜2頭" },
     { key: "back" as const, label: "△ 抑え", required: false, desc: "0〜5頭" },
     { key: "danger" as const, label: "⚠️ 危険馬", required: false, desc: "0〜1頭" },
   ];
@@ -210,7 +210,7 @@ export default function VoteForm({ raceId, entries }: Props) {
     <div className={`rounded-2xl border overflow-hidden ${cardBg}`}>
       <div className={`p-4 border-b ${borderColor}`}>
         <h2 className={`font-bold ${textPrimary}`}>🗳 予想を投票する</h2>
-        <p className={`text-xs mt-1 ${textMuted}`}>1着予想（必須）+ 複勝・抑え・危険馬（任意）</p>
+        <p className={`text-xs mt-1 ${textMuted}`}>本命（必須）+ 対抗・抑え・危険馬（任意）</p>
       </div>
 
       {copySource && (
@@ -332,7 +332,7 @@ export default function VoteForm({ raceId, entries }: Props) {
                 </div>) : null; })()}
               {placePicks.map((id) => { const e = entries.find((x) => x.id === id); return e ? (
                 <div key={id} className={`flex items-center gap-2 rounded-lg p-3 ${isDark ? "bg-blue-500/10" : "bg-blue-50"}`}>
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${isDark ? "bg-blue-500/20 text-blue-400" : "bg-blue-100 text-blue-600"}`}>○ 複勝</span>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${isDark ? "bg-blue-500/20 text-blue-400" : "bg-blue-100 text-blue-600"}`}>○ 対抗</span>
                   <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${isDark ? "bg-slate-600 text-slate-100" : "bg-gray-800 text-white"}`}>{e.post_number}</span>
                   <span className={`font-bold ${textPrimary}`}>{e.horses?.name}</span>
                 </div>) : null; })}
@@ -349,7 +349,7 @@ export default function VoteForm({ raceId, entries }: Props) {
                   <span className={`font-bold ${textPrimary}`}>{e.horses?.name}</span>
                 </div>) : null; })()}
               {!dangerPick && placePicks.length === 0 && backPicks.length === 0 && (
-                <p className={`text-xs text-center ${textMuted}`}>※ 複勝・抑え・危険馬は未選択です（任意）</p>
+                <p className={`text-xs text-center ${textMuted}`}>※ 対抗・抑え・危険馬は未選択です（任意）</p>
               )}
             </div>
             <div className="flex gap-2">

@@ -19,14 +19,14 @@ export default function PointsGuidePage() {
       {/* 基本ルール */}
       <Section title="📋 基本ルール">
         <p className="text-sm text-gray-600 mb-3">
-          各レースで「1着予想（本命）」「複勝予想（相手）」「抑え」「危険馬」を選んで投票。
+          各レースで「本命（◎）」「対抗（○）」「抑え（△）」「危険馬（⚠️）」を選んで投票。
           レース確定後に自動で採点され、ポイントが加算されます。
         </p>
         <div className="bg-green-50 rounded-xl p-4 text-sm text-green-800">
           <strong>投票ルール：</strong>
           <ul className="mt-2 space-y-1 list-disc list-inside">
             <li>◎ 1着予想（本命）… 必須、1頭選択</li>
-            <li>○ 複勝予想（相手）… 任意、最大2頭</li>
+            <li>○ 対抗 … 任意、最大2頭</li>
             <li>△ 抑え … 任意、最大5頭</li>
             <li>⚠️ 危険馬 … 任意、最大1頭</li>
             <li>締切：発走2分前まで</li>
@@ -53,7 +53,7 @@ export default function PointsGuidePage() {
           ]}
         />
 
-        <h3 className="text-sm font-bold text-gray-700 mt-4 mb-2">○ 複勝的中（3着以内）</h3>
+        <h3 className="text-sm font-bold text-gray-700 mt-4 mb-2">◎ 複勝的中（◎が3着以内）</h3>
         <Table
           headers={["オッズ", "獲得ポイント"]}
           rows={[
@@ -184,7 +184,7 @@ export default function PointsGuidePage() {
           <div className="flex items-start gap-3">
             <span className="text-lg">○</span>
             <div>
-              <div className="font-bold text-gray-800">相手（複勝予想）</div>
+              <div className="font-bold text-gray-800">対抗</div>
               <p className="text-sm text-gray-600">3着以内に入ると予想する馬。馬連・ワイド・三連複の判定に使用。</p>
             </div>
           </div>
@@ -267,7 +267,7 @@ export default function PointsGuidePage() {
           <FAQ q="ポイントは減ることはありますか？" a="いいえ。ハズレてもポイントは減りません。累計ポイントは増え続けます。" />
           <FAQ q="投票を変更できますか？" a="発走2分前まで変更・取り消しが可能です。" />
           <FAQ q="月間ポイントと累計ポイントの違いは？" a="月間ポイントは毎月1日にリセットされ、月間ランキングに使用されます。累計ポイントはリセットされず、ランクの計算に使用されます。" />
-          <FAQ q="完全的中とは？" a="1着予想（◎）・複勝予想（○）・危険馬（⚠️）の全てが的中した場合に達成です。+200Pのボーナスが付きます。" />
+          <FAQ q="完全的中とは？" a="本命（◎）・対抗（○）・危険馬（⚠️）の全てが的中した場合に達成です。+200Pのボーナスが付きます。" />
           <FAQ q="△（抑え）を増やすとどうなりますか？" a="三連複が当たりやすくなりますが、獲得ポイントに倍率（0.2〜1.0）がかかります。絞るほど高リターン、広げるほど安定だが低リターンです。" />
           <FAQ q="馬連・ワイドに△は使えますか？" a="いいえ。馬連・ワイドは◎と○の組み合わせのみで判定されます。△は三連複のみに影響します。" />
         </div>

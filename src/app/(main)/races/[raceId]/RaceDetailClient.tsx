@@ -214,11 +214,13 @@ function PointsGuide({ isDark }: { isDark: boolean }) {
   const linkColor = isDark ? "text-amber-400" : "text-green-600";
 
   const items = [
-    { label: "◎ 単勝的中", value: "20〜250P", color: "text-red-500" },
-    { label: "○ 複勝的中", value: "10〜60P", color: "text-blue-500" },
+    { label: "🎯 単勝的中（◎1着）", value: "20〜250P", color: "text-red-500" },
+    { label: "🎫 複勝的中（◎3着以内）", value: "10〜60P", color: "text-blue-500" },
     { label: "🎫 馬連的中", value: "30〜280P", color: isDark ? "text-green-400" : "text-green-600" },
+    { label: "🔥 馬単ボーナス", value: "×2倍", color: "text-red-500" },
     { label: "🎟️ ワイド的中", value: "15〜90P", color: isDark ? "text-green-400" : "text-green-600" },
     { label: "🎰 三連複的中", value: "20〜300P", color: "text-purple-500" },
+    { label: "🔥 3連単ボーナス", value: "×3〜5倍", color: "text-red-500" },
     { label: "⚠️ 危険馬的中", value: "10〜50P", color: "text-orange-500" },
     { label: "💎 完全的中ボーナス", value: "+200P", color: isDark ? "text-yellow-400" : "text-yellow-600" },
   ];

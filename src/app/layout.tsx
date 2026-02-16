@@ -7,12 +7,12 @@ export const metadata: Metadata = {
     default: "ゲートイン！ | 競馬予想で腕試し",
     template: "%s | ゲートイン！",
   },
-  description: "みんなの予想で腕試し！レースの1着・複勝・危険馬を予想してポイントを稼ごう。月間ランキング上位者にはAmazonギフト券をプレゼント！",
+  description: "みんなの予想で腕試し！本命・対抗・危険馬を予想してポイントを稼ごう。月間ランキング上位者にはAmazonギフト券をプレゼント！",
   icons: { icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏇</text></svg>" },
   metadataBase: new URL("https://gate-in.jp"),
   openGraph: {
     title: "ゲートイン！ | 競馬予想で腕試し",
-    description: "みんなの予想で腕試し！レースの1着・複勝・危険馬を予想してポイントを稼ごう。",
+    description: "みんなの予想で腕試し！本命・対抗・危険馬を予想してポイントを稼ごう。",
     siteName: "ゲートイン！",
     locale: "ja_JP",
     type: "website",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "ゲートイン！ | 競馬予想で腕試し",
-    description: "みんなの予想で腕試し！レースの1着・複勝・危険馬を予想してポイントを稼ごう。",
+    description: "みんなの予想で腕試し！本命・対抗・危険馬を予想してポイントを稼ごう。",
     images: ["/api/og?title=ゲートイン！"],
   },
 };
@@ -49,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               name: "ゲートイン！",
               url: "https://gate-in.jp",
               logo: "https://gate-in.jp/icon.png",
-              description: "競馬予想SNS。レースの1着・複勝・危険馬を予想してポイントを稼ごう！",
+              description: "競馬予想SNS。本命・対抗・危険馬を予想してポイントを稼ごう！",
               sameAs: [],
             }),
           }}
