@@ -178,3 +178,54 @@ COMMENT ON COLUMN votes.comment IS '予想理由のコメント';
 ## 📞 連絡先
 
 質問があれば開発チームまで。
+
+
+---
+
+## 🎯 次回セッションの議題
+
+### テーマ: 競馬道場コンテンツ作成
+
+ワイヤーフレーム（`article-wireframe-v2.jsx`, `quiz-wireframe.jsx`）を基に、SEOを意識した競馬コンテンツを作成・量産する計画。
+
+### 議論ポイント
+
+1. **記事フォーマット設計**
+   - MicroCMSのスキーマに合わせた構造
+   - SEO最適化（タイトル、メタ、見出し構成）
+   - カテゴリ別テンプレート（血統/コース/騎手/予想術/名馬）
+
+2. **クイズフォーマット設計**
+   - 難易度別（入門/中級/上級/マスター）
+   - カテゴリ別出題傾向
+   - 解説の書き方
+
+3. **コンテンツ案**
+   - 記事トピックリスト
+   - クイズ問題案
+   - SEOキーワード戦略
+
+4. **大量生成の方法**
+   - AIアシスト生成フロー
+   - 品質管理プロセス
+   - MicroCMSへの一括投入方法
+
+### 参照ファイル
+
+- `~/Downloads/article-wireframe-v2.jsx` - 記事UI設計
+- `~/Downloads/quiz-wireframe.jsx` - クイズUI設計
+- `src/lib/microcms.ts` - MicroCMSクライアント（型定義あり）
+
+### MicroCMS APIスキーマ（参考）
+
+**articles**
+- title, slug, category, thumbnail, emoji, excerpt, content, readTime, hasQuiz, isPremium, tags, publishedAt
+
+**quiz-questions**
+- question, category, level, choice1-4, correctIndex, explanation, order
+
+**article-categories**
+- name, slug, icon, description, gradient, order
+
+**quiz-categories**
+- name, slug, icon, description, color, order
