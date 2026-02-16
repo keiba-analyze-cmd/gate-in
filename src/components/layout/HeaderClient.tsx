@@ -17,6 +17,7 @@ type Props = {
 
 export default function HeaderClient({ user, profile, unreadCount }: Props) {
   const { isDark } = useTheme();
+  const isLoggedIn = !!user;
 
   const getInitial = (name: string | null): string => {
     if (!name) return "G";
@@ -33,15 +34,18 @@ export default function HeaderClient({ user, profile, unreadCount }: Props) {
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-0.5 ml-6">
-          <NavLink href="/" isDark={isDark}>トップ</NavLink>
-          <NavLink href="/races" isDark={isDark}>レース</NavLink>
-          <NavLink href="/rankings" isDark={isDark}>ランキング</NavLink>
-          <NavLink href="/contest" isDark={isDark}>大会</NavLink>
-          <NavLink href="/timeline" isDark={isDark}>TL</NavLink>
-          <NavLink href="/dojo" isDark={isDark}>道場</NavLink>
-          <NavLink href="/users" isDark={isDark}>検索</NavLink>
-        </nav>
+        {/* ログイン時のみナビゲーション表示 */}
+        {isLoggedIn && (
+          <nav className="hidden md:flex items-center gap-0.5 ml-6">
+            <NavLink href="/" isDark={isDark}>トップ</NavLink>
+            <NavLink href="/races" isDark={isDark}>レース</NavLink>
+            <NavLink href="/rankings" isDark={isDark}>ランキング</NavLink>
+            <NavLink href="/contest" isDark={isDark}>大会</NavLink>
+            <NavLink href="/timeline" isDark={isDark}>TL</NavLink>
+            <NavLink href="/dojo" isDark={isDark}>道場</NavLink>
+            <NavLink href="/users" isDark={isDark}>検索</NavLink>
+          </nav>
+        )}
 
         <div className="flex items-center gap-3">
           {profile && user ? (
@@ -57,7 +61,7 @@ export default function HeaderClient({ user, profile, unreadCount }: Props) {
 
               <Link href="/mypage" className="block">
                 {profile.avatar_url ? (
-                  <Image src={profile.avatar_url} alt="マイページ" width={32} height={32} className={`w-8 h-8 rounded-full border-2 cursor-pointer ${isDark ? "border-amber-500" : "border-green-500"}`} />
+                  <Image src={profile.avatar_url} alt="マイページ" width={32} height={32} className={`w-8 h-8 rounded-full border-2 cursor-pointer ${isDark ? "border-amber-500" : "border-green-500"}`} unoptimized />
                 ) : (
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 cursor-pointer ${isDark ? "bg-gradient-to-br from-amber-500 to-orange-500 text-slate-900 border-amber-400" : "bg-gradient-to-br from-green-500 to-emerald-500 text-white border-green-400"}`}>
                     {getInitial(profile.display_name)}

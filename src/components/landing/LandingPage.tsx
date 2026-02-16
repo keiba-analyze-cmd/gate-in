@@ -19,18 +19,24 @@ type Stats = {
   votes: number;
 };
 
+type HeroImage = {
+  url: string | null;
+  alt: string;
+} | null;
+
 type Props = {
   openRaces: Race[];
   stats: Stats;
+  heroImage?: HeroImage;
 };
 
-export default function LandingPage({ openRaces, stats }: Props) {
+export default function LandingPage({ openRaces, stats, heroImage }: Props) {
   const gradeRaces = openRaces.filter((r) => r.grade);
 
   return (
     <div className="space-y-8 pb-24">
       {/* ====== ヒーロー ====== */}
-      <HeroSection />
+      <HeroSection heroImage={heroImage} />
 
       {/* ====== 3ステップ ====== */}
       <StepsSection />
@@ -72,10 +78,24 @@ export default function LandingPage({ openRaces, stats }: Props) {
 }
 
 // ====== ヒーローセクション ======
-function HeroSection() {
+function HeroSection({ heroImage }: { heroImage?: HeroImage }) {
+  const hasImage = heroImage?.url;
+  
   return (
     <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-green-600 via-green-500 to-emerald-600 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800">
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+      {/* カスタム背景画像 */}
+      {hasImage && (
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${heroImage.url})` }}
+        >
+          <div className="absolute inset-0 bg-black/40" />
+        </div>
+      )}
+      {/* デフォルトパターン（画像がない場合） */}
+      {!hasImage && (
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+      )}
       <div className="relative px-6 py-16 text-center text-white">
         <div className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-1.5 mb-6">
           <span className="text-yellow-300 text-sm">🎉</span>

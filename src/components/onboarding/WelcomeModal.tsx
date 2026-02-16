@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { createClient } from "@/lib/supabase/client";
 import { getRank } from "@/lib/constants/ranks";
 
 type SuggestedUser = {
@@ -23,8 +24,17 @@ export default function WelcomeModal() {
   const [followLoading, setFollowLoading] = useState(false);
 
   useEffect(() => {
-    const seen = localStorage.getItem("gate-in-onboarding");
-    if (!seen) setShow(true);
+    const checkAuth = async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      // ログイン済み かつ オンボーディング未完了の場合のみ表示
+      if (user) {
+        const seen = localStorage.getItem("gate-in-onboarding");
+        if (!seen) setShow(true);
+      }
+    };
+    checkAuth();
   }, []);
 
   // おすすめユーザーを取得

@@ -14,6 +14,7 @@ const TABS = [
 
 const EXTRA_LINKS = [
   { href: "/admin/verified", label: "✅ 認証バッジ", description: "公式予想家の認証" },
+  { href: "/admin/settings", label: "⚙️ サイト設定", description: "LP画像など" },
 ];
 
 export default function AdminTabs() {

@@ -80,7 +80,16 @@ export default async function HomePage() {
       votes: votesCount ?? 0,
     };
     
-    return <LandingPage openRaces={openRaces ?? []} stats={stats} />;
+    // HERO画像設定を取得
+    const { data: heroSetting } = await supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "hero_image")
+      .single();
+    
+    const heroImage = heroSetting?.value ?? null;
+    
+    return <LandingPage openRaces={openRaces ?? []} stats={stats} heroImage={heroImage} />;
   }
 
   return (

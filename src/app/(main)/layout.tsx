@@ -1,7 +1,7 @@
 import Header from "@/components/layout/Header";
 import { ToastProvider } from "@/components/ui/Toast";
 import WelcomeModal from "@/components/onboarding/WelcomeModal";
-import BottomNav from "@/components/layout/BottomNav";
+import BottomNavWrapper from "@/components/layout/BottomNavWrapper";
 import Footer from "@/components/layout/Footer";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import MainLayoutClient from "./MainLayoutClient";
@@ -15,7 +15,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           <ToastProvider><WelcomeModal />{children}</ToastProvider>
         </main>
         <Footer />
-        <BottomNav />
+        <BottomNavWrapper />
       </MainLayoutClient>
     </ThemeProvider>
   );
