@@ -4,6 +4,7 @@ import { getRank } from "@/lib/constants/ranks";
 import RaceCard from "@/components/races/RaceCard";
 import LandingPage from "@/components/landing/LandingPage";
 import NextRaceByVenue from "@/components/races/NextRaceByVenue";
+import G1FeatureCard from "@/components/races/G1FeatureCard";
 import FollowingVotes from "@/components/social/FollowingVotes";
 import PopularVotesSection from "@/components/social/PopularVotesSection";
 import WeeklyMVPBanner from "@/components/social/WeeklyMVPBanner";
@@ -32,6 +33,10 @@ export default async function HomePage() {
 
   // 今週の重賞レース（grade付きを全て表示）
   const featuredRaces = openRaces?.filter((r) => r.grade) ?? [];
+  
+  // G1レースを分離（特別表示用）
+  const g1Races = featuredRaces.filter((r) => r.grade === "G1");
+  const otherGradeRaces = featuredRaces.filter((r) => r.grade !== "G1");
 
   // 競馬場ごとに最も発走が近いレースを1つずつ抽出
   const now = new Date();
@@ -58,6 +63,16 @@ export default async function HomePage() {
     venueNextRaces.push({ course_name, race });
   }
   venueNextRaces.sort((a, b) => new Date(a.race.post_time).getTime() - new Date(b.race.post_time).getTime());
+
+  // G1レースの投票数を取得
+  const g1VoteCounts: Record<string, number> = {};
+  for (const race of g1Races) {
+    const { count } = await supabase
+      .from("votes")
+      .select("*", { count: "exact", head: true })
+      .eq("race_id", race.id);
+    g1VoteCounts[race.id] = count ?? 0;
+  }
 
   // 最近の結果
   const { data: recentResults } = await supabase
@@ -94,14 +109,29 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-5">
-      {/* ====== 🏆 今週の重賞 ====== */}
-      {featuredRaces.length > 0 && (
+      {/* ====== 👑 G1レース（特別表示） ====== */}
+      {g1Races.length > 0 && (
         <section>
-          <h2 className="text-sm font-black text-gray-900 mb-3">🏆 今週の重賞</h2>
-          <div className={`grid gap-3 ${featuredRaces.length === 1 ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}>
-            {featuredRaces.map((race) => {
+          <h2 className="text-sm font-black text-gray-900 dark:text-white mb-3">👑 今週のG1</h2>
+          <div className="space-y-4">
+            {g1Races.map((race) => (
+              <G1FeatureCard 
+                key={race.id} 
+                race={race} 
+                voteCount={g1VoteCounts[race.id] ?? 0} 
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ====== 🏆 その他の重賞 ====== */}
+      {otherGradeRaces.length > 0 && (
+        <section>
+          <h2 className="text-sm font-black text-gray-900 dark:text-white mb-3">🏆 今週の重賞</h2>
+          <div className={`grid gap-3 ${otherGradeRaces.length === 1 ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}>
+            {otherGradeRaces.map((race) => {
               const gradeColors: Record<string, string> = {
-                G1: "from-yellow-500 to-yellow-600",
                 G2: "from-red-500 to-red-600",
                 G3: "from-green-500 to-green-600",
                 OP: "from-gray-500 to-gray-600",

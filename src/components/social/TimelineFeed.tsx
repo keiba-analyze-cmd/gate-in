@@ -19,6 +19,8 @@ type TimelineEntry = {
   status?: string;
   body?: string;
   sentiment?: string;
+  comment?: string | null;
+  picks?: { pick_type: string; horse_name: string; post_number: number }[];
   timestamp: string;
 };
 

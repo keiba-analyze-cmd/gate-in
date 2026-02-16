@@ -6,6 +6,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
 import { useTheme } from "@/contexts/ThemeContext";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const VoteShareCard = dynamic(() => import("@/components/share/VoteShareCard"), { ssr: false });
 
 type Entry = {
   id: string;
@@ -24,18 +27,31 @@ type CopySource = {
   picks: { pick_type: string; race_entry_id: string }[];
 };
 
-type Props = { raceId: string; entries: Entry[] };
+type Props = { 
+  raceId: string; 
+  entries: Entry[];
+  raceInfo?: {
+    name: string;
+    date: string;
+    courseName: string;
+    grade?: string | null;
+  };
+  userName?: string;
+};
 
-export default function VoteForm({ raceId, entries }: Props) {
+export default function VoteForm({ raceId, entries, raceInfo, userName }: Props) {
   const { isDark } = useTheme();
   const [winPick, setWinPick] = useState<string | null>(null);
   const [placePicks, setPlacePicks] = useState<string[]>([]);
   const [backPicks, setBackPicks] = useState<string[]>([]);
   const [dangerPick, setDangerPick] = useState<string | null>(null);
+  const [comment, setComment] = useState<string>("");
   const [activeTab, setActiveTab] = useState<"win" | "place" | "back" | "danger">("win");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showShareCard, setShowShareCard] = useState(false);
+  const [submittedPicks, setSubmittedPicks] = useState<{pick_type: string; post_number: number; horse_name: string}[]>([]);
   const [copySource, setCopySource] = useState<CopySource | null>(null);
   const [loadingCopy, setLoadingCopy] = useState(false);
   const router = useRouter();
@@ -115,6 +131,7 @@ export default function VoteForm({ raceId, entries }: Props) {
 
     const voteData: any = { user_id: user.id, race_id: raceId };
     if (copySource) voteData.copied_from_vote_id = copySource.vote_id;
+    if (comment.trim()) voteData.comment = comment.trim();
 
     const { data: vote, error: voteErr } = await supabase.from("votes").insert(voteData).select().single();
     if (voteErr || !vote) {
@@ -153,6 +170,19 @@ export default function VoteForm({ raceId, entries }: Props) {
     }).catch(() => {});
 
     showToast(copySource ? "乗っかり投票が完了しました！🚀" : "投票が完了しました！🎉");
+    
+    // シェアカード用にpicksを保存
+    if (raceInfo) {
+      const picksForShare = [
+        winPick ? { pick_type: "win", post_number: entries.find(e => e.id === winPick)?.post_number ?? 0, horse_name: entries.find(e => e.id === winPick)?.horses?.name ?? "" } : null,
+        ...placePicks.map(id => ({ pick_type: "place", post_number: entries.find(e => e.id === id)?.post_number ?? 0, horse_name: entries.find(e => e.id === id)?.horses?.name ?? "" })),
+        ...backPicks.map(id => ({ pick_type: "back", post_number: entries.find(e => e.id === id)?.post_number ?? 0, horse_name: entries.find(e => e.id === id)?.horses?.name ?? "" })),
+        dangerPick ? { pick_type: "danger", post_number: entries.find(e => e.id === dangerPick)?.post_number ?? 0, horse_name: entries.find(e => e.id === dangerPick)?.horses?.name ?? "" } : null,
+      ].filter(Boolean) as {pick_type: string; post_number: number; horse_name: string}[];
+      setSubmittedPicks(picksForShare);
+      setShowShareCard(true);
+    }
+    
     router.refresh();
   };
 
@@ -312,6 +342,26 @@ export default function VoteForm({ raceId, entries }: Props) {
           {dangerPick && <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${isDark ? "bg-slate-700 text-slate-300" : "bg-gray-200 text-gray-700"}`}>⚠️ {entries.find((e) => e.id === dangerPick)?.horses?.name}</span>}
           {!winPick && !placePicks.length && !backPicks.length && !dangerPick && <span className={`text-xs ${textMuted}`}>馬を選択してください</span>}
         </div>
+        {/* 予想理由コメント */}
+        <div className="mb-3">
+          <label className={`block text-xs font-medium mb-1 ${textSecondary}`}>
+            💬 予想理由（任意・タイムラインに表示されます）
+          </label>
+          <textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="例: 前走の末脚が良かった。内枠有利のコースなので..."
+            maxLength={200}
+            rows={2}
+            className={`w-full px-3 py-2 rounded-lg text-sm resize-none ${
+              isDark 
+                ? "bg-slate-800 border-slate-600 text-slate-100 placeholder-slate-500" 
+                : "bg-white border-gray-200 text-gray-800 placeholder-gray-400"
+            } border focus:outline-none focus:ring-2 ${isDark ? "focus:ring-amber-500" : "focus:ring-green-500"}`}
+          />
+          <div className={`text-right text-xs mt-1 ${textMuted}`}>{comment.length}/200</div>
+        </div>
+        
         {error && <div className={`text-sm p-2 rounded-lg mb-3 ${isDark ? "text-red-400 bg-red-500/10" : "text-red-600 bg-red-50"}`}>{error}</div>}
         <button onClick={handleConfirmOpen} disabled={!winPick || loading}
           className={`w-full py-3 font-bold rounded-xl transition-colors disabled:opacity-40 ${btnPrimary}`}>
@@ -367,6 +417,19 @@ export default function VoteForm({ raceId, entries }: Props) {
             </div>
           </div>
         </div>
+      )}
+
+      {/* 予想シェアカードモーダル */}
+      {showShareCard && raceInfo && (
+        <VoteShareCard
+          raceName={raceInfo.name}
+          raceDate={raceInfo.date}
+          courseName={raceInfo.courseName}
+          grade={raceInfo.grade}
+          picks={submittedPicks}
+          userName={userName ?? "ゲスト"}
+          onClose={() => setShowShareCard(false)}
+        />
       )}
     </div>
   );

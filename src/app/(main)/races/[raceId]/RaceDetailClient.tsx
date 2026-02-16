@@ -129,7 +129,17 @@ export default function RaceDetailClient({
 
       {/* 投票フォーム（受付中） */}
       {isVotable && entries && (
-        <VoteForm raceId={race.id} entries={entries} />
+        <VoteForm 
+          raceId={race.id} 
+          entries={entries}
+          raceInfo={{
+            name: race.name,
+            date: race.race_date,
+            courseName: race.course_name,
+            grade: race.grade,
+          }}
+          userName={userName}
+        />
       )}
 
       {/* タブナビゲーション */}
