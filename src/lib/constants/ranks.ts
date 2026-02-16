@@ -1,7 +1,5 @@
 // ====================================================
 // ランク定義（累計ポイント基準）
-// 目安: 週10投票 x 月4週 = 40投票/月
-// 上級者で月3000-4000P → レジェンドまで約6ヶ月
 // ====================================================
 export const RANKS = [
   { id: "beginner_1", name: "ビギナー Ⅰ", icon: "🔰", tier: "ビギナー", threshold: 0 },
@@ -44,21 +42,21 @@ export function getNextRank(rankId: string) {
 export const POINT_RULES = {
   // 単勝（◎が1着）: オッズ別
   win_odds: [
-    { max: 1.9, points: 20 },   // 鉄板
-    { max: 3.9, points: 40 },   // 本命
-    { max: 6.9, points: 60 },   // 中穴
-    { max: 14.9, points: 100 }, // 穴
-    { max: 29.9, points: 150 }, // 大穴
-    { max: Infinity, points: 250 }, // 超大穴
+    { max: 1.9, points: 20 },
+    { max: 3.9, points: 40 },
+    { max: 6.9, points: 60 },
+    { max: 14.9, points: 100 },
+    { max: 29.9, points: 150 },
+    { max: Infinity, points: 250 },
   ],
 
   // 複勝（○が3着以内）: オッズ別
   place_odds: [
-    { max: 1.4, points: 10 },   // 鉄板
-    { max: 2.4, points: 15 },   // 本命
-    { max: 3.9, points: 25 },   // 中穴
-    { max: 6.9, points: 40 },   // 穴
-    { max: Infinity, points: 60 }, // 大穴
+    { max: 1.4, points: 10 },
+    { max: 2.4, points: 15 },
+    { max: 3.9, points: 25 },
+    { max: 6.9, points: 40 },
+    { max: Infinity, points: 60 },
   ],
 
   // 馬連（◎○が1-2着）: オッズ別
@@ -99,7 +97,16 @@ export const POINT_RULES = {
     { count: 5, multiplier: 0.2 },
   ],
 
-  // 危険馬的中: 人気別ポイント（人気馬を危険視→着外ほど評価高い）
+  // 馬単ボーナス（1着◎、2着○の順番通り）
+  exacta_bonus: 2.0,
+
+  // 3連単ボーナス（1着◎、2着○、3着○/△の順番通り）
+  trifecta_bonus: {
+    place_3rd: 5.0,  // 3着が○の場合
+    back_3rd: 3.0,   // 3着が△の場合
+  },
+
+  // 危険馬的中: 人気別ポイント
   danger: {
     1: 50, 2: 40, 3: 30,
     4: 20, 5: 15,
@@ -126,7 +133,6 @@ export const POINT_RULES = {
 // ポイント取得関数
 // ====================================================
 
-// オッズからポイントを取得する汎用関数
 function getPointsByOdds(odds: number, table: readonly { max: number; points: number }[]): number {
   for (const tier of table) {
     if (odds <= tier.max) return tier.points;
@@ -134,54 +140,57 @@ function getPointsByOdds(odds: number, table: readonly { max: number; points: nu
   return table[table.length - 1].points;
 }
 
-// 単勝ポイント（オッズ連動）
 export function getWinPointsByOdds(odds: number): number {
   return getPointsByOdds(odds, POINT_RULES.win_odds);
 }
 
-// 複勝ポイント（オッズ連動）
 export function getPlacePointsByOdds(odds: number): number {
   return getPointsByOdds(odds, POINT_RULES.place_odds);
 }
 
-// 馬連ポイント（オッズ連動）
 export function getQuinellaPointsByOdds(odds: number): number {
   return getPointsByOdds(odds, POINT_RULES.quinella_odds);
 }
 
-// ワイドポイント（オッズ連動）
 export function getWidePointsByOdds(odds: number): number {
   return getPointsByOdds(odds, POINT_RULES.wide_odds);
 }
 
-// 三連複ポイント（オッズ連動）
 export function getTrioPointsByOdds(odds: number): number {
   return getPointsByOdds(odds, POINT_RULES.trio_odds);
 }
 
-// △の数から倍率を取得
 export function getBackMultiplier(backCount: number): number {
   if (backCount <= 0) return 1.0;
   const tier = POINT_RULES.back_multiplier.find(t => t.count === backCount);
-  return tier?.multiplier ?? 0.2; // 5頭以上は0.2
+  return tier?.multiplier ?? 0.2;
 }
 
-// 危険馬的中ポイントを取得（人気馬ほど高い）
 export function getDangerPoints(popularity: number): number {
   return POINT_RULES.danger[popularity] ?? POINT_RULES.danger.default;
 }
 
-// グレードボーナスを取得
 export function getGradeBonus(grade: string | null): number {
   if (!grade) return 0;
   return (POINT_RULES.grade_bonus as Record<string, number>)[grade] ?? 0;
+}
+
+// 馬単ボーナス倍率
+export function getExactaBonus(): number {
+  return POINT_RULES.exacta_bonus;
+}
+
+// 3連単ボーナス倍率
+export function getTrifectaBonus(thirdPickType: "place" | "back"): number {
+  return thirdPickType === "place" 
+    ? POINT_RULES.trifecta_bonus.place_3rd 
+    : POINT_RULES.trifecta_bonus.back_3rd;
 }
 
 // ====================================================
 // 旧関数（後方互換性のため残す）
 // ====================================================
 
-// 1着的中ポイント（人気別 → 非推奨、オッズ連動を使用推奨）
 const WIN_POINTS_BY_POPULARITY: Record<number | string, number> = {
   1: 30, 2: 50, 3: 50,
   4: 80, 5: 80,

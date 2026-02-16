@@ -10,6 +10,8 @@ import {
   getBackMultiplier,
   getDangerPoints,
   getGradeBonus,
+  getExactaBonus,
+  getTrifectaBonus,
   POINT_RULES,
 } from "@/lib/constants/ranks";
 
@@ -159,37 +161,37 @@ export async function settleRace(
         }
       }
 
-      // --- 複勝的中判定（オッズ連動）---
+      // --- 複勝的中判定（◎が3着以内）---
+      if (winPick && top3EntryIds.includes(winPick.race_entry_id) && !winHit) {
+        // ◎が3着以内だが1着ではない場合（単勝外れ、複勝的中）
+        const winEntryInfo = entryMap.get(winPick.race_entry_id);
+        const winPostNum = winEntryInfo?.post_number;
+        const placePayout = payoutMap.get("place")?.find(p => p.combination === String(winPostNum));
+        const placeOdds = placePayout ? placePayout.payout_amount / 100 : 1.5;
+
+        const basePts = getPlacePointsByOdds(placeOdds);
+        const pts = basePts + gradeBonus;
+        votePoints += pts;
+        anyHit = true;
+
+        const gradeLabel = gradeBonus > 0 ? `（${race.grade}+${gradeBonus}）` : "";
+        transactions.push({
+          reason: "place_hit",
+          amount: pts,
+          description: `複勝的中（◎${winPostNum}番→3着以内、${placeOdds.toFixed(1)}倍）+${basePts}P${gradeLabel}`,
+        });
+      }
+
+      // --- 対抗（○）の的中判定（ポイントなし、is_hitのみ更新）---
       for (const pp of placePicks) {
-        if (top3EntryIds.includes(pp.race_entry_id)) {
-          // 複勝払戻からオッズを取得
-          const entryInfo = entryMap.get(pp.race_entry_id);
-          const postNum = entryInfo?.post_number;
-          const placePayout = payoutMap.get("place")?.find(p => p.combination === String(postNum));
-          const placeOdds = placePayout ? placePayout.payout_amount / 100 : 1.5; // 払戻/100でオッズ近似
-
-          const basePts = getPlacePointsByOdds(placeOdds);
-          const pts = basePts + gradeBonus;
-          votePoints += pts;
-          anyHit = true;
-
-          const gradeLabel = gradeBonus > 0 ? `（${race.grade}+${gradeBonus}）` : "";
-          transactions.push({
-            reason: "place_hit",
-            amount: pts,
-            description: `複勝的中（${placeOdds.toFixed(1)}倍）+${basePts}P${gradeLabel}`,
-          });
-          await supabase.from("vote_picks")
-            .update({ is_hit: true, points_earned: pts }).eq("id", pp.id);
-        } else {
-          allPlaceHit = false;
-          await supabase.from("vote_picks")
-            .update({ is_hit: false, points_earned: 0 }).eq("id", pp.id);
-        }
+        const isPlaceHit = top3EntryIds.includes(pp.race_entry_id);
+        if (!isPlaceHit) allPlaceHit = false;
+        await supabase.from("vote_picks")
+          .update({ is_hit: isPlaceHit, points_earned: 0 }).eq("id", pp.id);
       }
       if (placePicks.length === 0) allPlaceHit = false;
 
-      // --- 馬連的中判定（◎○が1-2着）---
+      // --- 馬連的中判定（◎○が1-2着）+ 馬単ボーナス ---
       if (winPick && placePicks.length > 0 && firstPostNum && secondPostNum) {
         const winPostNum = entryMap.get(winPick.race_entry_id)?.post_number;
         
@@ -209,17 +211,25 @@ export async function settleRace(
             );
             const quinellaOdds = quinellaPayout ? quinellaPayout.payout_amount / 100 : 10;
 
-            const basePts = getQuinellaPointsByOdds(quinellaOdds);
+            let basePts = getQuinellaPointsByOdds(quinellaOdds);
+            
+            // 馬単ボーナス: 1着◎、2着○の順番通りなら2倍
+            const isExactaHit = winPostNum === firstPostNum && placePostNum === secondPostNum;
+            if (isExactaHit) {
+              basePts = Math.floor(basePts * getExactaBonus());
+            }
+            
             const pts = basePts + gradeBonus;
             votePoints += pts;
             anyHit = true;
             hitQuinellaOdds = quinellaOdds; // バッジ用に記録
 
             const gradeLabel = gradeBonus > 0 ? `（${race.grade}+${gradeBonus}）` : "";
+            const exactaLabel = isExactaHit ? `【馬単ボーナス×${getExactaBonus()}】` : "";
             transactions.push({
-              reason: "quinella_hit",
+              reason: isExactaHit ? "exacta_hit" : "quinella_hit",
               amount: pts,
-              description: `馬連的中（${quinellaOdds.toFixed(1)}倍）+${basePts}P${gradeLabel}`,
+              description: `馬連的中（${quinellaOdds.toFixed(1)}倍）${exactaLabel}+${basePts}P${gradeLabel}`,
             });
             break; // 馬連は1回のみ
           }
@@ -259,7 +269,7 @@ export async function settleRace(
         }
       }
 
-      // --- 三連複的中判定（◎○○/◎○△/◎△△が1-2-3着）---
+      // --- 三連複的中判定（◎○○/◎○△/◎△△が1-2-3着）+ 3連単ボーナス ---
       if (winPick && top3PostNumbers.length === 3) {
         const winInTop3 = top3EntryIds.includes(winPick.race_entry_id);
         
@@ -285,8 +295,37 @@ export async function settleRace(
 
             let basePts = getTrioPointsByOdds(trioOdds);
             
-            // △が含まれる場合は倍率適用
-            if (backHitsInTop3.length > 0) {
+            // 3連単ボーナス判定: 1着◎、2着○、3着○or△の順番通り
+            const winEntryId = winPick.race_entry_id;
+            const secondEntryId = second?.race_entry_id;
+            const thirdResult = results.find((r) => r.finish_position === 3);
+            const thirdEntryId = thirdResult?.race_entry_id;
+            
+            const isWinFirst = winEntryId === first?.race_entry_id;
+            const secondIsPlace = placePicks.some((pp: any) => pp.race_entry_id === secondEntryId);
+            const thirdIsPlace = placePicks.some((pp: any) => pp.race_entry_id === thirdEntryId);
+            const thirdIsBack = backPicks.some((bp: any) => bp.race_entry_id === thirdEntryId);
+            
+            let trifectaBonus = 1.0;
+            let trifectaLabel = "";
+            
+            // 1着◎、2着○、3着○ → 5倍
+            if (isWinFirst && secondIsPlace && thirdIsPlace) {
+              trifectaBonus = getTrifectaBonus("place");
+              trifectaLabel = `【3連単ボーナス×${trifectaBonus}】`;
+            }
+            // 1着◎、2着○、3着△ → 3倍
+            else if (isWinFirst && secondIsPlace && thirdIsBack) {
+              trifectaBonus = getTrifectaBonus("back");
+              trifectaLabel = `【3連単ボーナス×${trifectaBonus}】`;
+            }
+            
+            // 3連単ボーナス適用
+            if (trifectaBonus > 1.0) {
+              basePts = Math.floor(basePts * trifectaBonus);
+            }
+            // △が含まれる場合は倍率適用（3連単ボーナスがない場合のみ）
+            else if (backHitsInTop3.length > 0) {
               const multiplier = getBackMultiplier(backCount);
               basePts = Math.floor(basePts * multiplier);
             }
@@ -297,11 +336,11 @@ export async function settleRace(
             hitTrioOdds = trioOdds; // バッジ用に記録
 
             const gradeLabel = gradeBonus > 0 ? `（${race.grade}+${gradeBonus}）` : "";
-            const backLabel = backHitsInTop3.length > 0 ? `（△${backCount}頭×${getBackMultiplier(backCount)}）` : "";
+            const backLabel = (backHitsInTop3.length > 0 && trifectaBonus === 1.0) ? `（△${backCount}頭×${getBackMultiplier(backCount)}）` : "";
             transactions.push({
-              reason: "trio_hit",
+              reason: trifectaBonus > 1.0 ? "trifecta_hit" : "trio_hit",
               amount: pts,
-              description: `三連複的中（${trioOdds.toFixed(1)}倍）+${basePts}P${backLabel}${gradeLabel}`,
+              description: `三連複的中（${trioOdds.toFixed(1)}倍）${trifectaLabel}+${basePts}P${backLabel}${gradeLabel}`,
             });
           }
         }

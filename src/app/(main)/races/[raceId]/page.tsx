@@ -30,6 +30,17 @@ export default async function RaceDetailPage({ params }: Props) {
     .select("*, vote_picks(*, race_entries(post_number, horses(name)))")
     .eq("race_id", raceId).eq("user_id", user.id).maybeSingle();
 
+  // 馬券種ごとのポイント内訳を取得
+  let pointsTransactions = null;
+  if (myVote) {
+    const { data: transactions } = await supabase
+      .from("points_transactions")
+      .select("reason, amount, description")
+      .eq("vote_id", myVote.id)
+      .order("created_at", { ascending: true });
+    pointsTransactions = transactions;
+  }
+
   const { createAdminClient } = await import("@/lib/admin");
   const adminDb = createAdminClient();
   const { count: totalVotes } = await adminDb
@@ -96,6 +107,7 @@ export default async function RaceDetailPage({ params }: Props) {
         hasVoted={hasVoted}
         isFinished={isFinished}
         isBeforeDeadline={isBeforeDeadline}
+        pointsTransactions={pointsTransactions}
       />
     </>
   );

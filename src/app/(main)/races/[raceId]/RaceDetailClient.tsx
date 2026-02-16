@@ -26,11 +26,12 @@ type Props = {
   hasVoted: boolean;
   isFinished: boolean;
   isBeforeDeadline: boolean;
+  pointsTransactions: any[] | null;
 };
 
 export default function RaceDetailClient({
   race, entries, myVote, results, payouts, totalVotes, userId,
-  isVotable, hasVoted, isFinished, isBeforeDeadline
+  isVotable, hasVoted, isFinished, isBeforeDeadline, pointsTransactions
 }: Props) {
   const { isDark } = useTheme();
   const [activeTab, setActiveTab] = useState<"horses" | "newspaper" | "votes" | "comments">("horses");
@@ -195,7 +196,7 @@ export default function RaceDetailClient({
         {/* サイドバー */}
         <div className="space-y-4">
           {hasVoted && myVote && (
-            <VoteSummary vote={myVote} isFinished={isFinished} />
+            <VoteSummary vote={myVote} isFinished={isFinished} transactions={pointsTransactions} />
           )}
           <PointsGuide isDark={isDark} />
         </div>
