@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { isValidAvatar, DEFAULT_AVATAR } from "@/lib/constants/avatars";
 import { validateHandle, normalizeHandle } from "@/lib/constants/handles";
+import { checkNGWords } from "@/lib/constants/ng-words";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -26,6 +27,12 @@ export async function POST(request: Request) {
   const handleValidation = validateHandle(handle);
   if (!handleValidation.ok) {
     return NextResponse.json({ error: handleValidation.error }, { status: 400 });
+  }
+
+  // NGワードチェック
+  const ngError = checkNGWords({ display_name: body.display_name, user_handle: handle });
+  if (ngError) {
+    return NextResponse.json({ error: ngError }, { status: 400 });
   }
 
   // 重複チェック

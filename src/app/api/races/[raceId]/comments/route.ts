@@ -3,6 +3,7 @@ import { rateLimit, rateLimitResponse } from "@/lib/rate-limit";
 import { validateComment } from "@/lib/validation";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { checkNGWords } from "@/lib/constants/ng-words";
 
 type Props = { params: Promise<{ raceId: string }>; };
 
@@ -52,6 +53,12 @@ export async function POST(request: Request, { params }: Props) {
   if (!rl.ok) return rateLimitResponse();
 
   const body = await request.json();
+
+  // NGワードチェック
+  const ngError = checkNGWords({ body: body.body });
+  if (ngError) {
+    return NextResponse.json({ error: ngError }, { status: 400 });
+  }
   const validation = validateComment(body.body);
   if (!validation.ok) return NextResponse.json({ error: validation.error }, { status: 400 });
 

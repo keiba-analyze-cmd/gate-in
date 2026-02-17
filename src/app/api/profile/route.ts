@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { isValidAvatar, DEFAULT_AVATAR } from "@/lib/constants/avatars";
 import { validateHandle, normalizeHandle } from "@/lib/constants/handles";
+import { checkNGWords } from "@/lib/constants/ng-words";
 
 export async function PATCH(request: Request) {
   const supabase = await createClient();
@@ -52,6 +53,16 @@ export async function PATCH(request: Request) {
     }
 
     updates.user_handle = handle;
+  }
+
+  // NGワードチェック
+  const ngError = checkNGWords({
+    display_name: updates.display_name,
+    bio: updates.bio,
+    user_handle: updates.user_handle,
+  });
+  if (ngError) {
+    return NextResponse.json({ error: ngError }, { status: 400 });
   }
 
   if (updates.display_name !== undefined) {
