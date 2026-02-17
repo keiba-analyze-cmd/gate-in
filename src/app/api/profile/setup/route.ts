@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { isValidAvatar, DEFAULT_AVATAR } from "@/lib/constants/avatars";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -19,6 +20,11 @@ export async function POST(request: Request) {
     display_name: body.display_name.trim(),
     profile_completed: true,
   };
+
+  // アバター絵文字
+  if (body.avatar_emoji) {
+    updates.avatar_emoji = isValidAvatar(body.avatar_emoji) ? body.avatar_emoji : DEFAULT_AVATAR;
+  }
 
   const allowedFields = ["gender", "age_group", "horse_racing_exp", "favorite_course"];
   for (const field of allowedFields) {

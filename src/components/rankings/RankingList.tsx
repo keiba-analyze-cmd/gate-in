@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import UserAvatar from "@/components/ui/UserAvatar";
 import { getRank } from "@/lib/constants/ranks";
 import { useTheme } from "@/contexts/ThemeContext";
 
 type RankingUser = {
   user_id: string;
   display_name: string;
-  avatar_url: string | null;
+  avatar_url: string | null; avatar_emoji: string | null;
   rank_id: string;
   points?: number;
   monthly_points?: number;

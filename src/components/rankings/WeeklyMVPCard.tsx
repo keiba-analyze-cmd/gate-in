@@ -9,7 +9,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 type MVPData = {
   user_id: string;
   display_name: string;
-  avatar_url: string | null;
+  avatar_url: string | null; avatar_emoji: string | null;
   rank_id: string;
   points: number;
   win_count: number;

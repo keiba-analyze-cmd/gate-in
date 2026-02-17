@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import UserAvatar from "@/components/ui/UserAvatar";
 import { useTheme } from "@/contexts/ThemeContext";
 
 type Props = {
@@ -43,11 +44,7 @@ export default function MyPageClient({
       {/* プロフィールカード */}
       <div className={`rounded-2xl p-6 ${heroText}`} style={{ background: heroGradient }}>
         <div className="flex items-start gap-4 mb-4">
-          {profile.avatar_url ? (
-            <img src={profile.avatar_url} alt="" className="w-16 h-16 rounded-full border-2 border-white/30" />
-          ) : (
-            <div className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl ${heroAccent}`}>🏇</div>
-          )}
+          <UserAvatar avatarUrl={profile.avatar_url} avatarEmoji={profile.avatar_emoji} size="xl" className="border-2 border-white/30" />
           <div className="flex-1">
             <h1 className="text-xl font-black">{profile.display_name}</h1>
             <div className="flex items-center gap-2 mt-1">

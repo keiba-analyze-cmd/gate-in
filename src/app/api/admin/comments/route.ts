@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   const adminClient = createAdminClient();
 
   let query = adminClient.from("comments")
-    .select("id, user_id, race_id, body, sentiment, is_deleted, is_hidden, edited_at, created_at, profiles(display_name, avatar_url), races(name, grade)", { count: "exact" })
+    .select("id, user_id, race_id, body, sentiment, is_deleted, is_hidden, edited_at, created_at, profiles(display_name, avatar_url, avatar_emoji), races(name, grade)", { count: "exact" })
     .order("created_at", { ascending: false }).range(offset, offset + limit - 1);
 
   if (filter === "reported") {

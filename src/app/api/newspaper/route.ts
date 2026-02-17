@@ -20,7 +20,7 @@ export async function GET(request: Request) {
 
   const { data: members } = await supabase
     .from("newspaper_members")
-    .select("member_user_id, display_order, profiles!newspaper_members_member_user_id_fkey(display_name, avatar_url, rank_id)")
+    .select("member_user_id, display_order, profiles!newspaper_members_member_user_id_fkey(display_name, avatar_url, avatar_emoji, rank_id)")
     .eq("user_id", user.id)
     .order("display_order", { ascending: true });
 
@@ -40,7 +40,7 @@ export async function GET(request: Request) {
   const formattedMembers = members.map((m: any) => ({
     user_id: m.member_user_id,
     display_name: m.profiles?.display_name ?? "匿名",
-    avatar_url: m.profiles?.avatar_url,
+    avatar_url: m.profiles?.avatar_url, avatar_emoji: m.profiles?.avatar_emoji,
     rank_id: m.profiles?.rank_id ?? "beginner_1",
   }));
 

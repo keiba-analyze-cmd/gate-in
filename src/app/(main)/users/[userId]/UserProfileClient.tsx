@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import UserAvatar from "@/components/ui/UserAvatar";
 import { useTheme } from "@/contexts/ThemeContext";
 import FollowButton from "@/components/social/FollowButton";
 import BlockButton from "@/components/social/BlockButton";

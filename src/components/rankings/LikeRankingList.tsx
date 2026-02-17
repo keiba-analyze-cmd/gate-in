@@ -10,7 +10,7 @@ type VoteItem = {
   vote_id: string;
   user_id: string;
   display_name: string;
-  avatar_url: string | null;
+  avatar_url: string | null; avatar_emoji: string | null;
   rank_id: string;
   like_count: number;
   race_name: string;

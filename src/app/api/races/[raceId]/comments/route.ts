@@ -23,7 +23,7 @@ export async function GET(request: Request, { params }: Props) {
   }
 
   let query = supabase.from("comments")
-    .select("*, profiles(display_name, avatar_url, rank_id), comment_reactions(emoji_type, user_id)")
+    .select("*, profiles(display_name, avatar_url, avatar_emoji, rank_id), comment_reactions(emoji_type, user_id)")
     .eq("race_id", raceId).eq("is_deleted", false).eq("is_hidden", false);
   if (parentId) { query = query.eq("parent_id", parentId); } else { query = query.is("parent_id", null); }
   query = query.order("created_at", { ascending: orderAsc }).limit(limit);
@@ -57,7 +57,7 @@ export async function POST(request: Request, { params }: Props) {
 
   const { data, error } = await supabase.from("comments")
     .insert({ user_id: user.id, race_id: raceId, parent_id: body.parent_id ?? null, body: body.body.trim(), sentiment: body.sentiment ?? null })
-    .select("*, profiles(display_name, avatar_url, rank_id)").single();
+    .select("*, profiles(display_name, avatar_url, avatar_emoji, rank_id)").single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 

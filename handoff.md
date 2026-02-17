@@ -1,231 +1,178 @@
-# 🏇 ゲートイン！ 引き継ぎドキュメント
-
-> **最終更新: 2026-02-16**
+# ゲートイン！開発引き継ぎドキュメント
+## 2026年2月17日 セッション時点
 
 ---
 
-## プロジェクト概要
+## 📁 プロジェクト概要
 
-**ゲートイン！**は競馬予想SNSアプリ。ユーザーが◎○△⚠️の印を選んで投票し、結果に応じてポイントを獲得、ランクアップする仕組み。
+- **プロジェクト名**: ゲートイン！（競馬予想SNS＆学習プラットフォーム）
+- **リポジトリ**: gate-in
+- **技術スタック**: Next.js 16, TypeScript, Tailwind CSS, Supabase, MicroCMS
+- **本番URL**: https://www.gate-in.jp
+
+---
+
+## ✅ これまでに完了した作業
+
+### 1. Phase N完了 - UIリデザイン＆ダークモード対応（2026-02-16）
+
+以下のコンポーネント/ページをダークモード対応：
+
+| ファイル | 内容 |
+|----------|------|
+| RaceResultTable.tsx | レース結果テーブル・払戻金 |
+| VoteDistribution.tsx | みんなの予想 |
+| VoteSummary.tsx | あなたの予想 |
+| MyNewspaperTab.tsx | My競馬新聞タブ |
+| CommentSection.tsx | 掲示板 |
+| LikeRankingList.tsx | いいねランキング |
+| WeeklyMVPCard.tsx | 週間MVP |
+| ContestClient.tsx | 月間大会ページ |
+| UserActivityFeed.tsx | ユーザーアクティビティ |
+| RankingList.tsx | ランキングリスト |
+
+### 2. バグ修正（2026-02-16）
+
+- `RaceResultTable.tsx`: payout undefined エラー修正
+- `RankingList.tsx`: className構文エラー + key重複修正
+
+### 3. MicroCMS連携＆コンテンツ投入（2026-02-17）
+
+- MicroCMSとのAPI連携完了
+- クイズ100問作成（6カテゴリ: 血統/コース/騎手/調教師/予想術/名馬）
+- 記事18本作成・投入完了（血統4・コース3・騎手3・調教師2・予想術3・名馬2＋初回1）
+- テーブルスタイル修正（MicroCMSリッチエディタのHTML構造対応）
+- カテゴリフィルター追加（記事タブにカテゴリ切替ボタン）
+- クイズ連携修正（記事↔クイズの自動紐づけ＆直接リンク）
+
+### 4. SEO Phase 1完了 - SEO基盤構築（2026-02-17）
 
 | 項目 | 内容 |
 |------|------|
-| URL | https://www.gate-in.jp |
-| GitHub | https://github.com/keiba-analyze-cmd/gate-in |
-| Tech | Next.js 16 (App Router) + Supabase + Vercel + TypeScript + Tailwind CSS |
-| CMS | MicroCMS（記事・クイズ管理） |
+| 記事ページ公開化 | 認証ガード解除、Googleクローラーが記事を読める状態に |
+| 動的メタデータ | 各記事のtitle/descriptionをMicroCMSから自動生成 |
+| JSON-LD構造化データ | Article Schema + BreadcrumbList Schema |
+| パンくずリスト | UIコンポーネント + 構造化データ |
+| サイトマップ | `src/app/sitemap.ts` → `/sitemap.xml` 自動生成 |
+| robots.txt | `src/app/robots.ts` → `/robots.txt` |
+| ルートメタデータ | title.template / description / OGP設定 |
+| 各ページメタデータ | 道場/記事一覧/デイリー/クイズカテゴリの個別metadata |
+| 運営者情報ページ | `/about` ページ新規作成 |
+| OGP画像 | `/public/og-default.png`（1200x630px） |
 
 ---
 
-## 現在の状態
+## 🚀 次に実装予定のタスク
 
-| 項目 | 内容 |
-|------|------|
-| 進捗 | 118/128タスク完了 |
-| 次のタスク | MicroCMS API作成の続き（quiz-questions, articles） |
-| ビルド | ✅ パス |
+### SEO Phase 2: コンテンツ拡充
 
----
+**SEO戦略書**: `/mnt/user-data/uploads/seo-strategy.md`
+**実装手順書**: `/mnt/user-data/uploads/00_IMPLEMENTATION_GUIDE.md`
 
-## 直近で実施した作業（2026-02-16）
+#### 要件
 
-### Phase P: コアループ強化 ✅
+1. **血統ピラーページ作成**
+   - 「競馬の血統入門｜知識ゼロから分かる血統の見方と活用法」
+   - 5,000〜10,000字の包括的な記事
+   - 狙うKW：「競馬 血統 入門」「競馬 血統 見方」「血統 わからない」
 
-| 機能 | 説明 | ファイル |
-|------|------|----------|
-| 的中アニメーション | 紙吹雪 + バイブレーション | `VoteSummary.tsx` |
-| 的中報告シェアカード | 画像生成 + SNS共有 | `HitShareCard.tsx` |
-| 予想理由コメント | 投票時入力 → TL表示 | `VoteForm.tsx`, `TimelineItem.tsx` |
+2. **既存18記事→ピラーページ内部リンク**
+   - 各記事本文内にピラーページへのリンク追加
+   - ピラーページから各記事へのリンク追加
+   - クラスター間の横断リンクも設置
 
-### Phase Q: G1特設機能 ✅
+3. **記事末尾クイズCTA設置**
+   - 記事カテゴリに対応するクイズへの導線
+   - 「この知識をクイズで確認する」ボタン
 
-| 機能 | 説明 | ファイル |
-|------|------|----------|
-| G1特設カード | カウントダウン、投票数表示 | `G1FeatureCard.tsx` |
-| 予想投稿シェアカード | 投票完了後にSNS共有 | `VoteShareCard.tsx` |
-| Xシェアボタン強化 | URLコピー、ハッシュタグ自動 | `ShareButtons.tsx` |
+4. **X（Twitter）アカウント開設・運用開始**
+   - 毎日のミニクイズ投稿
+   - 記事公開時の告知
 
-### Phase R: MicroCMS連携 🔄
+5. **FAQ Schema対応**
+   - FAQ形式の記事にFAQPage構造化データを追加
 
-| 状態 | 内容 |
-|------|------|
-| ✅ 完了 | MicroCMSサービス作成（gatein） |
-| ✅ 完了 | 環境変数設定（.env.local） |
-| ✅ 完了 | MicroCMSクライアント作成（src/lib/microcms.ts） |
-| ✅ 完了 | API: article-categories |
-| ✅ 完了 | API: tags |
-| ✅ 完了 | API: quiz-categories |
-| 🔄 途中 | API: quiz-questions |
-| 🔴 未着手 | API: articles |
+### SEO全体戦略の要点
+
+- **ポジション**: 「予想サイト」ではなく「競馬学習プラットフォーム」
+- **トピッククラスター**: 6クラスター（血統/コース/騎手/調教/予想/名馬）
+- **キーワード戦略**: 「なぜ」「違い」「入門」「仕組み」系のロングテールを狙う
+- **大手との差別化**: netkeiba等とは戦わず、学習意図のクエリで勝つ
 
 ---
 
-## 🔐 環境変数
+## 📊 タスク進捗
 
-### MicroCMS（設定済み）
-```
-MICROCMS_SERVICE_DOMAIN=gatein
-MICROCMS_API_KEY=wexGay9HtOEvOqFaNMu8RB9tBguAvICDy1bu
-```
+- **完了**: 120/125 タスク（96%）
+- **残り**: SEO Phase 2 の5タスク（#130〜#134）
+- **Phase O**（レース一覧UI改善）: SEO Phase 2後に実施予定
 
 ---
 
-## 🔜 次回再開時のタスク
+## 📂 関連ファイル
 
-### 1. MicroCMS API作成の続き
+### SEO関連
+- `src/app/layout.tsx`（メタデータ追加済み）
+- `src/app/sitemap.ts`
+- `src/app/robots.ts`
+- `src/components/seo/JsonLd.tsx`
+- `src/components/seo/Breadcrumbs.tsx`
+- `src/app/(main)/about/page.tsx`
+- `src/app/(main)/dojo/articles/[articleId]/page.tsx`（公開化済み）
 
-#### quiz-questions のフィールド（確認・完成）
+### レース一覧（Phase O改修対象）
+- `src/app/(main)/races/page.tsx`
+- `src/app/(main)/races/RacesClient.tsx`
 
-| フィールドID | 表示名 | 種類 | 必須 |
-|-------------|--------|------|:----:|
-| question | 問題文 | テキストエリア | ✅ |
-| category | カテゴリ | コンテンツ参照(quiz-categories) | ✅ |
-| level | レベル | テキストフィールド | ✅ |
-| choice1 | 選択肢1 | テキストフィールド | ✅ |
-| choice2 | 選択肢2 | テキストフィールド | ✅ |
-| choice3 | 選択肢3 | テキストフィールド | - |
-| choice4 | 選択肢4 | テキストフィールド | - |
-| correctIndex | 正解番号 | 数値 | ✅ |
-| explanation | 解説 | リッチエディタ | - |
-| order | 表示順 | 数値 | - |
-
-#### articles API作成
-
-| フィールドID | 表示名 | 種類 | 必須 |
-|-------------|--------|------|:----:|
-| title | タイトル | テキストフィールド | ✅ |
-| slug | スラッグ | テキストフィールド | ✅ |
-| category | カテゴリ | コンテンツ参照(article-categories) | ✅ |
-| thumbnail | サムネイル画像 | 画像 | - |
-| emoji | アイコン絵文字 | テキストフィールド | - |
-| excerpt | 概要 | テキストエリア | - |
-| content | 本文 | リッチエディタ | ✅ |
-| readTime | 読了時間(分) | 数値 | - |
-| hasQuiz | クイズ付き | 真偽値 | - |
-| isPremium | プレミアム記事 | 真偽値 | - |
-| tags | タグ | 複数コンテンツ参照(tags) | - |
-| publishedAt | 公開日 | 日時 | - |
-
-### 2. MicroCMS → アプリ連携
-
-- 道場ページ（dojo）をMicroCMSデータに接続
-- 記事一覧・詳細ページ作成
-- クイズ機能実装
-
-### 3. Phase S: 習慣形成（Phase2）
-
-- デイリーミッション
-- 週末レースプレビュー記事
-- 予想家分析ダッシュボード
-- お気に入り馬登録
+### ドキュメント
+- `TASKLIST_latest.md`
+- `seo-strategy.md`
+- `00_IMPLEMENTATION_GUIDE.md`
 
 ---
 
-## 📁 作成済みファイル一覧
+## 🔧 開発コマンド
 
-### MicroCMS
-- `src/lib/microcms.ts` - クライアント + 型定義 + API関数
+```bash
+# 開発サーバー起動
+npm run dev
 
-### シェア機能
-- `src/components/share/HitShareCard.tsx` - 的中報告シェアカード
-- `src/components/share/VoteShareCard.tsx` - 予想投稿シェアカード
-- `src/components/social/ShareButtons.tsx` - 汎用シェアボタン
+# ビルド
+npm run build
 
-### G1特設
-- `src/components/races/G1FeatureCard.tsx` - G1特設カード
-
-### アニメーション
-- `src/components/races/VoteSummary.tsx` - 的中アニメーション追加
-
-### 投票関連（更新）
-- `src/components/races/VoteForm.tsx` - コメント入力追加
-- `src/app/api/timeline/route.ts` - コメント取得追加
-- `src/components/social/TimelineItem.tsx` - コメント表示追加
-
----
-
-## 📦 追加パッケージ
-```json
-{
-  "canvas-confetti": "^1.9.2",
-  "@types/canvas-confetti": "^1.6.4",
-  "html2canvas": "^1.4.1",
-  "microcms-js-sdk": "^3.1.0"
-}
+# デプロイ（Vercel自動）
+git push origin main
 ```
 
 ---
 
-## 📝 Supabase実行済みSQL
-```sql
--- 予想理由コメント（2026-02-16）
-ALTER TABLE votes ADD COLUMN IF NOT EXISTS comment TEXT;
-COMMENT ON COLUMN votes.comment IS '予想理由のコメント';
+## 📝 次のチャットで伝えること
+
+```
+ゲートイン！の開発を続けます。
+
+前回のセッションで以下が完了しています：
+- Phase N（UIリデザイン＆ダークモード対応）完了
+- MicroCMS連携完了（クイズ100問・記事18本投入済み）
+- SEO Phase 1完了（メタデータ/JSON-LD/sitemap/robots/about等）
+
+次のタスクは「SEO Phase 2: コンテンツ拡充」です。
+SEO戦略書とImplementation Guideを添付します。
+
+要件：
+1. 血統ピラーページ作成（5,000〜10,000字）
+2. 既存18記事⇔ピラーの相互内部リンク
+3. 記事末尾クイズCTA設置
+4. X（Twitter）運用開始
+5. FAQ Schema対応
 ```
 
 ---
 
 ## ⚠️ 注意事項
 
-1. **MicroCMS不具合**: 2026-02-16時点でログインエラー発生中。復旧後にAPI作成を続行。
-
-2. **APIキーの扱い**: `MICROCMS_API_KEY`は`.env.local`にのみ記載。Gitにはコミットしない。
-
-3. **ビルド時のPython使用**: bashのヒアドキュメントでJSX/TSXファイルを作成すると`<`がエスケープ問題を起こすため、Python経由で書き込むのが安定。
-
----
-
-## 📞 連絡先
-
-質問があれば開発チームまで。
-
-
----
-
-## 🎯 次回セッションの議題
-
-### テーマ: 競馬道場コンテンツ作成
-
-ワイヤーフレーム（`article-wireframe-v2.jsx`, `quiz-wireframe.jsx`）を基に、SEOを意識した競馬コンテンツを作成・量産する計画。
-
-### 議論ポイント
-
-1. **記事フォーマット設計**
-   - MicroCMSのスキーマに合わせた構造
-   - SEO最適化（タイトル、メタ、見出し構成）
-   - カテゴリ別テンプレート（血統/コース/騎手/予想術/名馬）
-
-2. **クイズフォーマット設計**
-   - 難易度別（入門/中級/上級/マスター）
-   - カテゴリ別出題傾向
-   - 解説の書き方
-
-3. **コンテンツ案**
-   - 記事トピックリスト
-   - クイズ問題案
-   - SEOキーワード戦略
-
-4. **大量生成の方法**
-   - AIアシスト生成フロー
-   - 品質管理プロセス
-   - MicroCMSへの一括投入方法
-
-### 参照ファイル
-
-- `~/Downloads/article-wireframe-v2.jsx` - 記事UI設計
-- `~/Downloads/quiz-wireframe.jsx` - クイズUI設計
-- `src/lib/microcms.ts` - MicroCMSクライアント（型定義あり）
-
-### MicroCMS APIスキーマ（参考）
-
-**articles**
-- title, slug, category, thumbnail, emoji, excerpt, content, readTime, hasQuiz, isPremium, tags, publishedAt
-
-**quiz-questions**
-- question, category, level, choice1-4, correctIndex, explanation, order
-
-**article-categories**
-- name, slug, icon, description, gradient, order
-
-**quiz-categories**
-- name, slug, icon, description, color, order
+- ダークモードは `useTheme()` フックで `isDark` を取得
+- アクセントカラー: ダーク=amber-500、ライト=green-600
+- サーバー/クライアントコンポーネント分離パターンを使用
+- 記事ページは認証不要（公開）、クイズ受験・コメント等は認証必要
+- MicroCMSからの記事取得: `getArticleDetail` 関数（`src/lib/microcms.ts`）

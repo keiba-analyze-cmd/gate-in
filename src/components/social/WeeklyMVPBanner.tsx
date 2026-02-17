@@ -8,7 +8,7 @@ import { getRank } from "@/lib/constants/ranks";
 type MVPData = {
   user_id: string;
   display_name: string;
-  avatar_url: string | null;
+  avatar_url: string | null; avatar_emoji: string | null;
   rank_id: string;
   weekly_points: number;
   hit_rate: number;

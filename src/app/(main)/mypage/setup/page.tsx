@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import AvatarPicker from "@/components/ui/AvatarPicker";
+import { DEFAULT_AVATAR } from "@/lib/constants/avatars";
 
 const AGE_GROUPS = [
   { value: "", label: "選択してください" },
@@ -44,6 +46,7 @@ const COURSES = [
 
 export default function ProfileSetupPage() {
   const [name, setName] = useState("");
+  const [avatarEmoji, setAvatarEmoji] = useState(DEFAULT_AVATAR);
   const [gender, setGender] = useState("");
   const [ageGroup, setAgeGroup] = useState("");
   const [exp, setExp] = useState("beginner");
@@ -65,6 +68,7 @@ export default function ProfileSetupPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         display_name: name.trim(),
+        avatar_emoji: avatarEmoji,
         gender: gender || null,
         age_group: ageGroup || null,
         horse_racing_exp: exp,
@@ -92,6 +96,9 @@ export default function ProfileSetupPage() {
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-5">
+          {/* アバター選択 */}
+          <AvatarPicker selected={avatarEmoji} onSelect={setAvatarEmoji} size="sm" />
+
           {/* 表示名（必須） */}
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">

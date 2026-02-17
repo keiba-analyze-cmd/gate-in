@@ -26,7 +26,7 @@ export async function GET(request: Request) {
     // ユーザー検索
     const { data: users } = await admin
       .from("profiles")
-      .select("id, display_name, avatar_url, rank_id, is_verified, cumulative_points")
+      .select("id, display_name, avatar_url, avatar_emoji, rank_id, is_verified, cumulative_points")
       .ilike("display_name", `%${search}%`)
       .order("cumulative_points", { ascending: false })
       .limit(20);
@@ -36,7 +36,7 @@ export async function GET(request: Request) {
     // 認証済みユーザー一覧
     const { data: verifiedUsers } = await admin
       .from("profiles")
-      .select("id, display_name, avatar_url, rank_id, is_verified, cumulative_points")
+      .select("id, display_name, avatar_url, avatar_emoji, rank_id, is_verified, cumulative_points")
       .eq("is_verified", true)
       .order("display_name", { ascending: true });
     

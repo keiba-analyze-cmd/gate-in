@@ -47,7 +47,7 @@ export async function POST(request: Request) {
       .update({
         display_name: "退会済みユーザー",
         bio: null,
-        avatar_url: null,
+        avatar_url: null, avatar_emoji: null,
         is_admin: false,
       })
       .eq("id", user.id);

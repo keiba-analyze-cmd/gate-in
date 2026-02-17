@@ -16,7 +16,7 @@ export async function GET() {
       id,
       member_user_id,
       display_order,
-      profiles!newspaper_members_member_user_id_fkey(display_name, avatar_url, rank_id)
+      profiles!newspaper_members_member_user_id_fkey(display_name, avatar_url, avatar_emoji, rank_id)
     `)
     .eq("user_id", user.id)
     .order("display_order", { ascending: true });
@@ -26,7 +26,7 @@ export async function GET() {
     user_id: m.member_user_id,
     display_order: m.display_order,
     display_name: m.profiles?.display_name ?? "匿名",
-    avatar_url: m.profiles?.avatar_url,
+    avatar_url: m.profiles?.avatar_url, avatar_emoji: m.profiles?.avatar_emoji,
     rank_id: m.profiles?.rank_id ?? "beginner_1",
   }));
 

@@ -1,6 +1,7 @@
 import { rateLimit, rateLimitResponse } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { isValidAvatar, DEFAULT_AVATAR } from "@/lib/constants/avatars";
 
 export async function PATCH(request: Request) {
   const supabase = await createClient();
@@ -22,6 +23,11 @@ export async function PATCH(request: Request) {
     if (body[field] !== undefined) {
       updates[field] = body[field];
     }
+  }
+
+  // アバター絵文字
+  if (body.avatar_emoji !== undefined) {
+    updates.avatar_emoji = isValidAvatar(body.avatar_emoji) ? body.avatar_emoji : DEFAULT_AVATAR;
   }
 
   if (updates.display_name !== undefined) {

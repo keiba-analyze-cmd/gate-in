@@ -10,7 +10,7 @@ type Props = {
   entries: { id: string; post_number: number; horses: { name: string } | null }[];
 };
 
-type Member = { user_id: string; display_name: string; avatar_url: string | null; rank_id: string };
+type Member = { user_id: string; display_name: string; avatar_url: string | null; avatar_emoji: string | null; rank_id: string };
 type MemberPick = { user_id: string; picks: { pick_type: string; race_entry_id: string }[] };
 
 const PICK_MARKS: Record<string, { mark: string; bg: string; text: string }> = {

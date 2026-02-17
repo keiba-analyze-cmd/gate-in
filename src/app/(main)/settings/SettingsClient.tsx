@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useTheme } from "@/contexts/ThemeContext";
+import LogoutButton from "@/components/LogoutButton";
 
 export default function SettingsClient() {
   const { isDark, toggleTheme, theme } = useTheme();
@@ -52,9 +53,17 @@ export default function SettingsClient() {
         <MenuItem href="/mypage/edit" icon="👤" label="プロフィール編集" desc="表示名・自己紹介を変更" isDark={isDark} border />
       </div>
 
-      {/* アカウント設定 */}
+      {/* アカウント */}
       <div className={`rounded-2xl border overflow-hidden ${cardClass}`}>
-        <MenuItem href="/mypage/delete" icon="🚪" label="アカウント削除" desc="退会する" isDark={isDark} danger />
+        <div className={`flex items-center gap-3 px-5 py-4 ${isDark ? "hover:bg-slate-800" : "hover:bg-gray-50"}`}>
+          <span className="text-xl">🔓</span>
+          <div className="flex-1">
+            <div className={`text-sm font-bold ${textPrimary}`}>ログアウト</div>
+            <div className={`text-xs ${textSecondary}`}>アカウントからログアウト</div>
+          </div>
+          <LogoutButton />
+        </div>
+        <MenuItem href="/mypage/delete" icon="🚪" label="アカウント削除" desc="退会する" isDark={isDark} danger border />
       </div>
 
       <div className="text-center pt-4">

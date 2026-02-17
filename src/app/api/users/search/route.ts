@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   if (!q || q.length < 1) return NextResponse.json({ users: [] });
   if (q.length > 50) return NextResponse.json({ error: "検索文字列が長すぎます" }, { status: 400 });
   const { data: users, error } = await createAdminClient().from("profiles")
-    .select("id, display_name, avatar_url, rank_id, cumulative_points, total_votes")
+    .select("id, display_name, avatar_url, avatar_emoji, rank_id, cumulative_points, total_votes")
     .ilike("display_name", `%${q}%`).order("cumulative_points", { ascending: false }).limit(20);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ users: users ?? [] });

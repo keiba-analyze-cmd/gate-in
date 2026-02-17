@@ -13,7 +13,7 @@ export async function GET(request: Request) {
     case "cumulative":
       query = supabase
         .from("profiles")
-        .select("id, display_name, avatar_url, rank_id, cumulative_points, total_votes, win_hits")
+        .select("id, display_name, avatar_url, avatar_emoji, rank_id, cumulative_points, total_votes, win_hits")
         .gt("total_votes", 0)
         .order("cumulative_points", { ascending: false })
         .limit(limit);
@@ -22,7 +22,7 @@ export async function GET(request: Request) {
     case "hit_rate":
       query = supabase
         .from("profiles")
-        .select("id, display_name, avatar_url, rank_id, cumulative_points, total_votes, win_hits")
+        .select("id, display_name, avatar_url, avatar_emoji, rank_id, cumulative_points, total_votes, win_hits")
         .gte("total_votes", 5)
         .order("win_hits", { ascending: false })
         .limit(limit);
@@ -31,7 +31,7 @@ export async function GET(request: Request) {
     case "streak":
       query = supabase
         .from("profiles")
-        .select("id, display_name, avatar_url, rank_id, cumulative_points, total_votes, win_hits, best_streak, current_streak")
+        .select("id, display_name, avatar_url, avatar_emoji, rank_id, cumulative_points, total_votes, win_hits, best_streak, current_streak")
         .gt("best_streak", 0)
         .order("best_streak", { ascending: false })
         .limit(limit);
@@ -40,7 +40,7 @@ export async function GET(request: Request) {
     default:
       query = supabase
         .from("profiles")
-        .select("id, display_name, avatar_url, rank_id, monthly_points, total_votes, win_hits")
+        .select("id, display_name, avatar_url, avatar_emoji, rank_id, monthly_points, total_votes, win_hits")
         .gt("monthly_points", 0)
         .order("monthly_points", { ascending: false })
         .limit(limit);

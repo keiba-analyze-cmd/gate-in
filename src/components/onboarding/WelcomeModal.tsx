@@ -8,7 +8,7 @@ import { getRank } from "@/lib/constants/ranks";
 type SuggestedUser = {
   id: string;
   display_name: string;
-  avatar_url: string | null;
+  avatar_url: string | null; avatar_emoji: string | null;
   rank_id: string;
   is_verified: boolean;
   cumulative_points: number;

@@ -28,7 +28,7 @@ export async function GET(request: Request) {
   // ランキング（上位50名）
   const { data: entries } = await supabase
     .from("contest_entries")
-    .select("*, profiles(display_name, avatar_url, rank_id)")
+    .select("*, profiles(display_name, avatar_url, avatar_emoji, rank_id)")
     .eq("contest_id", contest.id)
     .order("total_points", { ascending: false })
     .limit(50);

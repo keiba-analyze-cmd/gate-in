@@ -13,7 +13,7 @@ type LikedVote = {
   status: string;
   user: {
     display_name: string;
-    avatar_url: string | null;
+    avatar_url: string | null; avatar_emoji: string | null;
     rank_id: string;
   };
   race: {

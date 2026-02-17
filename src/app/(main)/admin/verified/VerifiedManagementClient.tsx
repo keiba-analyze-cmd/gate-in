@@ -10,7 +10,7 @@ import VerifiedBadge from "@/components/ui/VerifiedBadge";
 type User = {
   id: string;
   display_name: string;
-  avatar_url: string | null;
+  avatar_url: string | null; avatar_emoji: string | null;
   rank_id: string;
   is_verified: boolean;
   cumulative_points: number;

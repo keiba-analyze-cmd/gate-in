@@ -11,14 +11,14 @@ type Member = {
   user_id: string;
   display_order: number;
   display_name: string;
-  avatar_url: string | null;
+  avatar_url: string | null; avatar_emoji: string | null;
   rank_id: string;
 };
 
 type FollowingUser = {
   user_id: string;
   display_name: string;
-  avatar_url: string | null;
+  avatar_url: string | null; avatar_emoji: string | null;
   rank_id: string;
 };
 
@@ -59,7 +59,7 @@ export default function NewspaperMemberSettings({ initialMembers, followingUsers
       if (!res.ok) { const data = await res.json(); throw new Error(data.error || "追加に失敗しました"); }
       const user = followingUsers.find(u => u.user_id === userId);
       if (user) {
-        setMembers([...members, { id: crypto.randomUUID(), user_id: userId, display_order: members.length, display_name: user.display_name, avatar_url: user.avatar_url, rank_id: user.rank_id }]);
+        setMembers([...members, { id: crypto.randomUUID(), user_id: userId, display_order: members.length, display_name: user.display_name, avatar_url: user.avatar_url, avatar_emoji: user.avatar_emoji, rank_id: user.rank_id }]);
       }
     } catch (err) { setError(err instanceof Error ? err.message : "追加に失敗しました"); }
     setLoading(false);

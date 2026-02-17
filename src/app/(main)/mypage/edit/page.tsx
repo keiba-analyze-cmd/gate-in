@@ -11,7 +11,7 @@ export default async function ProfileEditPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("display_name, bio, avatar_url")
+    .select("display_name, bio, avatar_url, avatar_emoji")
     .eq("id", user.id)
     .single();
 
@@ -25,6 +25,7 @@ export default async function ProfileEditPage() {
         initialName={profile.display_name}
         initialBio={profile.bio ?? ""}
         avatarUrl={profile.avatar_url}
+        avatarEmoji={profile.avatar_emoji}
       />
     </div>
   );

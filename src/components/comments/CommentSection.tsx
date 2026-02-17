@@ -12,7 +12,7 @@ type Comment = {
   sentiment: string | null;
   created_at: string;
   user_id: string;
-  profiles: { display_name: string; avatar_url: string | null; rank_id: string } | null;
+  profiles: { display_name: string; avatar_url: string | null; avatar_emoji: string | null; rank_id: string } | null;
 };
 
 type Props = { raceId: string; currentUserId: string };

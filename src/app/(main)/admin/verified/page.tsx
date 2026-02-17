@@ -20,7 +20,7 @@ export default async function VerifiedManagementPage() {
   // 認証済みユーザー一覧を取得
   const { data: verifiedUsers } = await admin
     .from("profiles")
-    .select("id, display_name, avatar_url, rank_id, is_verified, cumulative_points")
+    .select("id, display_name, avatar_url, avatar_emoji, rank_id, is_verified, cumulative_points")
     .eq("is_verified", true)
     .order("display_name", { ascending: true });
 

@@ -26,7 +26,7 @@ export async function PATCH(request: Request, { params }: Props) {
   const { data: updated, error: updateError } = await supabase.from("comments")
     .update({ body: body.body.trim(), edited_at: new Date().toISOString() })
     .eq("id", commentId).eq("user_id", user.id)
-    .select("*, profiles(display_name, avatar_url, rank_id)").single();
+    .select("*, profiles(display_name, avatar_url, avatar_emoji, rank_id)").single();
 
   if (updateError) return NextResponse.json({ error: updateError.message }, { status: 500 });
   return NextResponse.json(updated);

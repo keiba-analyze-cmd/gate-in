@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import UserAvatar from "@/components/ui/UserAvatar";
 import { getRank } from "@/lib/constants/ranks";
 import { useTheme } from "@/contexts/ThemeContext";
 import VerifiedBadge from "@/components/ui/VerifiedBadge";
@@ -17,7 +18,7 @@ type Props = {
     vote_id?: string;
     like_count?: number;
     is_liked?: boolean;
-    user: { display_name: string; avatar_url: string | null; rank_id: string; is_verified?: boolean } | null;
+    user: { display_name: string; avatar_url: string | null; avatar_emoji: string | null; rank_id: string; is_verified?: boolean } | null;
     user_id: string;
     race: { name: string; grade: string | null; course_name: string; race_number?: number | null; race_date?: string } | null;
     race_id: string;
@@ -112,11 +113,7 @@ export default function TimelineItem({ item }: Props) {
       {/* ヘッダー */}
       <div className="flex items-center gap-2 mb-2">
         <Link href={`/users/${item.user_id}`} className="flex items-center gap-2 group">
-          {item.user?.avatar_url ? (
-            <Image width={32} height={32} src={item.user.avatar_url} alt="" className="w-8 h-8 rounded-full" unoptimized />
-          ) : (
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${avatarBg}`}>🏇</div>
-          )}
+          <UserAvatar avatarUrl={item.user?.avatar_url} avatarEmoji={item.user?.avatar_emoji} size="sm" />
           <span className={`text-sm font-bold ${textPrimary} group-${hoverColor}`}>{item.user?.display_name ?? "匿名"}</span>
           {item.user?.is_verified && <VerifiedBadge size="sm" />}
         </Link>

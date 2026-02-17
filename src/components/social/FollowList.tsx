@@ -9,7 +9,7 @@ import FollowButton from "./FollowButton";
 type FollowUser = {
   id: string;
   display_name: string;
-  avatar_url: string | null;
+  avatar_url: string | null; avatar_emoji: string | null;
   rank_id: string;
   cumulative_points: number;
   is_following: boolean;

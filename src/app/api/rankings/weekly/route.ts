@@ -71,7 +71,7 @@ export async function GET(request: Request) {
   const userIds = sortedUsers.map(([id]) => id);
   const { data: profiles } = await admin
     .from("profiles")
-    .select("id, display_name, avatar_url, rank_id")
+    .select("id, display_name, avatar_url, avatar_emoji, rank_id")
     .in("id", userIds);
 
   const profileMap = new Map((profiles ?? []).map((p) => [p.id, p]));
@@ -102,7 +102,7 @@ export async function GET(request: Request) {
       rank: index + 1,
       user_id: userId,
       display_name: profile?.display_name ?? "匿名",
-      avatar_url: profile?.avatar_url ?? null,
+      avatar_url: profile?.avatar_url, avatar_emoji: profile?.avatar_emoji ?? null,
       rank_id: profile?.rank_id ?? "beginner_1",
       weekly_points: points,
     };
@@ -115,7 +115,7 @@ export async function GET(request: Request) {
     mvp: mvpProfile ? {
       user_id: mvpUserId,
       display_name: mvpProfile.display_name,
-      avatar_url: mvpProfile.avatar_url,
+      avatar_url: mvpProfile.avatar_url, avatar_emoji: mvpProfile.avatar_emoji,
       rank_id: mvpProfile.rank_id,
       weekly_points: mvpPoints,
       hit_rate: hitRate,

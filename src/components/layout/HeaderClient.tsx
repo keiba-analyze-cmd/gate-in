@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import UserAvatar from "@/components/ui/UserAvatar";
 import { useTheme } from "@/contexts/ThemeContext";
 
 type Props = {
@@ -9,6 +9,7 @@ type Props = {
   profile: {
     display_name: string | null;
     avatar_url: string | null;
+    avatar_emoji: string | null;
     cumulative_points: number;
     rank_icon: string;
   } | null;
@@ -60,8 +61,10 @@ export default function HeaderClient({ user, profile, unreadCount }: Props) {
               </Link>
 
               <Link href="/mypage" className="block">
-                {profile.avatar_url ? (
-                  <Image src={profile.avatar_url} alt="マイページ" width={32} height={32} className={`w-8 h-8 rounded-full border-2 cursor-pointer ${isDark ? "border-amber-500" : "border-green-500"}`} unoptimized />
+                {profile.avatar_emoji ? (
+                  <UserAvatar avatarEmoji={profile.avatar_emoji} size="sm" className={`border-2 cursor-pointer ${isDark ? "border-amber-500" : "border-green-500"}`} />
+                ) : profile.avatar_url ? (
+                  <UserAvatar avatarUrl={profile.avatar_url} size="sm" className={`border-2 cursor-pointer ${isDark ? "border-amber-500" : "border-green-500"}`} />
                 ) : (
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 cursor-pointer ${isDark ? "bg-gradient-to-br from-amber-500 to-orange-500 text-slate-900 border-amber-400" : "bg-gradient-to-br from-green-500 to-emerald-500 text-white border-green-400"}`}>
                     {getInitial(profile.display_name)}

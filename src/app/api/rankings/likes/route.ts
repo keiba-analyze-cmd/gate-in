@@ -47,7 +47,7 @@ export async function GET(request: Request) {
       is_perfect,
       like_count,
       created_at,
-      profiles!votes_user_id_fkey(display_name, avatar_url, rank_id),
+      profiles!votes_user_id_fkey(display_name, avatar_url, avatar_emoji, rank_id),
       races(name, grade, course_name, race_date),
       vote_picks(pick_type, race_entries(post_number, horses(name)))
     `)
@@ -67,7 +67,7 @@ export async function GET(request: Request) {
     is_perfect: vote.is_perfect,
     user: {
       display_name: vote.profiles?.display_name ?? "匿名",
-      avatar_url: vote.profiles?.avatar_url,
+      avatar_url: vote.profiles?.avatar_url, avatar_emoji: vote.profiles?.avatar_emoji,
       rank_id: vote.profiles?.rank_id ?? "beginner_1",
     },
     race: {

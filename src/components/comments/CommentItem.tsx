@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import UserAvatar from "@/components/ui/UserAvatar";
 import { getRank } from "@/lib/constants/ranks";
 import CommentForm from "./CommentForm";
 import ReportModal from "./ReportModal";
@@ -11,12 +12,12 @@ type Reaction = { emoji_type: string; user_id: string };
 type Comment = {
   id: string; user_id: string; body: string; sentiment: string | null;
   created_at: string; edited_at?: string | null; reply_count: number;
-  profiles: { display_name: string; avatar_url: string | null; rank_id: string } | null;
+  profiles: { display_name: string; avatar_url: string | null; avatar_emoji: string | null; rank_id: string } | null;
   comment_reactions: Reaction[];
 };
 type Reply = {
   id: string; user_id: string; body: string; created_at: string; edited_at?: string | null;
-  profiles: { display_name: string; avatar_url: string | null; rank_id: string } | null;
+  profiles: { display_name: string; avatar_url: string | null; avatar_emoji: string | null; rank_id: string } | null;
 };
 type Props = { comment: Comment; currentUserId: string; raceId: string };
 

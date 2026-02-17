@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getRank } from "@/lib/constants/ranks";
 
-type User = { id: string; display_name: string; avatar_url: string | null; rank_id: string; cumulative_points: number; total_votes: number; };
+type User = { id: string; display_name: string; avatar_url: string | null; avatar_emoji: string | null; rank_id: string; cumulative_points: number; total_votes: number; };
 
 export default function UserSearchPage() {
   const [query, setQuery] = useState("");
@@ -34,7 +34,7 @@ export default function UserSearchPage() {
         <div className="bg-white rounded-2xl border border-gray-200 divide-y divide-gray-100">
           {users.map(u=>{const rank=getRank(u.rank_id);return(
             <Link key={u.id} href={`/users/${u.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors">
-              {u.avatar_url?<Image width={40} height={40} src={u.avatar_url} alt="" className="w-10 h-10 rounded-full" unoptimized/>:<div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-lg">🏇</div>}
+              {u.avatar_url ?<Image width={40} height={40} src={u.avatar_url} alt="" className="w-10 h-10 rounded-full" unoptimized/>:<div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-lg">🏇</div>}
               <div className="flex-1 min-w-0"><div className="text-sm font-bold text-gray-800 truncate">{u.display_name}</div><div className="flex items-center gap-2 text-xs text-gray-500"><span>{rank.icon} {rank.name}</span><span className="font-bold text-green-600">{u.cumulative_points.toLocaleString()} P</span></div></div>
               <span className="text-gray-300 text-sm">›</span>
             </Link>);})}

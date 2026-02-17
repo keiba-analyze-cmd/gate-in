@@ -3,30 +3,32 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/contexts/ThemeContext";
+import AvatarPicker from "@/components/ui/AvatarPicker";
+import { DEFAULT_AVATAR } from "@/lib/constants/avatars";
 
 type Props = {
   initialName: string;
   initialBio: string;
   avatarUrl: string | null;
+  avatarEmoji: string | null;
 };
 
-export default function ProfileEditForm({ initialName, initialBio, avatarUrl }: Props) {
+export default function ProfileEditForm({ initialName, initialBio, avatarUrl, avatarEmoji }: Props) {
   const { isDark } = useTheme();
   const [name, setName] = useState(initialName);
   const [bio, setBio] = useState(initialBio);
+  const [selectedAvatar, setSelectedAvatar] = useState(avatarEmoji || DEFAULT_AVATAR);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const router = useRouter();
 
   const cardBg = isDark ? "bg-slate-900 border-slate-700" : "bg-white border-gray-100";
-  const textPrimary = isDark ? "text-slate-100" : "text-gray-900";
   const textSecondary = isDark ? "text-slate-400" : "text-gray-600";
   const textMuted = isDark ? "text-slate-500" : "text-gray-400";
   const inputBg = isDark ? "bg-slate-800 border-slate-700 text-slate-100" : "bg-white border-gray-200 text-gray-900";
   const inputFocus = isDark ? "focus:ring-amber-500" : "focus:ring-green-500";
   const btnPrimary = isDark ? "bg-amber-500 text-slate-900 hover:bg-amber-400" : "bg-green-600 text-white hover:bg-green-700";
   const btnSecondary = isDark ? "bg-slate-700 text-slate-300 hover:bg-slate-600" : "bg-gray-100 text-gray-600 hover:bg-gray-200";
-  const avatarBg = isDark ? "bg-amber-500/20" : "bg-green-100";
 
   const handleSave = async () => {
     if (!name.trim()) {
@@ -39,7 +41,11 @@ export default function ProfileEditForm({ initialName, initialBio, avatarUrl }: 
     const res = await fetch("/api/profile", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ display_name: name.trim(), bio: bio.trim() }),
+      body: JSON.stringify({
+        display_name: name.trim(),
+        bio: bio.trim(),
+        avatar_emoji: selectedAvatar,
+      }),
     });
 
     if (res.ok) {
@@ -57,17 +63,8 @@ export default function ProfileEditForm({ initialName, initialBio, avatarUrl }: 
 
   return (
     <div className={`rounded-2xl border p-6 space-y-5 ${cardBg}`}>
-      {/* アバター */}
-      <div className="flex items-center gap-4">
-        {avatarUrl ? (
-          <img src={avatarUrl} alt="" className="w-20 h-20 rounded-full" />
-        ) : (
-          <div className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl ${avatarBg}`}>🏇</div>
-        )}
-        <p className={`text-xs ${textMuted}`}>
-          アバターはログインサービス（Google/X）の画像が使われます
-        </p>
-      </div>
+      {/* アバター選択 */}
+      <AvatarPicker selected={selectedAvatar} onSelect={setSelectedAvatar} />
 
       {/* 表示名 */}
       <div>
@@ -77,7 +74,7 @@ export default function ProfileEditForm({ initialName, initialBio, avatarUrl }: 
           value={name}
           onChange={(e) => setName(e.target.value)}
           maxLength={20}
-          placeholder="おかこ"
+          placeholder="予想太郎"
           className={`w-full border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:border-transparent outline-none ${inputBg} ${inputFocus}`}
         />
         <p className={`text-xs mt-1 ${textMuted}`}>{name.length}/20文字</p>

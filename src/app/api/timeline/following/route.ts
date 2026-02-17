@@ -35,7 +35,7 @@ export async function GET() {
       earned_points,
       like_count,
       created_at,
-      profiles!votes_user_id_fkey(display_name, avatar_url, rank_id),
+      profiles!votes_user_id_fkey(display_name, avatar_url, avatar_emoji, rank_id),
       races(name, grade, course_name, race_number),
       vote_picks(pick_type, race_entries(post_number, horses(name)))
     `)
@@ -54,7 +54,7 @@ export async function GET() {
     created_at: vote.created_at,
     user: {
       display_name: vote.profiles?.display_name ?? "匿名",
-      avatar_url: vote.profiles?.avatar_url,
+      avatar_url: vote.profiles?.avatar_url, avatar_emoji: vote.profiles?.avatar_emoji,
       rank_id: vote.profiles?.rank_id ?? "beginner_1",
     },
     race: {

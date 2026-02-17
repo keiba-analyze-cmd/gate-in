@@ -19,7 +19,7 @@ export async function GET(request: Request) {
     // このユーザーがフォローしている人一覧
     let query = supabase
       .from("follows")
-      .select("id, following_id, created_at, profiles!follows_following_id_fkey(id, display_name, avatar_url, rank_id, cumulative_points)")
+      .select("id, following_id, created_at, profiles!follows_following_id_fkey(id, display_name, avatar_url, avatar_emoji, rank_id, cumulative_points)")
       .eq("follower_id", userId)
       .order("created_at", { ascending: false })
       .limit(limit);
@@ -57,7 +57,7 @@ export async function GET(request: Request) {
     // このユーザーのフォロワー一覧
     let query = supabase
       .from("follows")
-      .select("id, follower_id, created_at, profiles!follows_follower_id_fkey(id, display_name, avatar_url, rank_id, cumulative_points)")
+      .select("id, follower_id, created_at, profiles!follows_follower_id_fkey(id, display_name, avatar_url, avatar_emoji, rank_id, cumulative_points)")
       .eq("following_id", userId)
       .order("created_at", { ascending: false })
       .limit(limit);

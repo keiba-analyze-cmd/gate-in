@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# バックアップ・生成ツール
+backup-*.json
+gate-in-article-gen/

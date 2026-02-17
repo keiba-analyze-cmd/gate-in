@@ -8,7 +8,7 @@ export default async function Header() {
 
   let profile = null;
   if (user) {
-    const { data } = await supabase.from("profiles").select("display_name, avatar_url, rank_id, cumulative_points").eq("id", user.id).single();
+    const { data } = await supabase.from("profiles").select("display_name, avatar_url, avatar_emoji, rank_id, cumulative_points").eq("id", user.id).single();
     profile = data;
   }
 
@@ -20,5 +20,5 @@ export default async function Header() {
 
   const rank = profile ? getRank(profile.rank_id) : null;
 
-  return <HeaderClient user={user ? { id: user.id } : null} profile={profile ? { display_name: profile.display_name, avatar_url: profile.avatar_url, cumulative_points: profile.cumulative_points, rank_icon: rank?.icon ?? "🏇" } : null} unreadCount={unreadCount} />;
+  return <HeaderClient user={user ? { id: user.id } : null} profile={profile ? { display_name: profile.display_name, avatar_url: profile.avatar_url, avatar_emoji: profile.avatar_emoji, cumulative_points: profile.cumulative_points, rank_icon: rank?.icon ?? "🏇" } : null} unreadCount={unreadCount} />;
 }
