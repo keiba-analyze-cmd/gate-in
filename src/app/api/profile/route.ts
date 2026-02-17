@@ -2,6 +2,7 @@ import { rateLimit, rateLimitResponse } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { isValidAvatar, DEFAULT_AVATAR } from "@/lib/constants/avatars";
+import { validateHandle, normalizeHandle } from "@/lib/constants/handles";
 
 export async function PATCH(request: Request) {
   const supabase = await createClient();
@@ -28,6 +29,29 @@ export async function PATCH(request: Request) {
   // アバター絵文字
   if (body.avatar_emoji !== undefined) {
     updates.avatar_emoji = isValidAvatar(body.avatar_emoji) ? body.avatar_emoji : DEFAULT_AVATAR;
+  }
+
+  // ユーザーハンドル
+  if (body.user_handle !== undefined) {
+    const handle = normalizeHandle(body.user_handle);
+    const handleValidation = validateHandle(handle);
+    if (!handleValidation.ok) {
+      return NextResponse.json({ error: handleValidation.error }, { status: 400 });
+    }
+
+    // 重複チェック
+    const { data: existing } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("user_handle", handle)
+      .neq("id", user.id)
+      .limit(1);
+
+    if (existing && existing.length > 0) {
+      return NextResponse.json({ error: "このユーザーIDは既に使われています" }, { status: 409 });
+    }
+
+    updates.user_handle = handle;
   }
 
   if (updates.display_name !== undefined) {

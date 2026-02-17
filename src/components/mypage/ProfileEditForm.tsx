@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/contexts/ThemeContext";
 import AvatarPicker from "@/components/ui/AvatarPicker";
+import HandleInput from "@/components/ui/HandleInput";
 import { DEFAULT_AVATAR } from "@/lib/constants/avatars";
 
 type Props = {
@@ -11,13 +12,15 @@ type Props = {
   initialBio: string;
   avatarUrl: string | null;
   avatarEmoji: string | null;
+  userHandle: string | null;
 };
 
-export default function ProfileEditForm({ initialName, initialBio, avatarUrl, avatarEmoji }: Props) {
+export default function ProfileEditForm({ initialName, initialBio, avatarUrl, avatarEmoji, userHandle }: Props) {
   const { isDark } = useTheme();
   const [name, setName] = useState(initialName);
   const [bio, setBio] = useState(initialBio);
   const [selectedAvatar, setSelectedAvatar] = useState(avatarEmoji || DEFAULT_AVATAR);
+  const [handle, setHandle] = useState(userHandle || "");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const router = useRouter();
@@ -35,6 +38,10 @@ export default function ProfileEditForm({ initialName, initialBio, avatarUrl, av
       setMessage("表示名は必須です");
       return;
     }
+    if (!handle || handle.length < 3) {
+      setMessage("ユーザーID（3文字以上）は必須です");
+      return;
+    }
     setLoading(true);
     setMessage("");
 
@@ -45,6 +52,7 @@ export default function ProfileEditForm({ initialName, initialBio, avatarUrl, av
         display_name: name.trim(),
         bio: bio.trim(),
         avatar_emoji: selectedAvatar,
+        user_handle: handle,
       }),
     });
 
@@ -80,6 +88,12 @@ export default function ProfileEditForm({ initialName, initialBio, avatarUrl, av
         <p className={`text-xs mt-1 ${textMuted}`}>{name.length}/20文字</p>
       </div>
 
+      {/* ユーザーID */}
+      <div>
+        <label className={`block text-sm font-bold mb-1 ${textSecondary}`}>ユーザーID *</label>
+        <HandleInput value={handle} onChange={setHandle} />
+      </div>
+
       {/* 自己紹介 */}
       <div>
         <label className={`block text-sm font-bold mb-1 ${textSecondary}`}>自己紹介</label>
@@ -113,7 +127,7 @@ export default function ProfileEditForm({ initialName, initialBio, avatarUrl, av
         </button>
         <button
           onClick={handleSave}
-          disabled={loading || !name.trim()}
+          disabled={loading || !name.trim() || handle.length < 3}
           className={`flex-1 py-3 font-bold rounded-xl disabled:opacity-40 transition-colors ${btnPrimary}`}
         >
           {loading ? "保存中..." : "保存する"}

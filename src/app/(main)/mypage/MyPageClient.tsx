@@ -47,6 +47,9 @@ export default function MyPageClient({
           <UserAvatar avatarUrl={profile.avatar_url} avatarEmoji={profile.avatar_emoji} size="xl" className="border-2 border-white/30" />
           <div className="flex-1">
             <h1 className="text-xl font-black">{profile.display_name}</h1>
+            {profile.user_handle && (
+              <div className={`text-xs font-mono ${heroTextMuted}`}>@{profile.user_handle}</div>
+            )}
             <div className="flex items-center gap-2 mt-1">
               <span className={`text-sm font-medium ${heroTextMuted}`}>{rank.icon} {rank.name}</span>
               {featuredBadge && <span className="text-sm">{featuredBadge.icon}</span>}

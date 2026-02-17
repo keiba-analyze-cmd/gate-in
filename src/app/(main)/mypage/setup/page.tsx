@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import AvatarPicker from "@/components/ui/AvatarPicker";
+import HandleInput from "@/components/ui/HandleInput";
 import { DEFAULT_AVATAR } from "@/lib/constants/avatars";
 
 const AGE_GROUPS = [
@@ -46,6 +47,7 @@ const COURSES = [
 
 export default function ProfileSetupPage() {
   const [name, setName] = useState("");
+  const [handle, setHandle] = useState("");
   const [avatarEmoji, setAvatarEmoji] = useState(DEFAULT_AVATAR);
   const [gender, setGender] = useState("");
   const [ageGroup, setAgeGroup] = useState("");
@@ -60,6 +62,10 @@ export default function ProfileSetupPage() {
       setError("表示名を入力してください");
       return;
     }
+    if (!handle || handle.length < 3) {
+      setError("ユーザーID（3文字以上）を入力してください");
+      return;
+    }
     setLoading(true);
     setError("");
 
@@ -68,6 +74,7 @@ export default function ProfileSetupPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         display_name: name.trim(),
+        user_handle: handle,
         avatar_emoji: avatarEmoji,
         gender: gender || null,
         age_group: ageGroup || null,
@@ -113,6 +120,15 @@ export default function ProfileSetupPage() {
               className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none"
             />
             <p className="text-xs text-gray-400 mt-1">他のユーザーに表示されます（20文字以内）</p>
+          </div>
+
+          {/* ユーザーID（必須） */}
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1">
+              ユーザーID <span className="text-red-500">*</span>
+            </label>
+            <HandleInput value={handle} onChange={setHandle} />
+            <p className="text-xs text-gray-400 mt-1">英小文字・数字・アンダースコア（3〜20文字）</p>
           </div>
 
           {/* 性別 */}
@@ -183,7 +199,7 @@ export default function ProfileSetupPage() {
 
           <button
             onClick={handleSubmit}
-            disabled={loading || !name.trim()}
+            disabled={loading || !name.trim() || handle.length < 3}
             className="w-full py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 disabled:opacity-40 transition-colors text-base"
           >
             {loading ? "保存中..." : "はじめる 🏇"}

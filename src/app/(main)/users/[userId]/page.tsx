@@ -12,8 +12,23 @@ export default async function UserProfilePage({ params }: Props) {
 
   if (!user) redirect("/login");
 
-  // profilesクエリ（JOINを分離）
-  const { data: profile, error } = await supabase.from("profiles").select("*").eq("id", userId).single();
+  // UUID形式かハンドル形式かを判定
+  const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId);
+
+  let profile;
+  let error;
+
+  if (isUUID) {
+    const result = await supabase.from("profiles").select("*").eq("id", userId).single();
+    profile = result.data;
+    error = result.error;
+  } else {
+    // ハンドルで検索
+    const result = await supabase.from("profiles").select("*").eq("user_handle", userId.toLowerCase()).single();
+    profile = result.data;
+    error = result.error;
+  }
+
   if (!profile || error) notFound();
 
   let featuredBadge = null;
@@ -24,21 +39,21 @@ export default async function UserProfilePage({ params }: Props) {
 
   const rank = getRank(profile.rank_id);
   const nextRank = getNextRank(profile.rank_id);
-  const isOwnProfile = user.id === userId;
+  const isOwnProfile = user.id === profile.id;
 
   let isFollowing = false;
   let isBlocked = false;
   if (!isOwnProfile) {
-    const { data } = await supabase.from("follows").select("id").eq("follower_id", user.id).eq("following_id", userId).maybeSingle();
+    const { data } = await supabase.from("follows").select("id").eq("follower_id", user.id).eq("following_id", profile.id).maybeSingle();
     isFollowing = !!data;
-    const { data: blockData } = await supabase.from("blocks").select("id").eq("blocker_id", user.id).eq("blocked_id", userId).maybeSingle();
+    const { data: blockData } = await supabase.from("blocks").select("id").eq("blocker_id", user.id).eq("blocked_id", profile.id).maybeSingle();
     isBlocked = !!blockData;
   }
 
-  const { count: followingCount } = await supabase.from("follows").select("*", { count: "exact", head: true }).eq("follower_id", userId);
-  const { count: followerCount } = await supabase.from("follows").select("*", { count: "exact", head: true }).eq("following_id", userId);
+  const { count: followingCount } = await supabase.from("follows").select("*", { count: "exact", head: true }).eq("follower_id", profile.id);
+  const { count: followerCount } = await supabase.from("follows").select("*", { count: "exact", head: true }).eq("following_id", profile.id);
 
-  const { data: userBadges } = await supabase.from("user_badges").select("badge_id, earned_at, badges(name, icon, description)").eq("user_id", userId).order("earned_at", { ascending: false });
+  const { data: userBadges } = await supabase.from("user_badges").select("badge_id, earned_at, badges(name, icon, description)").eq("user_id", profile.id).order("earned_at", { ascending: false });
 
   const winRate = profile.total_votes > 0 ? Math.round((profile.win_hits / profile.total_votes) * 1000) / 10 : 0;
   const placeRate = profile.total_votes > 0 ? Math.round((profile.place_hits / profile.total_votes) * 1000) / 10 : 0;
@@ -58,7 +73,7 @@ export default async function UserProfilePage({ params }: Props) {
       winRate={winRate}
       placeRate={placeRate}
       progressToNext={progressToNext}
-      userId={userId}
+      userId={profile.id}
       isVerified={profile.is_verified ?? false}
     />
   );

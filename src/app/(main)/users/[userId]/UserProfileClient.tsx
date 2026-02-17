@@ -65,6 +65,9 @@ export default function UserProfileClient({
               {profile.display_name}
               {isVerified && <VerifiedBadge size="md" />}
             </h1>
+            {profile.user_handle && (
+              <div className="text-xs font-mono text-green-200">@{profile.user_handle}</div>
+            )}
             <div className="flex items-center gap-2 flex-wrap">
               <span className={`text-xs font-medium ${textSecondary}`}>{rank.icon} {rank.name}</span>
               <span className={`text-xs font-black ${accentColor}`}>{profile.cumulative_points}P</span>
