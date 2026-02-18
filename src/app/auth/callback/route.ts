@@ -48,6 +48,13 @@ export async function GET(request: Request) {
               .eq("id", data.user.id);
           }
 
+          // ウェルカムメール送信（バックグラウンド）
+          fetch(`${origin}/api/webhooks/welcome-email`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: data.user.id }),
+          }).catch((e) => console.error("[Welcome Email Error]", e));
+
           return NextResponse.redirect(`${origin}/mypage/setup`);
         }
       }

@@ -7,6 +7,14 @@
     {
       "path": "/api/cron/update-entries",
       "schedule": "0 0,2,4,6 * * 0,6"
+    },
+    {
+      "path": "/api/cron/email-weekend",
+      "schedule": "30 7 * * 5"
+    },
+    {
+      "path": "/api/cron/email-reactivation",
+      "schedule": "0 3 * * 3"
     }
   ]
 }
