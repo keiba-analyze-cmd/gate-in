@@ -54,6 +54,8 @@ export type QuizQuestion = {
   explanation?: string;
   category?: QuizCategory;
   level?: string;
+  courseId?: string;
+  stageId?: number;
   order?: number;
 };
 
@@ -140,6 +142,8 @@ export async function getQuizCategoryBySlug(slug: string) {
 export async function getQuizQuestions(options?: {
   categoryId?: string;
   level?: string;
+  courseId?: string;
+  stageId?: number;
   limit?: number;
   offset?: number;
 }) {
@@ -150,7 +154,12 @@ export async function getQuizQuestions(options?: {
   if (options?.level) {
     filters.push(`level[equals]${options.level}`);
   }
-
+  if (options?.courseId) {
+    filters.push(`courseId[equals]${options.courseId}`);
+  }
+  if (options?.stageId !== undefined) {
+    filters.push(`stageId[equals]${options.stageId}`);
+  }
   const data = await client.get<MicroCMSListResponse<QuizQuestion>>({
     endpoint: "quiz-questions",
     queries: {
