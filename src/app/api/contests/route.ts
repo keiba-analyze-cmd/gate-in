@@ -5,32 +5,54 @@ export async function GET(request: Request) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const { searchParams } = new URL(request.url);
-  const yearMonth = searchParams.get("month");
+  const type = searchParams.get("type") || "weekly";
 
-  // 指定月 or 今月の大会を取得
-  let contestQuery = supabase
+  let contest = null;
+
+  // 1. active な大会を探す
+  const { data: activeContests } = await supabase
     .from("contests")
-    .select("*");
+    .select("*")
+    .eq("type", type)
+    .eq("status", "active")
+    .order("started_at", { ascending: false })
+    .limit(1);
 
-  if (yearMonth) {
-    contestQuery = contestQuery.eq("year_month", yearMonth);
-  } else {
-    contestQuery = contestQuery.eq("status", "active");
+  contest = activeContests?.[0] ?? null;
+
+  // 2. active がなければ最新の finished を表示（先週の結果）
+  if (!contest) {
+    const { data: finishedContests } = await supabase
+      .from("contests")
+      .select("*")
+      .eq("type", type)
+      .eq("status", "finished")
+      .order("week_start", { ascending: false })
+      .limit(1);
+
+    contest = finishedContests?.[0] ?? null;
   }
-
-  const { data: contests } = await contestQuery.order("year_month", { ascending: false }).limit(1);
-  const contest = contests?.[0];
 
   if (!contest) {
-    return NextResponse.json({ contest: null, entries: [], my_entry: null });
+    return NextResponse.json({ contest: null, entries: [], my_entry: null, contest_races: [] });
   }
 
-  // ランキング（上位50名）
+  // 対象レース取得
+  const { data: contestRaces } = await supabase
+    .from("contest_races")
+    .select("*, races(id, race_name, race_date, venue, race_number, post_time, status, grade)")
+    .eq("contest_id", contest.id)
+    .order("race_order", { ascending: true });
+
+  // ランキング（上位50名、タイブレーク対応）
   const { data: entries } = await supabase
     .from("contest_entries")
-    .select("*, profiles(display_name, avatar_url, avatar_emoji, rank_id)")
+    .select("*, profiles(display_name, avatar_url, avatar_emoji, rank_id, user_handle)")
     .eq("contest_id", contest.id)
+    .eq("is_eligible", true)
     .order("total_points", { ascending: false })
+    .order("hit_race_count", { ascending: false })
+    .order("earliest_vote_at", { ascending: true })
     .limit(50);
 
   // 自分のエントリー
@@ -44,12 +66,12 @@ export async function GET(request: Request) {
       .maybeSingle();
     myEntry = data;
 
-    // 自分の順位を計算
     if (myEntry) {
       const { count } = await supabase
         .from("contest_entries")
         .select("*", { count: "exact", head: true })
         .eq("contest_id", contest.id)
+        .eq("is_eligible", true)
         .gt("total_points", myEntry.total_points);
       myEntry.ranking = (count ?? 0) + 1;
     }
@@ -59,5 +81,6 @@ export async function GET(request: Request) {
     contest,
     entries: (entries ?? []).map((e, i) => ({ ...e, ranking: i + 1 })),
     my_entry: myEntry,
+    contest_races: contestRaces ?? [],
   });
 }

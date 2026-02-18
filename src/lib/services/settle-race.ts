@@ -480,6 +480,101 @@ export async function settleRace(
         }
       }
 
+      // 9b. 週間大会エントリーを更新
+      const { data: weeklyContestRace } = await supabase
+        .from("contest_races")
+        .select("contest_id, race_order")
+        .eq("race_id", raceId)
+        .maybeSingle();
+
+      if (weeklyContestRace) {
+        const { data: weeklyContest } = await supabase
+          .from("contests")
+          .select("id")
+          .eq("id", weeklyContestRace.contest_id)
+          .eq("type", "weekly")
+          .eq("status", "active")
+          .maybeSingle();
+
+        if (weeklyContest) {
+          const wcId = weeklyContest.id;
+          const raceOrder = weeklyContestRace.race_order;
+
+          // 連続的中ストリーク計算（現在のレースから逆順にチェック）
+          let consecutiveHits = 0;
+          if (anyHit) {
+            consecutiveHits = 1;
+            const { data: allContestRaces } = await supabase
+              .from("contest_races")
+              .select("race_id, race_order")
+              .eq("contest_id", wcId)
+              .lt("race_order", raceOrder)
+              .order("race_order", { ascending: false });
+
+            if (allContestRaces) {
+              for (const cr of allContestRaces) {
+                const { data: prevVote } = await supabase
+                  .from("votes")
+                  .select("status")
+                  .eq("race_id", cr.race_id)
+                  .eq("user_id", vote.user_id)
+                  .in("status", ["settled_hit", "settled_miss"])
+                  .maybeSingle();
+                if (prevVote?.status === "settled_hit") {
+                  consecutiveHits++;
+                } else {
+                  break;
+                }
+              }
+            }
+          }
+
+          // ストリークボーナス（到達時のみ加算）
+          let newStreakPts = 0;
+          if (consecutiveHits === 2) newStreakPts = 20;
+          else if (consecutiveHits === 3) newStreakPts = 50;
+          else if (consecutiveHits === 4) newStreakPts = 100;
+          else if (consecutiveHits === 5) newStreakPts = 200;
+
+          const weeklyTotalPts = votePoints + newStreakPts;
+
+          const { data: wcEntry } = await supabase
+            .from("contest_entries")
+            .select("id, total_points, vote_count, hit_race_count, streak_bonus, earliest_vote_at")
+            .eq("contest_id", wcId)
+            .eq("user_id", vote.user_id)
+            .maybeSingle();
+
+          if (wcEntry) {
+            await supabase.from("contest_entries").update({
+              total_points: wcEntry.total_points + weeklyTotalPts,
+              vote_count: wcEntry.vote_count + 1,
+              hit_race_count: (wcEntry.hit_race_count ?? 0) + (anyHit ? 1 : 0),
+              streak_bonus: (wcEntry.streak_bonus ?? 0) + newStreakPts,
+              earliest_vote_at: wcEntry.earliest_vote_at ?? vote.created_at,
+              is_eligible: true,
+            }).eq("id", wcEntry.id);
+          } else {
+            await supabase.from("contest_entries").insert({
+              contest_id: wcId, user_id: vote.user_id,
+              total_points: weeklyTotalPts, vote_count: 1,
+              hit_race_count: anyHit ? 1 : 0,
+              streak_bonus: newStreakPts,
+              earliest_vote_at: vote.created_at,
+              is_eligible: true,
+            });
+          }
+
+          if (newStreakPts > 0) {
+            await supabase.from("points_transactions").insert({
+              user_id: vote.user_id, vote_id: vote.id, race_id: raceId,
+              amount: newStreakPts, reason: "weekly_streak_bonus",
+              description: `週間大会 ${consecutiveHits}連続的中ボーナス +${newStreakPts}P`,
+            });
+          }
+        }
+      }
+
       // 10. バッジ自動付与チェック
       const isUpset = winHit && winnerPopularity >= 10;
       const isG1Win = winHit && race.grade === "G1";
