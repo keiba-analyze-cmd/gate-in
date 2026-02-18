@@ -70,7 +70,7 @@ export default async function ArticleDetailPage({ params }: Props) {
   const quizCategories = await getQuizCategories();
   const quizCategoryIds = new Set(quizCategories.map((c) => c.id));
   const categoryId = article.category?.id || "";
-  const hasMatchingQuiz = quizCategoryIds.has(categoryId);
+  const hasMatchingQuiz = article.hasQuiz === true;
 
   // パンくずリスト
   const breadcrumbItems = [
