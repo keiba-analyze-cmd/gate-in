@@ -1,7 +1,7 @@
 // src/app/(main)/dojo/articles/page.tsx
 import { Metadata } from "next";
 import ArticlesListClient from "./ArticlesListClient";
-import { getArticles, getArticleCategories, getQuizCategories } from "@/lib/microcms";
+import { getArticles, getArticleCategories } from "@/lib/microcms";
 
 export const metadata: Metadata = {
   title: "記事一覧 | 競馬道場",
@@ -20,7 +20,7 @@ export default async function ArticlesPage({ searchParams }: Props) {
   const params = await searchParams;
   const filterCategoryId = params.category || "";
 
-  const [articlesData, articleCategories, quizCategories] = await Promise.all([
+  const [articlesData, articleCategories] = await Promise.all([
     getArticles({
       categoryId: filterCategoryId || undefined,
       limit: 100,
@@ -31,12 +31,7 @@ export default async function ArticlesPage({ searchParams }: Props) {
       limit: 100,
     })),
     getArticleCategories().catch(() => []),
-    getQuizCategories().catch(() => []),
   ]);
-
-  const quizCategoryIds = new Set(
-    (Array.isArray(quizCategories) ? quizCategories : []).map((c) => c.id)
-  );
 
   const articles = articlesData.contents.map((article) => {
     const categoryId = article.category?.id || "";
@@ -50,7 +45,7 @@ export default async function ArticlesPage({ searchParams }: Props) {
       categoryId,
       categoryName: article.category?.name || "",
       categoryIcon: article.category?.icon || "",
-      hasQuiz: quizCategoryIds.has(categoryId),
+      hasQuiz: article.hasQuiz === true,
       publishedAt: article.publishedAt || article.createdAt,
     };
   });

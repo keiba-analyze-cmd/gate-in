@@ -96,7 +96,7 @@ export default async function DojoPage() {
   // 記事データシリアライズ
   const articles = articlesData.contents.map((article) => {
     const categoryId = article.category?.id || "";
-    const hasMatchingQuiz = quizCategoryIds.has(categoryId);
+    const hasMatchingQuiz = article.hasQuiz === true;
     return {
       id: article.id,
       title: article.title,
