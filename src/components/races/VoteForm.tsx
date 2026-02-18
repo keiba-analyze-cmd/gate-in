@@ -10,6 +10,24 @@ import dynamic from "next/dynamic";
 
 const VoteShareCard = dynamic(() => import("@/components/share/VoteShareCard"), { ssr: false });
 
+// 枠番カラー（JRA公式準拠）
+function getGateColor(gate: number | null): string {
+  if (!gate) return "bg-gray-200 text-gray-700";
+  const colors: Record<number, string> = {
+    1: "bg-white text-gray-800 border border-gray-300",
+    2: "bg-black text-white",
+    3: "bg-red-600 text-white",
+    4: "bg-blue-600 text-white",
+    5: "bg-yellow-400 text-gray-900",
+    6: "bg-green-600 text-white",
+    7: "bg-orange-500 text-white",
+    8: "bg-pink-400 text-white",
+  };
+  return colors[gate] || "bg-gray-200 text-gray-700";
+}
+
+
+
 type Entry = {
   id: string;
   post_number: number;
@@ -310,7 +328,7 @@ export default function VoteForm({ raceId, entries, raceInfo, userName }: Props)
                 : defaultStyle
               } ${(isMaxPlace || isMaxBack) ? "opacity-40" : ""}`}
             >
-              <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${isDark ? "bg-slate-600 text-slate-100" : "bg-gray-800 text-white"}`}>
+              <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${getGateColor(entry.gate_number)}`}>
                 {entry.post_number}
               </span>
               <div className="flex-1 min-w-0">
@@ -323,8 +341,8 @@ export default function VoteForm({ raceId, entries, raceInfo, userName }: Props)
                 </div>
               </div>
               <div className="text-right shrink-0">
-                {entry.odds && <span className={`font-bold ${isDark ? "text-slate-200" : "text-gray-700"}`}>{entry.odds}</span>}
-                {entry.popularity && <div className={`text-xs ${textMuted}`}>{entry.popularity}人気</div>}
+                {entry.odds && <span className={`font-bold text-sm ${isDark ? "text-slate-200" : "text-gray-700"}`}>{entry.odds}<span className={`text-xs font-normal ${textMuted}`}>倍</span></span>}
+                {entry.popularity && <div className={`text-xs ${entry.popularity <= 3 ? (isDark ? "text-amber-400 font-bold" : "text-amber-600 font-bold") : textMuted}`}>{entry.popularity <= 3 ? ["🥇","🥈","🥉"][entry.popularity-1] : ""}{entry.popularity}人気</div>}
               </div>
               <div className="w-6 shrink-0 text-center">
                 {isSelected && <span className={`text-lg ${color}`}>{mark}</span>}

@@ -202,19 +202,20 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ====== 🏆 月間大会バナー ====== */}
+      {/* ====== 🏆 週間予想大会バナー ====== */}
       <Link href="/contest" className="block">
-        <div className="rounded-2xl overflow-hidden border-2 border-purple-300 bg-gradient-to-br from-purple-600 to-purple-500 px-5 py-4 text-white">
+        <div className="rounded-2xl overflow-hidden border-2 border-purple-300 bg-gradient-to-br from-purple-600 to-indigo-700 px-5 py-4 text-white relative">
+          <div className="absolute top-0 right-0 bg-amber-400 text-purple-900 text-[10px] font-black px-2 py-0.5 rounded-bl-lg">毎週開催</div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="text-2xl">🏆</span>
               <div>
-                <div className="text-sm font-black">月間予想大会</div>
-                <div className="text-xs text-purple-200 font-medium">近日開催予定！</div>
+                <div className="text-sm font-black">週間予想大会</div>
+                <div className="text-xs text-purple-200 font-medium">WIN5対象レースでポイントバトル！</div>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-xs text-purple-200">賞品</div>
+              <div className="text-xs text-purple-200">🥇🥈🥉</div>
               <div className="text-sm font-black">Amazonギフト券</div>
             </div>
           </div>
