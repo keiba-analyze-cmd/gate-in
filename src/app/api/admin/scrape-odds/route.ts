@@ -84,7 +84,7 @@ export async function POST(request: Request) {
     // 投票受付中のレースを取得
     const { data: races } = await admin
       .from("races")
-      .select("id, name, race_id_external")
+      .select("id, name, external_id")
       .eq("status", "voting_open");
 
     if (!races || races.length === 0) {
@@ -92,14 +92,14 @@ export async function POST(request: Request) {
     }
 
     for (const race of races) {
-      if (!race.race_id_external) {
+      if (!race.external_id) {
         results.push({ raceId: race.id, name: race.name, updated: 0, error: "外部IDなし" });
         continue;
       }
 
       try {
         // オッズをスクレイピング
-        const oddsMap = await scrapeOdds(race.race_id_external);
+        const oddsMap = await scrapeOdds(race.external_id);
 
         if (oddsMap.size === 0) {
           results.push({ raceId: race.id, name: race.name, updated: 0, error: "オッズ取得失敗" });
@@ -172,7 +172,7 @@ export async function GET(request: Request) {
 
   const { data: races, count } = await admin
     .from("races")
-    .select("id, name, race_id_external, post_time", { count: "exact" })
+    .select("id, name, external_id, post_time", { count: "exact" })
     .eq("status", "voting_open")
     .order("post_time", { ascending: true });
 
@@ -182,7 +182,7 @@ export async function GET(request: Request) {
       id: r.id,
       name: r.name,
       post_time: r.post_time,
-      has_external_id: !!r.race_id_external,
+      has_external_id: !!r.external_id,
     })) ?? [],
   });
 }
