@@ -34,14 +34,14 @@ export async function GET(request: Request) {
           .single();
 
         // OAuth初回ログイン: 表示名をデフォルトセット
-        if (profile && !profile.setup_completed) {
+        if (!profile || !profile.setup_completed) {
           const oauthName =
             data.user.user_metadata?.full_name ??
             data.user.user_metadata?.name ??
             data.user.email?.split("@")[0] ??
             "";
 
-          if (oauthName && (!profile.display_name || profile.display_name.startsWith("ユーザー"))) {
+          if (oauthName && (!profile?.display_name || profile?.display_name.startsWith("ユーザー"))) {
             await supabase
               .from("profiles")
               .update({ display_name: oauthName.substring(0, 20) })
