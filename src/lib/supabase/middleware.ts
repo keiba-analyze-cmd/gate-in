@@ -36,6 +36,7 @@ export async function updateSession(request: NextRequest) {
   const isAuthPage =
     request.nextUrl.pathname === "/login" ||
     request.nextUrl.pathname.startsWith("/auth") ||
+    request.nextUrl.pathname.startsWith("/dojo/articles") ||
     request.nextUrl.pathname === "/";
 
   if (!user && !isAuthPage) {
