@@ -1,5 +1,7 @@
+// src/app/(main)/dojo/articles/page.tsx
 import { Metadata } from "next";
 import ArticlesListClient from "./ArticlesListClient";
+import { getArticles, getArticleCategories, getQuizCategories } from "@/lib/microcms";
 
 export const metadata: Metadata = {
   title: "記事一覧 | 競馬道場",
@@ -10,7 +12,64 @@ export const metadata: Metadata = {
   },
 };
 
-// ★ 認証チェックを削除 → 記事一覧もクローラーがアクセス可能に
-export default function ArticlesPage() {
-  return <ArticlesListClient />;
+type Props = {
+  searchParams: Promise<{ category?: string }>;
+};
+
+export default async function ArticlesPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const filterCategoryId = params.category || "";
+
+  const [articlesData, articleCategories, quizCategories] = await Promise.all([
+    getArticles({
+      categoryId: filterCategoryId || undefined,
+      limit: 100,
+    }).catch(() => ({
+      contents: [],
+      totalCount: 0,
+      offset: 0,
+      limit: 100,
+    })),
+    getArticleCategories().catch(() => []),
+    getQuizCategories().catch(() => []),
+  ]);
+
+  const quizCategoryIds = new Set(
+    (Array.isArray(quizCategories) ? quizCategories : []).map((c) => c.id)
+  );
+
+  const articles = articlesData.contents.map((article) => {
+    const categoryId = article.category?.id || "";
+    return {
+      id: article.id,
+      title: article.title,
+      slug: article.slug,
+      emoji: article.emoji || "📖",
+      excerpt: article.excerpt || "",
+      readTime: article.readTime || 5,
+      categoryId,
+      categoryName: article.category?.name || "",
+      categoryIcon: article.category?.icon || "",
+      hasQuiz: quizCategoryIds.has(categoryId),
+      publishedAt: article.publishedAt || article.createdAt,
+    };
+  });
+
+  const categories = (
+    Array.isArray(articleCategories) ? articleCategories : []
+  ).map((cat) => ({
+    id: cat.id,
+    name: cat.name,
+    icon: cat.icon || "",
+    order: cat.order || 0,
+  }));
+
+  return (
+    <ArticlesListClient
+      articles={articles}
+      categories={categories}
+      totalCount={articlesData.totalCount}
+      initialCategoryId={filterCategoryId}
+    />
+  );
 }

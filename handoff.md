@@ -1,178 +1,214 @@
-# ゲートイン！開発引き継ぎドキュメント
-## 2026年2月17日 セッション時点
+# ゲートイン！ 引き継ぎドキュメント
+
+## 📅 最終更新: 2026-02-18
 
 ---
 
-## 📁 プロジェクト概要
+## 🏇 プロジェクト概要
 
-- **プロジェクト名**: ゲートイン！（競馬予想SNS＆学習プラットフォーム）
-- **リポジトリ**: gate-in
-- **技術スタック**: Next.js 16, TypeScript, Tailwind CSS, Supabase, MicroCMS
-- **本番URL**: https://www.gate-in.jp
+**ゲートイン！** は競馬予想SNS＋学習プラットフォーム。ユーザーが競馬レースの予想を投稿し、的中率を競い合うソーシャルサービス。加えて、初心者向け学習記事やクイズも提供。
 
----
-
-## ✅ これまでに完了した作業
-
-### 1. Phase N完了 - UIリデザイン＆ダークモード対応（2026-02-16）
-
-以下のコンポーネント/ページをダークモード対応：
-
-| ファイル | 内容 |
-|----------|------|
-| RaceResultTable.tsx | レース結果テーブル・払戻金 |
-| VoteDistribution.tsx | みんなの予想 |
-| VoteSummary.tsx | あなたの予想 |
-| MyNewspaperTab.tsx | My競馬新聞タブ |
-| CommentSection.tsx | 掲示板 |
-| LikeRankingList.tsx | いいねランキング |
-| WeeklyMVPCard.tsx | 週間MVP |
-| ContestClient.tsx | 月間大会ページ |
-| UserActivityFeed.tsx | ユーザーアクティビティ |
-| RankingList.tsx | ランキングリスト |
-
-### 2. バグ修正（2026-02-16）
-
-- `RaceResultTable.tsx`: payout undefined エラー修正
-- `RankingList.tsx`: className構文エラー + key重複修正
-
-### 3. MicroCMS連携＆コンテンツ投入（2026-02-17）
-
-- MicroCMSとのAPI連携完了
-- クイズ100問作成（6カテゴリ: 血統/コース/騎手/調教師/予想術/名馬）
-- 記事18本作成・投入完了（血統4・コース3・騎手3・調教師2・予想術3・名馬2＋初回1）
-- テーブルスタイル修正（MicroCMSリッチエディタのHTML構造対応）
-- カテゴリフィルター追加（記事タブにカテゴリ切替ボタン）
-- クイズ連携修正（記事↔クイズの自動紐づけ＆直接リンク）
-
-### 4. SEO Phase 1完了 - SEO基盤構築（2026-02-17）
-
-| 項目 | 内容 |
-|------|------|
-| 記事ページ公開化 | 認証ガード解除、Googleクローラーが記事を読める状態に |
-| 動的メタデータ | 各記事のtitle/descriptionをMicroCMSから自動生成 |
-| JSON-LD構造化データ | Article Schema + BreadcrumbList Schema |
-| パンくずリスト | UIコンポーネント + 構造化データ |
-| サイトマップ | `src/app/sitemap.ts` → `/sitemap.xml` 自動生成 |
-| robots.txt | `src/app/robots.ts` → `/robots.txt` |
-| ルートメタデータ | title.template / description / OGP設定 |
-| 各ページメタデータ | 道場/記事一覧/デイリー/クイズカテゴリの個別metadata |
-| 運営者情報ページ | `/about` ページ新規作成 |
-| OGP画像 | `/public/og-default.png`（1200x630px） |
+**本番URL**: Vercel にデプロイ済み
+**リポジトリ**: `gate-in` (GitHub)
 
 ---
 
-## 🚀 次に実装予定のタスク
+## 🏗️ アーキテクチャ
 
-### SEO Phase 2: コンテンツ拡充
-
-**SEO戦略書**: `/mnt/user-data/uploads/seo-strategy.md`
-**実装手順書**: `/mnt/user-data/uploads/00_IMPLEMENTATION_GUIDE.md`
-
-#### 要件
-
-1. **血統ピラーページ作成**
-   - 「競馬の血統入門｜知識ゼロから分かる血統の見方と活用法」
-   - 5,000〜10,000字の包括的な記事
-   - 狙うKW：「競馬 血統 入門」「競馬 血統 見方」「血統 わからない」
-
-2. **既存18記事→ピラーページ内部リンク**
-   - 各記事本文内にピラーページへのリンク追加
-   - ピラーページから各記事へのリンク追加
-   - クラスター間の横断リンクも設置
-
-3. **記事末尾クイズCTA設置**
-   - 記事カテゴリに対応するクイズへの導線
-   - 「この知識をクイズで確認する」ボタン
-
-4. **X（Twitter）アカウント開設・運用開始**
-   - 毎日のミニクイズ投稿
-   - 記事公開時の告知
-
-5. **FAQ Schema対応**
-   - FAQ形式の記事にFAQPage構造化データを追加
-
-### SEO全体戦略の要点
-
-- **ポジション**: 「予想サイト」ではなく「競馬学習プラットフォーム」
-- **トピッククラスター**: 6クラスター（血統/コース/騎手/調教/予想/名馬）
-- **キーワード戦略**: 「なぜ」「違い」「入門」「仕組み」系のロングテールを狙う
-- **大手との差別化**: netkeiba等とは戦わず、学習意図のクエリで勝つ
-
----
-
-## 📊 タスク進捗
-
-- **完了**: 120/125 タスク（96%）
-- **残り**: SEO Phase 2 の5タスク（#130〜#134）
-- **Phase O**（レース一覧UI改善）: SEO Phase 2後に実施予定
-
----
-
-## 📂 関連ファイル
-
-### SEO関連
-- `src/app/layout.tsx`（メタデータ追加済み）
-- `src/app/sitemap.ts`
-- `src/app/robots.ts`
-- `src/components/seo/JsonLd.tsx`
-- `src/components/seo/Breadcrumbs.tsx`
-- `src/app/(main)/about/page.tsx`
-- `src/app/(main)/dojo/articles/[articleId]/page.tsx`（公開化済み）
-
-### レース一覧（Phase O改修対象）
-- `src/app/(main)/races/page.tsx`
-- `src/app/(main)/races/RacesClient.tsx`
-
-### ドキュメント
-- `TASKLIST_latest.md`
-- `seo-strategy.md`
-- `00_IMPLEMENTATION_GUIDE.md`
+```
+gate-in/
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── (main)/             # 認証後の主要ページ群
+│   │   │   ├── mypage/         # マイページ、編集、セットアップ
+│   │   │   ├── races/          # レース一覧・詳細
+│   │   │   ├── rankings/       # ランキング
+│   │   │   ├── timeline/       # タイムライン
+│   │   │   ├── users/          # ユーザー検索・プロフィール
+│   │   │   ├── settings/       # 設定
+│   │   │   ├── contest/        # 大会
+│   │   │   ├── dojo/           # 道場
+│   │   │   └── admin/          # 管理画面
+│   │   ├── api/                # APIルート
+│   │   │   ├── profile/        # プロフィール CRUD + check-handle
+│   │   │   ├── races/          # レース関連
+│   │   │   ├── comments/       # コメント
+│   │   │   ├── timeline/       # タイムライン
+│   │   │   ├── rankings/       # ランキング
+│   │   │   ├── follows/        # フォロー
+│   │   │   └── ...
+│   │   ├── auth/callback/      # OAuth コールバック
+│   │   └── login/              # ログインページ
+│   ├── components/
+│   │   ├── ui/                 # 共通UI（AvatarPicker, UserAvatar, HandleInput, BackLink等）
+│   │   ├── social/             # SNS系（TimelineItem, FollowList等）
+│   │   ├── comments/           # コメント系
+│   │   ├── rankings/           # ランキング系
+│   │   ├── mypage/             # マイページ系（ProfileEditForm）
+│   │   ├── layout/             # Header, HeaderClient
+│   │   ├── landing/            # LandingPage
+│   │   └── onboarding/         # WelcomeModal
+│   ├── lib/
+│   │   ├── constants/          # 定数
+│   │   │   ├── avatars.ts      # アバター絵文字定義（20種類）
+│   │   │   ├── handles.ts      # ユーザーハンドル バリデーション
+│   │   │   ├── ng-words.ts     # NGワードフィルター（約250語）
+│   │   │   └── ranks.ts        # ランク定義
+│   │   ├── supabase/           # Supabase クライアント
+│   │   └── rate-limit.ts       # レート制限
+│   └── contexts/
+│       └── ThemeContext.tsx     # ダークモード
+├── gate-in-article-gen/        # 記事生成ツール（gitignore済）
+│   ├── generate_articles.py    # Claude API で記事生成
+│   ├── microcms-bulk-import.mjs # microCMS 一括投入
+│   ├── masterplan.md           # 416記事のマスタープラン
+│   └── output/                 # 生成済み記事JSON
+└── supabase/migrations/        # DBマイグレーション
+```
 
 ---
 
-## 🔧 開発コマンド
+## 🗄️ データベース（Supabase）
+
+### profiles テーブル（主要カラム）
+| カラム | 型 | 説明 |
+|--------|------|------|
+| id | UUID (PK) | auth.users.id と同じ |
+| display_name | TEXT | 表示名（1-20文字） |
+| user_handle | TEXT (UNIQUE) | @handle（英小文字・数字・_、3-20文字） |
+| bio | TEXT | 自己紹介（200文字以内） |
+| avatar_url | TEXT | 画像URL（レガシー、未使用） |
+| avatar_emoji | TEXT | アバター絵文字（デフォルト🏇） |
+| rank_id | TEXT | ランクID |
+| cumulative_points | INT | 累計ポイント |
+| monthly_points | INT | 月間ポイント |
+| total_votes | INT | 総投票数 |
+| win_hits | INT | 1着的中数 |
+| place_hits | INT | 複勝的中数 |
+| best_streak | INT | 最長連勝 |
+| current_streak | INT | 現在連勝 |
+| is_verified | BOOL | 認証済みフラグ |
+| setup_completed | BOOL | 初期設定完了フラグ |
+| featured_badge_id | UUID | 表示バッジ |
+
+### その他の主要テーブル
+- **votes** — 予想投票
+- **vote_picks** — 投票の各馬選択（◎○▲△）
+- **comments** — レースコメント
+- **comment_reactions** — コメントリアクション
+- **follows** — フォロー関係
+- **blocks** — ブロック関係
+- **notifications** — 通知
+- **user_badges** — ユーザーバッジ
+- **badges** — バッジ定義
+- **races** — レース情報
+- **race_entries** — 出走馬
+- **horses** — 馬情報
+- **contests** — 大会
+- **newspaper_members** — 予想新聞メンバー
+
+---
+
+## 🔑 重要な実装詳細
+
+### アバターシステム
+- `avatar_emoji` を優先、次に `avatar_url`、どちらもなければデフォルト（🏇）
+- `UserAvatar` 共通コンポーネントで一元管理（xs/sm/md/lg/xl サイズ）
+- 全API select クエリに `avatar_emoji` 追加済み
+
+### ユーザーハンドル（@handle）
+- `/users/[userId]` は UUID とハンドルの両方に対応
+- UUID形式判定: `/^[0-9a-f]{8}-[0-9a-f]{4}-...$/i.test(userId)`
+- 予約語ブロック: admin, api, login 等約30語
+- リアルタイム重複チェック: `/api/profile/check-handle?handle=xxx`
+
+### NGワードフィルター
+- `checkNGWords()` — 複数フィールド一括チェック
+- `checkNGWord()` — 単一テキストチェック
+- `maskNGWords()` — マスク表示（＊＊＊置換）
+- 全角→半角変換してもチェック
+- 適用箇所: profile/setup, profile/PATCH, comments POST, comments PATCH
+
+### LP（ランディングページ）
+- `LandingPage.tsx` で `useEffect` による強制ライトモード
+- アンマウント時にダークモード復帰
+- ダークモード関連のクラスは削除済み
+
+---
+
+## 📰 記事生成システム
+
+### ツール構成（gate-in-article-gen/）
+- `masterplan.md` — 416記事の全体計画（15カテゴリ、Wave 1-13）
+- `generate_articles.py` — Claude API (claude-sonnet-4-20250514) で記事生成
+  - `--wave N` でWave指定、`--dry-run` でプレビュー
+  - HTML形式で出力、メタデータ（articleType, quizCategory等）付き
+- `microcms-bulk-import.mjs` — 生成JSONをmicroCMSに一括投入
+  - カテゴリマッピング、スラッグ生成、重複スキップ
+
+### microCMS スキーマ
+- **articles** API: title, content, category, articleType[], parentPillar, relatedArticles[], quizCategory, readTime, difficulty, slug, excerpt
+- **15カテゴリ**: beginner-basics, betting-types, race-analysis, pedigree, jockey-trainer, course-guide, data-statistics, advanced-strategy, uma-musume, mental-management, laws-manners, history-culture, overseas-racing, regional-racing, seasonal-guide
+- **6クイズカテゴリ**: g1, basics, betting, analysis, trivia, records
+
+### 生成進捗
+| Wave | 本数 | コスト | ステータス |
+|------|------|--------|-----------|
+| W5 | 40本 | $2.23 | ✅ 投入済 |
+| W6 | 53本 | $2.98 | ✅ 投入済 |
+| W7 | - | - | 🔄 生成中 |
+| W8-13 | - | - | ⏳ 未着手 |
+
+### 投入手順
+```bash
+cd gate-in-article-gen
+export ANTHROPIC_API_KEY=xxx
+
+# 生成
+python3 generate_articles.py --wave N
+
+# **太字** → <strong> 変換
+python3 -c "
+import json, re, glob
+files = glob.glob('output/WN/article-WN-*.json')
+fixed = 0
+for f in files:
+    with open(f, 'r') as fh: d = json.load(fh)
+    original = d['content']
+    d['content'] = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', d['content'])
+    if d['content'] != original:
+        fixed += 1
+        with open(f, 'w') as fh: json.dump(d, fh, ensure_ascii=False, indent=2)
+print(f'{fixed}/{len(files)}件を修正')
+"
+
+# microCMS投入
+export MICROCMS_API_KEY=xxx
+node microcms-bulk-import.mjs WN
+```
+
+---
+
+## 🔧 開発環境
 
 ```bash
-# 開発サーバー起動
-npm run dev
-
-# ビルド
-npm run build
-
-# デプロイ（Vercel自動）
-git push origin main
+cd ~/gate-in
+npm run dev        # localhost:3000 (Turbopack)
 ```
+
+### 環境変数（.env.local）
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN`
+- `NEXT_PUBLIC_MICROCMS_API_KEY`
 
 ---
 
-## 📝 次のチャットで伝えること
+## ⚠️ 既知の注意点
 
-```
-ゲートイン！の開発を続けます。
-
-前回のセッションで以下が完了しています：
-- Phase N（UIリデザイン＆ダークモード対応）完了
-- MicroCMS連携完了（クイズ100問・記事18本投入済み）
-- SEO Phase 1完了（メタデータ/JSON-LD/sitemap/robots/about等）
-
-次のタスクは「SEO Phase 2: コンテンツ拡充」です。
-SEO戦略書とImplementation Guideを添付します。
-
-要件：
-1. 血統ピラーページ作成（5,000〜10,000字）
-2. 既存18記事⇔ピラーの相互内部リンク
-3. 記事末尾クイズCTA設置
-4. X（Twitter）運用開始
-5. FAQ Schema対応
-```
-
----
-
-## ⚠️ 注意事項
-
-- ダークモードは `useTheme()` フックで `isDark` を取得
-- アクセントカラー: ダーク=amber-500、ライト=green-600
-- サーバー/クライアントコンポーネント分離パターンを使用
-- 記事ページは認証不要（公開）、クイズ受験・コメント等は認証必要
-- MicroCMSからの記事取得: `getArticleDetail` 関数（`src/lib/microcms.ts`）
+1. **avatar_url はレガシー** — 画像アップロード機能は未実装、avatar_emoji を使用
+2. **全角バッククォート問題** — 一部のテンプレートリテラルが `` ` `` ではなく全角 `` ` `` になっている可能性（HeaderClient等で発生歴あり）
+3. **NGワードの「バカ」「アホ」** — 競馬会話で「バカ当たり！」等の用途あり、必要に応じ調整
+4. **backup-*.json, gate-in-article-gen/** は .gitignore 済み
+5. **記事生成の後処理** — `**bold**` → `<strong>bold</strong>` 変換が毎回必要

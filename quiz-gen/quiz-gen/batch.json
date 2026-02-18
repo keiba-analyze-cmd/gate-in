@@ -1,0 +1,717 @@
+[
+  {
+    "articleId": "gjfd55acy",
+    "courseId": "blood_basics",
+    "stageId": 1
+  },
+  {
+    "articleId": "z1udg_03jxi",
+    "courseId": "blood_basics",
+    "stageId": 2
+  },
+  {
+    "articleId": "7xc_a9_i8y2",
+    "courseId": "blood_basics",
+    "stageId": 3
+  },
+  {
+    "articleId": "sy1u4c-e8h",
+    "courseId": "blood_basics",
+    "stageId": 4
+  },
+  {
+    "articleId": "xedf_j1m05x",
+    "courseId": "blood_basics",
+    "stageId": 5
+  },
+  {
+    "articleId": "blood-w5-01-9fbcd8ab",
+    "courseId": "blood_basics",
+    "stageId": 6
+  },
+  {
+    "articleId": "blood-w5-02-67e67cb4",
+    "courseId": "blood_basics",
+    "stageId": 7
+  },
+  {
+    "articleId": "blood-w5-03-353de66a",
+    "courseId": "blood_basics",
+    "stageId": 8
+  },
+  {
+    "articleId": "blood-w5-04-ad56b58e",
+    "courseId": "blood_basics",
+    "stageId": 9
+  },
+  {
+    "articleId": "blood-w5-05-ab15b903",
+    "courseId": "blood_sire",
+    "stageId": 1
+  },
+  {
+    "articleId": "blood-w5-06-99575bca",
+    "courseId": "blood_sire",
+    "stageId": 2
+  },
+  {
+    "articleId": "blood-w5-07-ff6d5a80",
+    "courseId": "blood_sire",
+    "stageId": 3
+  },
+  {
+    "articleId": "blood-w5-08-290e8ff0",
+    "courseId": "blood_sire",
+    "stageId": 4
+  },
+  {
+    "articleId": "blood-w6-01-188c0771",
+    "courseId": "blood_sire",
+    "stageId": 5
+  },
+  {
+    "articleId": "blood-w6-02-eea98919",
+    "courseId": "blood_sire",
+    "stageId": 6
+  },
+  {
+    "articleId": "blood-w6-03-112b6a3f",
+    "courseId": "blood_sire",
+    "stageId": 7
+  },
+  {
+    "articleId": "blood-w6-04-f8eb346e",
+    "courseId": "blood_sire",
+    "stageId": 8
+  },
+  {
+    "articleId": "blood-w6-05-d6748e17",
+    "courseId": "blood_sire",
+    "stageId": 9
+  },
+  {
+    "articleId": "blood-w6-06-d97728c9",
+    "courseId": "blood_broodmare",
+    "stageId": 1
+  },
+  {
+    "articleId": "blood-w6-07-a4d9ed0d",
+    "courseId": "blood_broodmare",
+    "stageId": 2
+  },
+  {
+    "articleId": "blood-w6-08-139d81e4",
+    "courseId": "blood_broodmare",
+    "stageId": 3
+  },
+  {
+    "articleId": "blood-w6-32-493da2d7",
+    "courseId": "blood_broodmare",
+    "stageId": 4
+  },
+  {
+    "articleId": "blood-w6-33-bbb3459d",
+    "courseId": "blood_broodmare",
+    "stageId": 5
+  },
+  {
+    "articleId": "blood-w6-34-a95802f7",
+    "courseId": "blood_broodmare",
+    "stageId": 6
+  },
+  {
+    "articleId": "blood-w6-35-6fd60b42",
+    "courseId": "blood_broodmare",
+    "stageId": 7
+  },
+  {
+    "articleId": "blood-w6-36-6ff1abaf",
+    "courseId": "blood_broodmare",
+    "stageId": 8
+  },
+  {
+    "articleId": "blood-w6-37-f7a9b0fc",
+    "courseId": "blood_broodmare",
+    "stageId": 9
+  },
+  {
+    "articleId": "blood-w6-38-167c0e33",
+    "courseId": "blood_advanced",
+    "stageId": 1
+  },
+  {
+    "articleId": "blood-w6-39-999683a8",
+    "courseId": "blood_advanced",
+    "stageId": 2
+  },
+  {
+    "articleId": "blood-w6-40-948df90f",
+    "courseId": "blood_advanced",
+    "stageId": 3
+  },
+  {
+    "articleId": "blood-w6-41-1c2a6423",
+    "courseId": "blood_advanced",
+    "stageId": 4
+  },
+  {
+    "articleId": "blood-w6-42-522370ef",
+    "courseId": "blood_advanced",
+    "stageId": 5
+  },
+  {
+    "articleId": "blood-w6-43-a467c089",
+    "courseId": "blood_advanced",
+    "stageId": 6
+  },
+  {
+    "articleId": "blood-w6-44-51b11594",
+    "courseId": "blood_advanced",
+    "stageId": 7
+  },
+  {
+    "articleId": "blood-w6-45-14926841",
+    "courseId": "blood_advanced",
+    "stageId": 8
+  },
+  {
+    "articleId": "sy25csrd6",
+    "courseId": "course_tokyo",
+    "stageId": 1
+  },
+  {
+    "articleId": "yqnbxr1qd1",
+    "courseId": "course_tokyo",
+    "stageId": 2
+  },
+  {
+    "articleId": "fzm9i5ie1v2",
+    "courseId": "course_tokyo",
+    "stageId": 3
+  },
+  {
+    "articleId": "course-w5-09-1237ef37",
+    "courseId": "course_tokyo",
+    "stageId": 4
+  },
+  {
+    "articleId": "course-w5-10-0e0260a6",
+    "courseId": "course_nakayama",
+    "stageId": 1
+  },
+  {
+    "articleId": "course-w5-11-b51f485d",
+    "courseId": "course_nakayama",
+    "stageId": 2
+  },
+  {
+    "articleId": "course-w5-12-b7b3fb42",
+    "courseId": "course_nakayama",
+    "stageId": 3
+  },
+  {
+    "articleId": "course-w5-13-147888c7",
+    "courseId": "course_nakayama",
+    "stageId": 4
+  },
+  {
+    "articleId": "course-w5-14-0f78f222",
+    "courseId": "course_kyoto",
+    "stageId": 1
+  },
+  {
+    "articleId": "course-w5-15-12c3cc43",
+    "courseId": "course_kyoto",
+    "stageId": 2
+  },
+  {
+    "articleId": "course-w5-16-4034e3c0",
+    "courseId": "course_kyoto",
+    "stageId": 3
+  },
+  {
+    "articleId": "course-w6-09-7078329c",
+    "courseId": "course_kyoto",
+    "stageId": 4
+  },
+  {
+    "articleId": "course-w6-10-b6a8632c",
+    "courseId": "course_hanshin",
+    "stageId": 1
+  },
+  {
+    "articleId": "course-w6-11-0a202cd0",
+    "courseId": "course_hanshin",
+    "stageId": 2
+  },
+  {
+    "articleId": "course-w6-12-921e989c",
+    "courseId": "course_hanshin",
+    "stageId": 3
+  },
+  {
+    "articleId": "course-w6-13-cf9e662a",
+    "courseId": "course_hanshin",
+    "stageId": 4
+  },
+  {
+    "articleId": "course-w6-14-85f78764",
+    "courseId": "course_local",
+    "stageId": 1
+  },
+  {
+    "articleId": "course-w6-15-a7aee747",
+    "courseId": "course_local",
+    "stageId": 2
+  },
+  {
+    "articleId": "5kbddqy-ta0p",
+    "courseId": "jockey_basics",
+    "stageId": 1
+  },
+  {
+    "articleId": "5k_tw5_lib",
+    "courseId": "jockey_basics",
+    "stageId": 2
+  },
+  {
+    "articleId": "39e5khadj",
+    "courseId": "jockey_basics",
+    "stageId": 3
+  },
+  {
+    "articleId": "jockey-w5-25-3f75bdea",
+    "courseId": "jockey_basics",
+    "stageId": 4
+  },
+  {
+    "articleId": "jockey-w5-26-d0cbbafd",
+    "courseId": "jockey_data",
+    "stageId": 1
+  },
+  {
+    "articleId": "jockey-w5-27-be6f37be",
+    "courseId": "jockey_data",
+    "stageId": 2
+  },
+  {
+    "articleId": "jockey-w5-28-b9e5a1c7",
+    "courseId": "jockey_data",
+    "stageId": 3
+  },
+  {
+    "articleId": "jockey-w5-29-37b1594c",
+    "courseId": "jockey_data",
+    "stageId": 4
+  },
+  {
+    "articleId": "jockey-w5-30-17da0afe",
+    "courseId": "jockey_strategy",
+    "stageId": 1
+  },
+  {
+    "articleId": "jockey-w6-23-bcdc987a",
+    "courseId": "jockey_strategy",
+    "stageId": 2
+  },
+  {
+    "articleId": "jockey-w6-24-8d754844",
+    "courseId": "jockey_strategy",
+    "stageId": 3
+  },
+  {
+    "articleId": "jockey-w6-25-8314af68",
+    "courseId": "jockey_strategy",
+    "stageId": 4
+  },
+  {
+    "articleId": "bnmpa9l5mzs3",
+    "courseId": "ticket_basics",
+    "stageId": 1
+  },
+  {
+    "articleId": "cewzim_yo",
+    "courseId": "ticket_basics",
+    "stageId": 2
+  },
+  {
+    "articleId": "vddxri4xlw",
+    "courseId": "ticket_basics",
+    "stageId": 3
+  },
+  {
+    "articleId": "prediction-w5-17-bbb12a0e",
+    "courseId": "ticket_basics",
+    "stageId": 4
+  },
+  {
+    "articleId": "prediction-w5-18-8a6045a9",
+    "courseId": "ticket_basics",
+    "stageId": 5
+  },
+  {
+    "articleId": "prediction-w5-19-1af2d2a3",
+    "courseId": "ticket_basics",
+    "stageId": 6
+  },
+  {
+    "articleId": "prediction-w5-20-b2b2616b",
+    "courseId": "ticket_basics",
+    "stageId": 7
+  },
+  {
+    "articleId": "prediction-w5-21-a6e7c1d3",
+    "courseId": "ticket_basics",
+    "stageId": 8
+  },
+  {
+    "articleId": "prediction-w5-22-719751e8",
+    "courseId": "ticket_basics",
+    "stageId": 9
+  },
+  {
+    "articleId": "prediction-w5-23-72c912c4",
+    "courseId": "ticket_basics",
+    "stageId": 10
+  },
+  {
+    "articleId": "general-w7-54-5b9ff750",
+    "courseId": "ticket_types",
+    "stageId": 1
+  },
+  {
+    "articleId": "general-w7-55-c9c0685d",
+    "courseId": "ticket_types",
+    "stageId": 2
+  },
+  {
+    "articleId": "general-w7-56-3f5c3585",
+    "courseId": "ticket_types",
+    "stageId": 3
+  },
+  {
+    "articleId": "general-w7-57-37588e10",
+    "courseId": "ticket_types",
+    "stageId": 4
+  },
+  {
+    "articleId": "general-w7-58-9ccc121e",
+    "courseId": "ticket_types",
+    "stageId": 5
+  },
+  {
+    "articleId": "general-w7-59-247f9768",
+    "courseId": "ticket_types",
+    "stageId": 6
+  },
+  {
+    "articleId": "general-w7-60-592c7000",
+    "courseId": "ticket_types",
+    "stageId": 7
+  },
+  {
+    "articleId": "general-w7-61-80bb4f9e",
+    "courseId": "ticket_types",
+    "stageId": 8
+  },
+  {
+    "articleId": "general-w7-62-eb31c79e",
+    "courseId": "ticket_types",
+    "stageId": 9
+  },
+  {
+    "articleId": "general-w7-63-9515b614",
+    "courseId": "ticket_types",
+    "stageId": 10
+  },
+  {
+    "articleId": "general-w7-125-9b9169f5",
+    "courseId": "ticket_odds",
+    "stageId": 1
+  },
+  {
+    "articleId": "general-w7-126-9a831385",
+    "courseId": "ticket_odds",
+    "stageId": 2
+  },
+  {
+    "articleId": "general-w7-127-c3c41e1c",
+    "courseId": "ticket_odds",
+    "stageId": 3
+  },
+  {
+    "articleId": "general-w7-128-07f80dc1",
+    "courseId": "ticket_odds",
+    "stageId": 4
+  },
+  {
+    "articleId": "general-w7-129-8b197243",
+    "courseId": "ticket_odds",
+    "stageId": 5
+  },
+  {
+    "articleId": "general-w7-130-5b0a147d",
+    "courseId": "ticket_odds",
+    "stageId": 6
+  },
+  {
+    "articleId": "general-w7-131-ada8a90d",
+    "courseId": "ticket_odds",
+    "stageId": 7
+  },
+  {
+    "articleId": "general-w7-132-25e5d97d",
+    "courseId": "ticket_odds",
+    "stageId": 8
+  },
+  {
+    "articleId": "general-w7-133-dd8a01d3",
+    "courseId": "ticket_odds",
+    "stageId": 9
+  },
+  {
+    "articleId": "general-w7-134-c1d3bf4f",
+    "courseId": "ticket_odds",
+    "stageId": 10
+  },
+  {
+    "articleId": "general-w7-196-f0be1f90",
+    "courseId": "ticket_strategy",
+    "stageId": 1
+  },
+  {
+    "articleId": "general-w7-197-160da0e4",
+    "courseId": "ticket_strategy",
+    "stageId": 2
+  },
+  {
+    "articleId": "general-w7-198-535a8410",
+    "courseId": "ticket_strategy",
+    "stageId": 3
+  },
+  {
+    "articleId": "general-w7-199-7d57fa1a",
+    "courseId": "ticket_strategy",
+    "stageId": 4
+  },
+  {
+    "articleId": "general-w7-200-f71d733e",
+    "courseId": "ticket_strategy",
+    "stageId": 5
+  },
+  {
+    "articleId": "general-w7-201-5e6aebad",
+    "courseId": "ticket_strategy",
+    "stageId": 6
+  },
+  {
+    "articleId": "general-w7-202-c4c60c0e",
+    "courseId": "ticket_strategy",
+    "stageId": 7
+  },
+  {
+    "articleId": "general-w7-203-0174502d",
+    "courseId": "ticket_strategy",
+    "stageId": 8
+  },
+  {
+    "articleId": "general-w7-204-a820782e",
+    "courseId": "ticket_strategy",
+    "stageId": 9
+  },
+  {
+    "articleId": "general-w7-205-4c322bfc",
+    "courseId": "ticket_strategy",
+    "stageId": 10
+  },
+  {
+    "articleId": "general-w7-267-63c75116",
+    "courseId": "ticket_advanced",
+    "stageId": 1
+  },
+  {
+    "articleId": "general-w7-268-c401102d",
+    "courseId": "ticket_advanced",
+    "stageId": 2
+  },
+  {
+    "articleId": "general-w7-269-1c442e95",
+    "courseId": "ticket_advanced",
+    "stageId": 3
+  },
+  {
+    "articleId": "general-w7-270-926953f1",
+    "courseId": "ticket_advanced",
+    "stageId": 4
+  },
+  {
+    "articleId": "general-w7-271-c16b4673",
+    "courseId": "ticket_advanced",
+    "stageId": 5
+  },
+  {
+    "articleId": "general-w7-272-68008110",
+    "courseId": "ticket_advanced",
+    "stageId": 6
+  },
+  {
+    "articleId": "general-w7-273-c9c13d3b",
+    "courseId": "ticket_advanced",
+    "stageId": 7
+  },
+  {
+    "articleId": "general-w7-274-92a37b5c",
+    "courseId": "ticket_advanced",
+    "stageId": 8
+  },
+  {
+    "articleId": "general-w7-275-dfd05bcd",
+    "courseId": "ticket_advanced",
+    "stageId": 9
+  },
+  {
+    "articleId": "general-w7-276-62e2b00c",
+    "courseId": "ticket_advanced",
+    "stageId": 10
+  },
+  {
+    "articleId": "appphvvhmm",
+    "courseId": "history_classics",
+    "stageId": 1
+  },
+  {
+    "articleId": "xyyma2qig",
+    "courseId": "history_classics",
+    "stageId": 2
+  },
+  {
+    "articleId": "legend-w5-31-cd50d3f3",
+    "courseId": "history_champions",
+    "stageId": 1
+  },
+  {
+    "articleId": "legend-w5-32-513d2ea7",
+    "courseId": "history_champions",
+    "stageId": 2
+  },
+  {
+    "articleId": "legend-w5-33-cf97d110",
+    "courseId": "history_records",
+    "stageId": 1
+  },
+  {
+    "articleId": "legend-w5-34-41351a33",
+    "courseId": "history_records",
+    "stageId": 2
+  },
+  {
+    "articleId": "legend-w6-26-ca16ef15",
+    "courseId": "history_modern",
+    "stageId": 1
+  },
+  {
+    "articleId": "legend-w6-27-c807d937",
+    "courseId": "history_modern",
+    "stageId": 2
+  },
+  {
+    "articleId": "xkpno96tiu65",
+    "courseId": "training_basics",
+    "stageId": 1
+  },
+  {
+    "articleId": "df8eii5i90k7",
+    "courseId": "training_analysis",
+    "stageId": 1
+  },
+  {
+    "articleId": "uma-musume-w5-35-322e1e9e",
+    "courseId": "umamusume_intro",
+    "stageId": 1
+  },
+  {
+    "articleId": "uma-musume-w5-36-ea9fd0f4",
+    "courseId": "umamusume_intro",
+    "stageId": 2
+  },
+  {
+    "articleId": "uma-musume-w5-37-beaaab92",
+    "courseId": "umamusume_intro",
+    "stageId": 3
+  },
+  {
+    "articleId": "uma-musume-w6-46-b979b82f",
+    "courseId": "umamusume_intro",
+    "stageId": 4
+  },
+  {
+    "articleId": "uma-musume-w6-47-c11dc03d",
+    "courseId": "umamusume_real",
+    "stageId": 1
+  },
+  {
+    "articleId": "uma-musume-w6-48-2f9fb5d1",
+    "courseId": "umamusume_real",
+    "stageId": 2
+  },
+  {
+    "articleId": "uma-musume-w6-49-bf7dc85a",
+    "courseId": "umamusume_real",
+    "stageId": 3
+  },
+  {
+    "articleId": "uma-musume-w6-50-cde371bd",
+    "courseId": "umamusume_real",
+    "stageId": 4
+  },
+  {
+    "articleId": "uma-musume-w6-51-fdc77e9b",
+    "courseId": "umamusume_advanced",
+    "stageId": 1
+  },
+  {
+    "articleId": "uma-musume-w6-52-ab44be4f",
+    "courseId": "umamusume_advanced",
+    "stageId": 2
+  },
+  {
+    "articleId": "uma-musume-w6-53-9dc94a64",
+    "courseId": "umamusume_advanced",
+    "stageId": 3
+  },
+  {
+    "articleId": "beginner-w5-38-b84eb95b",
+    "courseId": "beginner_first",
+    "stageId": 1
+  },
+  {
+    "articleId": "beginner-w5-39-f011b84d",
+    "courseId": "beginner_first",
+    "stageId": 2
+  },
+  {
+    "articleId": "beginner-w5-40-85dcec71",
+    "courseId": "beginner_first",
+    "stageId": 3
+  },
+  {
+    "articleId": "beginner-w6-28-5638bd49",
+    "courseId": "beginner_watching",
+    "stageId": 1
+  },
+  {
+    "articleId": "beginner-w6-29-c0584070",
+    "courseId": "beginner_watching",
+    "stageId": 2
+  },
+  {
+    "articleId": "beginner-w6-30-1cbb7f34",
+    "courseId": "beginner_watching",
+    "stageId": 3
+  },
+  {
+    "articleId": "beginner-w6-31-54676853",
+    "courseId": "beginner_betting",
+    "stageId": 1
+  }
+]

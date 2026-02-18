@@ -3,6 +3,8 @@
 import React, { useMemo } from "react";
 import Link from "next/link";
 import { useTheme } from "@/contexts/ThemeContext";
+import ArticleQuiz from "@/components/dojo/ArticleQuiz";
+import RelatedArticles from "@/components/dojo/RelatedArticles";
 
 type Props = {
   articleId: string;
@@ -48,7 +50,6 @@ function processArticleHtml(html: string, isDark: boolean): string {
     (_match, tableInner) => {
       let inner: string = tableInner;
 
-      // ヘッダー行（th を含む tr）
       inner = inner.replace(
         /<tr>([\s\S]*?)<\/tr>/g,
         (trMatch: string, trInner: string) => {
@@ -68,7 +69,6 @@ function processArticleHtml(html: string, isDark: boolean): string {
         }
       );
 
-      // データ行
       let dataRowIdx = 0;
       inner = inner.replace(
         /<tr>([\s\S]*?)<\/tr>/g,
@@ -123,7 +123,6 @@ export default function ArticleDetailClient({
     ? "bg-slate-900 border-slate-700"
     : "bg-white border-gray-200";
   const textPrimary = isDark ? "text-slate-100" : "text-gray-900";
-  const textSecondary = isDark ? "text-slate-400" : "text-gray-500";
   const textMuted = isDark ? "text-slate-500" : "text-gray-400";
   const btnPrimary = isDark
     ? "bg-amber-500 hover:bg-amber-400 text-slate-900"
@@ -227,32 +226,22 @@ export default function ArticleDetailClient({
         </div>
       )}
 
-      {/* クイズCTA — 対応するクイズカテゴリがある場合のみ表示 */}
+      {/* ① 記事ミニクイズ — コース進捗に依存しない、誰でも挑戦可能 */}
       {hasQuiz && quizCategoryId && (
-        <div
-          className={`rounded-2xl border p-5 ${
-            isDark
-              ? "bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-amber-500/30"
-              : "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200"
-          }`}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className={`font-bold ${textPrimary}`}>
-                🧠 理解度をチェック！
-              </h3>
-              <p className={`text-sm ${textSecondary}`}>
-                この記事に関連するクイズに挑戦
-              </p>
-            </div>
-            <Link
-              href={`/dojo/quiz/${quizCategoryId}`}
-              className={`px-4 py-2 rounded-xl font-bold text-sm ${btnPrimary}`}
-            >
-              クイズに挑戦 →
-            </Link>
-          </div>
-        </div>
+        <ArticleQuiz
+          articleId={articleId}
+          categoryId={quizCategoryId}
+          categoryName={categoryName}
+        />
+      )}
+
+      {/* ② 関連記事 — 同カテゴリの記事を自動表示（SEO内部リンク） */}
+      {categoryId && (
+        <RelatedArticles
+          currentArticleId={articleId}
+          categoryId={categoryId}
+          categoryName={categoryName}
+        />
       )}
 
       <div className="flex gap-2">

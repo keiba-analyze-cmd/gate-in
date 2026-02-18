@@ -1,6 +1,30 @@
 import { createAdminClient } from "@/lib/admin";
-import { getArticles, getQuizCategories } from "@/lib/microcms";
+import { createClient } from "microcms-js-sdk";
 import type { MetadataRoute } from "next";
+
+const microcms = createClient({
+  serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN || "gatein",
+  apiKey: process.env.MICROCMS_API_KEY || "",
+});
+
+// microCMSから全記事を取得（ページネーション対応）
+async function getAllArticles() {
+  const all: { id: string; updatedAt: string }[] = [];
+  let offset = 0;
+  const limit = 100;
+
+  while (true) {
+    const res = await microcms.getList({
+      endpoint: "articles",
+      queries: { limit, offset, fields: ["id", "updatedAt"] },
+    });
+    all.push(...res.contents);
+    if (all.length >= res.totalCount) break;
+    offset += limit;
+  }
+
+  return all;
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://gate-in.jp";
@@ -20,11 +44,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  // ── 道場：記事ページ ──
+  // ── 道場：記事ページ（全件取得） ──
   let articleEntries: MetadataRoute.Sitemap = [];
   try {
-    const articles = await getArticles({ limit: 100 });
-    articleEntries = articles.contents.map((article) => ({
+    const articles = await getAllArticles();
+    articleEntries = articles.map((article) => ({
       url: `${baseUrl}/dojo/articles/${article.id}`,
       lastModified: new Date(article.updatedAt),
       changeFrequency: "weekly" as const,
@@ -37,8 +61,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // ── 道場：クイズカテゴリページ ──
   let quizEntries: MetadataRoute.Sitemap = [];
   try {
-    const categories = await getQuizCategories();
-    quizEntries = categories.map((cat) => ({
+    const res = await microcms.getList({
+      endpoint: "quiz-categories",
+      queries: { limit: 50, fields: ["id"] },
+    });
+    quizEntries = res.contents.map((cat) => ({
       url: `${baseUrl}/dojo/quiz/${cat.id}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,

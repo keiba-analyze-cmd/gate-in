@@ -1,0 +1,19 @@
+{
+  "name": "quiz-gen",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build-batch": "npx ts-node build-batch.ts",
+    "generate": "npx ts-node generate.ts",
+    "generate:dry": "npx ts-node generate.ts --dry"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "microcms-js-sdk": "^3.1.2"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.0",
+    "@types/node": "^20.0.0"
+  }
+}
