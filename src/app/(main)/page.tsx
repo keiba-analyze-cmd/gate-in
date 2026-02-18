@@ -125,7 +125,7 @@ export default async function HomePage() {
       .map((q) => ({
         id: q.id,
         question: q.question,
-        choices: [q.choice1, q.choice2, q.choice3 ?? '', q.choice4 ?? ''] as string[],
+        choices: [q.choice1, q.choice2, q.choice3 || '', q.choice4 || ''].map(c => String(c)),
         correctIndex: q.correctIndex - 1,
         explanation: (q.explanation || "").replace(/<[^>]*>/g, ""),
       }));
