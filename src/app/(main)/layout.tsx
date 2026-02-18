@@ -5,6 +5,7 @@ import BottomNavWrapper from "@/components/layout/BottomNavWrapper";
 import Footer from "@/components/layout/Footer";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import MainLayoutClient from "./MainLayoutClient";
+import ScrollToTop from "@/components/ScrollToTop";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -12,7 +13,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <MainLayoutClient>
         <Header />
         <main className="max-w-5xl mx-auto px-4 py-5 pb-24 md:pb-5 animate-fade-in">
-          <ToastProvider><WelcomeModal />{children}</ToastProvider>
+          <ToastProvider><ScrollToTop /><WelcomeModal />{children}</ToastProvider>
         </main>
         <Footer />
         <BottomNavWrapper />
