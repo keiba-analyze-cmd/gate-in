@@ -2,7 +2,7 @@
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getQuizQuestions } from "@/lib/microcms";
-import { COURSE_DB, STAGE_DEFINITIONS } from "@/lib/constants/dojo";
+import { COURSE_MAP, DEFAULT_STAGES } from "@/lib/constants/dojo";
 import StageQuizClient from "./StageQuizClient";
 
 type Props = {
@@ -14,10 +14,10 @@ export default async function StageQuizPage({ params }: Props) {
   const stageId = parseInt(stageIdStr, 10);
 
   // バリデーション
-  const course = COURSE_DB[courseId];
+  const course = COURSE_MAP[courseId];
   if (!course) notFound();
 
-  const stageDef = STAGE_DEFINITIONS.find((s) => s.id === stageId);
+  const stageDef = DEFAULT_STAGES.find((s) => s.id === stageId);
   if (!stageDef) notFound();
 
   // 認証チェック
@@ -38,7 +38,6 @@ export default async function StageQuizPage({ params }: Props) {
       .single();
 
     if (!prevProgress || prevProgress.stars === 0) {
-      // 未解放 → 道場TOPに戻す
       redirect("/dojo");
     }
   }
@@ -52,18 +51,36 @@ export default async function StageQuizPage({ params }: Props) {
     .eq("stage_id", stageId)
     .single();
 
-  // microCMSからクイズ問題を取得
-  // ステージごとに問題数分をランダム取得
-  const questionsData = await getQuizQuestions({ limit: 100 });
-  const allQuestions = questionsData.contents.map((q) => ({
+  // microCMSからクイズ問題を取得（courseId + stageIdで絞り込み）
+  const questionsData = await getQuizQuestions({
+    courseId,
+    stageId,
+    limit: 100,
+  });
+
+  let allQuestions = questionsData.contents.map((q) => ({
     id: q.id,
     question: q.question,
     options: [q.choice1, q.choice2, q.choice3, q.choice4].filter(
       Boolean
     ) as string[],
-    correctIndex: q.correctIndex - 1, // microCMSは1始まり→0始まりに変換
+    correctIndex: q.correctIndex - 1,
     explanation: q.explanation || "",
   }));
+
+  // courseId/stageIdで問題が見つからない場合、全問からフォールバック
+  if (allQuestions.length === 0) {
+    const fallback = await getQuizQuestions({ limit: 100 });
+    allQuestions = fallback.contents.map((q) => ({
+      id: q.id,
+      question: q.question,
+      options: [q.choice1, q.choice2, q.choice3, q.choice4].filter(
+        Boolean
+      ) as string[],
+      correctIndex: q.correctIndex - 1,
+      explanation: q.explanation || "",
+    }));
+  }
 
   // ランダムにステージの問題数分を抽出
   const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
