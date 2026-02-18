@@ -24,13 +24,31 @@ type HeroImage = {
   alt: string;
 } | null;
 
+type LPArticle = {
+  id: string;
+  title: string;
+  emoji: string;
+  categoryName: string;
+  readTime: number;
+};
+
+type LPQuiz = {
+  id: string;
+  question: string;
+  choices: string[];
+  correctIndex: number;
+  explanation: string;
+};
+
 type Props = {
   openRaces: Race[];
   stats: Stats;
   heroImage?: HeroImage;
+  articles?: LPArticle[];
+  quizzes?: LPQuiz[];
 };
 
-export default function LandingPage({ openRaces, stats, heroImage }: Props) {
+export default function LandingPage({ openRaces, stats, heroImage, articles = [], quizzes = [] }: Props) {
   const gradeRaces = openRaces.filter((r) => r.grade);
 
   // LP は常にライトモード
@@ -59,6 +77,11 @@ export default function LandingPage({ openRaces, stats, heroImage }: Props) {
 
       {/* ====== 特徴 ====== */}
       <FeaturesSection />
+
+      {/* ====== 🥋 競馬道場（記事＆クイズ） ====== */}
+      {(articles.length > 0 || quizzes.length > 0) && (
+        <DojoPreviewSection articles={articles} quizzes={quizzes} />
+      )}
 
       {/* ====== 画面イメージ ====== */}
       <ScreenshotSection />
@@ -89,6 +112,252 @@ export default function LandingPage({ openRaces, stats, heroImage }: Props) {
 
       {/* ====== 追従フッター ====== */}
       <StickyFooter />
+    </div>
+  );
+}
+
+// ====== 🥋 道場プレビューセクション（記事 + クイズ体験） ======
+function DojoPreviewSection({
+  articles,
+  quizzes,
+}: {
+  articles: LPArticle[];
+  quizzes: LPQuiz[];
+}) {
+  return (
+    <section className="space-y-6">
+      {/* セクションヘッダー */}
+      <div className="text-center">
+        <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-full px-4 py-1.5 mb-3">
+          <span className="text-amber-600 text-sm">🥋</span>
+          <span className="text-sm font-bold text-amber-700">競馬道場</span>
+        </div>
+        <h2 className="text-xl font-black text-gray-900">
+          記事を読んで、クイズで力試し！
+        </h2>
+        <p className="text-sm text-gray-500 mt-1">
+          500+の記事と1,000+のクイズで競馬知識を鍛えよう
+        </p>
+      </div>
+
+      {/* クイズ体験 */}
+      {quizzes.length > 0 && <QuizTrySection quizzes={quizzes} />}
+
+      {/* 記事カード */}
+      {articles.length > 0 && (
+        <div>
+          <h3 className="text-base font-black text-gray-900 mb-3">
+            📚 人気の記事
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {articles.slice(0, 4).map((article) => (
+              <Link
+                key={article.id}
+                href={`/dojo/articles/${article.id}`}
+                className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3 hover:shadow-md transition-shadow"
+              >
+                <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-lg shrink-0">
+                  {article.emoji}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-bold text-sm text-gray-800 truncate">
+                    {article.title}
+                  </div>
+                  <div className="text-[10px] text-gray-400 mt-0.5">
+                    {article.categoryName}
+                    {article.readTime > 0 && ` • ⏱ ${article.readTime}分`}
+                  </div>
+                </div>
+                <span className="text-gray-300">→</span>
+              </Link>
+            ))}
+          </div>
+          <div className="text-center mt-4">
+            <Link
+              href="/dojo/articles"
+              className="inline-block bg-amber-50 border border-amber-200 text-amber-700 font-bold text-sm px-6 py-2.5 rounded-full hover:bg-amber-100 transition-colors"
+            >
+              500+の記事をもっと読む →
+            </Link>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+// ====== 🎯 クイズ体験セクション ======
+function QuizTrySection({ quizzes }: { quizzes: LPQuiz[] }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [answered, setAnswered] = useState(false);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [finished, setFinished] = useState(false);
+
+  const quiz = quizzes[currentIndex];
+  if (!quiz) return null;
+
+  const handleSelect = (choiceIndex: number) => {
+    if (answered) return;
+    setSelected(choiceIndex);
+    setAnswered(true);
+    if (choiceIndex === quiz.correctIndex) {
+      setCorrectCount((c) => c + 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentIndex + 1 >= quizzes.length) {
+      setFinished(true);
+      return;
+    }
+    setCurrentIndex((i) => i + 1);
+    setSelected(null);
+    setAnswered(false);
+  };
+
+  const handleReset = () => {
+    setCurrentIndex(0);
+    setSelected(null);
+    setAnswered(false);
+    setCorrectCount(0);
+    setFinished(false);
+  };
+
+  if (finished) {
+    return (
+      <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6 text-center">
+        <div className="text-4xl mb-3">🎉</div>
+        <h3 className="text-lg font-black text-gray-900 mb-1">
+          結果: {correctCount}/{quizzes.length}問正解！
+        </h3>
+        <p className="text-sm text-gray-600 mb-4">
+          {correctCount === quizzes.length
+            ? "パーフェクト！あなたは競馬通！🏆"
+            : correctCount >= quizzes.length * 0.6
+              ? "なかなかの実力！もっと学んでみよう 💪"
+              : "まだまだ伸びしろあり！道場で特訓しよう 🔥"}
+        </p>
+        <div className="flex gap-3 justify-center">
+          <button
+            onClick={handleReset}
+            className="bg-white border border-gray-300 text-gray-700 font-bold text-sm px-5 py-2.5 rounded-full hover:bg-gray-50 transition-colors"
+          >
+            もう一度
+          </button>
+          <Link
+            href="/login"
+            className="bg-green-600 text-white font-bold text-sm px-6 py-2.5 rounded-full hover:bg-green-700 transition-colors"
+          >
+            無料登録して道場へ →
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+      {/* ヘッダー */}
+      <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-white text-lg">🎯</span>
+          <span className="text-white font-black text-sm">
+            競馬知識チェック！
+          </span>
+        </div>
+        <span className="text-white/80 text-xs font-bold">
+          {currentIndex + 1}/{quizzes.length}問目
+        </span>
+      </div>
+
+      {/* 問題 */}
+      <div className="p-5">
+        <p className="font-bold text-gray-900 text-base mb-4 leading-relaxed">
+          {quiz.question}
+        </p>
+
+        {/* 選択肢 */}
+        <div className="space-y-2">
+          {quiz.choices.map((choice, i) => {
+            let style = "border-gray-200 hover:border-gray-400 bg-white";
+            if (answered) {
+              if (i === quiz.correctIndex) {
+                style =
+                  "border-green-500 bg-green-50 ring-2 ring-green-200";
+              } else if (i === selected && i !== quiz.correctIndex) {
+                style = "border-red-400 bg-red-50";
+              } else {
+                style = "border-gray-200 bg-gray-50 opacity-50";
+              }
+            }
+
+            return (
+              <button
+                key={i}
+                onClick={() => handleSelect(i)}
+                disabled={answered}
+                className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all ${style}`}
+              >
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black shrink-0 ${
+                      answered && i === quiz.correctIndex
+                        ? "bg-green-500 text-white"
+                        : answered && i === selected
+                          ? "bg-red-400 text-white"
+                          : "bg-gray-100 text-gray-500"
+                    }`}
+                  >
+                    {answered && i === quiz.correctIndex
+                      ? "✓"
+                      : answered && i === selected
+                        ? "✗"
+                        : String.fromCharCode(65 + i)}
+                  </span>
+                  <span
+                    className={`text-sm font-medium ${
+                      answered && i === quiz.correctIndex
+                        ? "text-green-800"
+                        : "text-gray-700"
+                    }`}
+                  >
+                    {choice}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* 解説 + 次へ */}
+        {answered && (
+          <div className="mt-4">
+            {quiz.explanation && (
+              <div
+                className={`text-sm p-3 rounded-lg mb-3 ${
+                  selected === quiz.correctIndex
+                    ? "bg-green-50 text-green-800"
+                    : "bg-red-50 text-red-800"
+                }`}
+              >
+                <span className="font-bold">
+                  {selected === quiz.correctIndex ? "⭕ 正解！" : "❌ 不正解…"}
+                </span>{" "}
+                {quiz.explanation}
+              </div>
+            )}
+            <button
+              onClick={handleNext}
+              className="w-full bg-amber-500 text-white font-bold text-sm py-3 rounded-xl hover:bg-amber-600 transition-colors"
+            >
+              {currentIndex + 1 >= quizzes.length
+                ? "結果を見る 🎉"
+                : "次の問題 →"}
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

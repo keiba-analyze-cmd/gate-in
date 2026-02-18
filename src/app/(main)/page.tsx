@@ -8,6 +8,7 @@ import G1FeatureCard from "@/components/races/G1FeatureCard";
 import FollowingVotes from "@/components/social/FollowingVotes";
 import PopularVotesSection from "@/components/social/PopularVotesSection";
 import WeeklyMVPBanner from "@/components/social/WeeklyMVPBanner";
+import { getArticles, getQuizQuestions } from "@/lib/microcms";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -103,8 +104,41 @@ export default async function HomePage() {
       .single();
     
     const heroImage = heroSetting?.value ?? null;
+
+    // LP用: 記事・クイズデータを取得
+    const [articlesData, quizData] = await Promise.all([
+      getArticles({ limit: 6 }).catch(() => ({ contents: [], totalCount: 0, offset: 0, limit: 6 })),
+      getQuizQuestions({ limit: 20 }).catch(() => ({ contents: [], totalCount: 0, offset: 0, limit: 20 })),
+    ]);
+
+    const lpArticles = articlesData.contents.map((a) => ({
+      id: a.id,
+      title: a.title,
+      emoji: a.emoji || "📖",
+      categoryName: a.category?.name || "",
+      readTime: a.readTime || 5,
+    }));
+
+    const lpQuizzes = quizData.contents
+      .filter((q) => q.choice1 && q.choice2 && q.choice3 && q.choice4)
+      .slice(0, 5)
+      .map((q) => ({
+        id: q.id,
+        question: q.question,
+        choices: [q.choice1, q.choice2, q.choice3, q.choice4],
+        correctIndex: q.correctIndex - 1,
+        explanation: (q.explanation || "").replace(/<[^>]*>/g, ""),
+      }));
     
-    return <LandingPage openRaces={openRaces ?? []} stats={stats} heroImage={heroImage} />;
+    return (
+      <LandingPage
+        openRaces={openRaces ?? []}
+        stats={stats}
+        heroImage={heroImage}
+        articles={lpArticles}
+        quizzes={lpQuizzes}
+      />
+    );
   }
 
   return (
