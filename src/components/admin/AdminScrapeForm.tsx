@@ -35,6 +35,14 @@ type RegistrationResult = {
   results: { name: string; status: string; entries_count?: number; error?: string }[];
 };
 
+type BackfillResult = {
+  raceId: string;
+  name: string;
+  date: string;
+  updated: number;
+  error?: string;
+};
+
 export default function AdminScrapeForm() {
   const [races, setRaces] = useState<ScrapedRace[]>([]);
   const [loading, setLoading] = useState(false);
@@ -59,29 +67,64 @@ export default function AdminScrapeForm() {
   const [scraping, setScraping] = useState(false);
   const [scrapeProgress, setScrapeProgress] = useState({ current: 0, total: 0, message: "" });
 
-  // ── オッズ更新用 ──
-  const [updatingOdds, setUpdatingOdds] = useState(false);
-  const [oddsResult, setOddsResult] = useState<{ message: string; results: any[] } | null>(null);
+  // ── オッズ一括取得用 ──
+  const [backfillLoading, setBackfillLoading] = useState(false);
+  const [backfillChecking, setBackfillChecking] = useState(false);
+  const [backfillInfo, setBackfillInfo] = useState<{ total_races: number; total_missing_entries: number; races: any[] } | null>(null);
+  const [backfillResults, setBackfillResults] = useState<BackfillResult[] | null>(null);
+  const [backfillError, setBackfillError] = useState("");
 
-  // ── オッズ更新 ──
-  const handleUpdateOdds = async () => {
-    setUpdatingOdds(true);
-    setOddsResult(null);
-    setError("");
+  // ── アコーディオン開閉 ──
+  const [openSection, setOpenSection] = useState<"scrape" | "backfill">("scrape");
+
+  // ── オッズ一括取得: 対象確認 ──
+  const handleCheckBackfill = async () => {
+    setBackfillChecking(true);
+    setBackfillError("");
+    setBackfillInfo(null);
+    setBackfillResults(null);
 
     try {
-      const res = await fetch("/api/admin/scrape-odds", { method: "POST" });
+      const res = await fetch("/api/admin/backfill-odds");
       const data = await res.json();
       
       if (!res.ok) {
-        throw new Error(data.error || "オッズ更新に失敗しました");
+        throw new Error(data.error || "確認に失敗しました");
       }
       
-      setOddsResult(data);
+      setBackfillInfo(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "オッズ更新に失敗しました");
+      setBackfillError(err instanceof Error ? err.message : "確認に失敗しました");
     } finally {
-      setUpdatingOdds(false);
+      setBackfillChecking(false);
+    }
+  };
+
+  // ── オッズ一括取得: 実行 ──
+  const handleBackfillOdds = async (limit: number = 10) => {
+    setBackfillLoading(true);
+    setBackfillError("");
+    setBackfillResults(null);
+
+    try {
+      const res = await fetch("/api/admin/backfill-odds", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ limit }),
+      });
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || "取得に失敗しました");
+      }
+      
+      setBackfillResults(data.results);
+      // 再度確認して残り件数を更新
+      handleCheckBackfill();
+    } catch (err) {
+      setBackfillError(err instanceof Error ? err.message : "取得に失敗しました");
+    } finally {
+      setBackfillLoading(false);
     }
   };
 
@@ -308,113 +351,260 @@ export default function AdminScrapeForm() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* ── Step 1: データ取得 ── */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="font-bold text-gray-800 mb-4">📥 netkeibaからレース一括登録</h3>
-
-        {/* 日付選択 + アクションボタン */}
-        <div className="bg-green-50 rounded-lg p-4 mb-4">
-          <p className="text-sm font-bold text-gray-700 mb-3">日付を選択してデータを取得</p>
-          <div className="flex flex-wrap items-end gap-3">
-            <div>
-              <label className="block text-xs font-bold text-gray-600 mb-1">開催日</label>
-              <input
-                type="date"
-                value={scrapeDate}
-                onChange={(e) => setScrapeDate(e.target.value)}
-                className="border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              />
+    <div className="space-y-4">
+      {/* ===== セクション1: レース一括取得 ===== */}
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <button
+          onClick={() => setOpenSection(openSection === "scrape" ? "backfill" : "scrape")}
+          className="w-full px-5 py-4 flex items-center justify-between bg-gradient-to-r from-green-50 to-white hover:from-green-100 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">📥</span>
+            <div className="text-left">
+              <h3 className="font-bold text-gray-800">レース一括取得</h3>
+              <p className="text-xs text-gray-500">netkeibaから出馬表・レース情報を取得</p>
             </div>
-            {/* クイック日付ボタン */}
-            {getWeekendDates().map(d => (
-              <button
-                key={d.value}
-                onClick={() => setScrapeDate(d.value)}
-                className={`px-3 py-2.5 rounded-lg text-xs font-bold border transition-colors ${
-                  scrapeDate === d.value
-                    ? "bg-green-600 text-white border-green-600"
-                    : "bg-white text-gray-600 border-gray-300 hover:border-green-400"
-                }`}
-              >
-                {d.label}
-              </button>
-            ))}
           </div>
-          <div className="flex flex-wrap gap-3 mt-4">
-            <button
-              onClick={() => handleScrapeAndPreview(false)}
-              disabled={scraping}
-              className="bg-green-600 text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {scraping ? "⏳ 取得中..." : "🔍 取得してプレビュー"}
-            </button>
-            <button
-              onClick={() => handleScrapeAndPreview(true)}
-              disabled={scraping}
-              className="bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {scraping ? "⏳ 取得中..." : "💾 JSONダウンロード"}
-            </button>
-          </div>
-          {/* 進捗表示 */}
-          {scraping && scrapeProgress.total > 0 && (
-            <div className="mt-3">
-              <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
-                <span className="animate-pulse">⏳</span>
-                <span>{scrapeProgress.message}</span>
+          <span className={`text-gray-400 transition-transform ${openSection === "scrape" ? "rotate-180" : ""}`}>
+            ▼
+          </span>
+        </button>
+
+        {openSection === "scrape" && (
+          <div className="p-5 border-t border-gray-100 space-y-4">
+            {/* 日付選択 + アクションボタン */}
+            <div className="bg-green-50 rounded-lg p-4">
+              <p className="text-sm font-bold text-gray-700 mb-3">日付を選択してデータを取得</p>
+              <div className="flex flex-wrap items-end gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-gray-600 mb-1">開催日</label>
+                  <input
+                    type="date"
+                    value={scrapeDate}
+                    onChange={(e) => setScrapeDate(e.target.value)}
+                    className="border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  />
+                </div>
+                {/* クイック日付ボタン */}
+                {getWeekendDates().map(d => (
+                  <button
+                    key={d.value}
+                    onClick={() => setScrapeDate(d.value)}
+                    className={`px-3 py-2.5 rounded-lg text-xs font-bold border transition-colors ${
+                      scrapeDate === d.value
+                        ? "bg-green-600 text-white border-green-600"
+                        : "bg-white text-gray-600 border-gray-300 hover:border-green-400"
+                    }`}
+                  >
+                    {d.label}
+                  </button>
+                ))}
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${(scrapeProgress.current / scrapeProgress.total) * 100}%` }}
+              <div className="flex flex-wrap gap-3 mt-4">
+                <button
+                  onClick={() => handleScrapeAndPreview(false)}
+                  disabled={scraping}
+                  className="bg-green-600 text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {scraping ? "⏳ 取得中..." : "🔍 取得してプレビュー"}
+                </button>
+                <button
+                  onClick={() => handleScrapeAndPreview(true)}
+                  disabled={scraping}
+                  className="bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {scraping ? "⏳ 取得中..." : "💾 JSONダウンロード"}
+                </button>
+              </div>
+              {/* 進捗表示 */}
+              {scraping && scrapeProgress.total > 0 && (
+                <div className="mt-3">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
+                    <span className="animate-pulse">⏳</span>
+                    <span>{scrapeProgress.message}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${(scrapeProgress.current / scrapeProgress.total) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+              {!scraping && scrapeProgress.message.startsWith("✅") && (
+                <div className="mt-3 text-sm text-green-600 font-bold">{scrapeProgress.message}</div>
+              )}
+            </div>
+
+            {/* JSONファイルから読み込み */}
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-sm font-bold text-gray-700 mb-2">または: JSONファイルから読み込み</p>
+              <div className="flex items-center gap-4">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".json"
+                  onChange={handleFileLoad}
+                  className="hidden"
+                  id="json-file-input"
                 />
+                <label
+                  htmlFor="json-file-input"
+                  className="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-700 cursor-pointer transition-colors inline-flex items-center gap-2"
+                >
+                  📂 JSONファイルを選択
+                </label>
+                {jsonMeta && (
+                  <span className="text-sm text-gray-600">
+                    📅 {jsonMeta.date}（取得: {new Date(jsonMeta.scraped_at).toLocaleString("ja-JP")}）
+                  </span>
+                )}
+                {loading && (
+                  <span className="text-sm text-gray-500 animate-pulse">読み込み中...</span>
+                )}
               </div>
             </div>
-          )}
-          {!scraping && scrapeProgress.message.startsWith("✅") && (
-            <div className="mt-3 text-sm text-green-600 font-bold">{scrapeProgress.message}</div>
-          )}
-        </div>
-
-        {/* JSONファイルから読み込み（代替手段） */}
-        <div className="bg-gray-50 rounded-lg p-4">
-          <p className="text-sm font-bold text-gray-700 mb-2">または: JSONファイルから読み込み</p>
-          <div className="flex items-center gap-4">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json"
-              onChange={handleFileLoad}
-              className="hidden"
-              id="json-file-input"
-            />
-            <label
-              htmlFor="json-file-input"
-              className="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-700 cursor-pointer transition-colors inline-flex items-center gap-2"
-            >
-              📂 JSONファイルを選択
-            </label>
-            {jsonMeta && (
-              <span className="text-sm text-gray-600">
-                📅 {jsonMeta.date}（取得: {new Date(jsonMeta.scraped_at).toLocaleString("ja-JP")}）
-              </span>
-            )}
-            {loading && (
-              <span className="text-sm text-gray-500 animate-pulse">読み込み中...</span>
-            )}
           </div>
-        </div>
+        )}
       </div>
 
-      {/* ── エラー表示 ── */}
+      {/* ===== セクション2: オッズ一括取得 ===== */}
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <button
+          onClick={() => setOpenSection(openSection === "backfill" ? "scrape" : "backfill")}
+          className="w-full px-5 py-4 flex items-center justify-between bg-gradient-to-r from-blue-50 to-white hover:from-blue-100 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">💰</span>
+            <div className="text-left">
+              <h3 className="font-bold text-gray-800">オッズ一括取得</h3>
+              <p className="text-xs text-gray-500">過去レースの人気・オッズを補完</p>
+            </div>
+          </div>
+          <span className={`text-gray-400 transition-transform ${openSection === "backfill" ? "rotate-180" : ""}`}>
+            ▼
+          </span>
+        </button>
+
+        {openSection === "backfill" && (
+          <div className="p-5 border-t border-gray-100 space-y-4">
+            <div className="bg-blue-50 rounded-lg p-4">
+              <p className="text-sm text-gray-600 mb-4">
+                結果確定済みのレースで、人気・オッズが未入力のものを検索し、netkeibaから取得します。
+              </p>
+
+              <div className="flex flex-wrap gap-3">
+                <button
+                  onClick={handleCheckBackfill}
+                  disabled={backfillChecking || backfillLoading}
+                  className="bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                >
+                  {backfillChecking ? "⏳ 確認中..." : "🔍 対象を確認"}
+                </button>
+
+                {backfillInfo && backfillInfo.total_races > 0 && (
+                  <>
+                    <button
+                      onClick={() => handleBackfillOdds(10)}
+                      disabled={backfillLoading}
+                      className="bg-green-600 text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-green-700 disabled:opacity-50 transition-colors"
+                    >
+                      {backfillLoading ? "⏳ 取得中..." : "🚀 10レース取得"}
+                    </button>
+                    <button
+                      onClick={() => handleBackfillOdds(30)}
+                      disabled={backfillLoading}
+                      className="bg-orange-600 text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-orange-700 disabled:opacity-50 transition-colors"
+                    >
+                      {backfillLoading ? "⏳ 取得中..." : "🔥 30レース取得"}
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {backfillError && (
+                <div className="mt-3 text-sm text-red-600 bg-red-50 rounded-lg p-3">
+                  ⚠️ {backfillError}
+                </div>
+              )}
+            </div>
+
+            {/* 対象レース一覧 */}
+            {backfillInfo && (
+              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+                  <h4 className="text-sm font-bold text-gray-800">
+                    📊 オッズ未入力: {backfillInfo.total_races}レース / {backfillInfo.total_missing_entries}頭
+                  </h4>
+                </div>
+                {backfillInfo.total_races === 0 ? (
+                  <div className="p-6 text-center text-gray-500">
+                    <span className="text-3xl">✅</span>
+                    <p className="mt-2 font-bold">すべてのレースにオッズが入力済みです</p>
+                  </div>
+                ) : (
+                  <div className="max-h-60 overflow-y-auto divide-y divide-gray-100">
+                    {backfillInfo.races.slice(0, 20).map((race: any) => (
+                      <div key={race.id} className="px-4 py-2 flex items-center justify-between text-sm">
+                        <div>
+                          <span className="text-gray-500">{race.date}</span>
+                          <span className="mx-2 text-gray-300">|</span>
+                          <span className="font-bold text-gray-800">{race.name}</span>
+                          <span className="text-xs text-gray-400 ml-2">{race.course}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-orange-600 font-bold">
+                            {race.missing}/{race.total}頭 未入力
+                          </span>
+                          {!race.has_external_id && (
+                            <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded">外部IDなし</span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    {backfillInfo.races.length > 20 && (
+                      <div className="px-4 py-2 text-center text-xs text-gray-400">
+                        ... 他 {backfillInfo.races.length - 20} レース
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 取得結果 */}
+            {backfillResults && (
+              <div className="bg-green-50 rounded-lg border border-green-200 p-4">
+                <h4 className="font-bold text-green-800 mb-3">✅ 取得完了</h4>
+                <div className="space-y-1 max-h-40 overflow-y-auto">
+                  {backfillResults.map((r, i) => (
+                    <div key={i} className="flex items-center gap-2 text-sm">
+                      <span>{r.updated > 0 ? "✅" : r.error ? "❌" : "⏭️"}</span>
+                      <span className="text-gray-600">{r.date}</span>
+                      <span className="font-bold text-gray-800">{r.name}</span>
+                      {r.updated > 0 && (
+                        <span className="text-green-600">{r.updated}頭更新</span>
+                      )}
+                      {r.error && (
+                        <span className="text-red-500 text-xs">{r.error}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* ===== エラー表示 ===== */}
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">
           ⚠️ {error}
         </div>
       )}
 
-      {/* ── プレビュー ── */}
+      {/* ===== プレビュー ===== */}
       {races.length > 0 && (
         <>
           {/* 統計バー */}
@@ -525,7 +715,7 @@ export default function AdminScrapeForm() {
         </>
       )}
 
-      {/* ── 登録結果 ── */}
+      {/* ===== 登録結果 ===== */}
       {result && (
         <div className="bg-white rounded-xl border border-green-200 p-5 space-y-3">
           <h3 className="font-bold text-green-700 text-lg">✅ 登録完了！</h3>

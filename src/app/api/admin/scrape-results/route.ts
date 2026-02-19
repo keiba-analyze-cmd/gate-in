@@ -34,36 +34,91 @@ async function scrapeResults(externalRaceId: string) {
   const $ = load(html);
 
   const results: {
-    post_number: number; horse_name: string; finish_position: number;
-    finish_time: string | null; jockey: string;
+    post_number: number;
+    horse_name: string;
+    finish_position: number;
+    finish_time: string | null;
+    jockey: string;
+    odds: number | null;
+    popularity: number | null;
   }[] = [];
 
+  // 結果テーブルを解析
   $("table.RaceTable01 tbody tr, table.Shutuba_Table tbody tr, #All_Result_Table tbody tr").each((_, row) => {
     const $r = $(row);
     const tds = $r.find("td");
     if (tds.length < 4) return;
 
+    // 着順
     const posText = tds.eq(0).text().trim();
     const pos = parseInt(posText);
     if (!pos || isNaN(pos)) return;
 
+    // 馬番
     const postNum = parseInt(tds.eq(2).text().trim());
     if (!postNum || isNaN(postNum)) return;
 
+    // 馬名
     const horseName = $r.find("span.Horse_Name a, a[href*='/horse/']").first().text().trim()
       || tds.eq(3).text().trim();
     if (!horseName) return;
 
+    // タイム
     const timeText = tds.eq(7).text().trim() || null;
+
+    // 騎手
     const jockey = $r.find("a[href*='/jockey/']").first().text().trim() || "";
 
+    // オッズと人気を取得
+    // netkeiba結果ページの構造:
+    // 着順(0), 枠(1), 馬番(2), 馬名(3), 性齢(4), 斤量(5), 騎手(6), タイム(7), 着差(8), 
+    // 通過(9), 上り(10), 単勝オッズ(11), 人気(12), 馬体重(13), ...
+    let odds: number | null = null;
+    let popularity: number | null = null;
+
+    // すべてのtdのテキストを取得
+    const cellTexts: string[] = [];
+    tds.each((_, td) => {
+      cellTexts.push($(td).text().trim());
+    });
+
+    // オッズを探す（X.X 形式の数値、通常11列目あたり）
+    for (let i = 10; i < Math.min(cellTexts.length, 14); i++) {
+      const text = cellTexts[i];
+      // オッズは 1.0 〜 999.9 の範囲で X.X 形式
+      if (/^\d+\.\d$/.test(text)) {
+        const val = parseFloat(text);
+        if (val >= 1.0 && val < 1000) {
+          odds = val;
+          break;
+        }
+      }
+    }
+
+    // 人気を探す（1〜18の整数、オッズの次の列）
+    for (let i = 11; i < Math.min(cellTexts.length, 15); i++) {
+      const text = cellTexts[i];
+      if (/^\d{1,2}$/.test(text)) {
+        const val = parseInt(text);
+        if (val >= 1 && val <= 18) {
+          popularity = val;
+          break;
+        }
+      }
+    }
+
     results.push({
-      finish_position: pos, post_number: postNum,
+      finish_position: pos,
+      post_number: postNum,
       horse_name: horseName.replace(/\s+/g, ""),
-      finish_time: timeText, jockey,
+      finish_time: timeText,
+      jockey,
+      odds,
+      popularity,
     });
   });
 
+  // 払戻金を解析
   const payouts: { bet_type: string; combination: string; payout_amount: number; popularity: number | null }[] = [];
 
   $(".Payout_Detail_Table tr, .Result_Pay_Back table tr, table.Pay_Table_01 tr").each((_, row) => {
@@ -135,13 +190,39 @@ export async function GET(request: Request) {
 
     const mappedResults = results.map((r) => {
       const entry = entryMap.get(r.post_number);
-      return { ...r, race_entry_id: entry?.id ?? null, db_horse_name: entry?.horse_name ?? null, matched: !!entry };
+      return {
+        ...r,
+        race_entry_id: entry?.id ?? null,
+        db_horse_name: entry?.horse_name ?? null,
+        matched: !!entry,
+      };
     });
 
+    // オッズをrace_entriesに更新
+    let oddsUpdated = 0;
+    for (const r of mappedResults) {
+      if (r.race_entry_id && (r.odds !== null || r.popularity !== null)) {
+        const updateData: { odds?: number; popularity?: number } = {};
+        if (r.odds !== null) updateData.odds = r.odds;
+        if (r.popularity !== null) updateData.popularity = r.popularity;
+
+        const { error } = await admin
+          .from("race_entries")
+          .update(updateData)
+          .eq("id", r.race_entry_id);
+
+        if (!error) oddsUpdated++;
+      }
+    }
+
     return NextResponse.json({
-      race_id: race.id, race_name: race.name,
-      results: mappedResults, payouts, source_url,
+      race_id: race.id,
+      race_name: race.name,
+      results: mappedResults,
+      payouts,
+      source_url,
       all_matched: mappedResults.every((r) => r.matched),
+      odds_updated: oddsUpdated,
     });
   } catch (err: any) {
     return NextResponse.json({ error: "スクレイプエラー: " + err.message }, { status: 500 });

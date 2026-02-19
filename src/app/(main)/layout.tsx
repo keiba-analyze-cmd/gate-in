@@ -6,8 +6,13 @@ import Footer from "@/components/layout/Footer";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import MainLayoutClient from "./MainLayoutClient";
 import ScrollToTop from "@/components/ScrollToTop";
+import PushNotificationPrompt from "@/components/push/PushNotificationPrompt";
+import { createClient } from "@/lib/supabase/server";
 
-export default function MainLayout({ children }: { children: React.ReactNode }) {
+export default async function MainLayout({ children }: { children: React.ReactNode }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
   return (
     <ThemeProvider>
       <MainLayoutClient>
@@ -17,6 +22,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         </main>
         <Footer />
         <BottomNavWrapper />
+        {user && <PushNotificationPrompt userId={user.id} />}
       </MainLayoutClient>
     </ThemeProvider>
   );
