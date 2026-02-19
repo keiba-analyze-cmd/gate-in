@@ -58,6 +58,9 @@ export default async function AdminPage({ searchParams }: Props) {
       <h1 className="text-2xl font-black text-gray-800 mb-6">🔧 管理画面</h1>
       <AdminTabs />
       <div className="bg-white rounded-b-xl border border-t-0 border-gray-200 p-6">
+        {/* 📊 ダッシュボードタブ */}
+        {currentTab === "dashboard" && <AdminDashboard />}
+
         {/* 📥 レース取得タブ */}
         {currentTab === "scrape" && <AdminScrapeForm />}
 
@@ -76,6 +79,7 @@ export default async function AdminPage({ searchParams }: Props) {
             </div>
           )
         )}
+
         {/* 📩 お問い合わせタブ */}
         {currentTab === "inquiries" && <AdminInquiries />}
 
