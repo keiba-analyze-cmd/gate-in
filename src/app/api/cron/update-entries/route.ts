@@ -66,7 +66,7 @@ async function scrapeEntryUpdates(externalRaceId: string) {
     const jockey = $r.find("td.Jockey a, a[href*='/jockey/']").first().text().trim() || null;
 
     // 斤量
-    const weightStr = $r.find("td.Txt_C").eq(0).text().trim() || $r.find("td").eq(5).text().trim();
+    const weightStr = $r.find("td").eq(4).text().trim();
     const weight = parseFloat(weightStr) || null;
 
     entries.push({

@@ -103,7 +103,7 @@ async function scrapeRace(raceId: string, fallbackDate: string) {
 
     const sexAge = $r.find("td.Barei, span.Barei").text().trim();
     const sex = sexAge ? sexAge.charAt(0) : "不";
-    const weightStr = $r.find("td.Txt_C").eq(0).text().trim() || $r.find("td").eq(5).text().trim();
+    const weightStr = $r.find("td").eq(4).text().trim();
     const weight = parseFloat(weightStr) || null;
     const jockey = $r.find("td.Jockey a, a[href*='/jockey/']").first().text().trim() || "未定";
     const oddsStr = $r.find("td.Popular span, span.Odds").first().text().trim();
