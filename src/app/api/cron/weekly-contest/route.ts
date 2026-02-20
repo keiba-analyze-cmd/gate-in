@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/admin";
+import { sendContestWinnerEmail } from "@/lib/email/contest-winner";
 
 /**
  * 週間予想大会自動作成 Cron API
@@ -92,7 +93,8 @@ export async function GET(request: Request) {
     await admin.from("contest_races").insert(contestRaces);
   }
 
-  // 前週TOP3に通知＋景品案内
+  // 前週TOP3に通知＋景品案内＋メール送信
+  const emailsSent: string[] = [];
   for (const pc of prevContests ?? []) {
     const { data: topEntries } = await admin
       .from("contest_entries")
@@ -107,13 +109,38 @@ export async function GET(request: Request) {
     if (topEntries) {
       const prizes = [5000, 3000, 2000];
       for (let i = 0; i < topEntries.length; i++) {
+        const userId = topEntries[i].user_id;
+        
+        // アプリ内通知
         await admin.from("notifications").insert({
-          user_id: topEntries[i].user_id,
+          user_id: userId,
           type: "contest_result",
           title: `週間大会 ${i + 1}位入賞！🏆`,
           body: `${pc.name}で${i + 1}位になりました！Amazonギフト券¥${prizes[i].toLocaleString()}をお送りします。`,
           is_read: false,
         });
+
+        // ユーザー情報を取得してメール送信
+        const { data: profile } = await admin
+          .from("profiles")
+          .select("display_name")
+          .eq("id", userId)
+          .single();
+
+        const { data: authUser } = await admin.auth.admin.getUserById(userId);
+
+        if (authUser?.user?.email && profile) {
+          const result = await sendContestWinnerEmail({
+            to: authUser.user.email,
+            displayName: profile.display_name,
+            rank: i + 1,
+            prizeAmount: prizes[i],
+            contestName: pc.name,
+          });
+          if (result.success) {
+            emailsSent.push(authUser.user.email);
+          }
+        }
       }
     }
   }
@@ -122,5 +149,6 @@ export async function GET(request: Request) {
     message: `${contestName} を作成しました`,
     contest_id: contest.id,
     linked_races: sundayRaces?.length ?? 0,
+    emails_sent: emailsSent.length,
   });
 }
