@@ -218,7 +218,7 @@ export default async function HomePage() {
               <span className="text-2xl">🏆</span>
               <div>
                 <div className="text-sm font-black">週間予想大会</div>
-                <div className="text-xs text-purple-200 font-medium">WIN5対象レースでポイントバトル！</div>
+                <div className="text-xs text-purple-200 font-medium">3レース以上予想で参加！WIN5対象レースでバトル</div>
               </div>
             </div>
             <div className="text-right">

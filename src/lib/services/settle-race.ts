@@ -552,7 +552,7 @@ export async function settleRace(
               hit_race_count: (wcEntry.hit_race_count ?? 0) + (anyHit ? 1 : 0),
               streak_bonus: (wcEntry.streak_bonus ?? 0) + newStreakPts,
               earliest_vote_at: wcEntry.earliest_vote_at ?? vote.created_at,
-              is_eligible: true,
+              is_eligible: (wcEntry.vote_count + 1) >= 3, // 3レース以上で参加資格
             }).eq("id", wcEntry.id);
           } else {
             await supabase.from("contest_entries").insert({
@@ -561,7 +561,7 @@ export async function settleRace(
               hit_race_count: anyHit ? 1 : 0,
               streak_bonus: newStreakPts,
               earliest_vote_at: vote.created_at,
-              is_eligible: true,
+              is_eligible: false, // 3レース以上で参加資格
             });
           }
 
