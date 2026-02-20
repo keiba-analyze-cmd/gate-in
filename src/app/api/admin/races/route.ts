@@ -97,6 +97,7 @@ export async function POST(request: Request) {
         console.error("馬作成エラー:", entry.horse_name, horseErr?.message);
         continue;
       }
+
       horseId = newHorse.id;
     }
 
@@ -110,7 +111,6 @@ export async function POST(request: Request) {
       odds: entry.odds ? parseFloat(entry.odds) : null,
       popularity: entry.popularity ? parseInt(entry.popularity) : null,
     });
-}
   }
 
   if (entryInserts.length > 0) {
@@ -130,6 +130,7 @@ export async function POST(request: Request) {
     entries_count: entryInserts.length,
   });
 }
+
 export async function GET(request: Request) {
   const user = await checkAdmin();
   if (!user) {
