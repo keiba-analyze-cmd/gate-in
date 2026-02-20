@@ -110,6 +110,7 @@ export async function POST(request: Request) {
       odds: entry.odds ? parseFloat(entry.odds) : null,
       popularity: entry.popularity ? parseInt(entry.popularity) : null,
     });
+}
   }
 
   if (entryInserts.length > 0) {
@@ -128,6 +129,7 @@ export async function POST(request: Request) {
     race_name: race.name,
     entries_count: entryInserts.length,
   });
+}
 export async function GET(request: Request) {
   const user = await checkAdmin();
   if (!user) {
