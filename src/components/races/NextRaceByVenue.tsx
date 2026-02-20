@@ -48,7 +48,7 @@ export default function NextRaceByVenue({ venues }: Props) {
         const timeStr = postTime
           ? postTime.toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Tokyo" })
           : "";
-        const deadline = postTime ? new Date(postTime.getTime() - 2 * 60 * 1000) : null;
+        const deadline = postTime ? new Date(postTime.getTime() + 30 * 1000) : null;
         const isPastDeadline = deadline ? now > deadline : false;
         const diffMs = deadline ? deadline.getTime() - now.getTime() : 0;
         const isUrgent = !isPastDeadline && diffMs > 0 && diffMs < 15 * 60 * 1000;

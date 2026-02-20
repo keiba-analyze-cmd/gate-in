@@ -7,7 +7,7 @@ export default function RaceCardCountdown({ postTime }: { postTime: string }) {
 
   useEffect(() => {
     const update = () => {
-      const deadline = new Date(postTime).getTime() - 2 * 60 * 1000;
+      const deadline = new Date(postTime).getTime() + 30 * 1000;
       const now = Date.now();
       const diff = deadline - now;
       if (diff <= 0) {

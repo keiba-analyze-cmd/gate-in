@@ -71,7 +71,7 @@ export default async function RaceListPage({ searchParams }: Props) {
   const now = new Date();
   const isDeadlinePassed = (race: any): boolean => {
     if (!race.post_time) return false;
-    const deadline = new Date(race.post_time).getTime() - 2 * 60 * 1000;
+    const deadline = new Date(race.post_time).getTime() + 30 * 1000;
     return now.getTime() > deadline;
   };
 

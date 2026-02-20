@@ -50,12 +50,12 @@ export default async function HomePage() {
   const venueMap = new Map<string, any>();
   for (const race of openRaces ?? []) {
     if (!race.post_time || !race.course_name) continue;
-    const deadline = new Date(race.post_time).getTime() - 2 * 60 * 1000;
+    const deadline = new Date(race.post_time).getTime() + 30 * 1000;
     const existing = venueMap.get(race.course_name);
     if (!existing) {
       venueMap.set(race.course_name, race);
     } else {
-      const existingDeadline = new Date(existing.post_time).getTime() - 2 * 60 * 1000;
+      const existingDeadline = new Date(existing.post_time).getTime() + 30 * 1000;
       const existingOpen = now.getTime() < existingDeadline;
       const thisOpen = now.getTime() < deadline;
       if (thisOpen && !existingOpen) {

@@ -131,7 +131,7 @@ export async function DELETE(
   }
 
   if (race.post_time) {
-    const deadline = new Date(race.post_time).getTime() - 2 * 60 * 1000;
+    const deadline = new Date(race.post_time).getTime() + 30 * 1000;
     if (Date.now() > deadline) {
       return Response.json({ error: "締切を過ぎています（発走2分前）" }, { status: 400 });
     }
@@ -196,7 +196,7 @@ export async function PUT(
   }
 
   if (race.post_time) {
-    const deadline = new Date(race.post_time).getTime() - 2 * 60 * 1000;
+    const deadline = new Date(race.post_time).getTime() + 30 * 1000;
     if (Date.now() > deadline) {
       return Response.json({ error: "締切を過ぎています（発走2分前）" }, { status: 400 });
     }

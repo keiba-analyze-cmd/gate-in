@@ -51,7 +51,7 @@ export default function VoteEditForm({ raceId, entries, existingPicks, postTime 
 
   // 締切チェック（発走2分前）
   const isBeforeDeadline = postTime
-    ? Date.now() < new Date(postTime).getTime() - 2 * 60 * 1000
+    ? Date.now() < new Date(postTime).getTime() + 30 * 1000
     : false;
 
   // 他タブで選択済みかチェック
