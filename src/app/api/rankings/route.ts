@@ -55,6 +55,7 @@ export async function GET(request: Request) {
 
   const rankings = (data ?? []).map((profile: any, index: number) => ({
     rank: index + 1,
+    user_id: profile.id,
     ...profile,
     hit_rate: profile.total_votes > 0
       ? Math.round((profile.win_hits / profile.total_votes) * 1000) / 10
