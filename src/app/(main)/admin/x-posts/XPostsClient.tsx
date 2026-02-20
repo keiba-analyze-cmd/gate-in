@@ -296,7 +296,7 @@ export default function XPostsClient({ posts }: Props) {
                       </button>
                     )}
                     {post.tweet_id && (
-                      
+                      <a
                         href={`https://twitter.com/i/status/${post.tweet_id}`}
                         target="_blank"
                         rel="noopener noreferrer"
