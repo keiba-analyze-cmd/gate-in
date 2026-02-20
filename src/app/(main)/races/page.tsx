@@ -37,17 +37,50 @@ export default async function RaceListPage({ searchParams }: Props) {
     .order("race_date", { ascending: false }).limit(100);
   const uniqueDates = [...new Set(dateDays?.map((d) => d.race_date) ?? [])];
 
+  // 今週のレースが投票可能かチェック
+  const now = new Date();
+  const jstNow = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  const jstDay = jstNow.getUTCDay();
+  
+  // 今週の土日を計算
+  const daysSinceThisSat = jstDay === 0 ? 1 : jstDay === 6 ? 0 : (jstDay + 1);
+  const thisSat = new Date(jstNow);
+  thisSat.setUTCDate(thisSat.getUTCDate() - daysSinceThisSat + (jstDay < 6 && jstDay !== 0 ? 6 : 0));
+  const thisSatStr = thisSat.toISOString().split("T")[0];
+  const thisSunStr = new Date(thisSat.getTime() + 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+  
+  // 今週のレースで投票可能なものがあるかチェック
+  const { data: thisWeekOpenRaces } = await supabase
+    .from("races")
+    .select("id")
+    .in("race_date", [thisSatStr, thisSunStr])
+    .eq("status", "voting_open")
+    .limit(1);
+  
+  const hasThisWeekOpenRaces = (thisWeekOpenRaces?.length ?? 0) > 0;
+
   let selectedDate: string = params.date ?? "";
   if (!selectedDate) {
-    const defaultDate = getDefaultRaceDate();
-    const defaultDateStr = formatDateString(defaultDate);
-    if (uniqueDates.includes(defaultDateStr)) {
-      selectedDate = defaultDateStr;
+    if (hasThisWeekOpenRaces) {
+      // 今週に投票可能なレースがある → 今週の土曜or日曜
+      if (uniqueDates.includes(thisSatStr)) {
+        selectedDate = thisSatStr;
+      } else if (uniqueDates.includes(thisSunStr)) {
+        selectedDate = thisSunStr;
+      } else {
+        selectedDate = uniqueDates[0] ?? "";
+      }
     } else {
-      selectedDate = uniqueDates[0] ?? "";
+      // 今週に投票可能なレースがない → 従来のロジック（先週日曜など）
+      const defaultDate = getDefaultRaceDate();
+      const defaultDateStr = formatDateString(defaultDate);
+      if (uniqueDates.includes(defaultDateStr)) {
+        selectedDate = defaultDateStr;
+      } else {
+        selectedDate = uniqueDates[0] ?? "";
+      }
     }
   }
-
   let query = supabase.from("races").select("*")
     .eq("race_date", selectedDate)
     .order("post_time", { ascending: true });

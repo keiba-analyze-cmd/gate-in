@@ -1,27 +1,42 @@
+// JST固定で日付を扱うためのユーティリティ
+
 export function addDays(date: Date, days: number): Date {
   const result = new Date(date);
   result.setDate(result.getDate() + days);
   return result;
 }
 
+// JSTの日付文字列からDateを作成（タイムゾーン問題を回避）
+export function parseJSTDate(dateStr: string): Date {
+  return new Date(dateStr + "T00:00:00+09:00");
+}
+
 export function getSaturdayOfWeek(date: Date): Date {
-  const result = new Date(date);
-  const day = result.getDay();
+  // JSTでの曜日を計算
+  const jstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  const day = jstDate.getUTCDay();
   const diff = day === 0 ? -1 : 6 - day;
+  
+  const result = new Date(date);
   result.setDate(result.getDate() + diff);
-  result.setHours(0, 0, 0, 0);
   return result;
 }
 
 export function getDefaultRaceDate(now: Date = new Date()): Date {
-  const day = now.getDay();
-  const hour = now.getHours();
+  // JSTでの現在時刻
+  const jstNow = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  const day = jstNow.getUTCDay();
+  const hour = jstNow.getUTCHours();
+  
   const thisSat = getSaturdayOfWeek(now);
   const thisSun = addDays(thisSat, 1);
   const lastSun = addDays(thisSun, -7);
   
+  // 金曜18時以降または土曜 → 今週土曜
   if ((day === 5 && hour >= 18) || day === 6) return thisSat;
+  // 日曜 → 今週日曜
   if (day === 0) return thisSun;
+  // それ以外 → 先週日曜
   return lastSun;
 }
 
@@ -31,17 +46,20 @@ export function getWeekRaceDates(baseDate: Date): Date[] {
 }
 
 export function formatDateString(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+  // JSTでの日付文字列を生成
+  const jstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  const year = jstDate.getUTCFullYear();
+  const month = String(jstDate.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(jstDate.getUTCDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
 
 export function formatDateWithDay(date: Date): string {
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
+  const jstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  const month = jstDate.getUTCMonth() + 1;
+  const day = jstDate.getUTCDate();
   const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
-  return `${month}/${day}(${dayNames[date.getDay()]})`;
+  return `${month}/${day}(${dayNames[jstDate.getUTCDay()]})`;
 }
 
 export function formatWeekRange(baseDate: Date): string {
