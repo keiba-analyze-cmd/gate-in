@@ -159,7 +159,7 @@ export default function ContestClient() {
           <div className="rounded-xl border bg-white p-6 text-center text-gray-400">
             <div className="text-3xl mb-2">📋</div>
             <p>まだエントリーがありません</p>
-            <p className="text-sm mt-1"><span class="font-bold text-green-600">3レース以上</span>予想すると自動でランキングに参加！</p>
+            <p className="text-sm mt-1"><span className="font-bold text-green-600">3レース以上</span>予想すると自動でランキングに参加！</p>
           </div>
         ) : (
           <div className="space-y-2">
