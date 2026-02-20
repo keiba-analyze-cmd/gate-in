@@ -128,21 +128,29 @@ export async function POST(request: Request) {
     race_name: race.name,
     entries_count: entryInserts.length,
   });
-}
-
-export async function GET() {
+export async function GET(request: Request) {
   const user = await checkAdmin();
   if (!user) {
     return NextResponse.json({ error: "管理者権限が必要です" }, { status: 403 });
   }
 
+  const { searchParams } = new URL(request.url);
+  const date = searchParams.get("date");
+
   const admin = createAdminClient();
-  const { data, error } = await admin
+  let query = admin
     .from("races")
-    .select("id, name, grade, race_date, course_name, race_number, status, head_count")
+    .select("id, name, grade, race_date, venue, course_name, race_number, post_time, status, head_count, is_win5")
     .order("race_date", { ascending: false })
-    .order("race_number", { ascending: true })
-    .limit(50);
+    .order("post_time", { ascending: true });
+
+  if (date) {
+    query = query.eq("race_date", date);
+  } else {
+    query = query.limit(50);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

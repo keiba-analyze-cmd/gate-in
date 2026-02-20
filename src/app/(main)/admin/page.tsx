@@ -5,6 +5,7 @@ import AdminRaceCreateForm from "@/components/admin/AdminRaceCreateForm";
 import AdminScrapeForm from "@/components/admin/AdminScrapeForm";
 import AdminInquiries from "@/components/admin/AdminInquiries";
 import AdminComments from "@/components/admin/AdminComments";
+import AdminContestManager from "@/components/admin/AdminContestManager";
 import AdminRaceList from "@/components/admin/AdminRaceList";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 
@@ -85,6 +86,8 @@ export default async function AdminPage({ searchParams }: Props) {
 
         {/* 💬 コメント管理タブ */}
         {currentTab === "comments" && <AdminComments />}
+
+        {currentTab === "contest" && <AdminContestManager />}
 
         {/* 📋 レース一覧タブ */}
         {currentTab === "list" && (

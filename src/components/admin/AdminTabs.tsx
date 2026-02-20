@@ -27,6 +27,7 @@ const TAB_GROUPS: TabGroup[] = [
       { key: "dashboard", label: "📊 KPI", description: "ダッシュボード" },
       { key: "inquiries", label: "📩 問合せ", description: "問い合わせ" },
       { key: "comments", label: "💬 コメント", description: "通報対応" },
+      { key: "contest", label: "🏆 大会", description: "週間大会" },
     ],
   },
 ];
