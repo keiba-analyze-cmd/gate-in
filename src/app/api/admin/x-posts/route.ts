@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     const { data, error } = await admin
       .from("x_scheduled_posts")
       .insert({
-        scheduled_at: new Date(scheduled_at).toISOString(),
+        scheduled_at: new Date(scheduled_at + "+09:00").toISOString(),
         content,
         post_type: post_type || "general",
         hashtags: hashtags || null,
