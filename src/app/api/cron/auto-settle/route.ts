@@ -110,11 +110,11 @@ export async function GET(request: Request) {
   const now = new Date();
   const jstNow = new Date(now.getTime() + 9 * 60 * 60 * 1000); // UTC→JST
 
-  // 発走10分後〜40分後のレースを対象（最大3回リトライ = 30分間）
-  const tenMinAgo = new Date(now.getTime() - 10 * 60 * 1000).toISOString();
-  const fortyMinAgo = new Date(now.getTime() - 40 * 60 * 1000).toISOString();
+  // 発走15分後〜45分後のレースを対象（最大3回リトライ = 30分間）
+  const tenMinAgo = new Date(now.getTime() - 15 * 60 * 1000).toISOString();
+  const fortyMinAgo = new Date(now.getTime() - 45 * 60 * 1000).toISOString();
 
-  // 対象: post_timeが10〜40分前 & status=voting_open & external_id有り
+  // 対象: post_timeが15〜45分前 & status=voting_open & external_id有り
   const { data: races } = await admin
     .from("races")
     .select("id, name, external_id, post_time, race_entries(id, post_number, horses(name))")

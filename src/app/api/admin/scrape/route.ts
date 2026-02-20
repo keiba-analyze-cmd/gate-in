@@ -23,8 +23,77 @@ const VENUE_MAP: Record<string, string> = {
   "09": "阪神", "10": "小倉",
 };
 
+// ── 主要重賞のレース名→グレードマッピング ──
+const GRADE_MAPPING: Record<string, string> = {
+  // G1
+  "フェブラリーS": "G1", "フェブラリーステークス": "G1",
+  "高松宮記念": "G1", "大阪杯": "G1", "桜花賞": "G1", "皐月賞": "G1",
+  "天皇賞（春）": "G1", "天皇賞・春": "G1", "天皇賞春": "G1", "天皇賞(春)": "G1",
+  "NHKマイルC": "G1", "NHKマイルカップ": "G1",
+  "ヴィクトリアマイル": "G1", "オークス": "G1", "優駿牝馬": "G1",
+  "ダービー": "G1", "日本ダービー": "G1", "東京優駿": "G1",
+  "安田記念": "G1", "宝塚記念": "G1",
+  "スプリンターズS": "G1", "スプリンターズステークス": "G1",
+  "秋華賞": "G1", "菊花賞": "G1",
+  "天皇賞（秋）": "G1", "天皇賞・秋": "G1", "天皇賞秋": "G1", "天皇賞(秋)": "G1",
+  "エリザベス女王杯": "G1", "マイルCS": "G1", "マイルチャンピオンシップ": "G1",
+  "ジャパンC": "G1", "ジャパンカップ": "G1",
+  "チャンピオンズC": "G1", "チャンピオンズカップ": "G1",
+  "阪神JF": "G1", "阪神ジュベナイルフィリーズ": "G1",
+  "朝日杯FS": "G1", "朝日杯フューチュリティステークス": "G1",
+  "有馬記念": "G1", "ホープフルS": "G1", "ホープフルステークス": "G1",
+  // G2
+  "阪急杯": "G3", "中山記念": "G2", "弥生賞": "G2",
+  "チューリップ賞": "G2", "フィリーズレビュー": "G2",
+  "金鯱賞": "G2", "スプリングS": "G2", "スプリングステークス": "G2",
+  "阪神大賞典": "G2", "日経賞": "G2", "毎日杯": "G2",
+  "産経大阪杯": "G2", "青葉賞": "G2", "フローラS": "G2",
+  "京王杯SC": "G2", "京王杯スプリングカップ": "G2",
+  "目黒記念": "G2", "函館記念": "G2", "七夕賞": "G2", "札幌記念": "G2",
+  "新潟記念": "G2", "セントウルS": "G2", "ローズS": "G2",
+  "神戸新聞杯": "G2", "オールカマー": "G2", "セントライト記念": "G2",
+  "毎日王冠": "G2", "府中牝馬S": "G2", "京都大賞典": "G2",
+  "富士S": "G2", "スワンS": "G2", "アルゼンチン共和国杯": "G2",
+  "京都記念": "G2", "東海S": "G2", "日経新春杯": "G2",
+  "アメリカJCC": "G2", "AJCC": "G2", "きさらぎ賞": "G2",
+  "京都牝馬S": "G2", "阪神牝馬S": "G2",
+  "ステイヤーズS": "G2", "阪神C": "G2", "阪神カップ": "G2",
+  "中日新聞杯": "G2",
+  // G3
+  "小倉大賞典": "G3", "ダイヤモンドS": "G3", "ダイヤモンドステークス": "G3",
+  "京成杯": "G3", "シンザン記念": "G3", "フェアリーS": "G3",
+  "愛知杯": "G3", "中山金杯": "G3", "京都金杯": "G3",
+  "根岸S": "G3", "シルクロードS": "G3", "東京新聞杯": "G3",
+  "クイーンC": "G3", "共同通信杯": "G3",
+  "アーリントンC": "G3", "オーシャンS": "G3",
+  "ファルコンS": "G3", "フラワーC": "G3", "マーチS": "G3",
+  "ダービー卿CT": "G3", "ニュージーランドT": "G3", "アンタレスS": "G3",
+  "福島牝馬S": "G3", "新潟大賞典": "G3", "京都新聞杯": "G3",
+  "平安S": "G3", "葵S": "G3", "鳴尾記念": "G3",
+  "エプソムC": "G3", "マーメイドS": "G3", "ユニコーンS": "G3",
+  "CBC賞": "G3", "ラジオNIKKEI賞": "G3", "プロキオンS": "G3",
+  "アイビスSD": "G3", "クイーンS": "G3", "関屋記念": "G3",
+  "小倉記念": "G3", "エルムS": "G3", "北九州記念": "G3",
+  "キーンランドC": "G3", "新潟2歳S": "G3", "札幌2歳S": "G3",
+  "シリウスS": "G3", "京成杯AH": "G3",
+  "サウジアラビアRC": "G3", "毎日放送賞": "G3",
+  "アルテミスS": "G3", "武蔵野S": "G3", "ファンタジーS": "G3",
+  "デイリー杯2歳S": "G3", "みやこS": "G3", "福島記念": "G3",
+  "東京スポーツ杯2歳S": "G3", "京阪杯": "G3", "カペラS": "G3",
+  "ターコイズS": "G3", "中山大障害": "G1",
+  "小倉牝馬S": "G3", "中京記念": "G3",
+};
+
 // ── グレード判定 ──
-function detectGrade(text: string): string | null {
+function detectGrade(text: string, raceName?: string): string | null {
+  // まずレース名でマッピングを確認
+  if (raceName) {
+    const normalizedName = raceName.replace(/\s/g, "");
+    for (const [key, grade] of Object.entries(GRADE_MAPPING)) {
+      if (normalizedName.includes(key)) return grade;
+    }
+  }
+  // テキストからパターンマッチ
   if (/G[Ⅰ1I]|GI[^IVX]|\(G1\)|（G1）/.test(text)) return "G1";
   if (/G[Ⅱ2]|GII|\(G2\)|（G2）/.test(text)) return "G2";
   if (/G[Ⅲ3]|GIII|\(G3\)|（G3）/.test(text)) return "G3";
@@ -32,8 +101,6 @@ function detectGrade(text: string): string | null {
   if (/オープン|OP/.test(text)) return "OP";
   return null;
 }
-
-// ── HTMLフェッチ（EUC-JP対応）──
 async function fetchPage(url: string): Promise<string> {
   const res = await fetch(url, {
     headers: {
@@ -85,7 +152,7 @@ async function scrapeRace(raceId: string, fallbackDate: string) {
     : fallbackDate;
 
   const gradeText = $(".Icon_GradeType").text().trim();
-  const grade = detectGrade(raceNameRaw + " " + gradeText + " " + fullInfo);
+  const grade = detectGrade(raceNameRaw + " " + gradeText + " " + fullInfo, raceName);
 
   const entries: any[] = [];
   $("table.Shutuba_Table tr.HorseList, table.RaceTable01 tr.HorseList").each((_, row) => {
