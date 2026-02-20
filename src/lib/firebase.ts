@@ -1,5 +1,5 @@
 // src/lib/firebase.ts
-import { initializeApp, getApps } from "firebase/app";
+import { initializeApp, getApps, FirebaseApp } from "firebase/app";
 import { getMessaging, getToken, onMessage, Messaging } from "firebase/messaging";
 
 const firebaseConfig = {
@@ -11,8 +11,14 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Firebase App 初期化（重複防止）
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+// Firebase設定が存在するかチェック
+const isFirebaseConfigured = Boolean(firebaseConfig.projectId && firebaseConfig.apiKey);
+
+// Firebase App 初期化（設定がある場合のみ）
+let app: FirebaseApp | null = null;
+if (isFirebaseConfigured) {
+  app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+}
 
 // Messaging インスタンス取得（ブラウザのみ）
 let messaging: Messaging | null = null;
@@ -20,14 +26,25 @@ let messaging: Messaging | null = null;
 export function getMessagingInstance(): Messaging | null {
   if (typeof window === "undefined") return null;
   if (!("Notification" in window)) return null;
+  if (!app) return null;
   if (!messaging) {
-    messaging = getMessaging(app);
+    try {
+      messaging = getMessaging(app);
+    } catch (error) {
+      console.error("Firebase Messaging初期化エラー:", error);
+      return null;
+    }
   }
   return messaging;
 }
 
 // プッシュ通知トークン取得
 export async function requestNotificationPermission(): Promise<string | null> {
+  if (!isFirebaseConfigured) {
+    console.log("Firebase未設定のため通知機能は利用できません");
+    return null;
+  }
+
   try {
     const permission = await Notification.requestPermission();
     if (permission !== "granted") {
@@ -65,3 +82,6 @@ export function onForegroundMessage(callback: (payload: any) => void) {
     callback(payload);
   });
 }
+
+// Firebase設定状況を外部から確認できるようにエクスポート
+export { isFirebaseConfigured };
