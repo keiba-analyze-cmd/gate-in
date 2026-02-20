@@ -101,7 +101,7 @@ export default async function RaceListPage({ searchParams }: Props) {
     .from("races").select("course_name").eq("race_date", selectedDate);
   const uniqueCourses = [...new Set(allRacesForDay?.map((r) => r.course_name) ?? [])];
 
-  const now = new Date();
+  // now は上で定義済み
   const isDeadlinePassed = (race: any): boolean => {
     if (!race.post_time) return false;
     const deadline = new Date(race.post_time).getTime() + 30 * 1000;
