@@ -37,7 +37,12 @@ export default async function HomePage() {
   
   // G1レースを分離（特別表示用）
   const g1Races = featuredRaces.filter((r) => r.grade === "G1");
-  const otherGradeRaces = featuredRaces.filter((r) => r.grade !== "G1");
+  const otherGradeRaces = featuredRaces
+    .filter((r) => r.grade === "G2" || r.grade === "G3")
+    .sort((a, b) => {
+      const order: Record<string, number> = { G2: 1, G3: 2 };
+      return (order[a.grade] || 99) - (order[b.grade] || 99);
+    });
 
   // 競馬場ごとに最も発走が近いレースを1つずつ抽出
   const now = new Date();
