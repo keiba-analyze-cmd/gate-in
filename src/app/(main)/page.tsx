@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/admin";
 import Link from "next/link";
 import { getRank } from "@/lib/constants/ranks";
 import RaceCard from "@/components/races/RaceCard";
@@ -72,8 +73,9 @@ export default async function HomePage() {
 
   // G1レースの投票数を取得
   const g1VoteCounts: Record<string, number> = {};
+  const admin = createAdminClient();
   for (const race of g1Races) {
-    const { count } = await supabase
+    const { count } = await admin
       .from("votes")
       .select("*", { count: "exact", head: true })
       .eq("race_id", race.id);
