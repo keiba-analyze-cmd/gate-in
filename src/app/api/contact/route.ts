@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { rateLimit, rateLimitResponse } from "@/lib/rate-limit";
 import { NextResponse } from "next/server";
+import { sendInquiryNotification } from "@/lib/slack";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -39,6 +40,13 @@ export async function POST(request: Request) {
   if (error) {
     return NextResponse.json({ error: "送信に失敗しました" }, { status: 500 });
   }
+
+  // Slack通知
+  await sendInquiryNotification({
+    email: body.email.trim(),
+    category: body.category ?? "general",
+    content: `【${body.subject.trim()}】\n${body.body.trim()}`,
+  });
 
   return NextResponse.json({ success: true });
 }

@@ -2,6 +2,7 @@ import { rateLimit, rateLimitResponse } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/admin";
 import { NextResponse } from "next/server";
+import { sendCommentReportNotification } from "@/lib/slack";
 
 type Props = {
   params: Promise<{ commentId: string }>;
@@ -34,7 +35,7 @@ export async function POST(request: Request, { params }: Props) {
   const adminClient = createAdminClient();
   const { data: comment } = await adminClient
     .from("comments")
-    .select("user_id")
+    .select("user_id, body, profiles(display_name)")
     .eq("id", commentId)
     .single();
 
@@ -69,6 +70,20 @@ export async function POST(request: Request, { params }: Props) {
   if (insertError) {
     return NextResponse.json({ error: insertError.message }, { status: 500 });
   }
+
+  // 通報者の情報を取得
+  const { data: reporter } = await adminClient
+    .from("profiles")
+    .select("display_name")
+    .eq("id", user.id)
+    .single();
+
+  // Slack通知
+  await sendCommentReportNotification({
+    reporterName: reporter?.display_name ?? "不明",
+    commentContent: comment.body ?? "",
+    commenterName: (comment.profiles as any)?.display_name ?? "不明",
+  });
 
   const { data: admins } = await adminClient
     .from("profiles")

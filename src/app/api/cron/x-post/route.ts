@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/admin";
 import { TwitterApi } from "twitter-api-v2";
+import { sendXPostNotification, sendErrorNotification } from "@/lib/slack";
 
 function verifyCron(request: Request): boolean {
   const authHeader = request.headers.get("authorization");
@@ -123,6 +124,7 @@ export async function GET(request: Request) {
         })
         .eq("id", post.id);
 
+      await sendXPostNotification(fullContent, `https://twitter.com/i/status/${tweet.data.id}`);
       results.push({ id: post.id, status: "posted", tweet_id: tweet.data.id });
     } catch (err: any) {
       console.error(`Failed to post ${post.id}:`, err);
