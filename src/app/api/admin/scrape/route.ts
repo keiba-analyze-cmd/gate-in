@@ -86,9 +86,25 @@ const GRADE_MAPPING: Record<string, string> = {
 
 // ── グレード判定 ──
 function detectGrade(text: string, raceName?: string): string | null {
+  // 除外パターン（記念レースなど、実際の重賞ではないもの）
+  const excludePatterns = ["受賞記念", "ベストレース", "記念レース", "アニバーサリー"];
+  
   // まずレース名でマッピングを確認
   if (raceName) {
     const normalizedName = raceName.replace(/\s/g, "");
+    
+    // 除外パターンに該当する場合はスキップ
+    const isExcluded = excludePatterns.some(pattern => normalizedName.includes(pattern));
+    if (isExcluded) {
+      // テキストからのパターンマッチのみ行う（マッピングはスキップ）
+      if (/G[Ⅰ1I]|GI[^IVX]|\(G1\)|（G1）/.test(text)) return "G1";
+      if (/G[Ⅱ2]|GII|\(G2\)|（G2）/.test(text)) return "G2";
+      if (/G[Ⅲ3]|GIII|\(G3\)|（G3）/.test(text)) return "G3";
+      if (/\(L\)|（L）|リステッド/.test(text)) return "L";
+      if (/オープン|OP/.test(text)) return "OP";
+      return null;
+    }
+    
     for (const [key, grade] of Object.entries(GRADE_MAPPING)) {
       if (normalizedName.includes(key)) return grade;
     }
