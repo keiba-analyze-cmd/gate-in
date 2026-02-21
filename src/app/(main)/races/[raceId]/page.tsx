@@ -106,7 +106,7 @@ export default async function RaceDetailPage({ params }: Props) {
   const now = new Date();
   const postTimeDate = race.post_time ? new Date(race.post_time) : null;
   const isBeforeDeadline = postTimeDate
-    ? now.getTime() < postTimeDate.getTime() - 2 * 60 * 1000
+    ? now.getTime() < postTimeDate.getTime() + 30 * 1000
     : true;
   const isVotable = race.status === "voting_open" && !myVote && isBeforeDeadline;
   const hasVoted = !!myVote;
