@@ -78,13 +78,14 @@ export default function VoteShareCard({
     window.open(twitterUrl, "_blank");
   };
 
-  // グレードの色
-  const gradeColors: Record<string, string> = {
-    G1: "from-yellow-500 to-amber-600",
-    G2: "from-red-500 to-rose-600",
-    G3: "from-green-500 to-emerald-600",
+  // グレードの色（html2canvas対応のためRGB値で指定）
+  const gradeGradients: Record<string, string> = {
+    G1: "linear-gradient(to bottom right, #eab308, #d97706)",
+    G2: "linear-gradient(to bottom right, #ef4444, #e11d48)",
+    G3: "linear-gradient(to bottom right, #22c55e, #059669)",
   };
-  const gradeBg = grade ? gradeColors[grade] ?? "from-blue-500 to-blue-600" : "from-green-500 to-emerald-600";
+  const defaultGradient = "linear-gradient(to bottom right, #22c55e, #059669)";
+  const gradientStyle = grade ? gradeGradients[grade] ?? defaultGradient : defaultGradient;
 
   return (
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={onClose}>
@@ -99,7 +100,8 @@ export default function VoteShareCard({
         <div className="p-4">
           <div
             ref={cardRef}
-            className={`rounded-2xl overflow-hidden shadow-xl bg-gradient-to-br ${gradeBg}`}
+            className="rounded-2xl overflow-hidden shadow-xl"
+            style={{ background: gradientStyle }}
           >
             {/* カード上部 */}
             <div className="p-5 text-white">
@@ -111,36 +113,55 @@ export default function VoteShareCard({
 
               {/* 予想バッジ */}
               <div className="text-center mb-4">
-                <div className="inline-block px-6 py-2 rounded-full bg-white/20 text-white font-black text-lg">
+                <div 
+                  className="inline-block px-6 py-2 rounded-full text-white font-black text-lg"
+                  style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+                >
                   🗳 予想しました！
                 </div>
               </div>
 
               {/* レース情報 */}
-              <div className="bg-white/10 rounded-xl p-4 mb-4">
+              <div 
+                className="rounded-xl p-4 mb-4"
+                style={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }}
+              >
                 <div className="flex items-center gap-2 mb-2">
                   {grade && (
-                    <span className="text-xs font-black px-2 py-0.5 rounded bg-white/30 text-white">
+                    <span 
+                      className="text-xs font-black px-2 py-0.5 rounded text-white"
+                      style={{ backgroundColor: "rgba(255, 255, 255, 0.3)" }}
+                    >
                       {grade}
                     </span>
                   )}
-                  <span className="text-white/80 text-sm">{courseName}</span>
+                  <span style={{ color: "rgba(255, 255, 255, 0.8)" }} className="text-sm">{courseName}</span>
                 </div>
                 <div className="font-black text-xl">{raceName}</div>
-                <div className="text-white/60 text-xs mt-1">{raceDate}</div>
+                <div style={{ color: "rgba(255, 255, 255, 0.6)" }} className="text-xs mt-1">{raceDate}</div>
               </div>
 
               {/* 予想内容 */}
               <div className="space-y-2 mb-4">
                 {winPick && (
                   <div className="flex items-center gap-2">
-                    <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">◎本命</span>
+                    <span 
+                      className="text-white text-xs font-bold px-2 py-0.5 rounded"
+                      style={{ backgroundColor: "#ef4444" }}
+                    >
+                      ◎本命
+                    </span>
                     <span className="font-bold">{winPick.post_number} {winPick.horse_name}</span>
                   </div>
                 )}
                 {placePicks.length > 0 && (
                   <div className="flex items-center gap-2">
-                    <span className="bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded">○対抗</span>
+                    <span 
+                      className="text-white text-xs font-bold px-2 py-0.5 rounded"
+                      style={{ backgroundColor: "#3b82f6" }}
+                    >
+                      ○対抗
+                    </span>
                     <span className="text-sm">
                       {placePicks.map(p => `${p.post_number} ${p.horse_name}`).join(", ")}
                     </span>
@@ -148,28 +169,46 @@ export default function VoteShareCard({
                 )}
                 {backPicks.length > 0 && (
                   <div className="flex items-center gap-2">
-                    <span className="bg-yellow-500 text-white text-xs font-bold px-2 py-0.5 rounded">△抑え</span>
-                    <span className="text-sm text-white/80">
+                    <span 
+                      className="text-white text-xs font-bold px-2 py-0.5 rounded"
+                      style={{ backgroundColor: "#eab308" }}
+                    >
+                      △抑え
+                    </span>
+                    <span className="text-sm" style={{ color: "rgba(255, 255, 255, 0.8)" }}>
                       {backPicks.map(p => `${p.post_number} ${p.horse_name}`).join(", ")}
                     </span>
                   </div>
                 )}
                 {dangerPick && (
                   <div className="flex items-center gap-2">
-                    <span className="bg-gray-500 text-white text-xs font-bold px-2 py-0.5 rounded">⚠️危険</span>
-                    <span className="text-sm text-white/80">{dangerPick.post_number} {dangerPick.horse_name}</span>
+                    <span 
+                      className="text-white text-xs font-bold px-2 py-0.5 rounded"
+                      style={{ backgroundColor: "#6b7280" }}
+                    >
+                      ⚠️危険
+                    </span>
+                    <span className="text-sm" style={{ color: "rgba(255, 255, 255, 0.8)" }}>{dangerPick.post_number} {dangerPick.horse_name}</span>
                   </div>
                 )}
               </div>
             </div>
 
             {/* カード下部（ユーザー情報） */}
-            <div className="bg-white/10 px-5 py-3 flex items-center justify-between">
+            <div 
+              className="px-5 py-3 flex items-center justify-between"
+              style={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }}
+            >
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm">🏇</div>
-                <span className="font-bold text-white/90 text-sm">{userName}</span>
+                <div 
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-sm"
+                  style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+                >
+                  🏇
+                </div>
+                <span className="font-bold text-sm" style={{ color: "rgba(255, 255, 255, 0.9)" }}>{userName}</span>
               </div>
-              <span className="text-white/50 text-xs">gate-in.jp</span>
+              <span className="text-xs" style={{ color: "rgba(255, 255, 255, 0.5)" }}>gate-in.jp</span>
             </div>
           </div>
         </div>
