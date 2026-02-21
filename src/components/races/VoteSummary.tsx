@@ -169,11 +169,20 @@ export default function VoteSummary({ vote, isFinished, transactions, raceInfo, 
     }
   }
 
+  // トランザクションがあるかどうか
+  const hasTransactions = transactions && transactions.length > 0;
+
   // 判定対象の馬券種を特定（予想内容から）
   const winPick = picks.find(p => p.pick_type === "win");
   const placePicks = picks.filter(p => p.pick_type === "place");
   const backPicks = picks.filter(p => p.pick_type === "back");
   const dangerPick = picks.find(p => p.pick_type === "danger");
+
+  // vote_picksからis_hitを取得するヘルパー
+  const isWinHit = winPick?.is_hit === true;
+  const placeHitPicks = placePicks.filter(p => p.is_hit === true);
+  const backHitPicks = backPicks.filter(p => p.is_hit === true);
+  const isDangerHit = dangerPick?.is_hit === true;
 
   // 表示する馬券種リストを構築
   const betResults: { label: string; icon: string; color: string; isHit: boolean; points: number; detail?: string }[] = [];
@@ -181,12 +190,15 @@ export default function VoteSummary({ vote, isFinished, transactions, raceInfo, 
   // 単勝（◎が1着）
   if (winPick) {
     const tx = transactionMap.get("win_hit")?.[0];
+    // transactionsがない場合はvote_picks.is_hitでフォールバック
+    const hitByPick = isWinHit;
+    const isHitResult = hasTransactions ? !!tx : hitByPick;
     betResults.push({
       label: "単勝",
       icon: "🎯",
       color: "red",
-      isHit: !!tx,
-      points: tx?.amount ?? 0,
+      isHit: isHitResult,
+      points: tx?.amount ?? (isHitResult ? winPick.points_earned : 0),
       detail: `◎${winPick.race_entries?.post_number ?? "?"}番→1着`,
     });
   }
@@ -195,30 +207,36 @@ export default function VoteSummary({ vote, isFinished, transactions, raceInfo, 
   if (winPick) {
     const winTx = transactionMap.get("win_hit")?.[0];
     const placeTx = transactionMap.get("place_hit")?.[0];
-    if (!winTx) {
+    // 単勝が外れているかどうか
+    const winMiss = hasTransactions ? !winTx : !isWinHit;
+    if (winMiss) {
+      // 複勝的中判定（◎が3着以内だが1着ではない）
+      const placeHitByPick = winPick.is_hit === true && !isWinHit;
+      const isHitResult = hasTransactions ? !!placeTx : placeHitByPick;
       betResults.push({
         label: "複勝",
         icon: "🎫",
         color: "blue",
-        isHit: !!placeTx,
+        isHit: isHitResult,
         points: placeTx?.amount ?? 0,
         detail: `◎${winPick.race_entries?.post_number ?? "?"}番→3着以内`,
       });
     }
   }
 
-  // 「対抗」セクションは削除（馬券種ではないため）
-
   // 馬連 / 馬単
   if (winPick && placePicks.length > 0) {
     const exactaTx = transactionMap.get("exacta_hit")?.[0];
     const quinellaTx = transactionMap.get("quinella_hit")?.[0];
     const tx = exactaTx ?? quinellaTx;
+    // フォールバック: ◎と○が両方3着以内で、かつ1-2着
+    // （正確には判定できないので、transactionsがない場合は控えめに表示）
+    const isHitResult = hasTransactions ? !!tx : false;
     betResults.push({
       label: exactaTx ? "馬連(馬単)" : "馬連",
       icon: "🎫",
       color: "green",
-      isHit: !!tx,
+      isHit: isHitResult,
       points: tx?.amount ?? 0,
       detail: exactaTx ? "順番通り×2" : undefined,
     });
@@ -228,13 +246,16 @@ export default function VoteSummary({ vote, isFinished, transactions, raceInfo, 
   if (winPick && placePicks.length > 0) {
     const txs = transactionMap.get("wide_hit") ?? [];
     const totalWidePoints = txs.reduce((sum, tx) => sum + tx.amount, 0);
+    // フォールバック: ◎と○が両方3着以内
+    const wideHitByPick = (winPick.is_hit === true) && placeHitPicks.length > 0;
+    const isHitResult = hasTransactions ? txs.length > 0 : wideHitByPick;
     betResults.push({
       label: "ワイド",
       icon: "🎟️",
       color: "teal",
-      isHit: txs.length > 0,
+      isHit: isHitResult,
       points: totalWidePoints,
-      detail: txs.length > 0 ? `${txs.length}的中` : undefined,
+      detail: txs.length > 0 ? `${txs.length}的中` : (isHitResult ? "的中" : undefined),
     });
   }
 
@@ -247,11 +268,15 @@ export default function VoteSummary({ vote, isFinished, transactions, raceInfo, 
     if (trifectaTx) {
       bonusLabel = trifectaTx.description.includes("×5") ? "順番通り×5" : "順番通り×3";
     }
+    // フォールバック: ◎と○/△が合計3頭以上3着以内
+    // フォールバック: 三連複フォーメーション的中条件（◎が3着以内 かつ ○2頭以上 または ○1頭+△1頭以上）
+    const trioHitByPick = (winPick.is_hit === true) && (placeHitPicks.length >= 2 || (placeHitPicks.length >= 1 && backHitPicks.length >= 1));
+    const isHitResult = hasTransactions ? !!tx : trioHitByPick;
     betResults.push({
       label: trifectaTx ? "三連複(3連単)" : "三連複",
       icon: "🎰",
       color: "purple",
-      isHit: !!tx,
+      isHit: isHitResult,
       points: tx?.amount ?? 0,
       detail: bonusLabel || undefined,
     });
@@ -260,12 +285,13 @@ export default function VoteSummary({ vote, isFinished, transactions, raceInfo, 
   // 危険馬
   if (dangerPick) {
     const tx = transactionMap.get("danger_hit")?.[0];
+    const isHitResult = hasTransactions ? !!tx : isDangerHit;
     betResults.push({
       label: "危険馬",
       icon: "⚠️",
       color: "orange",
-      isHit: !!tx,
-      points: tx?.amount ?? 0,
+      isHit: isHitResult,
+      points: tx?.amount ?? (isDangerHit ? dangerPick.points_earned : 0),
       detail: `${dangerPick.race_entries?.post_number ?? "?"}番`,
     });
   }
@@ -279,6 +305,15 @@ export default function VoteSummary({ vote, isFinished, transactions, raceInfo, 
       color: "yellow",
       isHit: true,
       points: perfectTx.amount,
+    });
+  } else if (!hasTransactions && isPerfect) {
+    // transactionsがなくてもis_perfectがtrueなら表示
+    betResults.push({
+      label: "完全的中",
+      icon: "💎",
+      color: "yellow",
+      isHit: true,
+      points: 200, // デフォルトボーナス
     });
   }
 
@@ -331,7 +366,7 @@ export default function VoteSummary({ vote, isFinished, transactions, raceInfo, 
               )}
             </div>
             <span className={`font-bold ${bet.isHit ? getColorClass(bet.color, true) : (isDark ? "text-red-400" : "text-red-500")}`}>
-              {bet.isHit ? `+${bet.points}P` : "×"}
+              {bet.isHit ? (bet.points > 0 ? `+${bet.points}P` : "✓") : "×"}
             </span>
           </div>
         ))}
