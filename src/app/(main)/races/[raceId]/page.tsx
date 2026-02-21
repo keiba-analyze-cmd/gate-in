@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
+import { Metadata } from "next";
 import JsonLd from "@/components/seo/JsonLd";
 import RaceDetailClient from "./RaceDetailClient";
 
@@ -7,6 +8,41 @@ type Props = {
   params: Promise<{ raceId: string }>;
 };
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { raceId } = await params;
+  const { createClient } = await import("@/lib/supabase/server");
+  const supabase = await createClient();
+  
+  const { data: race } = await supabase
+    .from("races")
+    .select("name, grade, course_name, race_date")
+    .eq("id", raceId)
+    .single();
+
+  if (!race) {
+    return { title: "レースが見つかりません" };
+  }
+
+  const title = `${race.name}${race.grade ? ` [${race.grade}]` : ""} - ${race.course_name}`;
+  const description = `${race.race_date} ${race.course_name}で開催の${race.name}${race.grade ? `（${race.grade}）` : ""}の予想を見る・投稿する`;
+  const ogUrl = `/api/og?title=${encodeURIComponent(race.name)}&grade=${race.grade ?? ""}&course=${encodeURIComponent(race.course_name)}&date=${race.race_date}`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [{ url: ogUrl, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogUrl],
+    },
+  };
+}
 export default async function RaceDetailPage({ params }: Props) {
   const { raceId } = await params;
   const supabase = await createClient();
