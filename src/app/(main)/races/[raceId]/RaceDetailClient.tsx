@@ -23,6 +23,7 @@ type Props = {
   totalVotes: number;
   userId: string;
   userName: string;
+  userHandle?: string | null;
   isVotable: boolean;
   hasVoted: boolean;
   isFinished: boolean;
@@ -31,7 +32,7 @@ type Props = {
 };
 
 export default function RaceDetailClient({
-  race, entries, myVote, results, payouts, totalVotes, userId, userName,
+  race, entries, myVote, results, payouts, totalVotes, userId, userName, userHandle,
   isVotable, hasVoted, isFinished, isBeforeDeadline, pointsTransactions
 }: Props) {
   const { isDark } = useTheme();
@@ -139,6 +140,7 @@ export default function RaceDetailClient({
             grade: race.grade,
           }}
           userName={userName}
+          userHandle={userHandle}
         />
       )}
 
@@ -218,6 +220,7 @@ export default function RaceDetailClient({
                 grade: race.grade,
               }}
               userName={userName}
+          userHandle={userHandle}
             />
           )}
           <PointsGuide isDark={isDark} />

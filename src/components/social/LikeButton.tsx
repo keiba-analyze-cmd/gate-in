@@ -20,18 +20,23 @@ export default function LikeButton({ voteId, initialCount = 0, initialLiked = fa
     setLoading(true);
 
     const wasLiked = isLiked;
+    const prevCount = count;
+    
+    // 楽観的更新
     setIsLiked(!wasLiked);
-    setCount(wasLiked ? count - 1 : count + 1);
+    setCount(wasLiked ? prevCount - 1 : prevCount + 1);
 
     try {
       const res = await fetch(`/api/votes/${voteId}/like`, { method: "POST" });
       if (!res.ok) {
+        // 失敗したら元に戻す
         setIsLiked(wasLiked);
-        setCount(wasLiked ? count : count - 1);
+        setCount(prevCount);
       }
     } catch {
+      // エラー時も元に戻す
       setIsLiked(wasLiked);
-      setCount(wasLiked ? count : count - 1);
+      setCount(prevCount);
     }
 
     setLoading(false);

@@ -16,6 +16,7 @@ type Props = {
   grade?: string | null;
   picks: Pick[];
   userName: string;
+  userHandle?: string | null;
   onClose: () => void;
 };
 
@@ -26,6 +27,7 @@ export default function VoteShareCard({
   grade,
   picks,
   userName,
+  userHandle,
   onClose,
 }: Props) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -72,7 +74,11 @@ export default function VoteShareCard({
       placePicks.length > 0 ? `○${placePicks.map(p => `${p.post_number} ${p.horse_name}`).join("、")}` : "",
     ].filter(Boolean).join("\n");
 
-    const text = `🗳 ${raceName}を予想しました！\n\n${pickText}\n\nみんなも予想しよう👇\n#ゲートイン #競馬予想 ${grade ? `#${grade}` : ""}`;
+    // プロフィールURL（handleがあれば含める）
+    const profileUrl = userHandle ? `https://www.gate-in.jp/users/${userHandle}` : "";
+    const profileLine = profileUrl ? `\n\n📊 フォロー&他の予想もチェック👇\n${profileUrl}` : "";
+
+    const text = `【${raceName}】予想🏇\n\n${pickText}${profileLine}\n\n#競馬予想 ${grade ? `#${grade} ` : ""}#ゲートイン`;
     const url = "https://www.gate-in.jp";
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
     window.open(twitterUrl, "_blank");

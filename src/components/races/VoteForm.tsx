@@ -55,9 +55,10 @@ type Props = {
     grade?: string | null;
   };
   userName?: string;
+  userHandle?: string | null;
 };
 
-export default function VoteForm({ raceId, entries, raceInfo, userName }: Props) {
+export default function VoteForm({ raceId, entries, raceInfo, userName, userHandle }: Props) {
   const { isDark } = useTheme();
   const [winPick, setWinPick] = useState<string | null>(null);
   const [placePicks, setPlacePicks] = useState<string[]>([]);
@@ -446,6 +447,7 @@ export default function VoteForm({ raceId, entries, raceInfo, userName }: Props)
           grade={raceInfo.grade}
           picks={submittedPicks}
           userName={userName ?? "ゲスト"}
+          userHandle={userHandle}
           onClose={() => { setShowShareCard(false); router.refresh(); }}
         />
       )}
