@@ -140,7 +140,6 @@ export default function RaceDetailClient({
             grade: race.grade,
           }}
           userName={userName}
-          userHandle={userHandle}
         />
       )}
 
@@ -220,7 +219,6 @@ export default function RaceDetailClient({
                 grade: race.grade,
               }}
               userName={userName}
-          userHandle={userHandle}
             />
           )}
           <PointsGuide isDark={isDark} />
