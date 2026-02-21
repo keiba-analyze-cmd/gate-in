@@ -81,7 +81,7 @@ export default function RaceDetailClient({
     const placePicks = picks.filter((p: any) => p.pick_type === "place");
     const fmt = (p: any) => `${p.race_entries?.post_number ?? "?"} ${ (p.race_entries?.horses as any)?.name ?? "不明"}`;
     const profileUrl = userHandle ? `https://www.gate-in.jp/users/${userHandle}` : "";
-    const profileLine = profileUrl ? `\n📊 フォロー\&他の予想もチェック👇\n${profileUrl}` : "";
+    const profileLine = profileUrl ? `\n\n📊 フォロー&他の予想もチェック👇\n${profileUrl}` : "\n\n🏇 みんなも予想しよう👇\nhttps://gate-in.jp";
     return [
       `【${race.name}】予想🏇`,
       "",
