@@ -180,7 +180,7 @@ export default function RacesClient({ openRaces, closedRaces, finishedRaces, vot
                 key={race.id}
                 race={race}
                 voted={votedRaceIds.includes(race.id)}
-                voteResult={voteResults[race.id] ? (voteResults[race.id] === "pending" ? "pending" : voteResults[race.id]) : "none"}
+                
               />
             ))}
           </div>
