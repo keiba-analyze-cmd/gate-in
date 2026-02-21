@@ -201,7 +201,7 @@ export default function VoteForm({ raceId, entries, raceInfo, userName }: Props)
       setShowShareCard(true);
     }
     
-    router.refresh();
+    // router.refresh(); ← シェアカード閉じる時に移動
   };
 
   const clearCopySource = () => {
@@ -446,7 +446,7 @@ export default function VoteForm({ raceId, entries, raceInfo, userName }: Props)
           grade={raceInfo.grade}
           picks={submittedPicks}
           userName={userName ?? "ゲスト"}
-          onClose={() => setShowShareCard(false)}
+          onClose={() => { setShowShareCard(false); router.refresh(); }}
         />
       )}
     </div>
