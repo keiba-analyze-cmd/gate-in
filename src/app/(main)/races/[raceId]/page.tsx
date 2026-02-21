@@ -53,11 +53,11 @@ export default async function RaceDetailPage({ params }: Props) {
   // ユーザー名を取得
   const { data: userProfile } = await supabase
     .from("profiles")
-    .select("display_name, handle")
+    .select("display_name, user_handle")
     .eq("id", user.id)
     .single();
   const userDisplayName = userProfile?.display_name ?? "ゲスト";
-  const userHandle = userProfile?.handle ?? null;
+  const userHandle = userProfile?.user_handle ?? null;
 
   const { data: race, error } = await supabase
     .from("races").select("*").eq("id", raceId).single();
