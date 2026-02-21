@@ -149,6 +149,19 @@ export async function GET(request: Request) {
         continue;
       }
 
+      // 払戻の検証: 最低限 win と place が必要
+      const hasWin = payouts.some(p => p.bet_type === "win");
+      const hasPlace = payouts.some(p => p.bet_type === "place");
+      
+      if (!hasWin || !hasPlace) {
+        results.push({
+          race_id: race.id, name: race.name,
+          status: "skipped", reason: "払戻未確定（次回リトライ）",
+          payouts_found: payouts.map(p => p.bet_type),
+        });
+        continue;
+      }
+
       // 馬番→race_entry_idマッピング
       const entryMap = new Map(
         ((race.race_entries as any[]) ?? []).map((e: any) => [
@@ -179,13 +192,16 @@ export async function GET(request: Request) {
       await admin.from("race_results").insert(resultInserts);
 
       if (payouts.length > 0) {
-        await admin.from("payouts").insert(
+        const { error: payoutError } = await admin.from("payouts").insert(
           payouts.map((p) => ({ race_id: race.id, ...p }))
         );
+        
+        if (payoutError) {
+          console.error(`[auto-settle] payouts insert error for race ${race.id}:`, payoutError);
+        }
       }
 
       // 清算（ポイント計算）
-      
       const settleResult = await settleRace(admin, race.id);
 
       results.push({
@@ -195,6 +211,7 @@ export async function GET(request: Request) {
         payouts_count: payouts.length,
         settled_votes: settleResult.settled_votes ?? 0,
         total_points: settleResult.total_points_awarded ?? 0,
+        errors: settleResult.errors?.length > 0 ? settleResult.errors : undefined,
       });
 
     } catch (err: any) {

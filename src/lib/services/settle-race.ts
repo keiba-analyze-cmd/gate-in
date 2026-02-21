@@ -422,14 +422,19 @@ export async function settleRace(
         settled_at: new Date().toISOString(),
       }).eq("id", vote.id);
 
-      // 7. ポイント履歴を登録
+      // 7. ポイント履歴を登録（エラーチェック追加）
       if (transactions.length > 0) {
-        await supabase.from("points_transactions").insert(
+        const { error: txError } = await supabase.from("points_transactions").insert(
           transactions.map((tx) => ({
             user_id: vote.user_id, vote_id: vote.id, race_id: raceId,
             amount: tx.amount, reason: tx.reason, description: tx.description,
           }))
         );
+        
+        if (txError) {
+          console.error(`[settle-race] points_transactions insert error for vote ${vote.id}:`, txError);
+          errors.push(`投票 ${vote.id} のトランザクション登録エラー: ${txError.message}`);
+        }
       }
 
       // 8. プロフィールのポイント・的中数を更新
@@ -566,11 +571,15 @@ export async function settleRace(
           }
 
           if (newStreakPts > 0) {
-            await supabase.from("points_transactions").insert({
+            const { error: streakTxError } = await supabase.from("points_transactions").insert({
               user_id: vote.user_id, vote_id: vote.id, race_id: raceId,
               amount: newStreakPts, reason: "weekly_streak_bonus",
               description: `週間大会 ${consecutiveHits}連続的中ボーナス +${newStreakPts}P`,
             });
+            
+            if (streakTxError) {
+              console.error(`[settle-race] weekly streak bonus insert error for vote ${vote.id}:`, streakTxError);
+            }
           }
         }
       }

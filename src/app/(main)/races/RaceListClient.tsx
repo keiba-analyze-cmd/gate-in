@@ -21,12 +21,19 @@ type Race = {
   post_time?: string | null;
 };
 
+type VotePick = { pick_type: string; is_hit: boolean | null };
+type VoteData = {
+  status: string;
+  is_perfect?: boolean;
+  vote_picks?: VotePick[];
+};
+
 type Props = {
   openRaces: Race[];
   closedRaces: Race[];
   finishedRaces: Race[];
   votedRaceIds: string[];
-  voteResults: Record<string, "pending" | "hit" | "miss">;
+  votes: Record<string, VoteData>;
   uniqueDates: string[];
   uniqueCourses: string[];
   selectedDate: string;
@@ -36,7 +43,7 @@ type Props = {
 };
 
 export default function RaceListClient({
-  openRaces, closedRaces, finishedRaces, votedRaceIds, voteResults,
+  openRaces, closedRaces, finishedRaces, votedRaceIds, votes,
   uniqueDates, uniqueCourses, selectedDate, selectedCourse, selectedGrade, searchQuery
 }: Props) {
   const { isDark } = useTheme();
@@ -90,8 +97,8 @@ export default function RaceListClient({
     router.push(buildUrl({ date: targetDate }));
   };
 
-  const getVoteResult = (raceId: string) => voteResults[raceId] ?? "none";
   const isVoted = (raceId: string) => votedRaceIds.includes(raceId);
+  const getVote = (raceId: string) => votes[raceId] ?? null;
 
   const renderRaceCards = (list: Race[], section: "open" | "closed" | "finished") => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -100,7 +107,7 @@ export default function RaceListClient({
           key={race.id}
           race={race}
           voted={isVoted(race.id)}
-          voteResult={section === "finished" ? getVoteResult(race.id) : "none"}
+          vote={section === "finished" ? getVote(race.id) : null}
           isDeadlinePassed={section !== "open"}
         />
       ))}

@@ -207,18 +207,7 @@ export default function VoteSummary({ vote, isFinished, transactions, raceInfo, 
     }
   }
 
-  // 対抗（○が3着以内）
-  if (placePicks.length > 0) {
-    const hitCount = placePicks.filter(p => p.is_hit).length;
-    betResults.push({
-      label: "対抗",
-      icon: "○",
-      color: "blue",
-      isHit: hitCount > 0,
-      points: 0,
-      detail: `${hitCount}/${placePicks.length}的中`,
-    });
-  }
+  // 「対抗」セクションは削除（馬券種ではないため）
 
   // 馬連 / 馬単
   if (winPick && placePicks.length > 0) {
@@ -341,15 +330,9 @@ export default function VoteSummary({ vote, isFinished, transactions, raceInfo, 
                 <span className={`text-xs ${textSecondary}`}>({bet.detail})</span>
               )}
             </div>
-            {bet.label === "対抗" ? (
-              <span className={`text-sm ${bet.isHit ? (isDark ? "text-blue-400" : "text-blue-600") : (isDark ? "text-red-400" : "text-red-500")}`}>
-                {bet.isHit ? "✓" : "×"}
-              </span>
-            ) : (
-              <span className={`font-bold ${bet.isHit ? getColorClass(bet.color, true) : (isDark ? "text-red-400" : "text-red-500")}`}>
-                {bet.isHit ? `+${bet.points}P` : "×"}
-              </span>
-            )}
+            <span className={`font-bold ${bet.isHit ? getColorClass(bet.color, true) : (isDark ? "text-red-400" : "text-red-500")}`}>
+              {bet.isHit ? `+${bet.points}P` : "×"}
+            </span>
           </div>
         ))}
       </div>

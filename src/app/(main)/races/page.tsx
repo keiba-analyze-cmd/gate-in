@@ -14,20 +14,30 @@ export default async function RaceListPage({ searchParams }: Props) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  type VoteInfo = { voted: boolean; result: "none" | "pending" | "hit" | "miss" };
-  const voteMap = new Map<string, VoteInfo>();
+  // 投票データの型定義
+  type VotePick = { pick_type: string; is_hit: boolean | null };
+  type VoteData = {
+    status: string;
+    is_perfect?: boolean;
+    vote_picks?: VotePick[];
+  };
+
+  const voteMap = new Map<string, VoteData>();
+  const votedRaceIds: string[] = [];
+
   if (user) {
+    // vote_picks を含めて取得
     const { data: myVotes } = await supabase
       .from("votes")
-      .select("race_id, status, earned_points")
+      .select("race_id, status, earned_points, is_perfect, vote_picks(pick_type, is_hit)")
       .eq("user_id", user.id);
+      
     for (const v of myVotes ?? []) {
+      votedRaceIds.push(v.race_id);
       voteMap.set(v.race_id, {
-        voted: true,
-        result: v.status === "pending" ? "pending"
-          : v.status === "settled_hit" ? "hit"
-          : v.status !== "pending" ? "miss"
-          : "none",
+        status: v.status,
+        is_perfect: v.is_perfect,
+        vote_picks: v.vote_picks ?? [],
       });
     }
   }
@@ -133,14 +143,8 @@ export default async function RaceListPage({ searchParams }: Props) {
   const closedRaces = [...gradeClosed, ...normalClosed];
   const finishedRaces = [...gradeFinished, ...normalFinished];
 
-  const voteResults: Record<string, "pending" | "hit" | "miss"> = {};
-  const votedRaceIds: string[] = [];
-  for (const [raceId, info] of voteMap) {
-    votedRaceIds.push(raceId);
-    if (info.result !== "none") {
-      voteResults[raceId] = info.result;
-    }
-  }
+  // votes オブジェクトを作成
+  const votes: Record<string, VoteData> = Object.fromEntries(voteMap);
 
   return (
     <RaceListClient
@@ -148,7 +152,7 @@ export default async function RaceListPage({ searchParams }: Props) {
       closedRaces={closedRaces}
       finishedRaces={finishedRaces}
       votedRaceIds={votedRaceIds}
-      voteResults={voteResults}
+      votes={votes}
       uniqueDates={uniqueDates}
       uniqueCourses={uniqueCourses}
       selectedDate={selectedDate}

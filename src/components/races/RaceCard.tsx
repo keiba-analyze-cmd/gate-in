@@ -26,7 +26,6 @@ type Props = {
     post_time?: string | null;
   };
   voted?: boolean;
-  voteResult?: "none" | "pending" | "hit" | "miss";
   vote?: {
     status: string;
     is_perfect?: boolean;
@@ -43,18 +42,15 @@ const GRADE_STYLES: Record<string, { bg: string; text: string }> = {
   L: { bg: "bg-blue-600", text: "text-white" },
 };
 
-export default function RaceCard({ race, voted, voteResult = "none", vote, isDeadlinePassed }: Props) {
+export default function RaceCard({ race, voted, vote, isDeadlinePassed }: Props) {
   const { isDark } = useTheme();
   const grade = race.grade ? GRADE_STYLES[race.grade] ?? { bg: "bg-gray-500", text: "text-white" } : null;
   const isFinished = race.status === "finished";
 
-  // 5段階的中ランクを計算
+  // 5段階的中ランクを計算（vote_picks を含む vote オブジェクトで正確に判定）
   let hitRank: HitRank = null;
   if (isFinished && vote) {
     hitRank = calculateHitRank(vote);
-  } else if (isFinished && voteResult !== "none") {
-    if (voteResult === "hit") hitRank = "A";
-    else if (voteResult === "miss") hitRank = "D";
   }
 
   const rankConfig = hitRank ? HIT_RANKS[hitRank] : null;
