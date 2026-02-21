@@ -28,10 +28,11 @@ export default function TimelineFeed() {
   const { isDark } = useTheme();
   const [items, setItems] = useState<TimelineEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [filter, setFilter] = useState("all");
 
-  const fetchItems = async (cursor?: string) => {
+  const fetchItems = async (cursor?: string, isRefresh?: boolean) => {
     const url = cursor
       ? `/api/timeline?filter=${filter}&cursor=${cursor}`
       : `/api/timeline?filter=${filter}`;
@@ -46,12 +47,19 @@ export default function TimelineFeed() {
       setNextCursor(data.next_cursor);
     }
     setLoading(false);
+    if (isRefresh) setRefreshing(false);
   };
 
   useEffect(() => {
     setLoading(true);
     fetchItems();
   }, [filter]);
+
+  // 手動更新
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchItems(undefined, true);
+  };
 
   const filters = [
     { key: "all", label: "すべて" },
@@ -69,21 +77,34 @@ export default function TimelineFeed() {
   const btnStyle = isDark 
     ? "bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700" 
     : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-200";
+  const refreshBtnStyle = isDark
+    ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+    : "bg-green-600 text-white hover:bg-green-700";
 
   return (
     <div>
-      <div className="flex gap-2 mb-4 overflow-x-auto pb-1 scrollbar-hide">
-        {filters.map((f) => (
-          <button
-            key={f.key}
-            onClick={() => setFilter(f.key)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
-              filter === f.key ? tabActive : tabInactive
-            }`}
-          >
-            {f.label}
-          </button>
-        ))}
+      {/* フィルター + 更新ボタン */}
+      <div className="flex items-center gap-2 mb-4">
+        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide flex-1">
+          {filters.map((f) => (
+            <button
+              key={f.key}
+              onClick={() => setFilter(f.key)}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
+                filter === f.key ? tabActive : tabInactive
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={handleRefresh}
+          disabled={refreshing || loading}
+          className={`px-3 py-1.5 rounded-full text-sm font-bold transition-colors shrink-0 disabled:opacity-50 ${refreshBtnStyle}`}
+        >
+          {refreshing ? "🔄" : "🔄 更新"}
+        </button>
       </div>
 
       {loading ? (

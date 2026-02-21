@@ -86,5 +86,5 @@ export async function POST(request: Request, { params }: Props) {
       });
     }
   }
-  return NextResponse.json(data, { status: 201 });
+  return NextResponse.json({ comment: data }, { status: 201 });
 }
