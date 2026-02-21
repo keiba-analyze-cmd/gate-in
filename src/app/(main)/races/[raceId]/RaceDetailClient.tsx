@@ -79,16 +79,17 @@ export default function RaceDetailClient({
     const picks = myVote.vote_picks ?? [];
     const winPick = picks.find((p: any) => p.pick_type === "win");
     const placePicks = picks.filter((p: any) => p.pick_type === "place");
-    const dangerPick = picks.find((p: any) => p.pick_type === "danger");
-    const fmt = (p: any) => `${p.race_entries?.post_number ?? "?"}.${ (p.race_entries?.horses as any)?.name ?? "不明"}`;
-    const weekday = ["日","月","火","水","木","金","土"][new Date(race.race_date + "T00:00:00+09:00").getDay()];
+    const fmt = (p: any) => `${p.race_entries?.post_number ?? "?"} ${ (p.race_entries?.horses as any)?.name ?? "不明"}`;
+    const profileUrl = userHandle ? `https://www.gate-in.jp/users/${userHandle}` : "";
+    const profileLine = profileUrl ? `\n📊 フォロー\&他の予想もチェック👇\n${profileUrl}` : "";
     return [
-      "#ゲートイン競馬予想",
-      `${race.race_date}(${weekday}) ${race.course_name}${race.race_number ? ` ${race.race_number}R` : ""} ${race.grade ? `[${race.grade}] ` : ""}${race.name}`,
-      winPick ? `◎本命: ${fmt(winPick)}` : "",
-      placePicks.length > 0 ? `○相手: ${placePicks.map(fmt).join(" / ")}` : "",
-      dangerPick ? `△危険: ${fmt(dangerPick)}` : "",
-      "https://gate-in.jp",
+      `【${race.name}】予想🏇`,
+      "",
+      winPick ? `◎ ${fmt(winPick)}` : "",
+      placePicks.length > 0 ? `○ ${placePicks.map(fmt).join("、")}` : "",
+      profileLine,
+      "",
+      `#競馬予想 ${race.grade ? `#${race.grade} ` : ""}#ゲートイン`,
     ].filter(Boolean).join("\n");
   };
 
