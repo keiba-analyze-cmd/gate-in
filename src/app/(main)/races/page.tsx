@@ -71,25 +71,24 @@ export default async function RaceListPage({ searchParams }: Props) {
 
   let selectedDate: string = params.date ?? "";
   if (!selectedDate) {
-    if (hasThisWeekOpenRaces) {
-      // 今週に投票可能なレースがある → 今週の土曜or日曜
-      if (uniqueDates.includes(thisSatStr)) {
-        selectedDate = thisSatStr;
-      } else if (uniqueDates.includes(thisSunStr)) {
-        selectedDate = thisSunStr;
-      } else {
-        selectedDate = uniqueDates[0] ?? "";
-      }
+    // 今日の曜日に応じてデフォルト日付を決定
+    const jstNow = new Date(Date.now() + 9 * 60 * 60 * 1000);
+    const todayDay = jstNow.getUTCDay();
+    
+    if (todayDay === 6 && uniqueDates.includes(thisSatStr)) {
+      // 土曜日 → 土曜日
+      selectedDate = thisSatStr;
+    } else if (todayDay === 0 && uniqueDates.includes(thisSunStr)) {
+      // 日曜日 → 日曜日
+      selectedDate = thisSunStr;
+    } else if (uniqueDates.includes(thisSunStr)) {
+      // 平日 → 日曜日
+      selectedDate = thisSunStr;
+    } else if (uniqueDates.includes(thisSatStr)) {
+      selectedDate = thisSatStr;
     } else {
-      // 今週に投票可能なレースがない → 従来のロジック（先週日曜など）
-      const defaultDate = getDefaultRaceDate();
-      const defaultDateStr = formatDateString(defaultDate);
-      if (uniqueDates.includes(defaultDateStr)) {
-        selectedDate = defaultDateStr;
-      } else {
         selectedDate = uniqueDates[0] ?? "";
       }
-    }
   }
   let query = supabase.from("races").select("*")
     .eq("race_date", selectedDate)
