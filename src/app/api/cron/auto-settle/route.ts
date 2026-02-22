@@ -35,7 +35,7 @@ async function scrapeResults(externalRaceId: string) {
   const $ = load(html);
 
   const results: {
-    post_number: number; horse_name: string; finish_position: number;
+    post_number: number; horse_name: string; finish_position: number; odds: number | null; popularity: number | null;
     finish_time: string | null;
   }[] = [];
 
@@ -60,6 +60,8 @@ async function scrapeResults(externalRaceId: string) {
       finish_position: pos, post_number: postNum,
       horse_name: horseName.replace(/\s+/g, ""),
       finish_time: timeText,
+      odds: parseFloat(tds.eq(12).text().replace(/[^0-9.]/g, "")) || null,
+      popularity: parseInt(tds.eq(13).text().trim()) || null,
     });
   });
 
@@ -184,6 +186,19 @@ export async function GET(request: Request) {
           status: "skipped", reason: "エントリー不一致",
         });
         continue;
+      }
+
+      // オッズと人気をrace_entriesに更新
+      for (const r of raceResults) {
+        if (r.odds !== null || r.popularity !== null) {
+          const entryId = entryMap.get(r.post_number);
+          if (entryId) {
+            await admin.from("race_entries").update({
+              odds: r.odds,
+              popularity: r.popularity,
+            }).eq("id", entryId);
+          }
+        }
       }
 
       // 既存結果をクリア → 登録
