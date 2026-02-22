@@ -32,12 +32,12 @@ export function getDefaultRaceDate(now: Date = new Date()): Date {
   const thisSun = addDays(thisSat, 1);
   const lastSun = addDays(thisSun, -7);
   
-  // 金曜18時以降または土曜 → 今週土曜
-  if ((day === 5 && hour >= 18) || day === 6) return thisSat;
+  // 土曜 → 今週土曜
+  if (day === 6) return thisSat;
   // 日曜 → 今週日曜
   if (day === 0) return thisSun;
-  // それ以外 → 先週日曜
-  return lastSun;
+  // 月〜金 → 次の日曜
+  return thisSun;
 }
 
 export function getWeekRaceDates(baseDate: Date): Date[] {
