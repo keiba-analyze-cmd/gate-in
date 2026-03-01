@@ -75,6 +75,9 @@ export default function LandingPage({ openRaces, stats, heroImage, articles = []
       {/* ====== 3ステップ ====== */}
       <StepsSection />
 
+      {/* ====== 🏆 週間予想大会 ====== */}
+      <ContestSection />
+
       {/* ====== 特徴 ====== */}
       <FeaturesSection />
 
@@ -98,8 +101,6 @@ export default function LandingPage({ openRaces, stats, heroImage, articles = []
       {/* ====== 公式予想家募集 ====== */}
       <OfficialRecruiterSection />
 
-      {/* ====== 月間大会＆景品 ====== */}
-      <ContestSection />
 
       {/* ====== 今週の重賞 ====== */}
       {gradeRaces.length > 0 && <GradeRacesSection races={gradeRaces} />}
@@ -676,26 +677,96 @@ function OfficialRecruiterSection() {
   );
 }
 
-// ====== 月間大会＆景品セクション ======
+// ====== 週間予想大会セクション ======
 function ContestSection() {
   return (
-    <section className="bg-gradient-to-r from-yellow-400 to-amber-500 rounded-2xl p-6 text-center text-white">
-      <h2 className="text-xl font-black mb-4">🎁 毎月開催！予想大会</h2>
-      <p className="text-sm text-yellow-100 mb-6">月間ポイントランキング上位者に豪華景品！</p>
-      <div className="flex justify-center gap-4 mb-4">
-        {[
-          { medal: "🥇", rank: "1位", prize: "¥10,000" },
-          { medal: "🥈", rank: "2位", prize: "¥5,000" },
-          { medal: "🥉", rank: "3位", prize: "¥3,000" },
-        ].map((p) => (
-          <div key={p.rank} className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-3">
-            <div className="text-3xl mb-1">{p.medal}</div>
-            <div className="text-xs font-medium text-yellow-100">{p.rank}</div>
-            <div className="text-sm font-black">Amazon {p.prize}</div>
+    <section className="relative overflow-hidden">
+      {/* メインカード */}
+      <div className="bg-gradient-to-br from-purple-600 via-indigo-600 to-purple-700 rounded-2xl p-6 text-white relative">
+        {/* 背景装飾 */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+        
+        {/* バッジ */}
+        <div className="flex justify-center mb-4">
+          <div className="inline-flex items-center gap-2 bg-amber-400 text-purple-900 rounded-full px-4 py-1">
+            <span className="text-sm">🔥</span>
+            <span className="text-sm font-black">毎週開催</span>
           </div>
-        ))}
+        </div>
+
+        <h2 className="text-2xl font-black text-center mb-2">🏆 週間予想大会</h2>
+        <p className="text-center text-purple-200 text-sm mb-6">
+          WIN5対象5レースで腕試し！上位入賞でAmazonギフト券GET
+        </p>
+
+        {/* 賞金 */}
+        <div className="flex justify-center gap-3 mb-6">
+          {[
+            { medal: "🥇", rank: "1位", prize: "¥5,000" },
+            { medal: "🥈", rank: "2位", prize: "¥3,000" },
+            { medal: "🥉", rank: "3位", prize: "¥2,000" },
+          ].map((p) => (
+            <div key={p.rank} className="bg-white/15 backdrop-blur-sm rounded-xl px-4 py-3 text-center">
+              <div className="text-2xl mb-1">{p.medal}</div>
+              <div className="text-[10px] font-medium text-purple-200">{p.rank}</div>
+              <div className="text-sm font-black">{p.prize}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* 参加方法 */}
+        <div className="bg-white/10 rounded-xl p-4 mb-4">
+          <h3 className="text-sm font-bold text-center mb-3">📝 参加方法（カンタン3ステップ）</h3>
+          <div className="flex justify-around text-center">
+            <div>
+              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-1 text-sm font-bold">1</div>
+              <div className="text-xs text-purple-200">土曜18時〜</div>
+              <div className="text-xs font-bold">予想する</div>
+            </div>
+            <div className="text-purple-300 self-center">→</div>
+            <div>
+              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-1 text-sm font-bold">2</div>
+              <div className="text-xs text-purple-200">3レース以上で</div>
+              <div className="text-xs font-bold">自動参加</div>
+            </div>
+            <div className="text-purple-300 self-center">→</div>
+            <div>
+              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-1 text-sm font-bold">3</div>
+              <div className="text-xs text-purple-200">日曜終了後</div>
+              <div className="text-xs font-bold">結果発表</div>
+            </div>
+          </div>
+        </div>
+
+        {/* 特徴 */}
+        <div className="grid grid-cols-2 gap-2 mb-4">
+          <div className="bg-white/10 rounded-lg p-2 text-center">
+            <span className="text-lg">🎫</span>
+            <div className="text-xs font-bold">参加費無料</div>
+          </div>
+          <div className="bg-white/10 rounded-lg p-2 text-center">
+            <span className="text-lg">🎯</span>
+            <div className="text-xs font-bold">オッズ連動ポイント</div>
+          </div>
+          <div className="bg-white/10 rounded-lg p-2 text-center">
+            <span className="text-lg">🔥</span>
+            <div className="text-xs font-bold">連続的中ボーナス</div>
+          </div>
+          <div className="bg-white/10 rounded-lg p-2 text-center">
+            <span className="text-lg">📊</span>
+            <div className="text-xs font-bold">リアルタイム順位</div>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <Link
+          href="/login"
+          className="block w-full bg-white text-purple-700 font-black text-center py-3 rounded-xl hover:bg-purple-50 transition-colors"
+        >
+          無料で参加する →
+        </Link>
       </div>
-      <p className="text-xs text-yellow-200">※ 4位〜10位にも参加賞あり</p>
     </section>
   );
 }
