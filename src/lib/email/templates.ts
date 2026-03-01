@@ -246,3 +246,173 @@ export function reactivationEmail(displayName: string): { subject: string; html:
     `),
   };
 }
+
+// ============================================
+// ⑥ 週間大会告知メール（金曜夕方送信）
+// ============================================
+export function weeklyContestAnnouncementEmail(
+  displayName: string,
+  contestName: string,
+  gradeRaces: { name: string; grade: string | null; venue: string; id: string }[]
+): { subject: string; html: string } {
+  const raceListHtml = gradeRaces.length > 0
+    ? gradeRaces.slice(0, 5).map((r) => `
+        <div style="display:flex;align-items:center;padding:10px 12px;background:#f9fafb;border-radius:8px;margin:0 0 6px;">
+          <span style="font-size:10px;font-weight:700;color:#fff;background:${r.grade === 'G1' ? '#eab308' : r.grade === 'G2' ? '#ef4444' : '#22c55e'};padding:2px 6px;border-radius:4px;">${r.grade}</span>
+          <span style="font-weight:600;margin-left:8px;font-size:13px;color:#1a1a1a;">${r.name}</span>
+          <span style="color:#999;font-size:11px;margin-left:auto;">${r.venue}</span>
+        </div>`).join("")
+    : '';
+
+  return {
+    subject: `🏆 ${contestName}が明日スタート！参加費無料でAmazonギフト券GET`,
+    html: layout(`
+      <div style="text-align:center;margin:0 0 20px;">
+        <div style="display:inline-block;background:#7c3aed;color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">🔥 毎週開催</div>
+      </div>
+
+      <h2 style="font-size:20px;font-weight:900;color:#1a1a1a;margin:0 0 8px;text-align:center;">
+        🏆 ${contestName}
+      </h2>
+      <p style="color:#666;font-size:14px;margin:0 0 24px;text-align:center;">
+        ${displayName}さん、今週も参加しませんか？
+      </p>
+
+      <!-- 賞金 -->
+      <div style="background:linear-gradient(135deg,#7c3aed,#4338ca);border-radius:16px;padding:24px;margin:0 0 24px;color:#fff;">
+        <p style="font-size:13px;margin:0 0 16px;text-align:center;opacity:0.9;">🎁 入賞賞金（Amazonギフト券）</p>
+        <table style="width:100%;text-align:center;">
+          <tr>
+            <td style="padding:8px;">
+              <div style="font-size:28px;">🥇</div>
+              <div style="font-size:18px;font-weight:900;">¥5,000</div>
+              <div style="font-size:11px;opacity:0.8;">1位</div>
+            </td>
+            <td style="padding:8px;">
+              <div style="font-size:28px;">🥈</div>
+              <div style="font-size:18px;font-weight:900;">¥3,000</div>
+              <div style="font-size:11px;opacity:0.8;">2位</div>
+            </td>
+            <td style="padding:8px;">
+              <div style="font-size:28px;">🥉</div>
+              <div style="font-size:18px;font-weight:900;">¥2,000</div>
+              <div style="font-size:11px;opacity:0.8;">3位</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- 参加方法 -->
+      <div style="background:#f0fdf4;border-radius:12px;padding:20px;margin:0 0 24px;">
+        <p style="font-weight:700;color:#166534;font-size:14px;margin:0 0 12px;">📝 参加方法（超カンタン）</p>
+        <table style="width:100%;font-size:13px;color:#444;">
+          <tr><td style="padding:6px 0;width:24px;">①</td><td style="padding:6px 8px;"><strong>土曜18時</strong>から予想受付スタート</td></tr>
+          <tr><td style="padding:6px 0;">②</td><td style="padding:6px 8px;"><strong>3レース以上</strong>予想で自動エントリー</td></tr>
+          <tr><td style="padding:6px 0;">③</td><td style="padding:6px 8px;">日曜レース終了後に結果発表！</td></tr>
+        </table>
+      </div>
+
+      ${gradeRaces.length > 0 ? `
+      <!-- 対象レース -->
+      <div style="margin:0 0 24px;">
+        <p style="font-weight:700;color:#1a1a1a;font-size:14px;margin:0 0 12px;">🏇 今週の対象レース（WIN5）</p>
+        ${raceListHtml}
+      </div>
+      ` : ''}
+
+      <div style="text-align:center;padding:8px 0;">
+        <a href="${SITE_URL}/contest" style="display:inline-block;background:#7c3aed;color:#fff;font-weight:700;font-size:14px;padding:14px 40px;border-radius:12px;text-decoration:none;">
+          大会ページを見る →
+        </a>
+      </div>
+    `),
+  };
+}
+
+// ============================================
+// ⑦ 大会リマインダー（日曜朝送信）
+// ============================================
+export function contestReminderEmail(
+  displayName: string,
+  contestName: string,
+  currentRank?: number,
+  currentPoints?: number,
+  votedCount?: number
+): { subject: string; html: string } {
+  const hasParticipated = votedCount && votedCount >= 3;
+  const needMoreVotes = votedCount !== undefined && votedCount < 3;
+
+  return {
+    subject: hasParticipated 
+      ? `⏰ ${contestName} 本日最終日！現在${currentRank}位`
+      : `⏰ ${contestName} 本日最終日！まだ間に合います`,
+    html: layout(`
+      <div style="text-align:center;margin:0 0 16px;">
+        <div style="display:inline-block;background:#ef4444;color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">⏰ 本日最終日</div>
+      </div>
+
+      <h2 style="font-size:20px;font-weight:900;color:#1a1a1a;margin:0 0 8px;text-align:center;">
+        ${contestName}
+      </h2>
+      <p style="color:#666;font-size:14px;margin:0 0 24px;text-align:center;">
+        ${displayName}さん、ラストスパートです！🔥
+      </p>
+
+      ${hasParticipated ? `
+      <!-- 参加済みの場合 -->
+      <div style="background:linear-gradient(135deg,#7c3aed,#4338ca);border-radius:16px;padding:24px;margin:0 0 24px;color:#fff;text-align:center;">
+        <p style="font-size:12px;margin:0 0 8px;opacity:0.9;">あなたの現在順位</p>
+        <div style="font-size:48px;font-weight:900;">${currentRank}位</div>
+        <div style="font-size:14px;opacity:0.9;">${currentPoints?.toLocaleString()}pt</div>
+      </div>
+      <p style="color:#444;font-size:14px;text-align:center;margin:0 0 24px;">
+        まだ順位を上げるチャンス！<br>
+        残りのレースで的中を狙いましょう 🎯
+      </p>
+      ` : needMoreVotes ? `
+      <!-- 参加条件未達成の場合 -->
+      <div style="background:#fffbeb;border-radius:16px;padding:24px;margin:0 0 24px;text-align:center;">
+        <div style="font-size:40px;margin:0 0 8px;">🎫</div>
+        <p style="font-size:16px;font-weight:700;color:#92400e;margin:0 0 8px;">
+          あと${3 - (votedCount ?? 0)}レース予想で参加確定！
+        </p>
+        <p style="font-size:13px;color:#666;margin:0;">
+          現在${votedCount}レース予想済み
+        </p>
+      </div>
+      <p style="color:#444;font-size:14px;text-align:center;margin:0 0 24px;">
+        午後のレースを予想して<br>
+        Amazonギフト券を狙いましょう！
+      </p>
+      ` : `
+      <!-- 未参加の場合 -->
+      <div style="background:#f0fdf4;border-radius:16px;padding:24px;margin:0 0 24px;text-align:center;">
+        <div style="font-size:40px;margin:0 0 8px;">🏆</div>
+        <p style="font-size:16px;font-weight:700;color:#166534;margin:0 0 8px;">
+          今からでも間に合います！
+        </p>
+        <p style="font-size:13px;color:#666;margin:0;">
+          3レース予想するだけで自動エントリー
+        </p>
+      </div>
+      `}
+
+      <!-- 賞金 -->
+      <div style="background:#f9fafb;border-radius:12px;padding:16px;margin:0 0 24px;">
+        <table style="width:100%;text-align:center;font-size:13px;">
+          <tr>
+            <td>🥇 <strong>¥5,000</strong></td>
+            <td>🥈 <strong>¥3,000</strong></td>
+            <td>🥉 <strong>¥2,000</strong></td>
+          </tr>
+        </table>
+      </div>
+
+      <div style="text-align:center;padding:8px 0;">
+        <a href="${SITE_URL}/contest" style="display:inline-block;background:#16a34a;color:#fff;font-weight:700;font-size:14px;padding:14px 40px;border-radius:12px;text-decoration:none;">
+          今すぐ予想する →
+        </a>
+      </div>
+    `),
+  };
+}
