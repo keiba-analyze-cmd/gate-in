@@ -34,13 +34,13 @@ export async function GET(request: Request) {
   }
 
   if (!contest) {
-    return NextResponse.json({ contest: null, entries: [], my_entry: null, contest_races: [] });
+    return NextResponse.json({ contest: null, entries: [], my_entry: null, contest_races: [], my_votes: [] });
   }
 
   // 対象レース取得
   const { data: contestRaces } = await supabase
     .from("contest_races")
-    .select("*, races(id, race_name, race_date, venue, race_number, post_time, status, grade)")
+    .select("*, races(id, name, race_date, course_name, race_number, post_time, status, grade)")
     .eq("contest_id", contest.id)
     .order("race_order", { ascending: true });
 
@@ -55,8 +55,17 @@ export async function GET(request: Request) {
     .order("earliest_vote_at", { ascending: true })
     .limit(50);
 
+  // 参加者数
+  const { count: totalParticipants } = await supabase
+    .from("contest_entries")
+    .select("*", { count: "exact", head: true })
+    .eq("contest_id", contest.id)
+    .eq("is_eligible", true);
+
   // 自分のエントリー
   let myEntry = null;
+  let myVotes: any[] = [];
+
   if (user) {
     const { data } = await supabase
       .from("contest_entries")
@@ -75,6 +84,17 @@ export async function GET(request: Request) {
         .gt("total_points", myEntry.total_points);
       myEntry.ranking = (count ?? 0) + 1;
     }
+
+    // 対象レースへの投票状況を取得
+    const raceIds = (contestRaces ?? []).map((cr: any) => cr.races?.id).filter(Boolean);
+    if (raceIds.length > 0) {
+      const { data: votes } = await supabase
+        .from("votes")
+        .select("race_id, status, earned_points, created_at")
+        .eq("user_id", user.id)
+        .in("race_id", raceIds);
+      myVotes = votes ?? [];
+    }
   }
 
   return NextResponse.json({
@@ -82,5 +102,7 @@ export async function GET(request: Request) {
     entries: (entries ?? []).map((e, i) => ({ ...e, ranking: i + 1 })),
     my_entry: myEntry,
     contest_races: contestRaces ?? [],
+    my_votes: myVotes,
+    total_participants: totalParticipants ?? 0,
   });
 }
