@@ -18,7 +18,7 @@ type Result = {
 type Payout = {
   bet_type: string;
   combination: string;
-  payout: number;
+  payout_amount: number;
   popularity: number | null;
 };
 
@@ -116,7 +116,7 @@ export default function RaceResultTable({ results, payouts, myVote }: Props) {
                   <span className={`text-sm ${textMuted}`}>{p.combination}</span>
                 </div>
                 <div className="text-right">
-                  <span className={`font-bold ${textPrimary}`}>¥{(p.payout ?? 0).toLocaleString()}</span>
+                  <span className={`font-bold ${textPrimary}`}>¥{(p.payout_amount ?? 0).toLocaleString()}</span>
                   {p.popularity && <span className={`text-xs ml-2 ${textMuted}`}>{p.popularity}番人気</span>}
                 </div>
               </div>
