@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/admin";
 import { NextResponse } from "next/server";
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
 // レース結果を登録する
 export async function POST(request: Request, { params }: Props) {
   const { raceId } = await params;
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const body = await request.json();
 
   // body.results: [{ race_entry_id, finish_position, finish_time?, margin?, last_3f? }]
