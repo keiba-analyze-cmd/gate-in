@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     query = query.eq("race_date", race_date);
   }
 
-  const { data: races, error } = await query.limit(15);
+  const { data: races, error } = await query.limit(5);
 
   if (error || !races) {
     return NextResponse.json({ error: "Failed to fetch races" }, { status: 500 });
