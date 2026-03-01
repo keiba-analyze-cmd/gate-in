@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/admin";
 import { sendEmail } from "@/lib/email/send";
-import { weeklyContestAnnouncementEmail } from "@/lib/email/templates";
+import { contestReminderEmail } from "@/lib/email/templates";
 
 /**
- * 週間大会告知メール（金曜夕方）
- * 毎週金曜 16:30 JST = "30 7 * * 5" UTC
+ * 大会リマインダーメール（日曜朝）
+ * 毎週日曜 8:00 JST = "0 23 * * 6" UTC (土曜23:00 UTC)
  */
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");
@@ -15,35 +15,38 @@ export async function GET(request: Request) {
 
   const admin = createAdminClient();
 
-  // 今週末（土日）の重賞レースを取得
-  const now = new Date();
-  const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
-  const sat = new Date(jst);
-  sat.setDate(jst.getDate() + (6 - jst.getDay()));
-  const sun = new Date(sat);
-  sun.setDate(sat.getDate() + 1);
-  const satStr = sat.toISOString().split("T")[0];
-  const sunStr = sun.toISOString().split("T")[0];
-
-  const { data: races } = await admin
-    .from("races")
-    .select("id, name, grade, course_name")
-    .in("race_date", [satStr, sunStr])
-    .not("grade", "is", null)
-    .order("race_date")
-    .order("post_time");
-
-  // 今週の大会
+  // 現在開催中の大会を取得
   const { data: contest } = await admin
     .from("contests")
-    .select("name")
+    .select("id, name")
     .eq("type", "weekly")
     .eq("status", "active")
     .order("started_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
-  const contestName = contest?.name || "週間予想大会";
+  if (!contest) {
+    return NextResponse.json({ message: "No active contest", sent: 0 });
+  }
+
+  // 大会エントリー情報を取得
+  const { data: entries } = await admin
+    .from("contest_entries")
+    .select("user_id, vote_count, total_points, is_eligible");
+
+  const entryMap = new Map(
+    (entries ?? []).map((e) => [e.user_id, e])
+  );
+
+  // ランキング計算（eligible のみ）
+  const eligibleEntries = (entries ?? [])
+    .filter((e) => e.is_eligible)
+    .sort((a, b) => b.total_points - a.total_points);
+  
+  const rankMap = new Map<string, number>();
+  eligibleEntries.forEach((e, i) => {
+    rankMap.set(e.user_id, i + 1);
+  });
 
   // メール配信対象ユーザー取得
   const { data: users } = await admin.auth.admin.listUsers({ perPage: 1000 });
@@ -66,17 +69,15 @@ export async function GET(request: Request) {
     if (profile?.email_notifications === false) { skipped++; continue; }
 
     const displayName = profile?.display_name || "ユーザー";
-    const gradeRaces = (races ?? []).map((r) => ({
-      name: r.name,
-      grade: r.grade,
-      venue: r.course_name,
-      id: r.id,
-    }));
+    const entry = entryMap.get(user.id);
+    const currentRank = rankMap.get(user.id);
 
-    const { subject, html } = weeklyContestAnnouncementEmail(
+    const { subject, html } = contestReminderEmail(
       displayName,
-      contestName,
-      gradeRaces
+      contest.name,
+      currentRank,
+      entry?.total_points,
+      entry?.vote_count
     );
 
     await sendEmail(user.email, subject, html);
@@ -84,5 +85,10 @@ export async function GET(request: Request) {
     await new Promise((r) => setTimeout(r, 500));
   }
 
-  return NextResponse.json({ sent, skipped, races: races?.length ?? 0, contest: contestName });
+  return NextResponse.json({ 
+    sent, 
+    skipped, 
+    contest: contest.name,
+    participants: eligibleEntries.length 
+  });
 }
