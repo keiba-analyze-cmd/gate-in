@@ -33,7 +33,7 @@ export async function POST(request: Request) {
   const results = [];
   for (const race of races) {
     try {
-      const result = await settleRace(race.id);
+      const result = await settleRace(admin, race.id);
       results.push({ race_id: race.id, name: race.name, ...result });
     } catch (err: any) {
       results.push({ race_id: race.id, name: race.name, error: err.message });
