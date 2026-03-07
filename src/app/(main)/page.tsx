@@ -10,6 +10,7 @@ import FollowingVotes from "@/components/social/FollowingVotes";
 import PopularVotesSection from "@/components/social/PopularVotesSection";
 import WeeklyMVPBanner from "@/components/social/WeeklyMVPBanner";
 import { getArticles, getQuizQuestions } from "@/lib/microcms";
+import ContestBanner from "@/components/contest/ContestBanner";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -148,6 +149,44 @@ export default async function HomePage() {
     );
   }
 
+
+  // 週間大会データ取得
+  const { data: activeContest } = await supabase
+    .from("contests")
+    .select("*")
+    .eq("type", "weekly")
+    .eq("status", "active")
+    .order("week_start", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  let contestRaces: any[] = [];
+  let myContestEntry: any = null;
+  let totalParticipants = 0;
+
+  if (activeContest) {
+    const { data: races } = await supabase
+      .from("contest_races")
+      .select("*, races(id, name, course_name, race_number, post_time, status, grade)")
+      .eq("contest_id", activeContest.id)
+      .order("race_order", { ascending: true });
+    contestRaces = races ?? [];
+
+    const { count } = await supabase
+      .from("contest_entries")
+      .select("*", { count: "exact", head: true })
+      .eq("contest_id", activeContest.id)
+      .eq("is_eligible", true);
+    totalParticipants = count ?? 0;
+
+    const { data: myEntry } = await supabase
+      .from("contest_entries")
+      .select("*")
+      .eq("contest_id", activeContest.id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    myContestEntry = myEntry;
+  }
   return (
     <div className="space-y-5">
       {/* ====== 👑 G1レース（特別表示） ====== */}
@@ -209,26 +248,15 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ====== 🏆 週間予想大会バナー ====== */}
-      <Link href="/contest" className="block">
-        <div className="rounded-2xl overflow-hidden border-2 border-purple-300 bg-gradient-to-br from-purple-600 to-indigo-700 px-5 py-4 text-white relative">
-          <div className="absolute top-0 right-0 bg-amber-400 text-purple-900 text-[10px] font-black px-2 py-0.5 rounded-bl-lg">毎週開催</div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">🏆</span>
-              <div>
-                <div className="text-sm font-black">週間予想大会</div>
-                <div className="text-xs text-purple-200 font-medium">3レース以上予想で参加！WIN5対象レースでバトル</div>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-xs text-purple-200">🥇🥈🥉</div>
-              <div className="text-sm font-black">Amazonギフト券</div>
-            </div>
-          </div>
-        </div>
-      </Link>
 
+      {/* ====== 🏆 週間予想大会バナー ====== */}
+      <ContestBanner
+        contest={activeContest}
+        contestRaces={contestRaces}
+        totalParticipants={totalParticipants}
+        myVoteCount={myContestEntry?.vote_count ?? 0}
+        isEligible={myContestEntry?.is_eligible ?? false}
+      />
       {/* ====== 🥇 週間MVP ====== */}
       <WeeklyMVPBanner />
 
