@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     .select("*")
     .eq("type", type)
     .eq("status", "active")
-    .order("started_at", { ascending: false })
+    .order("week_start", { ascending: false })
     .limit(1);
 
   contest = activeContests?.[0] ?? null;
