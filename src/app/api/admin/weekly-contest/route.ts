@@ -64,7 +64,6 @@ export async function POST(request: Request) {
         prize_1st: 5000,
         prize_2nd: 3000,
         prize_3rd: 2000,
-        started_at: `${sundayStr}T00:00:00+09:00`,
       })
       .select()
       .single();
