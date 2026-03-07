@@ -64,6 +64,7 @@ export async function POST(request: Request) {
         prize_1st: 5000,
         prize_2nd: 3000,
         prize_3rd: 2000,
+        year_month: sundayStr.slice(0, 7),
       })
       .select()
       .single();
