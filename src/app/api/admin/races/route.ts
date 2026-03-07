@@ -143,7 +143,7 @@ export async function GET(request: Request) {
   const admin = createAdminClient();
   let query = admin
     .from("races")
-    .select("id, name, grade, race_date, venue, course_name, race_number, post_time, status, head_count, is_win5")
+    .select("id, name, grade, race_date, course_name, race_number, post_time, status, head_count, is_win5")
     .order("race_date", { ascending: false })
     .order("post_time", { ascending: true });
 

@@ -6,7 +6,7 @@ type Race = {
   id: string;
   name: string;
   race_date: string;
-  venue: string;
+  course_name: string;
   race_number: number;
   post_time: string;
   grade: string | null;
@@ -158,7 +158,7 @@ export default function AdminContestManager() {
               <div className="flex flex-wrap gap-2">
                 {contestRaces.map((cr) => (
                   <span key={cr.races.id} className="bg-white text-purple-700 text-xs px-2 py-1 rounded border border-purple-200">
-                    {cr.race_order}. {cr.races.venue}{cr.races.race_number}R {cr.races.grade && `(${cr.races.grade})`}
+                    {cr.race_order}. {cr.races.course_name}{cr.races.race_number}R {cr.races.grade && `(${cr.races.grade})`}
                   </span>
                 ))}
               </div>
@@ -224,7 +224,7 @@ export default function AdminContestManager() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-gray-900">
-                          {race.venue} {race.race_number}R
+                          {race.course_name} {race.race_number}R
                         </span>
                         {race.grade && (
                           <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${
