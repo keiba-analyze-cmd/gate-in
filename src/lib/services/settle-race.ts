@@ -462,7 +462,7 @@ export async function settleRace(
 
       const { data: contest } = await supabase
         .from("contests").select("id, min_votes")
-        .eq("year_month", yearMonth).eq("status", "active").maybeSingle();
+        .eq("year_month", yearMonth).eq("status", "active").eq("type", "monthly").maybeSingle();
 
       if (contest) {
         const { data: existing } = await supabase
