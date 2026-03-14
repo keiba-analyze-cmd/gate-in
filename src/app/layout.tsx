@@ -16,14 +16,14 @@ export const metadata: Metadata = {
     siteName: "ゲートイン！",
     locale: "ja_JP",
     type: "website",
-    images: [{ url: "/api/og?title=ゲートイン！", width: 1200, height: 630 }],
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   verification: { google: "6bhGEFMP9Ks_vGaFch0SVAJz45i_9Yn7ZuvzZKwUpS8" },
   twitter: {
     card: "summary_large_image",
     title: "ゲートイン！ | 競馬予想で腕試し",
     description: "みんなの予想で腕試し！本命・対抗・危険馬を予想してポイントを稼ごう。",
-    images: ["/api/og?title=ゲートイン！"],
+    images: ["/og-image.png"],
   },
 };
 
