@@ -50,7 +50,7 @@ export async function GET(request: Request) {
       status: "active",
       week_start: sundayStr,
       week_end: sundayStr,
-      year_month: yearMonth,
+      year_month: sundayStr,
       start_date: sundayStr,
       end_date: sundayStr,
       prize_1st: 5000,
