@@ -182,6 +182,13 @@ export default function VoteForm({ raceId, entries, raceInfo, userName, userHand
     }
 
     // My新聞メンバーに通知（バックグラウンドで実行）
+
+    // 週間大会エントリーを更新
+    fetch("/api/votes/update-contest-entry", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ race_id: raceId }),
+    }).catch(() => {});
     fetch("/api/votes/notify-newspaper", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
