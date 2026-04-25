@@ -14,6 +14,7 @@ import ShareButtons from "@/components/social/ShareButtons";
 import RaceCountdown from "@/components/races/RaceCountdown";
 import MyNewspaperTab from "@/components/races/MyNewspaperTab";
 
+import AIPredictorTab from "@/components/races/AIPredictorTab";
 type Props = {
   race: any;
   entries: any[] | null;
@@ -36,7 +37,7 @@ export default function RaceDetailClient({
   isVotable, hasVoted, isFinished, isBeforeDeadline, pointsTransactions
 }: Props) {
   const { isDark } = useTheme();
-  const [activeTab, setActiveTab] = useState<"horses" | "newspaper" | "votes" | "comments">("horses");
+  const [activeTab, setActiveTab] = useState<"horses" | "newspaper" | "votes" | "comments" | "ai">("horses");
 
   const cardBg = isDark ? "bg-slate-900 border-slate-700" : "bg-white border-gray-100";
   const textPrimary = isDark ? "text-slate-100" : "text-gray-800";
@@ -66,6 +67,7 @@ export default function RaceDetailClient({
     { key: "newspaper", label: "📰 My新聞", show: hasVoted || isFinished },
     { key: "votes", label: "👥 みんなの予想", show: hasVoted || isFinished },
     { key: "comments", label: "💬 掲示板", show: hasVoted || isFinished },
+    { key: "ai", label: "🤖 AI予想", show: hasVoted || isFinished },
   ].filter(t => t.show);
 
   const tabActive = isDark ? "bg-amber-500 text-slate-900" : "bg-green-600 text-white";
@@ -186,6 +188,11 @@ export default function RaceDetailClient({
             <CommentSection raceId={race.id} currentUserId={userId} />
           )}
 
+
+          {/* AI予想タブ */}
+          {activeTab === "ai" && (
+            <AIPredictorTab raceId={race.id} hasVoted={hasVoted} isFinished={isFinished} />
+          )}
           {/* 投票編集フォーム */}
           {hasVoted && myVote && race.status === "voting_open" && entries && activeTab === "horses" && (
             <VoteEditForm
