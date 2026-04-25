@@ -43,3 +43,8 @@ next-env.d.ts
 # バックアップ・生成ツール
 backup-*.json
 gate-in-article-gen/
+
+# JRDB raw data (licensed, do not commit)
+data/jrdb/raw/
+data/jrdb/parsed/
+data/jrdb/raw/.jrdb_creds
