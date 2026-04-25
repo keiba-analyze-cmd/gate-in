@@ -13,6 +13,7 @@ type AIPrediction = {
   horse_name: string;
   score: string;
   reason_key: string;
+  comment?: string;
   gap?: string;
   sire_name?: string;
   weight_change?: number;
@@ -109,8 +110,7 @@ export default function AIPredictorTab({ raceId, hasVoted, isFinished }: Props) 
 
       {predictions.map((p) => {
         const icon = PREDICTOR_ICONS[p.predictor_id] || "🤖";
-        const reasonFn = REASON_TEXT[p.reason_key];
-        const reason = reasonFn ? reasonFn(p) : `スコア${p.score}で選出。`;
+        const reason = p.comment || (() => { const fn = REASON_TEXT[p.reason_key]; return fn ? fn(p) : "スコア"+p.score+"で選出。"; })();
 
         return (
           <div
