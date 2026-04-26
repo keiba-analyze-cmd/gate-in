@@ -75,6 +75,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Sitemap: クイズカテゴリ取得エラー", e);
   }
 
+  // ── AI予想家ページ ──
+  const predictorIds = ["hayate", "kazan", "hakusen", "hibari", "gantetsu"];
+  const predictorEntries = predictorIds.map((id) => ({
+    url: `${baseUrl}/predictors/${id}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
   return [
     // 固定ページ
     { url: baseUrl, lastModified: new Date(), changeFrequency: "daily", priority: 1 },
@@ -83,6 +92,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/dojo/articles`, lastModified: new Date(), changeFrequency: "daily", priority: 0.8 },
     { url: `${baseUrl}/rankings`, lastModified: new Date(), changeFrequency: "daily", priority: 0.7 },
     { url: `${baseUrl}/contest`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
+    { url: `${baseUrl}/predictors`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: `${baseUrl}/about`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${baseUrl}/terms`, changeFrequency: "monthly", priority: 0.3 },
     { url: `${baseUrl}/privacy`, changeFrequency: "monthly", priority: 0.3 },
@@ -91,5 +101,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...raceEntries,
     ...articleEntries,
     ...quizEntries,
+    ...predictorEntries,
   ];
 }
