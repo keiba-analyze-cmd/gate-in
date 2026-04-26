@@ -81,6 +81,9 @@ export default function LandingPage({ openRaces, stats, heroImage, articles = []
       {/* ====== 特徴 ====== */}
       <FeaturesSection />
 
+      {/* ====== 🤖 AI予想家紹介 ====== */}
+      <AIPredictorSection />
+
       {/* ====== 🥋 競馬道場（記事＆クイズ） ====== */}
       {(articles.length > 0 || quizzes.length > 0) && (
         <DojoPreviewSection articles={articles} quizzes={quizzes} />
@@ -365,35 +368,29 @@ function QuizTrySection({ quizzes }: { quizzes: LPQuiz[] }) {
 
 // ====== ヒーローセクション ======
 function HeroSection({ heroImage }: { heroImage?: HeroImage }) {
-  const hasImage = heroImage?.url;
-  
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-green-600 via-green-500 to-emerald-600">
-      {/* カスタム背景画像 */}
-      {hasImage && (
-        <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${heroImage.url})` }}
-        >
-          <div className="absolute inset-0 bg-black/40" />
-        </div>
-      )}
-      {/* デフォルトパターン（画像がない場合） */}
-      {!hasImage && (
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
-      )}
-      <div className="relative px-6 py-16 text-center text-white">
-        <div className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-1.5 mb-6">
+    <section className="relative overflow-hidden rounded-3xl">
+      {/* ヒーロー画像背景 */}
+      <div className="absolute inset-0">
+        <Image
+          src="/images/hero-ai.jpg"
+          alt="ゲートイン！ 5体のAI予想家"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+      </div>
+      <div className="relative px-6 pt-8 pb-16 text-center text-white">
+        <div className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-1.5 mb-6 backdrop-blur-sm">
           <span className="text-yellow-300 text-sm">🎉</span>
           <span className="text-sm font-medium">β版公開中！</span>
         </div>
-        <h1 className="text-4xl sm:text-5xl font-black mb-4 leading-tight">
-          競馬予想で<br />
-          <span className="text-yellow-300">腕試し！</span>
-        </h1>
+        <div className="h-32 sm:h-40" />
         <p className="text-green-100 text-base sm:text-lg mb-8 max-w-md mx-auto leading-relaxed">
-          本命・対抗・危険馬を予想してポイントを稼ごう。<br />
-          月間ランキング上位者には<span className="font-bold text-yellow-300">Amazonギフト券</span>をプレゼント！
+          本命・対抗・穴馬を予想してポイントを稼ごう。<br />
+          <span className="font-bold text-yellow-300">5体のAI予想家</span>があなたの予想をサポート。<br />
+          月間ランキング上位には<span className="font-bold text-yellow-300">Amazonギフト券</span>！
         </p>
         <Link
           href="/login"
@@ -445,12 +442,68 @@ function StepsSection() {
   );
 }
 
+
+// ====== AI予想家紹介セクション ======
+function AIPredictorSection() {
+  const predictors = [
+    { id: "hayate", name: "ハヤテ", type: "データ分析型", img: "/images/predictors/hayate.png", color: "border-blue-300 bg-blue-50", tagBg: "bg-blue-100 text-blue-700", rate: "59.5%", desc: "IDM・騎手指数を解析し、数字で勝ち馬を導く", quote: "数字は嘘をつきません。" },
+    { id: "gantetsu", name: "ガンテツ", type: "軸馬特化型", img: "/images/predictors/gantetsu.png", color: "border-slate-300 bg-slate-50", tagBg: "bg-slate-100 text-slate-700", rate: "77.4%", desc: "自信がある時だけ1頭を選出。3着内率77%の精度", quote: "迷いなき一撃、それがワシの◎じゃ。" },
+    { id: "kazan", name: "カザン", type: "穴馬予測型", img: "/images/predictors/kazan.png", color: "border-red-300 bg-red-50", tagBg: "bg-red-100 text-red-700", rate: "16.0%", desc: "人気薄の実力馬を嗅ぎ分ける回収率重視派", quote: "本命党には見えない景色がある。" },
+    { id: "hakusen", name: "ハクセン", type: "血統分析型", img: "/images/predictors/hakusen.png", color: "border-green-300 bg-green-50", tagBg: "bg-green-100 text-green-700", rate: "56.2%", desc: "父馬×コース×距離の相性から勝ち馬を見抜く", quote: "血は記憶する。コースも、距離も。" },
+    { id: "hibari", name: "ヒバリ", type: "当日データ型", img: "/images/predictors/hibari.png", color: "border-amber-300 bg-amber-50", tagBg: "bg-amber-100 text-amber-700", rate: "58.2%", desc: "馬体重・当日の調子から仕上がりを判断", quote: "今日の空気、あたしには読める。" },
+  ];
+
+  return (
+    <section className="space-y-4">
+      <div className="text-center">
+        <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-full px-4 py-1.5 mb-3">
+          <span className="text-blue-600 text-sm">🤖</span>
+          <span className="text-sm font-bold text-blue-700">NEW</span>
+        </div>
+        <h2 className="text-xl font-black text-gray-900">
+          5体のAI予想家が予想をサポート
+        </h2>
+        <p className="text-sm text-gray-500 mt-1">
+          それぞれ異なるロジックで◎（本命）を選出
+        </p>
+      </div>
+      <div className="space-y-3">
+        {predictors.map((p) => (
+          <div key={p.id} className={`rounded-2xl border p-4 flex items-center gap-4 ${p.color}`}>
+            <Image
+              src={p.img}
+              alt={p.name}
+              width={56}
+              height={56}
+              className="rounded-full object-cover flex-shrink-0"
+            />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-base font-black text-gray-900">{p.name}</span>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${p.tagBg}`}>{p.type}</span>
+              </div>
+              <p className="text-xs text-gray-600 leading-relaxed mb-1">{p.desc}</p>
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-bold text-gray-800">3着内率 {p.rate}</span>
+                <span className="text-[10px] text-gray-400 italic">「{p.quote}」</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p className="text-center text-xs text-gray-400">
+        ※ AI予想は投票後に閲覧可能。まず自分で予想してからAIの見解をチェック！
+      </p>
+    </section>
+  );
+}
+
 // ====== 特徴セクション ======
 function FeaturesSection() {
   const features = [
     { icon: "🎯", title: "シンプルな予想", desc: "本命◎、対抗○、危険馬⚠️を選ぶだけ。馬券を買わなくてもOK！", color: "bg-red-50" },
     { icon: "👥", title: "SNS機能", desc: "予想家をフォローしてタイムラインをチェック。いいね＆コメントで交流！", color: "bg-blue-50" },
-    { icon: "📊", title: "成績管理", desc: "的中率・回収率を自動計算。自分の予想傾向を分析できます。", color: "bg-green-50" },
+    { icon: "🤖", title: "AI予想家", desc: "5体のAIがそれぞれの専門分野で◎を選出。投票後に閲覧可能！", color: "bg-blue-50" },
     { icon: "🎁", title: "毎月景品", desc: "ランキング上位者にAmazonギフト券をプレゼント！", color: "bg-yellow-50" },
   ];
 
