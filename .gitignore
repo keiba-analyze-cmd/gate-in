@@ -49,3 +49,7 @@ data/jrdb/raw/
 data/jrdb/parsed/
 data/jrdb/raw/.jrdb_creds
 data/jrdb/pipeline.log
+
+# JRDB data
+jrdb-data/
+*.log
