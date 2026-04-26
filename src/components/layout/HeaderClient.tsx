@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import UserAvatar from "@/components/ui/UserAvatar";
 import { useTheme } from "@/contexts/ThemeContext";
 
@@ -28,12 +29,9 @@ export default function HeaderClient({ user, profile, unreadCount }: Props) {
   return (
     <header className={`sticky top-0 z-50 border-b-2 transition-colors ${isDark ? "bg-slate-900 border-amber-500" : "bg-white border-green-600"}`}>
       <div className="max-w-5xl mx-auto flex items-center justify-between px-4 h-12">
-        <Link href="/" className="flex items-center gap-1.5 shrink-0">
-          <span className="text-xl">🏇</span>
-          <span className={`text-lg font-black ${isDark ? "text-slate-100" : "text-gray-800"}`}>
-            ゲートイン<span className={isDark ? "text-amber-400" : "text-orange-600"}>！</span>
-          </span>
-        </Link>
+        <Link href="/" className="flex items-center shrink-0">
+            <Image src="/images/logo.png" alt="ゲートイン！" width={120} height={36} className="h-8 w-auto" priority />
+          </Link>
 
         {/* ログイン時のみナビゲーション表示 */}
         {isLoggedIn && (

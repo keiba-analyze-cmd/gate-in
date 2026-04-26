@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { getRank, RANKS } from "@/lib/constants/ranks";
+import ScrollAnimation from "./ScrollAnimation";
+import CountUp from "./CountUp";
 
 type Race = {
   id: string;
@@ -56,6 +58,20 @@ export default function LandingPage({ openRaces, stats, heroImage, articles = []
     const html = document.documentElement;
     const wasDark = html.classList.contains("dark");
     html.classList.remove("dark");
+    // アニメーション用CSS注入
+    if (!document.getElementById("lp-animations")) {
+      const style = document.createElement("style");
+      style.id = "lp-animations";
+      style.textContent = `
+        @keyframes slowZoom { from { transform: scale(1); } to { transform: scale(1.05); } }
+        .animate-slow-zoom { animation: slowZoom 12s ease-out forwards; }
+        @keyframes pulseGlow { 0%, 100% { box-shadow: 0 4px 16px rgba(22,163,74,0.3); } 50% { box-shadow: 0 4px 32px rgba(22,163,74,0.6); } }
+        .animate-pulse-glow { animation: pulseGlow 2.5s ease-in-out infinite; }
+        @keyframes floatParticle { 0% { transform: translateY(0) scale(0); opacity: 0; } 20% { opacity: 1; transform: scale(1); } 100% { transform: translateY(-400px) scale(0.3); opacity: 0; } }
+        .animate-float-particle { animation: floatParticle 6s ease-out infinite; }
+      `;
+      document.head.appendChild(style);
+    }
     html.classList.add("light");
     html.style.colorScheme = "light";
     return () => {
@@ -73,33 +89,34 @@ export default function LandingPage({ openRaces, stats, heroImage, articles = []
       <HeroSection heroImage={heroImage} />
 
       {/* ====== 3ステップ ====== */}
-      <StepsSection />
+      <ScrollAnimation><StepsSection /></ScrollAnimation>
 
       {/* ====== 🏆 週間予想大会 ====== */}
       <ContestSection />
 
       {/* ====== 特徴 ====== */}
-      <FeaturesSection />
+      <ScrollAnimation><FeaturesSection /></ScrollAnimation>
 
       {/* ====== 🤖 AI予想家紹介 ====== */}
-      <AIPredictorSection />
+      <ScrollAnimation><AIPredictorSection /></ScrollAnimation>
 
       {/* ====== 🥋 競馬道場（記事＆クイズ） ====== */}
       {(articles.length > 0 || quizzes.length > 0) && (
-        <DojoPreviewSection articles={articles} quizzes={quizzes} />
+        <ScrollAnimation><DojoPreviewSection articles={articles} quizzes={quizzes} />
+      </ScrollAnimation>
       )}
 
       {/* ====== 画面イメージ ====== */}
-      <ScreenshotSection />
+      <ScrollAnimation><ScreenshotSection /></ScrollAnimation>
 
       {/* ====== ポイントシステム ====== */}
-      <PointSystemSection />
+      <ScrollAnimation><PointSystemSection /></ScrollAnimation>
 
       {/* ====== ランク＆バッジ ====== */}
-      <RankBadgeSection />
+      <ScrollAnimation><RankBadgeSection /></ScrollAnimation>
 
       {/* ====== 実績数字 ====== */}
-      <StatsSection stats={stats} />
+      <ScrollAnimation><StatsSection stats={stats} /></ScrollAnimation>
 
       {/* ====== 公式予想家募集 ====== */}
       <OfficialRecruiterSection />
@@ -109,7 +126,7 @@ export default function LandingPage({ openRaces, stats, heroImage, articles = []
       {gradeRaces.length > 0 && <GradeRacesSection races={gradeRaces} />}
 
       {/* ====== FAQ ====== */}
-      <FAQSection />
+      <ScrollAnimation><FAQSection /></ScrollAnimation>
 
       {/* ====== 最終CTA ====== */}
       <FinalCTASection />
@@ -370,37 +387,28 @@ function QuizTrySection({ quizzes }: { quizzes: LPQuiz[] }) {
 function HeroSection({ heroImage }: { heroImage?: HeroImage }) {
   return (
     <section className="relative overflow-hidden rounded-3xl">
-      {/* ヒーロー画像背景 */}
-      <div className="absolute inset-0">
+      {/* ヒーロー画像 */}
+      <div className="relative">
         <Image
           src="/images/hero-ai.jpg"
           alt="ゲートイン！ 5体のAI予想家"
-          fill
-          className="object-cover"
+          width={1200}
+          height={630}
+          className="w-full h-auto rounded-3xl animate-slow-zoom"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-      </div>
-      <div className="relative px-6 pt-8 pb-16 text-center text-white">
-        <div className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-1.5 mb-6 backdrop-blur-sm">
-          <span className="text-yellow-300 text-sm">🎉</span>
-          <span className="text-sm font-medium">β版公開中！</span>
+        {/* 下部グラデーション（CTAエリア） */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent rounded-b-3xl px-6 pb-6 pt-20 text-center">
+          <Link
+            href="/login"
+            className="inline-block bg-white text-green-700 font-black text-lg px-10 py-4 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all animate-pulse-glow"
+          >
+            無料で始める →
+          </Link>
+          <p className="text-green-200 text-xs mt-3" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.8)" }}>
+            Google・Xアカウントで30秒で登録完了
+          </p>
         </div>
-        <div className="h-32 sm:h-40" />
-        <p className="text-green-100 text-base sm:text-lg mb-8 max-w-md mx-auto leading-relaxed">
-          本命・対抗・穴馬を予想してポイントを稼ごう。<br />
-          <span className="font-bold text-yellow-300">5体のAI予想家</span>があなたの予想をサポート。<br />
-          月間ランキング上位には<span className="font-bold text-yellow-300">Amazonギフト券</span>！
-        </p>
-        <Link
-          href="/login"
-          className="inline-block bg-white text-green-700 font-black text-lg px-10 py-4 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all"
-        >
-          無料で始める →
-        </Link>
-        <p className="text-green-200 text-xs mt-4">
-          Google・Xアカウントで30秒で登録完了
-        </p>
       </div>
     </section>
   );
@@ -690,15 +698,15 @@ function StatsSection({ stats }: { stats: Stats }) {
       <h2 className="text-xl font-black text-center mb-6">📊 サービス実績</h2>
       <div className="grid grid-cols-3 gap-4 text-center">
         <div>
-          <div className="text-3xl font-black">{stats.races.toLocaleString()}+</div>
+          <div className="text-3xl font-black"><CountUp target={stats.races} suffix="+" /></div>
           <div className="text-xs text-green-200">対応レース数</div>
         </div>
         <div>
-          <div className="text-3xl font-black">{stats.horses.toLocaleString()}+</div>
+          <div className="text-3xl font-black"><CountUp target={stats.horses} suffix="+" /></div>
           <div className="text-xs text-green-200">登録馬数</div>
         </div>
         <div>
-          <div className="text-3xl font-black">{stats.votes.toLocaleString()}+</div>
+          <div className="text-3xl font-black"><CountUp target={stats.votes} suffix="+" /></div>
           <div className="text-xs text-green-200">投稿された予想</div>
         </div>
       </div>
@@ -920,20 +928,46 @@ function FAQSection() {
 // ====== 最終CTAセクション ======
 function FinalCTASection() {
   return (
-    <section className="text-center py-8">
-      <div className="text-5xl mb-4">🏇</div>
-      <h2 className="text-2xl font-black text-gray-900 mb-3">
-        さあ、予想を始めよう！
-      </h2>
-      <p className="text-sm text-gray-500 mb-6">
-        登録無料・30秒で完了
-      </p>
-      <Link
-        href="/login"
-        className="inline-block bg-green-600 text-white font-black text-lg px-12 py-4 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all"
-      >
-        無料でアカウント作成 →
-      </Link>
+    <section className="relative overflow-hidden rounded-3xl" style={{ minHeight: 400 }}>
+      {/* 背景画像（パララックス風） */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-fixed"
+        style={{ backgroundImage: "url(/images/cta-gate.jpg)" }}
+      />
+      {/* オーバーレイ */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+      {/* 光の粒子エフェクト */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(12)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-yellow-300/30 animate-float-particle"
+            style={{
+              width: 3 + Math.random() * 4,
+              height: 3 + Math.random() * 4,
+              left: 10 + Math.random() * 80 + "%",
+              bottom: -10 + "%",
+              animationDelay: Math.random() * 5 + "s",
+              animationDuration: 4 + Math.random() * 4 + "s",
+            }}
+          />
+        ))}
+      </div>
+      {/* コンテンツ */}
+      <div className="relative text-center py-20 px-6">
+        <h2 className="text-3xl sm:text-4xl font-black text-white mb-4" style={{ textShadow: "0 2px 12px rgba(0,0,0,0.6)" }}>
+          さあ、予想を始めよう！
+        </h2>
+        <p className="text-white/80 text-sm mb-8" style={{ textShadow: "0 1px 6px rgba(0,0,0,0.6)" }}>
+          登録無料・30秒で完了
+        </p>
+        <Link
+          href="/login"
+          className="inline-block bg-white text-green-700 font-black text-lg px-12 py-4 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all animate-pulse-glow"
+        >
+          無料でアカウント作成 →
+        </Link>
+      </div>
     </section>
   );
 }
@@ -943,10 +977,9 @@ function StickyFooter() {
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-50 shadow-lg">
       <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">🏇</span>
-          <span className="text-sm font-bold text-gray-800 hidden sm:inline">Gate In!</span>
-        </div>
+          <div className="flex items-center gap-2">
+            <Image src="/images/logo.png" alt="ゲートイン！" width={100} height={30} className="h-7 w-auto" />
+          </div>
         <Link
           href="/login"
           className="flex-1 sm:flex-none bg-green-600 text-white text-sm font-bold px-6 py-2.5 rounded-full text-center hover:bg-green-700 transition-colors"

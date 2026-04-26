@@ -23,7 +23,7 @@ export default function AIPredictorBanner() {
           レース詳細で予想を見る →
         </span>
       </div>
-      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide md:justify-center">
         {PREDICTORS.map((p) => (
           <div
             key={p.id}
