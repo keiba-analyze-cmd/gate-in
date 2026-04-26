@@ -11,6 +11,8 @@ import PopularVotesSection from "@/components/social/PopularVotesSection";
 import WeeklyMVPBanner from "@/components/social/WeeklyMVPBanner";
 import { getArticles, getQuizQuestions } from "@/lib/microcms";
 import ContestBanner from "@/components/contest/ContestBanner";
+import AIPredictorBanner from "@/components/social/AIPredictorBanner";
+import AIColumnPreview from "@/components/social/AIColumnPreview";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -278,24 +280,11 @@ export default async function HomePage() {
         <FollowingVotes />
       </section>
 
-      {/* ====== 📚 競馬道場への誘導 ====== */}
-      <Link href="/dojo" className="block">
-        <div className="rounded-2xl overflow-hidden border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 px-5 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">📚</span>
-              <div>
-                <div className="text-sm font-black text-gray-900">競馬道場</div>
-                <div className="text-xs text-gray-600 font-medium">クイズ＆記事で競馬力UP！</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">NEW</span>
-              <span className="text-amber-600 font-bold">→</span>
-            </div>
-          </div>
-        </div>
-      </Link>
+      {/* ====== 🤖 AI予想家 ====== */}
+      <AIPredictorBanner />
+
+      {/* ====== 📝 AI予想家コラム ====== */}
+      <AIColumnPreview />
 
       {/* ====== 📊 最近の結果 ====== */}
       {recentResults && recentResults.length > 0 && (
