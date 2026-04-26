@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import UserAvatar from "@/components/ui/UserAvatar";
+import RankingTabs from "@/components/rankings/RankingTabs";
 
 type ContestRace = {
   race_order: number;
@@ -39,7 +40,7 @@ type MyVote = {
   created_at: string;
 };
 
-export default function ContestClient() {
+export default function ContestClient({ currentUserId = "" }: { currentUserId?: string }) {
   const [contest, setContest] = useState<any>(null);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [myEntry, setMyEntry] = useState<any>(null);
@@ -47,7 +48,7 @@ export default function ContestClient() {
   const [myVotes, setMyVotes] = useState<MyVote[]>([]);
   const [totalParticipants, setTotalParticipants] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"overview" | "races" | "ranking">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "races" | "ranking" | "all_rankings">("overview");
 
   useEffect(() => {
     fetch("/api/contests?type=weekly")
@@ -217,7 +218,7 @@ export default function ContestClient() {
 
       {/* タブ切り替え */}
       <div className="flex gap-2 mb-4">
-        {(["overview", "races", "ranking"] as const).map((tab) => (
+        {(["overview", "races", "ranking", "all_rankings"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -230,6 +231,7 @@ export default function ContestClient() {
             {tab === "overview" && "📊 概要"}
             {tab === "races" && "🏇 レース"}
             {tab === "ranking" && "🏆 順位"}
+            {tab === "all_rankings" && "📊 ランキング"}
           </button>
         ))}
       </div>
@@ -453,6 +455,10 @@ export default function ContestClient() {
         </div>
       )}
 
+
+      {activeTab === "all_rankings" && (
+        <RankingTabs currentUserId={currentUserId} />
+      )}
       {/* フローティングCTA（未参加時） */}
       {!isEligible && isActive && (
         <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-white dark:from-gray-900 via-white dark:via-gray-900 to-transparent p-4 pt-8">

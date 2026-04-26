@@ -48,3 +48,4 @@ gate-in-article-gen/
 data/jrdb/raw/
 data/jrdb/parsed/
 data/jrdb/raw/.jrdb_creds
+data/jrdb/pipeline.log

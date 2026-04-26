@@ -7,9 +7,9 @@ import { useTheme } from "@/contexts/ThemeContext";
 const NAV_ITEMS = [
   { id: 'home', href: '/', icon: '🏠', label: 'トップ', match: /^\/$/ },
   { id: 'races', href: '/races', icon: '🏇', label: 'レース', match: /^\/races/ },
-  { id: 'timeline', href: '/timeline', icon: '📰', label: 'TL', match: /^\/timeline/ },
-  { id: 'dojo', href: '/dojo', icon: '📚', label: '道場', match: /^\/dojo/ },
-  { id: 'rankings', href: '/rankings', icon: '🏆', label: 'ランキング', match: /^\/(rankings|contest)/ },
+  { id: 'timeline', href: '/timeline', icon: '📣', label: 'TL', match: /^\/timeline/ },
+  { id: 'contest', href: '/contest', icon: '🏆', label: '大会', match: /^\/contest/ },
+  { id: 'mypage', href: '/mypage', icon: '👤', label: 'マイページ', match: /^\/mypage/ },
 ];
 
 export default function BottomNav() {

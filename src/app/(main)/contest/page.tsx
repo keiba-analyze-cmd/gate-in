@@ -6,5 +6,5 @@ export default async function ContestPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
-  return <ContestClient />;
+  return <ContestClient currentUserId={user.id} />;
 }
