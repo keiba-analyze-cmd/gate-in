@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;overflow:hidden}
+.comp{width:1080px;height:1920px;position:relative;overflow:hidden;background:#0a0a0a}
+.layer{position:absolute;width:1080px;height:1920px;top:0;left:0}
+.s1{z-index:10}
+.s1 .bg{position:absolute;width:1080px;height:1920px;background:radial-gradient(ellipse at 50% 50%,#1a1a2e 0%,#0a0a0a 65%)}
+.s1 .hook{position:absolute;left:0;top:700px;width:1080px;text-align:center;font:900 56px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.7);opacity:0;white-space:nowrap}
+.s1 .race{position:absolute;left:40px;top:810px;width:1000px;text-align:center;font:900 84px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;opacity:0;white-space:nowrap;text-shadow:0 4px 30px rgba(0,0,0,0.6)}
+.s1 .grade{position:absolute;left:0;top:930px;width:1080px;text-align:center;font:700 42px 'Hiragino Kaku Gothic ProN',sans-serif;opacity:0;white-space:nowrap}
+.s1 .q{position:absolute;left:0;top:1040px;width:1080px;text-align:center;font:900 44px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.45);opacity:0;white-space:nowrap}
+.s2{z-index:20}
+.s2 .bg{position:absolute;width:1080px;height:1920px;background:#0a0a0a;opacity:0}
+.cres{position:absolute;left:0;top:0;width:1080px;height:1920px;opacity:0}
+.cres .cimg{position:absolute;left:60px;top:420px;width:180px;height:180px;border-radius:90px;overflow:hidden;border:5px solid;opacity:0}
+.cres .cimg img{width:100%;height:100%;object-fit:cover}
+.cres .cname{position:absolute;left:270px;top:440px;font:900 60px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;opacity:0;white-space:nowrap}
+.cres .ctype{position:absolute;left:270px;top:516px;font:500 32px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.5);opacity:0;white-space:nowrap}
+.cres .pickbox{position:absolute;left:60px;top:660px;width:960px;height:200px;background:rgba(255,255,255,0.04);border-radius:24px;border-left:8px solid;opacity:0}
+.cres .picklbl{position:absolute;left:28px;top:18px;font:700 32px 'Hiragino Kaku Gothic ProN',sans-serif;white-space:nowrap}
+.cres .pickname{position:absolute;left:28px;top:66px;font:900 64px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;white-space:nowrap}
+.cres .pickinfo{position:absolute;left:28px;top:146px;font:500 30px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.4);white-space:nowrap}
+.cres .rmark{position:absolute;left:0;top:940px;width:1080px;text-align:center;font:900 160px 'Hiragino Kaku Gothic ProN',sans-serif;opacity:0}
+.cres .rmark.hit{color:#22c55e;text-shadow:0 0 60px rgba(34,197,94,0.5),0 0 120px rgba(34,197,94,0.3)}
+.cres .rmark.miss{color:#ef4444;text-shadow:0 0 60px rgba(239,68,68,0.5),0 0 120px rgba(239,68,68,0.3)}
+.cres .rtxt{position:absolute;left:0;top:1260px;width:1080px;text-align:center;font:900 52px 'Hiragino Kaku Gothic ProN',sans-serif;opacity:0;white-space:nowrap}
+.s3{z-index:30}
+.s3 .bg{position:absolute;width:1080px;height:1920px;background:#0a0a0a;opacity:0}
+.s3 .title{position:absolute;left:0;top:380px;width:1080px;text-align:center;font:900 52px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;opacity:0;white-space:nowrap}
+.srow{position:absolute;left:60px;width:960px;height:140px;background:rgba(255,255,255,0.03);border-radius:20px;opacity:0}
+.srow .simg{position:absolute;left:16px;top:15px;width:110px;height:110px;border-radius:55px;overflow:hidden;border:3px solid}
+.srow .simg img{width:100%;height:100%;object-fit:cover}
+.srow .sname{position:absolute;left:144px;top:24px;font:900 42px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;white-space:nowrap}
+.srow .spick{position:absolute;left:144px;top:78px;font:500 28px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.4);white-space:nowrap}
+.srow .sbadge{position:absolute;right:24px;top:25px;width:90px;height:90px;border-radius:45px;text-align:center;line-height:90px;font:900 48px 'Hiragino Kaku Gothic ProN',sans-serif}
+.sbadge.hit{background:rgba(34,197,94,0.15);border:3px solid #22c55e;color:#22c55e}
+.sbadge.miss{background:rgba(239,68,68,0.15);border:3px solid #ef4444;color:#ef4444}
+.s4{z-index:40}
+.s4 .bg{position:absolute;width:1080px;height:1920px;background:radial-gradient(ellipse at 50% 50%,#1a1a2e 0%,#0a0a0a 65%);opacity:0}
+.s4 .title{position:absolute;left:0;top:680px;width:1080px;text-align:center;font:900 48px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.6);opacity:0;white-space:nowrap}
+.stat{position:absolute;width:460px;height:220px;background:rgba(255,255,255,0.04);border-radius:24px;border:1px solid rgba(255,255,255,0.08);text-align:center;opacity:0}
+.stat .sv{font:900 80px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;margin-top:44px;white-space:nowrap}
+.stat .sl{font:500 30px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.5);margin-top:10px;white-space:nowrap}
+.s5{z-index:50}
+.s5 .bg{position:absolute;width:1080px;height:1920px;background:linear-gradient(180deg,#0a0a0a 30%,#1a1a2e 100%);opacity:0}
+.s5 .c1{position:absolute;left:0;top:740px;width:1080px;text-align:center;font:900 60px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;opacity:0;white-space:nowrap}
+.s5 .c2{position:absolute;left:0;top:840px;width:1080px;text-align:center;font:500 38px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.6);opacity:0;white-space:nowrap}
+.s5 .bt{position:absolute;left:140px;top:950px;width:800px;height:120px;background:#6366f1;border-radius:60px;text-align:center;line-height:120px;font:900 44px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;opacity:0;white-space:nowrap;box-shadow:0 0 60px rgba(99,102,241,0.5)}
+.s5 .ar{position:absolute;left:0;top:1120px;width:1080px;text-align:center;font:400 60px sans-serif;color:#818cf8;opacity:0}
+.wm{position:absolute;right:36px;bottom:50px;z-index:100;font:700 28px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.2);white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="comp" data-composition-id="results" data-width="1080" data-height="1920" data-duration="35" data-start="0">
+<div class="layer s1" id="s1"><div class="bg"></div><div class="hook" id="hook">結果速報</div><div class="race" id="race">{{RACE_NAME}}</div><div class="grade" id="grd" style="color:{{GRADE_COLOR}}">{{GRADE}} / {{VENUE}} {{SURFACE}} {{DISTANCE}}m</div><div class="q" id="q">5体のAI予想家、的中したのは…？</div></div>
+<div class="layer s2" id="s2"><div class="bg" id="s2b"></div>{{#CHAR_RESULTS}}</div>
+<div class="layer s3" id="s3"><div class="bg" id="s3b"></div><div class="title" id="sbt">的中スコアボード</div>{{#SCOREBOARD_ROWS}}</div>
+<div class="layer s4" id="s4"><div class="bg" id="s4b"></div><div class="title" id="s4t">今週の成績</div><div class="stat" id="st1" style="left:50px;top:800px"><div class="sv">{{HIT_COUNT}}/5</div><div class="sl">的中数</div></div><div class="stat" id="st2" style="left:570px;top:800px"><div class="sv">{{KAISHUU}}%</div><div class="sl">回収率</div></div></div>
+<div class="layer s5" id="s5"><div class="bg" id="s5b"></div><div class="c1" id="c1">来週の予想をチェック</div><div class="c2" id="c2">プロフィールのリンクから</div><div class="bt" id="bt">フォローで毎週受け取る</div><div class="ar" id="ar">▼</div></div>
+<div class="wm">ゲートイン！AI競馬予想家</div>
+</div>
+<script>
+(function(){
+var t=gsap.timeline({paused:true});
+t.to("#hook",{opacity:1,duration:0.4},0.3).from("#hook",{y:30,duration:0.4},0.3)
+.to("#race",{opacity:1,duration:0.5,ease:"power3.out"},0.8).from("#race",{y:40,scale:0.9,duration:0.5,ease:"power3.out"},0.8)
+.to("#grd",{opacity:1,duration:0.3},1.4).to("#q",{opacity:1,duration:0.4},1.8).from("#q",{y:20,duration:0.4},1.8)
+.to("#s1",{opacity:0,duration:0.3},2.8).to("#s2b",{opacity:1,duration:0.3},2.9);
+{{#CHAR_ANIMATIONS}}
+t.to("#s2b",{opacity:0,duration:0.3},17.7).to("#s3b",{opacity:1,duration:0.3},17.8);
+t.to("#sbt",{opacity:1,duration:0.3},18.0).from("#sbt",{y:20,duration:0.3},18.0);
+{{#SCOREBOARD_ANIMATIONS}}
+t.to(["#s3b","#sbt","#sr0","#sr1","#sr2","#sr3","#sr4"],{opacity:0,duration:0.3},24.7).to("#s4b",{opacity:1,duration:0.3},24.8);
+t.to("#s4t",{opacity:1,duration:0.3},25.0).from("#s4t",{y:20,duration:0.3},25.0)
+.to("#st1",{opacity:1,duration:0.4},25.5).from("#st1",{y:30,duration:0.4},25.5)
+.to("#st2",{opacity:1,duration:0.4},25.9).from("#st2",{y:30,duration:0.4},25.9);
+t.to(["#s4b","#s4t","#st1","#st2"],{opacity:0,duration:0.3},27.7).to("#s5b",{opacity:1,duration:0.4},27.8);
+t.to("#c1",{opacity:1,duration:0.4},28.0).from("#c1",{y:40,duration:0.4},28.0)
+.to("#c2",{opacity:1,duration:0.3},28.6)
+.to("#bt",{opacity:1,scale:1,duration:0.4,ease:"back.out(1.5)"},29.2).from("#bt",{scale:0.8,duration:0.4,ease:"back.out(1.5)"},29.2)
+.to("#bt",{boxShadow:"0 0 100px rgba(99,102,241,0.6)",duration:0.6,repeat:3,yoyo:true},30.0)
+.to("#ar",{opacity:1,duration:0.3},29.6).to("#ar",{y:20,duration:0.5,repeat:5,yoyo:true,ease:"power1.inOut"},30.0)
+.to(".comp",{opacity:0,duration:0.5},34.5);
+window.__timelines=window.__timelines||{};window.__timelines["results"]=t;
+})();
+</script>
+</body>
+</html>
