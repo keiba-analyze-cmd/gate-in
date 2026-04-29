@@ -90,7 +90,7 @@ export default async function HomePage() {
   // 最近の結果に対するユーザーの投票結果
   const recentRaceIds = (recentResults || []).map(r => r.id);
   let userResults: Record<string, { race_id: string; status: string; earned_points: number }> = {};
-  if (recentRaceIds.length > 0) {
+  if (user && recentRaceIds.length > 0) {
     const { data: myRecentVotes } = await supabase
       .from("votes")
       .select("race_id, status, earned_points")
