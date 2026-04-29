@@ -59,9 +59,10 @@ const TABS = [
   { id: "profile", label: "プロフィール", icon: "👤" },
   { id: "stats", label: "成績", icon: "📊" },
   { id: "predictions", label: "予想履歴", icon: "🏇" },
+  { id: "columns", label: "コラム", icon: "📝" },
 ] as const;
 
-type TabId = (typeof TABS)[number]["id"];
+type TabId = "profile" | "stats" | "predictions" | "columns"; // was (typeof TABS)[number]["id"];
 
 // ── 他の予想家への導線 ──
 const ALL_PREDICTORS = [
@@ -175,8 +176,9 @@ export default function PredictorPageClient({
           predictions={recentPredictions}
         />
       )}
-
-      {/* ── 他のAI予想家 ── */}
+      {activeTab === "columns" && (
+        <ColumnsTab predictorId={predictorId} meta={meta} />
+      )}
       <section className="space-y-3">
         <h2 className="text-base font-black text-gray-900 dark:text-white">
           🤖 他のAI予想家
@@ -553,4 +555,102 @@ function formatYearMonth(ym: string): string {
   // "2026-04" → "2026年4月"
   const [year, month] = ym.split("-");
   return `${year}年${parseInt(month)}月`;
+}
+
+// ══════════════════════════════════════
+// コラムタブ
+// ══════════════════════════════════════
+function ColumnsTab({
+  predictorId,
+  meta,
+}: {
+  predictorId: string;
+  meta: PredictorMeta;
+}) {
+  const [columns, setColumns] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useState(() => {
+    (async () => {
+      try {
+        const res = await fetch(`/api/ai-columns?predictor_id=${predictorId}&limit=10`);
+        if (res.ok) {
+          const data = await res.json();
+          setColumns(data.columns || []);
+        }
+      } catch {}
+      setLoading(false);
+    })();
+  });
+
+  if (loading) {
+    return (
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 text-center">
+        <div className="text-sm text-gray-400">読み込み中...</div>
+      </div>
+    );
+  }
+
+  if (columns.length === 0) {
+    return (
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 text-center">
+        <div className="text-4xl mb-3">📝</div>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          まだコラムがありません。
+          <br />
+          金曜・土曜・月曜に自動生成されます。
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {columns.map((col: any) => (
+        <div
+          key={col.id}
+          className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-5"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-lg">{meta.emoji}</span>
+            <h3 className="font-black text-gray-900 dark:text-white text-sm flex-1">
+              {col.title}
+            </h3>
+            <span className="text-[10px] text-gray-400">
+              {new Date(col.created_at).toLocaleDateString("ja-JP", {
+                month: "short",
+                day: "numeric",
+              })}
+            </span>
+          </div>
+          {col.race_name && (
+            <div className="flex items-center gap-2 mb-2">
+              {col.race_grade && (
+                <span
+                  className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                    col.race_grade === "G1"
+                      ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-400"
+                      : col.race_grade === "G2"
+                        ? "bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-400"
+                        : "bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-400"
+                  }`}
+                >
+                  {col.race_grade}
+                </span>
+              )}
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                {col.race_name}
+              </span>
+            </div>
+          )}
+          <div
+            className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap"
+            style={{ borderLeft: `3px solid ${meta.color}`, paddingLeft: "12px" }}
+          >
+            {col.content}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
