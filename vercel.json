@@ -1,4 +1,5 @@
 {
+  "installCommand": "npm install --legacy-peer-deps --force",
   "crons": [
     { "path": "/api/cron/venue-conditions", "schedule": "*/30 * * * 0,6" },
     {
