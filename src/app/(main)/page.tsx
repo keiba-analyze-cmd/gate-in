@@ -20,7 +20,7 @@ export default async function HomePage() {
     const { data: myVotes } = await supabase
       .from("votes")
       .select("race_id")
-      .eq("user_id", user.id);
+      .eq("user_id", user!.id);
     votedRaceIds = new Set((myVotes ?? []).map((v) => v.race_id));
   }
 
@@ -94,7 +94,7 @@ export default async function HomePage() {
     const { data: myRecentVotes } = await supabase
       .from("votes")
       .select("race_id, status, earned_points")
-      .eq("user_id", user.id)
+      .eq("user_id", user!.id)
       .in("race_id", recentRaceIds);
     for (const v of myRecentVotes ?? []) {
       userResults[v.race_id] = v;
@@ -206,7 +206,7 @@ export default async function HomePage() {
   const { data: reads } = await supabase
     .from("user_story_reads")
     .select("story_id")
-    .eq("user_id", user.id);
+    .eq("user_id", user!.id);
   readStoryIds = (reads || []).map(r => r.story_id);
 
   // 週間大会データ
@@ -242,7 +242,7 @@ export default async function HomePage() {
       .from("contest_entries")
       .select("*")
       .eq("contest_id", activeContest.id)
-      .eq("user_id", user.id)
+      .eq("user_id", user!.id)
       .maybeSingle();
     myContestEntry = myEntry;
   }

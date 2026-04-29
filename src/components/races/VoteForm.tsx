@@ -324,7 +324,7 @@ export default function VoteForm({
   };
 
   const guideText = () => {
-    const counts = { win: 0, place: 0, back: 0 };
+    const counts = { win: 0, place: 0, back: 0, danger: 0 };
     picks
       .filter((p) => p.type !== "danger")
       .forEach((p) => counts[p.type]++);
