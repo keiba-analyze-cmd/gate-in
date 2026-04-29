@@ -1,13 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/admin";
 import Link from "next/link";
-import { getRank } from "@/lib/constants/ranks";
-import RaceCard from "@/components/races/RaceCard";
 import LandingPage from "@/components/landing/LandingPage";
 import NextRaceByVenue from "@/components/races/NextRaceByVenue";
 import G1FeatureCard from "@/components/races/G1FeatureCard";
 import FollowingVotes from "@/components/social/FollowingVotes";
 import AIPredictorStories from "@/components/social/AIPredictorStories";
+import RecentResults from "@/components/social/RecentResults";
 import { getArticles, getQuizQuestions } from "@/lib/microcms";
 import ContestBanner from "@/components/contest/ContestBanner";
 
@@ -87,6 +86,20 @@ export default async function HomePage() {
     .eq("status", "finished")
     .order("race_date", { ascending: false })
     .limit(5);
+
+  // 最近の結果に対するユーザーの投票結果
+  const recentRaceIds = (recentResults || []).map(r => r.id);
+  let userResults: Record<string, { race_id: string; status: string; earned_points: number }> = {};
+  if (recentRaceIds.length > 0) {
+    const { data: myRecentVotes } = await supabase
+      .from("votes")
+      .select("race_id, status, earned_points")
+      .eq("user_id", user.id)
+      .in("race_id", recentRaceIds);
+    for (const v of myRecentVotes ?? []) {
+      userResults[v.race_id] = v;
+    }
+  }
 
   // ══════════════════════════════════
   // 未ログイン → ランディングページ
@@ -308,12 +321,8 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ④ フォロー中の予想 */}
-      <section>
-        <FollowingVotes />
-      </section>
 
-      {/* ⑤ 大会バナー */}
+      {/* ④ 大会バナー */}
       <ContestBanner
         contest={activeContest}
         contestRaces={contestRaces}
@@ -321,6 +330,11 @@ export default async function HomePage() {
         myVoteCount={myContestEntry?.vote_count ?? 0}
         isEligible={myContestEntry?.is_eligible ?? false}
       />
+
+      {/* ⑤ フォロー中の予想 */}
+      <section>
+        <FollowingVotes />
+      </section>
 
       {/* ⑥ 投票受付中（横スクロール） */}
       {venueNextRaces.length > 0 && (
@@ -339,16 +353,12 @@ export default async function HomePage() {
       {recentResults && recentResults.length > 0 && (
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-black text-gray-900 dark:text-white">📊 最近のレース結果</h2>
+            <h2 className="text-sm font-black text-gray-900 dark:text-white">📊 最近の結果</h2>
             <Link href="/races" className="text-xs text-blue-600 dark:text-blue-400 font-bold hover:underline">
               すべて見る →
             </Link>
           </div>
-          <div className="space-y-2">
-            {recentResults.map((race) => (
-              <RaceCard key={race.id} race={race} />
-            ))}
-          </div>
+          <RecentResults races={recentResults} userResults={userResults} />
         </section>
       )}
     </div>

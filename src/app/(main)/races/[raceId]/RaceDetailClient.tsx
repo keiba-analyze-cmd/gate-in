@@ -13,8 +13,8 @@ import CommentSection from "@/components/comments/CommentSection";
 import ShareButtons from "@/components/social/ShareButtons";
 import RaceCountdown from "@/components/races/RaceCountdown";
 import MyNewspaperTab from "@/components/races/MyNewspaperTab";
-
 import AIPredictorTab from "@/components/races/AIPredictorTab";
+
 type Props = {
   race: any;
   entries: any[] | null;
@@ -32,18 +32,58 @@ type Props = {
   pointsTransactions: any[] | null;
 };
 
+type TabConfig = {
+  key: string;
+  label: string;
+  badge?: number | string;
+};
+
 export default function RaceDetailClient({
   race, entries, myVote, results, payouts, totalVotes, userId, userName, userHandle,
   isVotable, hasVoted, isFinished, isBeforeDeadline, pointsTransactions
 }: Props) {
   const { isDark } = useTheme();
-  const [activeTab, setActiveTab] = useState<"horses" | "newspaper" | "votes" | "comments" | "ai">("horses");
 
+  // ── Tab config based on race state ──
+  const getTabs = (): TabConfig[] => {
+    if (isFinished) {
+      return [
+        { key: "result", label: "結果" },
+        { key: "finishOrder", label: "着順" },
+        { key: "payout", label: "配当" },
+        { key: "everyone", label: "みんな", badge: totalVotes },
+      ];
+    }
+    if (hasVoted) {
+      return [
+        { key: "myPicks", label: "My予想" },
+        { key: "everyone", label: "みんな", badge: totalVotes },
+        { key: "ai", label: "AI予想" },
+        { key: "info", label: "情報" },
+      ];
+    }
+    // Not voted
+    return [
+      { key: "vote", label: "投票" },
+      { key: "everyone", label: "みんな", badge: totalVotes },
+      { key: "ai", label: "AI予想" },
+      { key: "info", label: "情報" },
+    ];
+  };
+
+  const tabs = getTabs();
+  const [activeTab, setActiveTab] = useState(tabs[0]?.key || "vote");
+  const currentTab = tabs.find((t) => t.key === activeTab) ? activeTab : tabs[0]?.key;
+
+  // ── Styles ──
   const cardBg = isDark ? "bg-slate-900 border-slate-700" : "bg-white border-gray-100";
   const textPrimary = isDark ? "text-slate-100" : "text-gray-800";
   const textSecondary = isDark ? "text-slate-400" : "text-gray-500";
   const textMuted = isDark ? "text-slate-500" : "text-gray-400";
   const linkColor = isDark ? "hover:text-amber-400" : "hover:text-green-600";
+  const activeColor = isDark ? "text-amber-400" : "text-green-600";
+  const activeBorder = isDark ? "border-amber-400" : "border-green-600";
+  const borderColor = isDark ? "border-slate-700" : "border-gray-200";
 
   const gradeColor = getGradeColor(race.grade, isDark);
   const postTime = race.post_time
@@ -62,26 +102,13 @@ export default function RaceDetailClient({
     ? { text: "⏰ 締切済み", style: isDark ? "bg-yellow-500/20 text-yellow-400" : "bg-yellow-100 text-yellow-700" }
     : { text: "準備中", style: isDark ? "bg-slate-700 text-slate-300" : "bg-gray-100 text-gray-600" };
 
-  const tabs = [
-    { key: "horses", label: "📋 出馬表", show: true },
-    { key: "newspaper", label: "📰 My新聞", show: hasVoted || isFinished },
-    { key: "votes", label: "👥 みんなの予想", show: hasVoted || isFinished },
-    { key: "comments", label: "💬 掲示板", show: hasVoted || isFinished },
-    { key: "ai", label: "🤖 AI予想", show: hasVoted || isFinished },
-  ].filter(t => t.show);
-
-  const tabActive = isDark ? "bg-amber-500 text-slate-900" : "bg-green-600 text-white";
-  const tabInactive = isDark
-    ? "bg-slate-800 text-slate-300 border border-slate-700 hover:border-amber-500/50"
-    : "bg-white text-gray-600 border border-gray-200 hover:border-green-300";
-
-  // シェアテキスト生成
+  // ── Share text ──
   const generateShareText = () => {
     if (!myVote) return "";
     const picks = myVote.vote_picks ?? [];
     const winPick = picks.find((p: any) => p.pick_type === "win");
     const placePicks = picks.filter((p: any) => p.pick_type === "place");
-    const fmt = (p: any) => `${p.race_entries?.post_number ?? "?"} ${ (p.race_entries?.horses as any)?.name ?? "不明"}`;
+    const fmt = (p: any) => `${p.race_entries?.post_number ?? "?"} ${(p.race_entries?.horses as any)?.name ?? "不明"}`;
     const profileUrl = userHandle ? `https://www.gate-in.jp/users/${userHandle}` : "";
     const profileLine = profileUrl ? `\n\n📊 フォロー&他の予想もチェック👇\n${profileUrl}` : "\n\n🏇 みんなも予想しよう👇\nhttps://gate-in.jp";
     return [
@@ -126,15 +153,40 @@ export default function RaceDetailClient({
         </div>
       </div>
 
-      {/* 結果テーブル（結果確定時） */}
-      {isFinished && results && (
-        <RaceResultTable results={results} payouts={payouts} myVote={myVote} />
-      )}
+      {/* ── タブバー ── */}
+      <div className={`flex border-b ${borderColor}`}>
+        {tabs.map((tab) => {
+          const isActive = currentTab === tab.key;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex-1 text-center py-2.5 text-xs font-medium transition-colors relative ${
+                isActive ? activeColor : textMuted
+              }`}
+            >
+              <span>{tab.label}</span>
+              {tab.badge != null && (
+                <span className={`ml-1 text-[9px] px-1.5 py-0.5 rounded-full ${
+                  isDark ? "bg-slate-700 text-slate-400" : "bg-gray-100 text-gray-500"
+                }`}>
+                  {tab.badge}
+                </span>
+              )}
+              {isActive && (
+                <div className={`absolute bottom-0 left-0 right-0 h-0.5 ${activeBorder}`} />
+              )}
+            </button>
+          );
+        })}
+      </div>
 
-      {/* 投票フォーム（受付中） */}
-      {isVotable && entries && (
-        <VoteForm 
-          raceId={race.id} 
+      {/* ── タブコンテンツ ── */}
+
+      {/* 投票タブ（受付中・未投票） */}
+      {currentTab === "vote" && isVotable && entries && (
+        <VoteForm
+          raceId={race.id}
           entries={entries}
           raceInfo={{
             name: race.name,
@@ -143,82 +195,57 @@ export default function RaceDetailClient({
             grade: race.grade,
           }}
           userName={userName}
+          userHandle={userHandle}
         />
       )}
 
-      {/* タブナビゲーション */}
-      {tabs.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key as any)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                activeTab === tab.key ? tabActive : tabInactive
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      )}
+      {/* My予想タブ（投票済み・結果待ち） */}
+      {currentTab === "myPicks" && hasVoted && myVote && (
+        <div className="space-y-4">
+          <VoteSummary
+            vote={myVote}
+            isFinished={isFinished}
+            transactions={pointsTransactions}
+            raceInfo={{
+              name: race.name,
+              date: race.race_date,
+              courseName: race.course_name,
+              grade: race.grade,
+            }}
+            userName={userName}
+          />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 space-y-4">
-          {/* 出馬表タブ */}
-          {activeTab === "horses" && entries && (
-            <div className={`rounded-2xl border p-5 ${cardBg}`}>
-              <h2 className={`font-bold mb-3 ${textPrimary}`}>📋 出馬表</h2>
-              <HorseList entries={entries} myVote={myVote} results={results} />
-            </div>
-          )}
-
-          {/* My新聞タブ */}
-          {activeTab === "newspaper" && (
-            <MyNewspaperTab raceId={race.id} entries={(entries ?? []).map(e => ({ id: e.id, post_number: e.post_number, horses: e.horses }))} />
-          )}
-
-          {/* みんなの予想タブ */}
-          {activeTab === "votes" && (
-            <VoteDistribution raceId={race.id} />
-          )}
-
-          {/* 掲示板タブ */}
-          {activeTab === "comments" && (
-            <CommentSection raceId={race.id} currentUserId={userId} />
-          )}
-
-
-          {/* AI予想タブ */}
-          {activeTab === "ai" && (
-            <AIPredictorTab raceId={race.id} hasVoted={hasVoted} isFinished={isFinished} />
-          )}
-          {/* 投票編集フォーム */}
-          {hasVoted && myVote && race.status === "voting_open" && entries && activeTab === "horses" && (
+          {/* 予想変更（発走前のみ） */}
+          {race.status === "voting_open" && entries && (
             <VoteEditForm
-              raceId={race.id} entries={entries}
+              raceId={race.id}
+              entries={entries}
               existingPicks={(myVote.vote_picks ?? []).map((p: any) => ({
-                pick_type: p.pick_type, race_entry_id: p.race_entry_id,
+                pick_type: p.pick_type,
+                race_entry_id: p.race_entry_id,
               }))}
               postTime={race.post_time}
             />
           )}
 
-          {/* シェアボタン */}
-          {hasVoted && myVote && (
-            <div className={`rounded-2xl border p-4 flex items-center justify-between ${cardBg}`}>
-              <span className={`text-sm font-bold ${textPrimary}`}>📣 予想をシェア</span>
-              <ShareButtons text={generateShareText()} />
-            </div>
-          )}
-        </div>
+          {/* AI予想家と一致 */}
+          <AIPredictorTab raceId={race.id} hasVoted={hasVoted} isFinished={isFinished} />
 
-        {/* サイドバー */}
+          {/* シェア */}
+          <div className={`rounded-2xl border p-4 flex items-center justify-between ${cardBg}`}>
+            <span className={`text-sm font-bold ${textPrimary}`}>📣 予想をシェア</span>
+            <ShareButtons text={generateShareText()} />
+          </div>
+        </div>
+      )}
+
+      {/* 結果タブ（結果確定後） */}
+      {currentTab === "result" && isFinished && (
         <div className="space-y-4">
           {hasVoted && myVote && (
-            <VoteSummary 
-              vote={myVote} 
-              isFinished={isFinished} 
+            <VoteSummary
+              vote={myVote}
+              isFinished={isFinished}
               transactions={pointsTransactions}
               raceInfo={{
                 name: race.name,
@@ -229,9 +256,94 @@ export default function RaceDetailClient({
               userName={userName}
             />
           )}
+
+          {!hasVoted && (
+            <div className={`rounded-2xl border p-6 text-center ${cardBg}`}>
+              <div className="text-3xl mb-2">🏇</div>
+              <div className={`text-sm ${textMuted}`}>このレースは予想していません</div>
+            </div>
+          )}
+
+          {/* AI予想家の結果 */}
+          <AIPredictorTab raceId={race.id} hasVoted={hasVoted} isFinished={isFinished} />
+
+          {/* シェア（的中時） */}
+          {hasVoted && myVote && (
+            <div className={`rounded-2xl border p-4 flex items-center justify-between ${cardBg}`}>
+              <span className={`text-sm font-bold ${textPrimary}`}>📣 結果をシェア</span>
+              <ShareButtons text={generateShareText()} />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 着順タブ（結果確定後） */}
+      {currentTab === "finishOrder" && isFinished && results && (
+        <RaceResultTable results={results} payouts={null} myVote={myVote} />
+      )}
+
+      {/* 配当タブ（結果確定後） */}
+      {currentTab === "payout" && isFinished && (
+        <div className={`rounded-2xl border p-5 ${cardBg}`}>
+          <h2 className={`font-bold mb-3 ${textPrimary}`}>💰 払戻金</h2>
+          {payouts && payouts.length > 0 ? (
+            <div className="space-y-2">
+              {payouts.map((p: any, i: number) => (
+                <div key={i} className={`flex items-center justify-between py-2 border-b last:border-0 ${
+                  isDark ? "border-slate-700" : "border-gray-100"
+                }`}>
+                  <div className="flex items-center gap-3">
+                    <span className={`text-sm font-medium min-w-[48px] ${textPrimary}`}>{p.bet_type}</span>
+                    <span className={`text-xs ${textMuted}`}>{p.combination}</span>
+                  </div>
+                  <div className="text-right">
+                    <span className={`text-sm font-bold ${textPrimary}`}>¥{(p.payout ?? 0).toLocaleString()}</span>
+                    {p.popularity && (
+                      <span className={`text-xs ml-2 ${textMuted}`}>{p.popularity}番人気</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className={`text-sm text-center py-4 ${textMuted}`}>
+              払戻金データがありません
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* みんなの予想タブ */}
+      {currentTab === "everyone" && (
+        <div className="space-y-4">
+          <VoteDistribution raceId={race.id} />
+          <CommentSection raceId={race.id} currentUserId={userId} />
+        </div>
+      )}
+
+      {/* AI予想タブ */}
+      {currentTab === "ai" && (
+        <AIPredictorTab raceId={race.id} hasVoted={hasVoted} isFinished={isFinished} />
+      )}
+
+      {/* 情報タブ（出馬表 + My新聞） */}
+      {currentTab === "info" && (
+        <div className="space-y-4">
+          {entries && (
+            <div className={`rounded-2xl border p-5 ${cardBg}`}>
+              <h2 className={`font-bold mb-3 ${textPrimary}`}>📋 出馬表</h2>
+              <HorseList entries={entries} myVote={myVote} results={results} />
+            </div>
+          )}
+          {(hasVoted || isFinished) && (
+            <MyNewspaperTab
+              raceId={race.id}
+              entries={(entries ?? []).map(e => ({ id: e.id, post_number: e.post_number, horses: e.horses }))}
+            />
+          )}
           <PointsGuide isDark={isDark} />
         </div>
-      </div>
+      )}
     </div>
   );
 }

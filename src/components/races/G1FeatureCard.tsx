@@ -20,131 +20,95 @@ type Props = {
 
 export default function G1FeatureCard({ race, voteCount = 0 }: Props) {
   const { isDark } = useTheme();
-  const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [timeLeft, setTimeLeft] = useState("");
   const [isLive, setIsLive] = useState(false);
 
   useEffect(() => {
     if (!race.post_time) return;
-
-    const updateCountdown = () => {
-      const now = new Date().getTime();
-      const postTime = new Date(race.post_time!).getTime();
-      const diff = postTime - now;
-
-      if (diff <= 0) {
-        setIsLive(true);
-        return;
-      }
-
-      setCountdown({
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-        minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
-        seconds: Math.floor((diff % (1000 * 60)) / 1000),
-      });
+    const update = () => {
+      const diff = new Date(race.post_time!).getTime() - Date.now();
+      if (diff <= 0) { setIsLive(true); return; }
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      if (d > 0) setTimeLeft(`${d}日${h}時間`);
+      else if (h > 0) setTimeLeft(`${h}時間${m}分`);
+      else setTimeLeft(`${m}分`);
     };
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
-    return () => clearInterval(interval);
+    update();
+    const iv = setInterval(update, 30000);
+    return () => clearInterval(iv);
   }, [race.post_time]);
 
-  const raceDate = new Date(race.race_date + "T00:00:00+09:00");
-  const dateStr = raceDate.toLocaleDateString("ja-JP", { 
-    month: "long", 
-    day: "numeric", 
-    weekday: "short" 
+  const dateStr = new Date(race.race_date + "T00:00:00+09:00").toLocaleDateString("ja-JP", {
+    month: "short", day: "numeric", weekday: "short",
   });
+
+  const postTimeStr = race.post_time
+    ? new Date(race.post_time).toLocaleTimeString("ja-JP", {
+        timeZone: "Asia/Tokyo", hour: "2-digit", minute: "2-digit",
+      })
+    : null;
 
   return (
     <Link href={`/races/${race.id}`} className="block group">
-      <div className={`relative overflow-hidden rounded-3xl ${
-        isDark 
-          ? "bg-gradient-to-br from-yellow-600 via-amber-500 to-orange-600" 
-          : "bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500"
-      } shadow-xl group-hover:shadow-2xl transition-all duration-300`}>
-        
-        {/* 背景装飾 */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
-          <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[200px] opacity-5">🏆</div>
-        </div>
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 via-yellow-500 to-orange-500 shadow-lg group-hover:shadow-xl transition-all">
+        {/* Background circles */}
+        <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/10" />
+        <div className="absolute right-12 -bottom-6 w-20 h-20 rounded-full bg-white/5" />
 
-        <div className="relative p-6">
-          {/* ヘッダー */}
-          <div className="flex items-center justify-between mb-4">
+        <div className="relative p-5">
+          {/* Top row */}
+          <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <span className="bg-white text-amber-600 text-xs font-black px-3 py-1 rounded-full shadow-lg animate-pulse">
-                👑 {race.grade}
+              <span className="bg-white/25 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">
+                {race.grade}
               </span>
-              {isLive && (
-                <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full animate-pulse">
-                  🔴 LIVE
-                </span>
-              )}
+              <span className="text-white/70 text-xs">{dateStr}</span>
             </div>
-            <span className="text-white/80 text-sm font-medium">{dateStr}</span>
+            {isLive ? (
+              <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse">
+                LIVE
+              </span>
+            ) : timeLeft ? (
+              <span className="text-white/60 text-xs">
+                あと {timeLeft}
+              </span>
+            ) : null}
           </div>
 
-          {/* レース名 */}
-          <h2 className="text-2xl sm:text-3xl font-black text-white mb-2 drop-shadow-lg">
+          {/* Race name */}
+          <h2 className="text-[22px] font-black text-white mb-1 leading-tight">
             {race.name}
           </h2>
 
-          {/* レース情報 */}
-          <div className="flex flex-wrap gap-3 text-white/90 text-sm mb-5">
-            <span className="flex items-center gap-1">
-              📍 {race.course_name}
-            </span>
-            {race.distance && (
-              <span className="flex items-center gap-1">
-                🏁 {race.distance}
-              </span>
-            )}
-            {race.head_count && (
-              <span className="flex items-center gap-1">
-                🐴 {race.head_count}頭立て
-              </span>
-            )}
+          {/* Details */}
+          <div className="text-white/80 text-xs mb-4">
+            {race.course_name}
+            {race.distance && ` ${race.distance}`}
+            {race.head_count && ` ・ ${race.head_count}頭`}
+            {postTimeStr && ` ・ ${postTimeStr}発走`}
           </div>
 
-          {/* カウントダウン */}
-          {!isLive && race.post_time && (
-            <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-4 mb-5">
-              <div className="text-white/70 text-xs text-center mb-2">⏰ 発走まで</div>
-              <div className="flex justify-center gap-3">
-                {countdown.days > 0 && (
-                  <div className="text-center">
-                    <div className="text-3xl font-black text-white">{countdown.days}</div>
-                    <div className="text-xs text-white/60">日</div>
-                  </div>
-                )}
-                <div className="text-center">
-                  <div className="text-3xl font-black text-white">{String(countdown.hours).padStart(2, '0')}</div>
-                  <div className="text-xs text-white/60">時間</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-black text-white">{String(countdown.minutes).padStart(2, '0')}</div>
-                  <div className="text-xs text-white/60">分</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-black text-white">{String(countdown.seconds).padStart(2, '0')}</div>
-                  <div className="text-xs text-white/60">秒</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 参加者数 & CTAボタン */}
+          {/* Bottom row */}
           <div className="flex items-center justify-between">
-            <div className="text-white/80 text-sm">
-              👥 <span className="font-bold text-white">{voteCount}</span>人が予想済み
+            <div className="flex items-center gap-2">
+              {/* Avatar stack */}
+              <div className="flex -space-x-1.5">
+                {[...Array(Math.min(3, voteCount || 1))].map((_, i) => (
+                  <div
+                    key={i}
+                    className="w-6 h-6 rounded-full bg-white/30 border-[1.5px] border-white/60"
+                  />
+                ))}
+              </div>
+              <span className="text-white/90 text-xs">
+                {voteCount > 0 ? `${voteCount}人が予想済み` : "最初の予想者になろう"}
+              </span>
             </div>
-            <span className="inline-flex items-center gap-2 bg-white text-amber-600 font-black text-sm px-5 py-2.5 rounded-full shadow-lg group-hover:scale-105 transition-transform">
-              🗳 予想する
-              <span className="group-hover:translate-x-1 transition-transform">→</span>
-            </span>
+            <div className="bg-white text-amber-600 px-4 py-1.5 rounded-full text-xs font-bold group-hover:scale-105 transition-transform shadow">
+              予想する
+            </div>
           </div>
         </div>
       </div>
