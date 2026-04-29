@@ -90,6 +90,11 @@ export default async function RaceListPage({ searchParams }: Props) {
         selectedDate = uniqueDates[0] ?? "";
       }
   }
+  // 馬場状態取得
+  const { data: venueConditions } = await supabase
+    .from("venue_conditions")
+    .select("*")
+    .eq("race_date", selectedDate);
   let query = supabase.from("races").select("*")
     .eq("race_date", selectedDate)
     .order("post_time", { ascending: true });
@@ -158,6 +163,7 @@ export default async function RaceListPage({ searchParams }: Props) {
       selectedCourse={params.course ?? ""}
       selectedGrade={params.grade ?? ""}
       searchQuery={params.q ?? ""}
+      venueConditions={venueConditions ?? []}
     />
   );
 }

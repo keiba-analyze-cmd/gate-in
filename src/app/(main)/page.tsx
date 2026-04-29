@@ -7,12 +7,9 @@ import LandingPage from "@/components/landing/LandingPage";
 import NextRaceByVenue from "@/components/races/NextRaceByVenue";
 import G1FeatureCard from "@/components/races/G1FeatureCard";
 import FollowingVotes from "@/components/social/FollowingVotes";
-import PopularVotesSection from "@/components/social/PopularVotesSection";
-import WeeklyMVPBanner from "@/components/social/WeeklyMVPBanner";
+import AIPredictorStories from "@/components/social/AIPredictorStories";
 import { getArticles, getQuizQuestions } from "@/lib/microcms";
 import ContestBanner from "@/components/contest/ContestBanner";
-import AIPredictorBanner from "@/components/social/AIPredictorBanner";
-import AIColumnPreview from "@/components/social/AIColumnPreview";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -28,7 +25,7 @@ export default async function HomePage() {
     votedRaceIds = new Set((myVotes ?? []).map((v) => v.race_id));
   }
 
-  // 投票受付中のレース（全件取得して競馬場ごとに分類）
+  // 投票受付中のレース
   const { data: openRaces } = await supabase
     .from("races")
     .select("*")
@@ -36,10 +33,8 @@ export default async function HomePage() {
     .order("post_time", { ascending: true })
     .limit(100);
 
-  // 今週の重賞レース（grade付きを全て表示）
+  // 重賞レース
   const featuredRaces = openRaces?.filter((r) => r.grade) ?? [];
-  
-  // G1レースを分離（特別表示用）
   const g1Races = featuredRaces.filter((r) => r.grade === "G1");
   const otherGradeRaces = featuredRaces
     .filter((r) => r.grade === "G2" || r.grade === "G3")
@@ -48,7 +43,7 @@ export default async function HomePage() {
       return (order[a.grade] || 99) - (order[b.grade] || 99);
     });
 
-  // 競馬場ごとに最も発走が近いレースを1つずつ抽出
+  // 競馬場ごとの次レース
   const now = new Date();
   const venueNextRaces: { course_name: string; race: any }[] = [];
   const venueMap = new Map<string, any>();
@@ -74,7 +69,7 @@ export default async function HomePage() {
   }
   venueNextRaces.sort((a, b) => new Date(a.race.post_time).getTime() - new Date(b.race.post_time).getTime());
 
-  // G1レースの投票数を取得
+  // G1投票数
   const g1VoteCounts: Record<string, number> = {};
   const admin = createAdminClient();
   for (const race of g1Races) {
@@ -91,11 +86,12 @@ export default async function HomePage() {
     .select("*")
     .eq("status", "finished")
     .order("race_date", { ascending: false })
-    .limit(3);
+    .limit(5);
 
+  // ══════════════════════════════════
   // 未ログイン → ランディングページ
+  // ══════════════════════════════════
   if (!user) {
-    // 実績数字を取得
     const { count: racesCount } = await supabase.from("races").select("*", { count: "exact", head: true });
     const { count: horsesCount } = await supabase.from("horses").select("*", { count: "exact", head: true });
     const { count: votesCount } = await supabase.from("votes").select("*", { count: "exact", head: true });
@@ -106,7 +102,6 @@ export default async function HomePage() {
       votes: votesCount ?? 0,
     };
     
-    // HERO画像設定を取得
     const { data: heroSetting } = await supabase
       .from("site_settings")
       .select("value")
@@ -115,7 +110,6 @@ export default async function HomePage() {
     
     const heroImage = heroSetting?.value ?? null;
 
-    // LP用: 記事・クイズデータを取得
     const [articlesData, quizData] = await Promise.all([
       getArticles({ limit: 6 }).catch(() => ({ contents: [], totalCount: 0, offset: 0, limit: 6 })),
       getQuizQuestions({ limit: 20 }).catch(() => ({ contents: [], totalCount: 0, offset: 0, limit: 20 })),
@@ -151,8 +145,58 @@ export default async function HomePage() {
     );
   }
 
+  // ══════════════════════════════════
+  // ログイン後: ストーリーズデータ取得
+  // ══════════════════════════════════
 
-  // 週間大会データ取得
+  // AI予想家マスタ
+  const { data: predictors } = await supabase
+    .from("ai_predictors")
+    .select("id, name, type_label, theme_color, image_url")
+    .eq("is_active", true)
+    .order("display_order");
+
+  // 最新ストーリーコンテンツ（過去3日分のAI予想）
+  const threeDaysAgo = new Date();
+  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+  const { data: storyPredictions } = await supabase
+    .from("ai_predictions")
+    .select(`
+      id,
+      predictor_id,
+      race_id,
+      umaban,
+      horse_name,
+      comment,
+      created_at,
+      races(id, name, grade)
+    `)
+    .gte("created_at", threeDaysAgo.toISOString())
+    .order("created_at", { ascending: false });
+
+  const stories = (storyPredictions || []).map(s => ({
+    id: s.id,
+    predictor_id: s.predictor_id,
+    type: "prediction" as const,
+    title: (s.races as any)?.name || "",
+    race_name: (s.races as any)?.name || "",
+    race_grade: (s.races as any)?.grade || null,
+    pick_number: s.umaban,
+    pick_name: s.horse_name || "",
+    comment: s.comment || "",
+    created_at: s.created_at,
+  }));
+
+  // 既読ストーリーID
+  let readStoryIds: string[] = [];
+  const { data: reads } = await supabase
+    .from("user_story_reads")
+    .select("story_id")
+    .eq("user_id", user.id);
+  readStoryIds = (reads || []).map(r => r.story_id);
+
+  // 週間大会データ
   const { data: activeContest } = await supabase
     .from("contests")
     .select("*")
@@ -189,28 +233,42 @@ export default async function HomePage() {
       .maybeSingle();
     myContestEntry = myEntry;
   }
+
+  // ══════════════════════════════════
+  // ログイン後: レンダリング
+  // ══════════════════════════════════
   return (
     <div className="space-y-5">
-      {/* ====== 👑 G1レース（特別表示） ====== */}
+      {/* ① AI予想家ストーリーズ */}
+      {(predictors?.length ?? 0) > 0 && (
+        <section>
+          <AIPredictorStories
+            predictors={predictors || []}
+            stories={stories}
+            readStoryIds={readStoryIds}
+            userId={user.id}
+          />
+        </section>
+      )}
+
+      {/* ② G1ヒーローカード */}
       {g1Races.length > 0 && (
         <section>
-          <h2 className="text-sm font-black text-gray-900 dark:text-white mb-3">👑 今週のG1</h2>
           <div className="space-y-4">
             {g1Races.map((race) => (
-              <G1FeatureCard 
-                key={race.id} 
-                race={race} 
-                voteCount={g1VoteCounts[race.id] ?? 0} 
+              <G1FeatureCard
+                key={race.id}
+                race={race}
+                voteCount={g1VoteCounts[race.id] ?? 0}
               />
             ))}
           </div>
         </section>
       )}
 
-      {/* ====== 🏆 その他の重賞 ====== */}
+      {/* ③ G2/G3ミニカード */}
       {otherGradeRaces.length > 0 && (
         <section>
-          <h2 className="text-sm font-black text-gray-900 dark:text-white mb-3">🏆 今週の重賞</h2>
           <div className={`grid gap-3 ${otherGradeRaces.length === 1 ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}>
             {otherGradeRaces.map((race) => {
               const gradeColors: Record<string, string> = {
@@ -250,8 +308,12 @@ export default async function HomePage() {
         </section>
       )}
 
+      {/* ④ フォロー中の予想 */}
+      <section>
+        <FollowingVotes />
+      </section>
 
-      {/* ====== 🏆 週間予想大会バナー ====== */}
+      {/* ⑤ 大会バナー */}
       <ContestBanner
         contest={activeContest}
         contestRaces={contestRaces}
@@ -259,15 +321,13 @@ export default async function HomePage() {
         myVoteCount={myContestEntry?.vote_count ?? 0}
         isEligible={myContestEntry?.is_eligible ?? false}
       />
-      {/* ====== 🥇 週間MVP ====== */}
-      <WeeklyMVPBanner />
 
-      {/* ====== 🔥 投票受付中のレース（競馬場別） ====== */}
+      {/* ⑥ 投票受付中（横スクロール） */}
       {venueNextRaces.length > 0 && (
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-black text-gray-900">🔥 投票受付中</h2>
-            <Link href="/races" className="text-xs text-blue-600 font-bold hover:underline">
+            <h2 className="text-sm font-black text-gray-900 dark:text-white">🔥 投票受付中</h2>
+            <Link href="/races" className="text-xs text-blue-600 dark:text-blue-400 font-bold hover:underline">
               すべて見る →
             </Link>
           </div>
@@ -275,23 +335,12 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ====== 👥 フォロー中の予想 ====== */}
-      <section>
-        <FollowingVotes />
-      </section>
-
-      {/* ====== 🤖 AI予想家 ====== */}
-      <AIPredictorBanner />
-
-      {/* ====== 📝 AI予想家コラム ====== */}
-      <AIColumnPreview />
-
-      {/* ====== 📊 最近の結果 ====== */}
+      {/* ⑦ 最近の結果 */}
       {recentResults && recentResults.length > 0 && (
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-black text-gray-900">📊 最近のレース結果</h2>
-            <Link href="/races" className="text-xs text-blue-600 font-bold hover:underline">
+            <h2 className="text-sm font-black text-gray-900 dark:text-white">📊 最近のレース結果</h2>
+            <Link href="/races" className="text-xs text-blue-600 dark:text-blue-400 font-bold hover:underline">
               すべて見る →
             </Link>
           </div>

@@ -14,7 +14,7 @@ export default function ShareButtons({ text, url, hashtags = [], size = "small" 
   const { isDark } = useTheme();
   const [copied, setCopied] = useState(false);
   
-  const shareUrl = url ?? (typeof window !== "undefined" ? window.location.href : "https://www.gate-in.jp");
+  const shareUrl = url ?? "https://www.gate-in.jp";
   
   const defaultHashtags = ["ゲートイン", "競馬予想"];
   const allHashtags = [...new Set([...defaultHashtags, ...hashtags])];
