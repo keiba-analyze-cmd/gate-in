@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0",
+  "compositions": {
+    "test": {
+      "src": "compositions/test.html",
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "duration": 5
+    }
+  }
+}

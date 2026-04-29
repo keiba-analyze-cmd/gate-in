@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;overflow:hidden}
+.comp{width:1080px;height:1920px;position:relative;overflow:hidden;background:#0a0a0a}
+.layer{position:absolute;width:1080px;height:1920px;top:0;left:0}
+
+/* S1: Character Intro */
+.s1{z-index:10}
+.s1 .bg{position:absolute;width:1080px;height:1920px;background:radial-gradient(ellipse at 50% 45%,#3d2a0f 0%,#0a0a0a 65%)}
+.s1 .cimg{position:absolute;left:290px;top:380px;width:500px;height:500px;border-radius:250px;overflow:hidden;border:6px solid #D97706;opacity:0;box-shadow:0 0 80px rgba(217,119,6,0.5)}
+.s1 .cimg img{width:100%;height:100%;object-fit:cover}
+.s1 .name{position:absolute;left:0;top:920px;width:1080px;text-align:center;font:900 80px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;opacity:0;white-space:nowrap;letter-spacing:4px;text-shadow:0 0 40px rgba(217,119,6,0.5)}
+.s1 .type{position:absolute;left:0;top:1020px;width:1080px;text-align:center;font:700 40px 'Hiragino Kaku Gothic ProN',sans-serif;color:#FBBF24;opacity:0;white-space:nowrap}
+.s1 .catch{position:absolute;left:60px;top:1110px;width:960px;text-align:center;font:500 34px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.5);opacity:0;line-height:1.5}
+
+/* S2: Profile */
+.s2{z-index:20}
+.s2 .bg{position:absolute;width:1080px;height:1920px;background:#0a0a0a;opacity:0}
+.s2 .stitle{position:absolute;left:0;top:380px;width:1080px;text-align:center;font:900 44px 'Hiragino Kaku Gothic ProN',sans-serif;color:#FBBF24;opacity:0;white-space:nowrap}
+.prof{position:absolute;left:60px;width:960px;height:180px;background:rgba(255,255,255,0.04);border-radius:24px;border-left:8px solid #D97706;opacity:0}
+.prof .plbl{position:absolute;left:28px;top:20px;font:700 28px 'Hiragino Kaku Gothic ProN',sans-serif;color:#FBBF24;white-space:nowrap}
+.prof .pval{position:absolute;left:28px;top:60px;font:900 48px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;white-space:nowrap}
+.prof .pdesc{position:absolute;left:28px;top:124px;font:500 26px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.4);white-space:nowrap}
+
+/* S3: Stats */
+.s3{z-index:30}
+.s3 .bg{position:absolute;width:1080px;height:1920px;background:#0a0a0a;opacity:0}
+.s3 .stitle{position:absolute;left:0;top:380px;width:1080px;text-align:center;font:900 44px 'Hiragino Kaku Gothic ProN',sans-serif;color:#FBBF24;opacity:0;white-space:nowrap}
+.stat-card{position:absolute;width:440px;height:260px;background:rgba(255,255,255,0.04);border-radius:24px;border:1px solid rgba(255,255,255,0.08);text-align:center;opacity:0}
+.stat-card .sv{font:900 80px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;margin-top:50px;white-space:nowrap}
+.stat-card .sl{font:500 28px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.5);margin-top:10px;white-space:nowrap}
+.stat-card .ssub{font:500 22px 'Hiragino Kaku Gothic ProN',sans-serif;color:#FBBF24;margin-top:6px;white-space:nowrap}
+.s3 .best{position:absolute;left:60px;top:1100px;width:960px;height:140px;background:rgba(255,255,255,0.04);border-radius:20px;border-left:8px solid #D97706;opacity:0}
+.s3 .best .blbl{position:absolute;left:28px;top:18px;font:700 28px 'Hiragino Kaku Gothic ProN',sans-serif;color:#FBBF24;white-space:nowrap}
+.s3 .best .bval{position:absolute;left:28px;top:60px;font:900 52px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;white-space:nowrap}
+
+/* S4: Quote */
+.s4{z-index:40}
+.s4 .bg{position:absolute;width:1080px;height:1920px;background:radial-gradient(ellipse at 50% 50%,#3d2a0f 0%,#0a0a0a 65%);opacity:0}
+.s4 .qmark{position:absolute;left:0;top:540px;width:1080px;text-align:center;font:900 160px Georgia,serif;color:#D97706;opacity:0.3;opacity:0}
+.s4 .quote{position:absolute;left:80px;top:720px;width:920px;text-align:center;font:900 48px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;opacity:0;line-height:1.7}
+.s4 .qname{position:absolute;left:0;top:1060px;width:1080px;text-align:center;font:700 34px 'Hiragino Kaku Gothic ProN',sans-serif;color:#FBBF24;opacity:0;white-space:nowrap}
+.s4 .qimg{position:absolute;left:440px;top:1120px;width:200px;height:200px;border-radius:100px;overflow:hidden;border:4px solid #D97706;opacity:0}
+.s4 .qimg img{width:100%;height:100%;object-fit:cover}
+
+/* S5: CTA */
+.s5{z-index:50}
+.s5 .bg{position:absolute;width:1080px;height:1920px;background:linear-gradient(180deg,#0a0a0a 30%,#3d2a0f 100%);opacity:0}
+.s5 .c1{position:absolute;left:0;top:740px;width:1080px;text-align:center;font:900 56px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;opacity:0;white-space:nowrap}
+.s5 .c2{position:absolute;left:0;top:840px;width:1080px;text-align:center;font:500 36px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.6);opacity:0;white-space:nowrap}
+.s5 .bt{position:absolute;left:140px;top:950px;width:800px;height:120px;background:#D97706;border-radius:60px;text-align:center;line-height:120px;font:900 44px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;opacity:0;white-space:nowrap;box-shadow:0 0 60px rgba(217,119,6,0.5)}
+.s5 .ar{position:absolute;left:0;top:1120px;width:1080px;text-align:center;font:400 60px sans-serif;color:#FBBF24;opacity:0}
+.wm{position:absolute;right:36px;bottom:50px;z-index:100;font:700 28px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.2);white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="comp" data-composition-id="charspot" data-width="1080" data-height="1920" data-duration="30" data-start="0">
+<div class="layer s1" id="s1"><div class="bg"></div>
+<div class="cimg" id="ci"><img src="../../../public/images/predictors/hibari.png" alt=""></div>
+<div class="name" id="nm">ヒバリ</div>
+<div class="type" id="tp">当日データ型</div>
+<div class="catch" id="ct">当日の馬体重、オッズ変動、馬場状態。
+リアルタイムの変化を見逃さない。</div>
+</div>
+<div class="layer s2" id="s2"><div class="bg" id="s2b"></div>
+<div class="stitle" id="s2t">ヒバリのプロフィール</div>
+<div class="prof" id="p0" style="top:460px"><div class="plbl">得意分野</div><div class="pval">当日シグナル</div><div class="pdesc">馬体重変動・調教指数・馬場を読む</div></div>
+<div class="prof" id="p1" style="top:660px"><div class="plbl">予想スタイル</div><div class="pval">直前判断型</div><div class="pdesc">発走30分前のデータで最終決定</div></div>
+<div class="prof" id="p2" style="top:860px"><div class="plbl">信条</div><div class="pval">現場主義</div><div class="pdesc">前日までのデータより当日の状態が全て</div></div>
+</div>
+<div class="layer s3" id="s3"><div class="bg" id="s3b"></div>
+<div class="stitle" id="s3t">通算成績</div>
+<div class="stat-card" id="sc0" style="left:50px;top:480px"><div class="sv">58%</div><div class="sl">3着内率</div><div class="ssub">当日データの力</div></div>
+<div class="stat-card" id="sc1" style="left:590px;top:480px"><div class="sv">91%</div><div class="sl">回収率</div><div class="ssub">堅実に積み上げ</div></div>
+<div class="stat-card" id="sc2" style="left:50px;top:780px"><div class="sv">+10kg</div><div class="sl">除外基準</div><div class="ssub">大幅増は切る</div></div>
+<div class="stat-card" id="sc3" style="left:590px;top:780px"><div class="sv">30分</div><div class="sl">公開タイミング</div><div class="ssub">発走前に速報</div></div>
+<div class="best" id="best"><div class="blbl">得意シーン</div><div class="bval">雨の日・馬場悪化時</div></div>
+</div>
+<div class="layer s4" id="s4"><div class="bg" id="s4b"></div>
+<div class="qmark" id="qm">"</div>
+<div class="quote" id="qt">朝の空気を読め。
+馬場の湿り気、
+パドックの気配。
+答えは現場にある。☀️</div>
+<div class="qname" id="qn">— ヒバリ</div>
+<div class="qimg" id="qi"><img src="../../../public/images/predictors/hibari.png" alt=""></div>
+</div>
+<div class="layer s5" id="s5"><div class="bg" id="s5b"></div>
+<div class="c1" id="c1">ヒバリの予想を見る</div>
+<div class="c2" id="c2">プロフィールのリンクから</div>
+<div class="bt" id="bt">フォローで毎週受け取る</div>
+<div class="ar" id="ar">▼</div>
+</div>
+<div class="wm">ゲートイン！AI競馬予想家</div>
+</div>
+<script>
+(function(){
+var t=gsap.timeline({paused:true});
+// S1: Intro (0-4s)
+t.to("#ci",{opacity:1,duration:0.6,ease:"power2.out"},0.2).from("#ci",{scale:1.15,duration:1.0,ease:"power2.out"},0.2)
+.to("#nm",{opacity:1,duration:0.5,ease:"power3.out"},0.8).from("#nm",{y:40,scale:0.9,duration:0.5},0.8)
+.to("#tp",{opacity:1,duration:0.3},1.4).from("#tp",{y:15,duration:0.3},1.4)
+.to("#ct",{opacity:1,duration:0.4},1.9).from("#ct",{y:20,duration:0.4},1.9);
+// S1→S2
+t.to("#s1",{opacity:0,duration:0.3},3.7).to("#s2b",{opacity:1,duration:0.3},3.8);
+// S2: Profile (4-12s)
+t.to("#s2t",{opacity:1,duration:0.3},4.0).from("#s2t",{y:20,duration:0.3},4.0)
+.to("#p0",{opacity:1,duration:0.3},4.6).from("#p0",{x:-50,duration:0.3},4.6)
+.to("#p1",{opacity:1,duration:0.3},6.2).from("#p1",{x:-50,duration:0.3},6.2)
+.to("#p2",{opacity:1,duration:0.3},7.8).from("#p2",{x:-50,duration:0.3},7.8);
+// S2→S3
+t.to(["#s2b","#s2t","#p0","#p1","#p2"],{opacity:0,duration:0.3},11.5).to("#s3b",{opacity:1,duration:0.3},11.6);
+// S3: Stats (12-20s)
+t.to("#s3t",{opacity:1,duration:0.3},12.0).from("#s3t",{y:20,duration:0.3},12.0)
+.to("#sc0",{opacity:1,duration:0.4},12.5).from("#sc0",{y:30,duration:0.4},12.5)
+.to("#sc1",{opacity:1,duration:0.4},13.0).from("#sc1",{y:30,duration:0.4},13.0)
+.to("#sc2",{opacity:1,duration:0.4},13.5).from("#sc2",{y:30,duration:0.4},13.5)
+.to("#sc3",{opacity:1,duration:0.4},14.0).from("#sc3",{y:30,duration:0.4},14.0)
+.to("#best",{opacity:1,duration:0.3},15.0).from("#best",{x:-50,duration:0.3},15.0);
+// S3→S4
+t.to(["#s3b","#s3t","#sc0","#sc1","#sc2","#sc3","#best"],{opacity:0,duration:0.3},19.5).to("#s4b",{opacity:1,duration:0.3},19.6);
+// S4: Quote (20-25s)
+t.to("#qm",{opacity:0.3,duration:0.4},20.0).from("#qm",{y:-30,duration:0.4},20.0)
+.to("#qt",{opacity:1,duration:0.6},20.5).from("#qt",{y:30,duration:0.6},20.5)
+.to("#qn",{opacity:1,duration:0.3},21.4)
+.to("#qi",{opacity:1,duration:0.3},21.8).from("#qi",{scale:0.5,duration:0.3,ease:"back.out(1.5)"},21.8);
+// S4→S5
+t.to(["#s4b","#qm","#qt","#qn","#qi"],{opacity:0,duration:0.3},24.5).to("#s5b",{opacity:1,duration:0.4},24.6);
+// S5: CTA (25-30s)
+t.to("#c1",{opacity:1,duration:0.4},25.0).from("#c1",{y:40,duration:0.4},25.0)
+.to("#c2",{opacity:1,duration:0.3},25.6)
+.to("#bt",{opacity:1,scale:1,duration:0.4,ease:"back.out(1.5)"},26.2).from("#bt",{scale:0.8,duration:0.4,ease:"back.out(1.5)"},26.2)
+.to("#bt",{boxShadow:"0 0 100px rgba(217,119,6,0.5)",duration:0.6,repeat:2,yoyo:true},27.0)
+.to("#ar",{opacity:1,duration:0.3},26.6).to("#ar",{y:20,duration:0.5,repeat:3,yoyo:true,ease:"power1.inOut"},27.0)
+.to(".comp",{opacity:0,duration:0.5},29.5);
+window.__timelines=window.__timelines||{};window.__timelines["charspot"]=t;
+})();
+</script>
+</body>
+</html>

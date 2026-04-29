@@ -36,6 +36,7 @@ const EXTRA_LINKS = [
   { href: "/admin/x-posts", label: "𝕏 投稿", description: "X自動投稿" },
   { href: "/admin/verified", label: "✅ 認証", description: "認証バッジ" },
   { href: "/admin/settings", label: "⚙️ 設定", description: "サイト設定" },
+  { href: "/admin/tiktok", label: "🎬 TikTok", description: "動画管理" },
 ];
 
 export default function AdminTabs() {

@@ -1,0 +1,13 @@
+{
+  "type": "results",
+  "race": { "name": "NHKマイルC", "grade": "G1", "gradeColor": "#f59e0b", "venue": "東京", "surface": "芝", "distance": 1600 },
+  "characters": [
+    { "id": "hayate", "name": "ハヤテ", "type": "データ分析型", "color": "#1E40AF", "light": "#60A5FA", "pick": { "num": 7, "name": "アルテミシア" }, "finish": 1, "hit": true, "comment": "1着的中！" },
+    { "id": "kazan", "name": "カザン", "type": "穴馬予測型", "color": "#DC2626", "light": "#F87171", "pick": { "num": 12, "name": "ライジングフォース" }, "finish": 8, "hit": false, "comment": "8着 不的中" },
+    { "id": "hakusen", "name": "ハクセン", "type": "血統分析型", "color": "#059669", "light": "#34D399", "pick": { "num": 3, "name": "ステラノーヴァ" }, "finish": 3, "hit": true, "comment": "3着的中！" },
+    { "id": "hibari", "name": "ヒバリ", "type": "当日データ型", "color": "#D97706", "light": "#FBBF24", "pick": { "num": 5, "name": "ブレイブハート" }, "finish": 2, "hit": true, "comment": "2着的中！" },
+    { "id": "gantetsu", "name": "ガンテツ", "type": "軸馬特化型", "color": "#475569", "light": "#94A3B8", "pick": { "num": 7, "name": "アルテミシア" }, "finish": 1, "hit": true, "comment": "1着的中！" }
+  ],
+  "hitCount": 4,
+  "kaishuu": 142
+}

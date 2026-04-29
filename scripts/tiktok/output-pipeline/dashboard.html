@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>TikTok動画レビュー</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,sans-serif;background:#111;color:#fff;display:flex;height:100vh}
+.sidebar{width:420px;background:#1a1a1a;border-right:1px solid #333;overflow-y:auto;padding:16px}
+.sidebar h1{font-size:18px;margin-bottom:12px;color:#999}
+.card{display:flex;align-items:center;gap:10px;padding:12px;border-radius:10px;cursor:pointer;margin-bottom:8px;border:1px solid #333;transition:all .15s}
+.card:hover{border-color:#666;background:#222}
+.card.active{border-color:#60a5fa;background:#1a2a3a}
+.card.done{opacity:0.5}
+.dot{width:10px;height:10px;border-radius:5px;flex-shrink:0}
+.info{flex:1;min-width:0}
+.label{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file{font-size:11px;color:#666;margin-top:2px}
+.actions{display:flex;gap:4px}
+.actions button{padding:4px 8px;border:1px solid #444;background:#222;color:#fff;border-radius:6px;font-size:11px;cursor:pointer}
+.actions button:hover{background:#333}
+.actions button.ok.checked{background:#16a34a;border-color:#16a34a}
+.main{flex:1;display:flex;flex-direction:column;align-items:center;padding:20px;background:#0a0a0a}
+.controls{display:flex;gap:10px;margin-bottom:16px}
+.controls button{padding:8px 16px;border:1px solid #444;background:#222;color:#fff;border-radius:8px;cursor:pointer;font-size:13px}
+.controls button:hover{background:#333}
+.phone{width:270px;height:480px;border:2px solid #333;border-radius:20px;overflow:hidden}
+iframe{width:1080px;height:1920px;border:none;transform:scale(0.25);transform-origin:top left}
+.status{margin-top:12px;font-size:12px;color:#666}
+.checklist{margin-top:20px;padding:16px;background:#1a1a1a;border-radius:12px;width:300px}
+.checklist h3{font-size:14px;color:#999;margin-bottom:8px}
+.checklist .item{font-size:12px;color:#666;padding:4px 0}
+</style></head><body>
+<div class="sidebar">
+<h1>🎬 TikTok動画レビュー (2本)</h1>
+<div class="card" onclick="loadVideo('prediction-kazan-NHKマイルC.html')">
+      <div class="dot" style="background:#60a5fa"></div>
+      <div class="info"><div class="label">予想: カザン × NHKマイルC</div><div class="file">prediction-kazan-NHKマイルC.html</div></div>
+      <div class="actions">
+        <button onclick="event.stopPropagation();openJson('prediction-kazan-NHKマイルC.json')">📝 JSON</button>
+        <button class="ok" onclick="event.stopPropagation();markOK('prediction-kazan-NHKマイルC.html',this)">✅</button>
+      </div>
+    </div>
+<div class="card" onclick="loadVideo('results-NHKマイルC.html')">
+      <div class="dot" style="background:#22c55e"></div>
+      <div class="info"><div class="label">結果:  × NHKマイルC</div><div class="file">results-NHKマイルC.html</div></div>
+      <div class="actions">
+        <button onclick="event.stopPropagation();openJson('results-NHKマイルC.json')">📝 JSON</button>
+        <button class="ok" onclick="event.stopPropagation();markOK('results-NHKマイルC.html',this)">✅</button>
+      </div>
+    </div>
+<div style="margin-top:20px;padding:12px;background:#222;border-radius:8px">
+<div style="font-size:12px;color:#888">ワークフロー</div>
+<div style="font-size:11px;color:#555;margin-top:4px;line-height:1.6">
+1. 動画クリック → プレビュー再生<br>
+2. 📝 JSON → 内容を編集<br>
+3. ターミナル: node pipeline.mjs generate<br>
+4. ブラウザリロード<br>
+5. ✅ ボタンで承認<br>
+6. 全部✅ → node pipeline.mjs render
+</div></div>
+</div>
+<div class="main">
+<div class="controls">
+<button onclick="playVideo()">▶ 再生</button>
+<button onclick="pauseVideo()">⏸ 停止</button>
+<button onclick="restartVideo()">⏮ 最初から</button>
+</div>
+<div class="phone"><iframe id="viewer" src=""></iframe></div>
+<div class="status" id="status">← 左から動画を選択</div>
+<div class="checklist">
+<h3>投稿前チェックリスト</h3>
+<div class="item">□ テキスト内容に誤りがないか</div>
+<div class="item">□ キャラ画像が正しく表示されるか</div>
+<div class="item">□ アニメーションのタイミングは適切か</div>
+<div class="item">□ ウォーターマークが表示されるか</div>
+<div class="item">□ CTAの内容は正しいか</div>
+</div>
+</div>
+<script>
+let currentFile='';
+function loadVideo(f){
+  currentFile=f;
+  document.getElementById('viewer').src=f;
+  document.getElementById('status').textContent='読込中: '+f;
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  setTimeout(()=>{document.getElementById('status').textContent='再生待機: '+f;},1000);
+}
+function getTL(){
+  try{
+    const w=document.getElementById('viewer').contentWindow;
+    return w.__timelines?Object.values(w.__timelines)[0]:null;
+  }catch(e){return null;}
+}
+function playVideo(){const t=getTL();if(t){t.play();document.getElementById('status').textContent='再生中: '+currentFile;}}
+function pauseVideo(){const t=getTL();if(t)t.pause();}
+function restartVideo(){const t=getTL();if(t){t.restart();document.getElementById('status').textContent='再生中: '+currentFile;}}
+function openJson(f){
+  alert('JSONを編集してください:\n\ncontent/'+f+'\n\n編集後: node pipeline.mjs generate');
+}
+function markOK(f,btn){
+  btn.classList.toggle('checked');
+  btn.closest('.card').classList.toggle('done');
+}
+</script></body></html>

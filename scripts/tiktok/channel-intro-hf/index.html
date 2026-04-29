@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1920px; overflow: hidden; font-family: 'Noto Sans JP', sans-serif; background: #0a0a0a; color: white; }
+  .scene { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; opacity: 0; overflow: hidden; }
+  .sbox {
+    position: absolute; bottom: 180px; width: 460px; height: 160px;
+    background: rgba(255,255,255,0.06); border-radius: 20px;
+    text-align: center; overflow: hidden;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .sv { font-size: 48px; font-weight: 900; line-height: 1.1; }
+  .sl { font-size: 20px; color: #94a3b8; margin-top: 6px; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head>
+<body>
+<div id="comp" data-composition-id="channel-intro" data-start="0" data-width="1080" data-height="1920" data-duration="45" data-fps="24" style="position:relative;width:1080px;height:1920px;overflow:hidden;background:#0a0a0a;">
+
+<!-- ====== フック ====== -->
+<div id="hook" class="scene">
+  <div style="position:absolute;left:0;top:0;width:1080px;height:1920px;background:repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(255,255,255,0.02) 59px,rgba(255,255,255,0.02) 60px),repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(255,255,255,0.02) 59px,rgba(255,255,255,0.02) 60px);"></div>
+  <div id="hook-l1" style="position:absolute;top:750px;width:1080px;text-align:center;font-size:60px;font-weight:900;opacity:0;">AIに競馬予想させたら</div>
+  <div id="hook-l2" style="position:absolute;top:840px;width:1080px;text-align:center;font-size:96px;font-weight:900;color:#fbbf24;opacity:0;">的中率59%だった</div>
+  <div id="hook-l3" style="position:absolute;top:970px;width:1080px;text-align:center;font-size:34px;color:#64748b;opacity:0;">3,477レースで検証</div>
+  <div id="hook-pulse" style="position:absolute;top:1050px;left:440px;width:200px;height:4px;border-radius:2px;background:#fbbf24;opacity:0;transform:scaleX(0);"></div>
+</div>
+
+<!-- ====== ハヤテ ====== -->
+<div id="s-hayate" class="scene">
+  <div id="line-hayate" style="position:absolute;top:418px;left:0;width:1080px;height:4px;background:#3b82f6;transform:scaleX(0);transform-origin:left;"></div>
+  <div style="position:absolute;top:420px;left:0;width:1080px;height:1080px;overflow:hidden;"><video id="vid-hayate" src="clips/hayate.mp4" muted playsinline preload="auto" style="width:1080px;height:1080px;object-fit:cover;"></video></div>
+  <div id="hayate-name" style="position:absolute;top:200px;left:60px;font-size:72px;font-weight:900;opacity:0;">ハヤテ</div>
+  <div id="hayate-type" style="position:absolute;top:285px;left:60px;font-size:30px;font-weight:700;color:#3b82f6;opacity:0;">データ分析型</div>
+  <div id="hayate-catch" style="position:absolute;top:330px;left:60px;font-size:28px;color:#ccc;font-style:italic;opacity:0;white-space:nowrap;">「数字は嘘をつかない」</div>
+  <div id="hayate-s1" class="sbox" style="left:60px;border:2px solid rgba(59,130,246,0.25);opacity:0;">
+    <div class="sv" style="color:#3b82f6;">27%</div><div class="sl">1着的中率</div>
+  </div>
+  <div id="hayate-s2" class="sbox" style="right:60px;border:2px solid rgba(255,255,255,0.08);opacity:0;">
+    <div class="sv">59.5%</div><div class="sl">3着内的中率</div>
+  </div>
+  <div style="position:absolute;bottom:90px;width:1080px;text-align:center;"><span style="display:inline-block;width:40px;height:10px;border-radius:5px;background:#3b82f6;margin:0 5px;"></span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span></div>
+</div>
+
+<!-- ====== カザン ====== -->
+<div id="s-kazan" class="scene">
+  <div id="line-kazan" style="position:absolute;top:418px;left:0;width:1080px;height:4px;background:#ef4444;transform:scaleX(0);transform-origin:left;"></div>
+  <div style="position:absolute;top:420px;left:0;width:1080px;height:1080px;overflow:hidden;"><video id="vid-kazan" src="clips/kazan.mp4" muted playsinline preload="auto" style="width:1080px;height:1080px;object-fit:cover;"></video></div>
+  <div id="kazan-name" style="position:absolute;top:200px;left:60px;font-size:72px;font-weight:900;opacity:0;">カザン</div>
+  <div id="kazan-type" style="position:absolute;top:285px;left:60px;font-size:30px;font-weight:700;color:#ef4444;opacity:0;">穴馬予測型</div>
+  <div id="kazan-catch" style="position:absolute;top:330px;left:60px;font-size:28px;color:#ccc;font-style:italic;opacity:0;white-space:nowrap;">「オッズの歪みに、俺が斬り込む」</div>
+  <div id="kazan-s1" class="sbox" style="left:60px;border:2px solid rgba(239,68,68,0.25);opacity:0;">
+    <div class="sv" style="color:#ef4444;">14.8倍</div><div class="sl">的中時の平均配当</div>
+  </div>
+  <div id="kazan-s2" class="sbox" style="right:60px;border:2px solid rgba(255,255,255,0.08);opacity:0;">
+    <div class="sv">77.4%</div><div class="sl">厳選時3着内率</div>
+  </div>
+  <div style="position:absolute;bottom:90px;width:1080px;text-align:center;"><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span><span style="display:inline-block;width:40px;height:10px;border-radius:5px;background:#ef4444;margin:0 5px;"></span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span></div>
+</div>
+
+<!-- ====== ハクセン ====== -->
+<div id="s-hakusen" class="scene">
+  <div id="line-hakusen" style="position:absolute;top:418px;left:0;width:1080px;height:4px;background:#10b981;transform:scaleX(0);transform-origin:left;"></div>
+  <div style="position:absolute;top:420px;left:0;width:1080px;height:1080px;overflow:hidden;"><video id="vid-hakusen" src="clips/hakusen.mp4" muted playsinline preload="auto" style="width:1080px;height:1080px;object-fit:cover;"></video></div>
+  <div id="hakusen-name" style="position:absolute;top:200px;left:60px;font-size:72px;font-weight:900;opacity:0;">ハクセン</div>
+  <div id="hakusen-type" style="position:absolute;top:285px;left:60px;font-size:30px;font-weight:700;color:#10b981;opacity:0;">血統分析型</div>
+  <div id="hakusen-catch" style="position:absolute;top:330px;left:60px;font-size:28px;color:#ccc;font-style:italic;opacity:0;white-space:nowrap;">「血は争えない…それが競馬だ」</div>
+  <div id="hakusen-s1" class="sbox" style="left:60px;border:2px solid rgba(16,185,129,0.25);opacity:0;">
+    <div class="sv" style="color:#10b981;">102%</div><div class="sl">単勝回収率</div>
+  </div>
+  <div id="hakusen-s2" class="sbox" style="right:60px;border:2px solid rgba(255,255,255,0.08);opacity:0;">
+    <div class="sv">56.2%</div><div class="sl">3着内的中率</div>
+  </div>
+  <div style="position:absolute;bottom:90px;width:1080px;text-align:center;"><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span><span style="display:inline-block;width:40px;height:10px;border-radius:5px;background:#10b981;margin:0 5px;"></span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span></div>
+</div>
+
+<!-- ====== ヒバリ ====== -->
+<div id="s-hibari" class="scene">
+  <div id="line-hibari" style="position:absolute;top:418px;left:0;width:1080px;height:4px;background:#f59e0b;transform:scaleX(0);transform-origin:left;"></div>
+  <div style="position:absolute;top:420px;left:0;width:1080px;height:1080px;overflow:hidden;"><img id="img-hibari" src="uploads/hibari2.png" style="width:1080px;height:1080px;object-fit:cover;transform:scale(1);"/></div>
+  <div id="hibari-name" style="position:absolute;top:200px;left:60px;font-size:72px;font-weight:900;opacity:0;">ヒバリ</div>
+  <div id="hibari-type" style="position:absolute;top:285px;left:60px;font-size:30px;font-weight:700;color:#f59e0b;opacity:0;">当日データ型</div>
+  <div id="hibari-catch" style="position:absolute;top:330px;left:60px;font-size:28px;color:#ccc;font-style:italic;opacity:0;white-space:nowrap;">「パドックが全てを教えてくれる！」</div>
+  <div id="hibari-s1" class="sbox" style="left:60px;border:2px solid rgba(245,158,11,0.25);opacity:0;">
+    <div class="sv" style="color:#f59e0b;">58.2%</div><div class="sl">3着内的中率</div>
+  </div>
+  <div id="hibari-s2" class="sbox" style="right:60px;border:2px solid rgba(255,255,255,0.08);opacity:0;">
+    <div class="sv">発走30分前</div><div class="sl">予想公開タイミング</div>
+  </div>
+  <div style="position:absolute;bottom:90px;width:1080px;text-align:center;"><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span><span style="display:inline-block;width:40px;height:10px;border-radius:5px;background:#f59e0b;margin:0 5px;"></span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span></div>
+</div>
+
+<!-- ====== ガンテツ ====== -->
+<div id="s-gantetsu" class="scene">
+  <div id="line-gantetsu" style="position:absolute;top:418px;left:0;width:1080px;height:4px;background:#94a3b8;transform:scaleX(0);transform-origin:left;"></div>
+  <div style="position:absolute;top:420px;left:0;width:1080px;height:1080px;overflow:hidden;"><img id="img-gantetsu" src="uploads/gantetsu2.png" style="width:1080px;height:1080px;object-fit:cover;transform:scale(1);"/></div>
+  <div id="gantetsu-name" style="position:absolute;top:200px;left:60px;font-size:72px;font-weight:900;opacity:0;">ガンテツ</div>
+  <div id="gantetsu-type" style="position:absolute;top:285px;left:60px;font-size:30px;font-weight:700;color:#94a3b8;opacity:0;">軸馬特化型</div>
+  <div id="gantetsu-catch" style="position:absolute;top:330px;left:60px;font-size:28px;color:#ccc;font-style:italic;opacity:0;white-space:nowrap;">「…この1頭だ。」</div>
+  <div id="gantetsu-s1" class="sbox" style="left:60px;border:2px solid rgba(148,163,184,0.25);opacity:0;">
+    <div class="sv" style="color:#94a3b8;">41.3%</div><div class="sl">厳選レース勝率</div>
+  </div>
+  <div id="gantetsu-s2" class="sbox" style="right:60px;border:2px solid rgba(255,255,255,0.08);opacity:0;">
+    <div class="sv">90%</div><div class="sl">5着内率</div>
+  </div>
+  <div style="position:absolute;bottom:90px;width:1080px;text-align:center;"><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#333;margin:0 5px;"></span><span style="display:inline-block;width:40px;height:10px;border-radius:5px;background:#94a3b8;margin:0 5px;"></span></div>
+</div>
+
+<!-- ====== CTA ====== -->
+<div id="cta" class="scene" style="background:linear-gradient(160deg,#064e3b,#0f766e);">
+  <div id="cta-glow" style="position:absolute;top:400px;left:290px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,0.2),transparent 70%);opacity:0;"></div>
+  <div id="cta-l1" style="position:absolute;top:560px;width:1080px;text-align:center;font-size:48px;font-weight:900;line-height:1.5;opacity:0;">あなたの予想を<br><span style="color:#fbbf24;font-size:56px;">AIでアップグレード</span></div>
+  <div id="cta-l2" style="position:absolute;top:780px;width:1080px;text-align:center;font-size:30px;color:#a7f3d0;line-height:1.8;opacity:0;">5体のAIから相性の良い1体を見つけて<br>毎週の予想に活かそう</div>
+  <div id="cta-btn" style="position:absolute;top:950px;left:140px;width:800px;text-align:center;background:white;color:#064e3b;font-weight:900;font-size:40px;padding:28px 0;border-radius:999px;opacity:0;">フォローして毎週の予想を受け取る</div>
+  <div id="cta-sub" style="position:absolute;top:1080px;width:1080px;text-align:center;font-size:24px;color:#6ee7b7;opacity:0;">プロフのリンクから無料で参加できます</div>
+  <!-- ミニキャラアイコン -->
+  <div id="cta-icons" style="position:absolute;top:1160px;width:1080px;text-align:center;opacity:0;">
+    <span style="display:inline-block;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#1e40af,#3b82f6);margin:0 8px;line-height:50px;font-size:24px;text-align:center;">⚡</span>
+    <span style="display:inline-block;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#dc2626,#ef4444);margin:0 8px;line-height:50px;font-size:24px;text-align:center;">🔥</span>
+    <span style="display:inline-block;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#059669,#10b981);margin:0 8px;line-height:50px;font-size:24px;text-align:center;">🧬</span>
+    <span style="display:inline-block;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#d97706,#f59e0b);margin:0 8px;line-height:50px;font-size:24px;text-align:center;">☀️</span>
+    <span style="display:inline-block;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#475569,#94a3b8);margin:0 8px;line-height:50px;font-size:24px;text-align:center;">🛡</span>
+  </div>
+</div>
+
+</div>
+<script>
+window.__timelines = window.__timelines || {};
+var tl = gsap.timeline({ paused: true });
+
+// フック
+tl.to("#hook", { opacity: 1, duration: 0.2 })
+  .to("#hook-l1", { opacity: 1, duration: 0.5, ease: "power3.out" })
+  .to("#hook-l2", { opacity: 1, duration: 0.5, ease: "power3.out" }, "-=0.2")
+  .to("#hook-pulse", { opacity: 1, scaleX: 1, duration: 0.4, ease: "power2.out" }, "-=0.1")
+  .to("#hook-l3", { opacity: 1, duration: 0.4 })
+  .to({}, { duration: 1.2 })
+  .to("#hook", { opacity: 0, duration: 0.3 });
+
+function charScene(id, dur) {
+  tl.to("#s-" + id, { opacity: 1, duration: 0.25 })
+    .call(function() { var v = document.getElementById("vid-" + id); if (v) { v.currentTime = 0; v.play().catch(function(){}); } })
+    .to("#line-" + id, { scaleX: 1, duration: 0.4, ease: "power2.out" }, "-=0.2")
+    .to("#" + id + "-name", { opacity: 1, duration: 0.4, ease: "power3.out" }, "-=0.2")
+    .to("#" + id + "-type", { opacity: 1, duration: 0.3, ease: "power3.out" }, "-=0.15")
+    .to("#" + id + "-catch", { opacity: 1, duration: 0.4, ease: "power2.out" })
+    .to("#" + id + "-s1", { opacity: 1, duration: 0.4, ease: "back.out(1.7)" }, "-=0.1")
+    .to("#" + id + "-s2", { opacity: 1, duration: 0.4, ease: "back.out(1.7)" }, "-=0.2")
+    .to({}, { duration: dur - 4.5 })
+    .to("#s-" + id, { opacity: 0, duration: 0.3 });
+}
+charScene("hayate", 8);
+charScene("kazan", 8);
+charScene("hakusen", 8);
+
+function imgScene(id, dur) {
+  tl.to("#s-" + id, { opacity: 1, duration: 0.25 })
+    .to("#line-" + id, { scaleX: 1, duration: 0.4, ease: "power2.out" }, "-=0.2")
+    .to("#img-" + id, { scale: 1.15, duration: dur - 0.6, ease: "none" }, "-=0.3")
+    .to("#" + id + "-name", { opacity: 1, duration: 0.4, ease: "power3.out" }, "<0.2")
+    .to("#" + id + "-type", { opacity: 1, duration: 0.3, ease: "power3.out" }, "-=0.15")
+    .to("#" + id + "-catch", { opacity: 1, duration: 0.4 })
+    .to("#" + id + "-s1", { opacity: 1, duration: 0.4, ease: "back.out(1.7)" }, "-=0.1")
+    .to("#" + id + "-s2", { opacity: 1, duration: 0.4, ease: "back.out(1.7)" }, "-=0.2")
+    .to({}, { duration: 0.5 })
+    .to("#s-" + id, { opacity: 0, duration: 0.3 });
+}
+imgScene("hibari", 6);
+imgScene("gantetsu", 6);
+
+// CTA
+tl.to("#cta", { opacity: 1, duration: 0.3 })
+  .to("#cta-glow", { opacity: 1, scale: 1.3, duration: 2, ease: "sine.inOut", yoyo: true, repeat: 2 })
+  .to("#cta-l1", { opacity: 1, duration: 0.6, ease: "power3.out" }, "-=4")
+  .to("#cta-l2", { opacity: 1, duration: 0.4 })
+  .to("#cta-btn", { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" })
+  .to("#cta-sub", { opacity: 1, duration: 0.3 })
+  .to("#cta-icons", { opacity: 1, duration: 0.4 })
+  .to({}, { duration: 1 });
+
+window.__timelines["channel-intro"] = tl;
+</script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;overflow:hidden}
+.comp{width:1080px;height:1920px;position:relative;overflow:hidden;background:#0a0a0a}
+.layer{position:absolute;width:1080px;height:1920px;top:0;left:0}
+
+/* S1: Hook */
+.s1{z-index:10}
+.s1 .bg{position:absolute;width:1080px;height:1920px;background:radial-gradient(ellipse at 50% 50%,#0f1f3d 0%,#0a0a0a 65%)}
+.s1 .icon{position:absolute;left:0;top:620px;width:1080px;text-align:center;font-size:120px;opacity:0}
+.s1 .hook{position:absolute;left:60px;top:780px;width:960px;text-align:center;font:900 52px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;opacity:0;line-height:1.5}
+.s1 .sub{position:absolute;left:60px;top:960px;width:960px;text-align:center;font:700 36px 'Hiragino Kaku Gothic ProN',sans-serif;color:#60A5FA;opacity:0;white-space:nowrap}
+
+/* S2: Data Bars */
+.s2{z-index:20}
+.s2 .bg{position:absolute;width:1080px;height:1920px;background:#0a0a0a;opacity:0}
+.s2 .dtitle{position:absolute;left:0;top:340px;width:1080px;text-align:center;font:900 44px 'Hiragino Kaku Gothic ProN',sans-serif;color:#60A5FA;opacity:0;white-space:nowrap}
+.s2 .dsource{position:absolute;left:0;top:400px;width:1080px;text-align:center;font:500 26px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.3);opacity:0;white-space:nowrap}
+.bar-row{position:absolute;left:60px;width:960px;height:110px;opacity:0}
+.bar-row .bar-label{position:absolute;left:0;top:0;width:200px;font:700 36px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;white-space:nowrap;line-height:50px}
+.bar-row .bar-track{position:absolute;left:220px;top:0;width:580px;height:50px;background:rgba(255,255,255,0.06);border-radius:12px;overflow:hidden}
+.bar-row .bar-fill{position:absolute;left:0;top:0;height:50px;border-radius:12px;width:0}
+.bar-row .bar-value{position:absolute;right:0;top:0;width:140px;text-align:right;font:900 40px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;white-space:nowrap;line-height:50px}
+.bar-row .bar-sub{position:absolute;left:220px;top:58px;font:500 24px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.35);white-space:nowrap}
+
+/* S3: Conclusion */
+.s3{z-index:30}
+.s3 .bg{position:absolute;width:1080px;height:1920px;background:radial-gradient(ellipse at 50% 50%,#0f1f3d 0%,#0a0a0a 65%);opacity:0}
+.s3 .cimg{position:absolute;left:420px;top:480px;width:240px;height:240px;border-radius:120px;overflow:hidden;border:4px solid #1E40AF;opacity:0}
+.s3 .cimg img{width:100%;height:100%;object-fit:cover}
+.s3 .cname{position:absolute;left:0;top:740px;width:1080px;text-align:center;font:900 36px 'Hiragino Kaku Gothic ProN',sans-serif;color:#60A5FA;opacity:0;white-space:nowrap}
+.s3 .conclusion{position:absolute;left:60px;top:830px;width:960px;text-align:center;font:900 56px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;opacity:0;line-height:1.5}
+.s3 .detail{position:absolute;left:60px;top:1060px;width:960px;text-align:center;font:500 32px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.5);opacity:0;line-height:1.5}
+
+/* S4: CTA */
+.s4{z-index:40}
+.s4 .bg{position:absolute;width:1080px;height:1920px;background:linear-gradient(180deg,#0a0a0a 30%,#0f1f3d 100%);opacity:0}
+.s4 .c1{position:absolute;left:0;top:740px;width:1080px;text-align:center;font:900 56px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;opacity:0;white-space:nowrap}
+.s4 .c2{position:absolute;left:0;top:840px;width:1080px;text-align:center;font:500 36px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.6);opacity:0;white-space:nowrap}
+.s4 .bt{position:absolute;left:140px;top:950px;width:800px;height:120px;background:#1E40AF;border-radius:60px;text-align:center;line-height:120px;font:900 44px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;opacity:0;white-space:nowrap;box-shadow:0 0 60px rgba(30,64,175,0.5)}
+.s4 .ar{position:absolute;left:0;top:1120px;width:1080px;text-align:center;font:400 60px sans-serif;color:#60A5FA;opacity:0}
+.wm{position:absolute;right:36px;bottom:50px;z-index:100;font:700 28px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.2);white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="comp" data-composition-id="datashort" data-width="1080" data-height="1920" data-duration="30" data-start="0">
+<div class="layer s1" id="s1"><div class="bg"></div>
+<div class="icon" id="icon">🎰</div>
+<div class="hook" id="hook">中山芝の内枠有利、
+どれくらい差がある？</div>
+<div class="sub" id="sub">2024-2026年 中山芝コース集計</div>
+</div>
+<div class="layer s2" id="s2"><div class="bg" id="s2b"></div>
+<div class="dtitle" id="dtitle">📊 枠番別 複勝率（中山芝）</div>
+<div class="dsource" id="dsrc">JRDB 2024-2026 中山芝 全レース</div>
+
+<div class="bar-row" id="br0" style="top:480px">
+  <div class="bar-label">1枠</div>
+  <div class="bar-track"><div class="bar-fill" id="bf0" style="background:#22c55e"></div></div>
+  <div class="bar-value">38.2%</div>
+  <div class="bar-sub">複勝率トップ</div>
+</div>
+
+<div class="bar-row" id="br1" style="top:610px">
+  <div class="bar-label">2枠</div>
+  <div class="bar-track"><div class="bar-fill" id="bf1" style="background:#60a5fa"></div></div>
+  <div class="bar-value">35.6%</div>
+  <div class="bar-sub">僅差の2位</div>
+</div>
+
+<div class="bar-row" id="br2" style="top:740px">
+  <div class="bar-label">3枠</div>
+  <div class="bar-track"><div class="bar-fill" id="bf2" style="background:#fbbf24"></div></div>
+  <div class="bar-value">33.1%</div>
+  <div class="bar-sub">ここまでが有利ゾーン</div>
+</div>
+
+<div class="bar-row" id="br3" style="top:870px">
+  <div class="bar-label">4-5枠</div>
+  <div class="bar-track"><div class="bar-fill" id="bf3" style="background:#a78bfa"></div></div>
+  <div class="bar-value">29.4%</div>
+  <div class="bar-sub">平均的</div>
+</div>
+
+<div class="bar-row" id="br4" style="top:1000px">
+  <div class="bar-label">7-8枠</div>
+  <div class="bar-track"><div class="bar-fill" id="bf4" style="background:#f87171"></div></div>
+  <div class="bar-value">22.8%</div>
+  <div class="bar-sub">外枠は不利</div>
+</div>
+</div>
+<div class="layer s3" id="s3"><div class="bg" id="s3b"></div>
+<div class="cimg" id="cimg"><img src="../../../public/images/predictors/hayate.png" alt=""></div>
+<div class="cname" id="cname">ハヤテの結論</div>
+<div class="conclusion" id="concl">1〜3枠が圧倒的有利！</div>
+<div class="detail" id="det">中山の小回りコースでは
+内をロスなく回れる枠が有利</div>
+</div>
+<div class="layer s4" id="s4"><div class="bg" id="s4b"></div>
+<div class="c1" id="c1">データで勝つ競馬</div>
+<div class="c2" id="c2">プロフィールのリンクから</div>
+<div class="bt" id="bt">フォローで毎週受け取る</div>
+<div class="ar" id="ar">▼</div>
+</div>
+<div class="wm">ゲートイン！AI競馬予想家</div>
+</div>
+<script>
+(function(){
+var t=gsap.timeline({paused:true});
+// S1: Hook (0-3.5s)
+t.to("#icon",{opacity:1,scale:1,duration:0.4,ease:"back.out(1.5)"},0.2).from("#icon",{scale:0.3,duration:0.4,ease:"back.out(1.5)"},0.2)
+.to("#hook",{opacity:1,duration:0.5},0.6).from("#hook",{y:40,duration:0.5},0.6)
+.to("#sub",{opacity:1,duration:0.3},1.4).from("#sub",{y:20,duration:0.3},1.4);
+// S1→S2
+t.to("#s1",{opacity:0,duration:0.3},3.2).to("#s2b",{opacity:1,duration:0.3},3.3);
+// S2: Data Bars (3.5-18s)
+t.to("#dtitle",{opacity:1,duration:0.3},3.5).from("#dtitle",{y:20,duration:0.3},3.5)
+.to("#dsrc",{opacity:1,duration:0.2},3.9);
+t.to("#br0",{opacity:1,duration:0.3},4.5).from("#br0",{x:-50,duration:0.3},4.5)
+.to("#bf0",{width:"95%",duration:1.0,ease:"power2.out"},4.9);
+t.to("#br1",{opacity:1,duration:0.3},7.0).from("#br1",{x:-50,duration:0.3},7.0)
+.to("#bf1",{width:"89%",duration:1.0,ease:"power2.out"},7.4);
+t.to("#br2",{opacity:1,duration:0.3},9.5).from("#br2",{x:-50,duration:0.3},9.5)
+.to("#bf2",{width:"83%",duration:1.0,ease:"power2.out"},9.9);
+t.to("#br3",{opacity:1,duration:0.3},12.0).from("#br3",{x:-50,duration:0.3},12.0)
+.to("#bf3",{width:"73%",duration:1.0,ease:"power2.out"},12.4);
+t.to("#br4",{opacity:1,duration:0.3},14.5).from("#br4",{x:-50,duration:0.3},14.5)
+.to("#bf4",{width:"57%",duration:1.0,ease:"power2.out"},14.9);
+// S2→S3
+t.to(["#s2b","#dtitle","#dsrc","#br0","#br1","#br2","#br3","#br4"],{opacity:0,duration:0.3},17.5).to("#s3b",{opacity:1,duration:0.3},17.6);
+// S3: Conclusion (18-24s)
+t.to("#cimg",{opacity:1,duration:0.3},18.0).from("#cimg",{scale:0.5,duration:0.3,ease:"back.out(1.5)"},18.0)
+.to("#cname",{opacity:1,duration:0.2},18.4)
+.to("#concl",{opacity:1,duration:0.5},18.8).from("#concl",{y:30,duration:0.5},18.8)
+.to("#det",{opacity:1,duration:0.3},19.6).from("#det",{y:20,duration:0.3},19.6);
+// S3→S4
+t.to(["#s3b","#cimg","#cname","#concl","#det"],{opacity:0,duration:0.3},23.5).to("#s4b",{opacity:1,duration:0.4},23.6);
+// S4: CTA (24-30s)
+t.to("#c1",{opacity:1,duration:0.4},24.0).from("#c1",{y:40,duration:0.4},24.0)
+.to("#c2",{opacity:1,duration:0.3},24.6)
+.to("#bt",{opacity:1,scale:1,duration:0.4,ease:"back.out(1.5)"},25.2).from("#bt",{scale:0.8,duration:0.4,ease:"back.out(1.5)"},25.2)
+.to("#bt",{boxShadow:"0 0 100px rgba(30,64,175,0.5)",duration:0.6,repeat:2,yoyo:true},26.0)
+.to("#ar",{opacity:1,duration:0.3},25.6).to("#ar",{y:20,duration:0.5,repeat:4,yoyo:true,ease:"power1.inOut"},26.0)
+.to(".comp",{opacity:0,duration:0.5},29.5);
+window.__timelines=window.__timelines||{};window.__timelines["datashort"]=t;
+})();
+</script>
+</body>
+</html>

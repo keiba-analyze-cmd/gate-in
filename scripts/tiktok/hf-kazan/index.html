@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700;900&display=swap" rel="stylesheet"/>
+</head>
+<body style="margin:0;padding:0;">
+<div id="root"
+     data-composition-id="kazan-pick"
+     data-start="0"
+     data-duration="40"
+     data-width="1080"
+     data-height="1920"
+     style="background:#0a0a0a;position:relative;overflow:hidden;
+            font-family:'Noto Sans JP',sans-serif;width:1080px;height:1920px;">
+
+  <div id="glow" class="clip" data-start="0" data-duration="40" data-track-index="0"
+       style="position:absolute;top:50%;left:50%;width:900px;height:900px;
+              transform:translate(-50%,-50%);
+              background:radial-gradient(circle,rgba(220,38,38,0.3) 0%,transparent 70%);"></div>
+
+  <div id="flash" class="clip" data-start="13" data-duration="1" data-track-index="1"
+       style="position:absolute;top:0;left:0;width:1080px;height:1920px;
+              background:rgba(220,38,38,0.8);"></div>
+
+  <div id="char-icon" class="clip" data-start="0" data-duration="40" data-track-index="2"
+       style="position:absolute;top:120px;left:50%;width:200px;height:200px;
+              margin-left:-100px;border-radius:50%;border:5px solid #DC2626;
+              overflow:hidden;background:#1a1a1a;">
+    <div style="width:100%;height:100%;display:flex;align-items:center;
+                justify-content:center;font-size:90px;">🔥</div></div>
+
+  <div id="char-name" class="clip" data-start="0.3" data-duration="39.7" data-track-index="3"
+       style="position:absolute;top:350px;width:1080px;text-align:center;">
+    <div style="font-size:40px;font-weight:900;color:#DC2626;letter-spacing:6px;">カザン</div>
+    <div style="font-size:24px;font-weight:700;color:#555;margin-top:8px;">穴馬予測型AI</div></div>
+
+  <div id="series-badge" class="clip" data-start="0.8" data-duration="3" data-track-index="4"
+       style="position:absolute;top:460px;width:1080px;text-align:center;">
+    <div style="display:inline-block;background:rgba(220,38,38,0.2);border:2px solid #DC2626;
+                border-radius:40px;padding:10px 40px;">
+      <span style="font-size:26px;font-weight:900;color:#DC2626;">🔥 今週の爆弾 🔥</span></div></div>
+
+  <div id="hook-1" class="clip" data-start="1.4" data-duration="2.5" data-track-index="5"
+       style="position:absolute;top:580px;width:1080px;text-align:center;">
+    <div style="font-size:54px;font-weight:900;color:white;line-height:1.5;">みんな見逃してるけど…</div></div>
+
+  <div id="hook-2" class="clip" data-start="2.2" data-duration="1.7" data-track-index="6"
+       style="position:absolute;top:700px;width:1080px;text-align:center;">
+    <div style="font-size:58px;font-weight:900;color:#DC2626;line-height:1.4;">こいつ、ヤバい。</div></div>
+
+  <div id="race-label" class="clip" data-start="4" data-duration="3.5" data-track-index="7"
+       style="position:absolute;top:540px;width:1080px;text-align:center;">
+    <div style="font-size:26px;font-weight:700;color:#666;letter-spacing:4px;">── TODAY'S TARGET ──</div></div>
+
+  <div id="race-name" class="clip" data-start="4.2" data-duration="7" data-track-index="8"
+       style="position:absolute;top:600px;width:1080px;text-align:center;">
+    <div style="font-size:64px;font-weight:900;color:white;letter-spacing:3px;">天皇賞・春</div></div>
+
+  <div id="teaser-comment" class="clip" data-start="5" data-duration="2.5" data-track-index="9"
+       style="position:absolute;top:740px;width:1080px;text-align:center;padding:0 80px;">
+    <div style="font-size:34px;font-weight:700;color:#ccc;line-height:1.7;font-style:italic;">
+      「人気<span style="color:#DC2626;font-size:42px;">8</span>番手なのに<br/>
+      IDM<span style="color:#DC2626;font-size:42px;">3</span>位？<br/>
+      この乖離…見逃す奴は<br/>モグリだぜ。」</div></div>
+
+  <div id="data-badges" class="clip" data-start="8" data-duration="3.5" data-track-index="10"
+       style="position:absolute;top:920px;width:1080px;display:flex;justify-content:center;gap:20px;">
+    <div class="badge" style="background:rgba(220,38,38,0.15);border:2px solid #DC2626;border-radius:16px;padding:18px 32px;text-align:center;">
+      <div style="font-size:18px;color:#DC2626;font-weight:700;">人気</div>
+      <div style="font-size:52px;color:white;font-weight:900;margin-top:4px;">8<span style="font-size:22px;">番手</span></div></div>
+    <div class="badge" style="background:rgba(220,38,38,0.15);border:2px solid #DC2626;border-radius:16px;padding:18px 32px;text-align:center;">
+      <div style="font-size:18px;color:#DC2626;font-weight:700;">IDM</div>
+      <div style="font-size:52px;color:white;font-weight:900;margin-top:4px;">3<span style="font-size:22px;">位</span></div></div>
+    <div class="badge" style="background:rgba(220,38,38,0.15);border:2px solid #DC2626;border-radius:16px;padding:18px 32px;text-align:center;">
+      <div style="font-size:18px;color:#DC2626;font-weight:700;">オッズ</div>
+      <div style="font-size:52px;color:white;font-weight:900;margin-top:4px;">12.5<span style="font-size:22px;">倍</span></div></div></div>
+
+  <div id="pre-reveal" class="clip" data-start="11.5" data-duration="1.5" data-track-index="11"
+       style="position:absolute;top:800px;width:1080px;text-align:center;">
+    <div style="font-size:48px;font-weight:900;color:white;letter-spacing:4px;">その馬は──</div></div>
+
+  <div id="honmei-mark" class="clip" data-start="13.1" data-duration="5.5" data-track-index="12"
+       style="position:absolute;top:500px;width:1080px;text-align:center;">
+    <div style="font-size:120px;font-weight:900;color:#DC2626;">◎</div></div>
+
+  <div id="horse-name-box" class="clip" data-start="13.4" data-duration="5.2" data-track-index="13"
+       style="position:absolute;top:650px;width:1080px;text-align:center;">
+    <div id="horse-name" style="font-size:110px;font-weight:900;color:white;letter-spacing:6px;
+         text-shadow:0 0 60px rgba(220,38,38,0.6);">ドウデュース</div></div>
+
+  <div id="horse-sub" class="clip" data-start="14.2" data-duration="4.4" data-track-index="14"
+       style="position:absolute;top:790px;width:1080px;text-align:center;">
+    <div style="font-size:28px;font-weight:700;color:#888;">武豊 ｜ 天皇賞・春</div></div>
+
+  <div id="other-label" class="clip" data-start="18.5" data-duration="10" data-track-index="15"
+       style="position:absolute;top:480px;width:1080px;text-align:center;">
+    <div style="font-size:30px;font-weight:700;color:#888;letter-spacing:3px;">── その他の注目馬 ──</div></div>
+
+  <div id="pick-0" class="clip" data-start="19" data-duration="9.5" data-track-index="16"
+       style="position:absolute;top:560px;width:1080px;padding:0 80px;">
+    <div style="background:rgba(59,130,246,0.1);border:2px solid #3B82F6;border-radius:20px;padding:24px 36px;display:flex;align-items:center;gap:24px;">
+      <div style="font-size:56px;font-weight:900;color:#3B82F6;">○</div>
+      <div style="flex:1;"><div style="font-size:42px;font-weight:900;color:white;">リバティアイランド</div>
+        <div style="font-size:22px;font-weight:700;color:#60A5FA;margin-top:6px;">IDM1位 / 順当だが軸として信頼</div></div></div></div>
+
+  <div id="pick-1" class="clip" data-start="22" data-duration="6.5" data-track-index="17"
+       style="position:absolute;top:740px;width:1080px;padding:0 80px;">
+    <div style="background:rgba(234,179,8,0.1);border:2px solid #EAB308;border-radius:20px;padding:24px 36px;display:flex;align-items:center;gap:24px;">
+      <div style="font-size:56px;font-weight:900;color:#EAB308;">▲</div>
+      <div style="flex:1;"><div style="font-size:42px;font-weight:900;color:white;">タスティエーラ</div>
+        <div style="font-size:22px;font-weight:700;color:#FACC15;margin-top:6px;">前走度外視 / 長距離適性◎</div></div></div></div>
+
+  <div id="pick-2" class="clip" data-start="25" data-duration="3.5" data-track-index="18"
+       style="position:absolute;top:920px;width:1080px;padding:0 80px;">
+    <div style="background:rgba(148,163,184,0.1);border:2px solid #94A3B8;border-radius:20px;padding:24px 36px;display:flex;align-items:center;gap:24px;">
+      <div style="font-size:56px;font-weight:900;color:#94A3B8;">△</div>
+      <div style="flex:1;"><div style="font-size:42px;font-weight:900;color:white;">スターズオンアース</div>
+        <div style="font-size:22px;font-weight:700;color:#CBD5E1;margin-top:6px;">距離不安も地力上位 / 3着候補</div></div></div></div>
+
+  <div id="summary" class="clip" data-start="28.5" data-duration="6" data-track-index="19"
+       style="position:absolute;top:480px;width:1080px;padding:0 60px;">
+    <div style="background:rgba(220,38,38,0.08);border:2px solid rgba(220,38,38,0.4);border-radius:24px;padding:36px 48px;">
+      <div style="font-size:28px;font-weight:900;color:#DC2626;text-align:center;margin-bottom:24px;">🔥 カザンの予想 🔥</div>
+      <div style="font-size:26px;font-weight:700;color:#888;text-align:center;margin-bottom:20px;">天皇賞・春</div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+        <span style="font-size:40px;font-weight:900;color:#DC2626;width:60px;">◎</span>
+        <span style="font-size:38px;font-weight:900;color:white;">ドウデュース</span>
+        <span style="font-size:20px;color:#888;margin-left:auto;">12.5倍</span></div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+        <span style="font-size:40px;font-weight:900;color:#3B82F6;width:60px;">○</span>
+        <span style="font-size:38px;font-weight:900;color:white;">リバティアイランド</span>
+        <span style="font-size:20px;color:#888;margin-left:auto;">3.2倍</span></div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+        <span style="font-size:40px;font-weight:900;color:#EAB308;width:60px;">▲</span>
+        <span style="font-size:38px;font-weight:900;color:white;">タスティエーラ</span>
+        <span style="font-size:20px;color:#888;margin-left:auto;">18.0倍</span></div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <span style="font-size:40px;font-weight:900;color:#94A3B8;width:60px;">△</span>
+        <span style="font-size:38px;font-weight:900;color:white;">スターズオンアース</span>
+        <span style="font-size:20px;color:#888;margin-left:auto;">8.5倍</span></div></div></div>
+
+  <div id="closing" class="clip" data-start="30.5" data-duration="4" data-track-index="20"
+       style="position:absolute;top:960px;width:1080px;text-align:center;padding:0 80px;">
+    <div style="font-size:36px;font-weight:900;color:#DC2626;line-height:1.6;">「荒れるぜ、今週は。」</div></div>
+
+  <div id="cta" class="clip" data-start="34.5" data-duration="4.5" data-track-index="21"
+       style="position:absolute;top:1100px;width:1080px;text-align:center;">
+    <div id="cta-btn" style="display:inline-block;background:#DC2626;color:white;font-size:34px;
+         font-weight:900;padding:24px 70px;border-radius:60px;letter-spacing:3px;">
+      ゲートイン！で予想する →</div>
+    <div style="font-size:24px;color:#666;margin-top:20px;font-weight:700;">🏇 gate-in.jp ｜ 登録無料</div></div>
+
+  <div class="clip" data-start="0" data-duration="40" data-track-index="22"
+       style="position:absolute;bottom:50px;width:1080px;text-align:center;">
+    <div style="font-size:18px;color:#333;font-weight:700;letter-spacing:2px;">AI競馬予想SNS ゲートイン！</div></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script>
+    var tl = gsap.timeline({ paused: true });
+
+    // Phase1: キャラ登場+フック
+    tl.from('#char-icon',{scale:0,opacity:0,duration:0.6,ease:'back.out(2)'},0);
+    tl.from('#char-name',{y:30,opacity:0,duration:0.4,ease:'power2.out'},0.3);
+    tl.from('#series-badge',{scale:0.5,opacity:0,duration:0.35,ease:'back.out(1.5)'},0.8);
+    tl.from('#hook-1',{x:-40,opacity:0,duration:0.45,ease:'power3.out'},1.4);
+    tl.from('#hook-2',{scale:1.5,opacity:0,duration:0.35,ease:'power4.out'},2.2);
+    tl.fromTo('#glow',{opacity:0},{opacity:0.5,duration:1.5,ease:'power2.inOut'},2.5);
+
+    // Phase2: レース+セリフ
+    tl.from('#race-label',{opacity:0,duration:0.35},4.0);
+    tl.from('#race-name',{y:20,opacity:0,duration:0.5,ease:'power2.out'},4.2);
+    tl.from('#teaser-comment',{y:20,opacity:0,duration:0.6,ease:'power2.out'},5.0);
+
+    // Phase3: データバッジ
+    tl.from('.badge:nth-child(1)',{scale:0,opacity:0,duration:0.35,ease:'back.out(1.6)'},8.0);
+    tl.from('.badge:nth-child(2)',{scale:0,opacity:0,duration:0.35,ease:'back.out(1.6)'},8.7);
+    tl.from('.badge:nth-child(3)',{scale:0,opacity:0,duration:0.35,ease:'back.out(1.6)'},9.4);
+    tl.to('#glow',{opacity:0.8,duration:0.8,ease:'power2.inOut'},10.0);
+
+    // Phase4: 溜め
+    tl.from('#pre-reveal',{opacity:0,duration:0.4,ease:'power2.out'},11.5);
+
+    // Phase5: ◎リビール
+    tl.to('#flash',{opacity:1,duration:0.08},13.0);
+    tl.to('#flash',{opacity:0,duration:0.35,ease:'power2.out'},13.08);
+    tl.from('#honmei-mark',{scale:5,opacity:0,duration:0.5,ease:'power4.out'},13.1);
+    tl.from('#horse-name-box',{scale:3,opacity:0,duration:0.7,ease:'power4.out'},13.4);
+    tl.from('#horse-sub',{y:10,opacity:0,duration:0.4,ease:'power2.out'},14.2);
+    tl.to('#horse-name',{textShadow:'0 0 100px rgba(220,38,38,1)',duration:0.4,yoyo:true,repeat:2,ease:'power2.inOut'},14.8);
+
+    // Phase6: 他の注目馬
+    tl.from('#other-label',{opacity:0,duration:0.35},18.5);
+    tl.from('#pick-0',{x:80,opacity:0,duration:0.5,ease:'power3.out'},19.0);
+    tl.from('#pick-1',{x:80,opacity:0,duration:0.5,ease:'power3.out'},22.0);
+    tl.from('#pick-2',{x:80,opacity:0,duration:0.5,ease:'power3.out'},25.0);
+
+    // Phase7: まとめ
+    tl.from('#summary',{scale:0.9,opacity:0,duration:0.6,ease:'power2.out'},28.5);
+    tl.from('#closing',{y:15,opacity:0,duration:0.5,ease:'power2.out'},30.5);
+
+    // Phase8: CTA
+    tl.from('#cta',{y:30,opacity:0,duration:0.5,ease:'power2.out'},34.5);
+    tl.to('#cta-btn',{scale:1.05,duration:0.35,yoyo:true,repeat:4,ease:'power2.inOut'},35.5);
+
+    // Phase9: フェードアウト
+    tl.to('#root',{opacity:0,duration:1.5,ease:'power2.inOut'},38.5);
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines['kazan-pick'] = tl;
+  </script>
+</div>
+</body>
+</html>

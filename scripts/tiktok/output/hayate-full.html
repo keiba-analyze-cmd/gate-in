@@ -1,0 +1,161 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"/><title>ハヤテ「数字で語る◎」</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700;900&display=swap" rel="stylesheet"/>
+<style>*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#111;display:flex;justify-content:center;min-height:100vh;padding:20px;}
+.pf{width:360px;height:640px;border-radius:24px;overflow:hidden;box-shadow:0 0 40px rgba(30,64,175,0.2);border:2px solid #333;}
+.vc{width:1080px;height:1920px;transform:scale(0.3333);transform-origin:top left;background:#0a0a0a;position:relative;overflow:hidden;font-family:'Noto Sans JP',sans-serif;}
+.ct{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:12px;align-items:center;background:rgba(0,0,0,0.8);padding:12px 24px;border-radius:40px;border:1px solid #333;}
+.ct button{background:#1E40AF;color:white;border:none;padding:8px 20px;border-radius:20px;font-size:14px;font-weight:700;cursor:pointer;}
+.ct button.s{background:#333;}
+.pb{width:200px;height:4px;background:#333;border-radius:2px;overflow:hidden;cursor:pointer;}
+.pf2{height:100%;background:#1E40AF;width:0%;}
+#timer{color:#1E40AF;font-weight:700;font-size:14px;min-width:48px;}</style></head>
+<body><div class="pf"><div class="vc" id="root">
+  <canvas id="particles" style="position:absolute;top:0;left:0;width:1080px;height:1920px;"></canvas>
+  <div id="glow" style="position:absolute;top:50%;left:50%;width:900px;height:900px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(30,64,175,0.3) 0%,transparent 70%);"></div>
+  <div id="flash" style="position:absolute;top:0;left:0;width:1080px;height:1920px;background:rgba(30,64,175,0.8);"></div>
+  <div id="char-icon" style="position:absolute;top:120px;left:50%;width:200px;height:200px;margin-left:-100px;border-radius:50%;border:5px solid #1E40AF;overflow:hidden;background:#1a1a1a;">
+    <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:90px;">📊</div></div>
+  <div id="char-name" style="position:absolute;top:350px;width:1080px;text-align:center;">
+    <div style="font-size:40px;font-weight:900;color:#1E40AF;letter-spacing:6px;">ハヤテ</div>
+    <div style="font-size:24px;font-weight:700;color:#555;margin-top:8px;">データ分析型AI</div></div>
+  <div id="series-badge" style="position:absolute;top:460px;width:1080px;text-align:center;">
+    <div style="display:inline-block;background:rgba(30,64,175,0.2);border:2px solid #1E40AF;border-radius:40px;padding:10px 40px;">
+      <span style="font-size:26px;font-weight:900;color:#1E40AF;">📊 数字で語る◎ 📊</span></div></div>
+  <div id="hook-1" style="position:absolute;top:580px;width:1080px;text-align:center;">
+    <div style="font-size:54px;font-weight:900;color:white;line-height:1.5;">データは嘘をつかない。</div></div>
+  <div id="hook-2" style="position:absolute;top:700px;width:1080px;text-align:center;">
+    <div style="font-size:58px;font-weight:900;color:#1E40AF;line-height:1.4;">答えは、ここにある。</div></div>
+  <div id="race-label" style="position:absolute;top:540px;width:1080px;text-align:center;">
+    <div style="font-size:26px;font-weight:700;color:#666;letter-spacing:4px;">── TODAY'S TARGET ──</div></div>
+  <div id="race-name" style="position:absolute;top:600px;width:1080px;text-align:center;">
+    <div style="font-size:64px;font-weight:900;color:white;letter-spacing:3px;">天皇賞・春</div></div>
+  <div id="teaser-comment" style="position:absolute;top:740px;width:1080px;text-align:center;padding:0 80px;">
+    <div style="font-size:34px;font-weight:700;color:#ccc;line-height:1.7;font-style:italic;">「人気8番手でIDM3位？<br/>この乖離…見逃す奴は<br/>モグリだぜ。」</div></div>
+  <div id="data-badges" style="position:absolute;top:920px;width:1080px;display:flex;justify-content:center;gap:20px;">
+    <div class="badge" style="background:rgba(30,64,175,0.15);border:2px solid #1E40AF;border-radius:16px;padding:18px 32px;text-align:center;">
+      <div style="font-size:18px;color:#1E40AF;font-weight:700;">人気</div><div style="font-size:52px;color:white;font-weight:900;margin-top:4px;">8<span style="font-size:22px;">番手</span></div></div>
+    <div class="badge" style="background:rgba(30,64,175,0.15);border:2px solid #1E40AF;border-radius:16px;padding:18px 32px;text-align:center;">
+      <div style="font-size:18px;color:#1E40AF;font-weight:700;">IDM</div><div style="font-size:52px;color:white;font-weight:900;margin-top:4px;">3<span style="font-size:22px;">位</span></div></div>
+    <div class="badge" style="background:rgba(30,64,175,0.15);border:2px solid #1E40AF;border-radius:16px;padding:18px 32px;text-align:center;">
+      <div style="font-size:18px;color:#1E40AF;font-weight:700;">オッズ</div><div style="font-size:52px;color:white;font-weight:900;margin-top:4px;">12.5<span style="font-size:22px;">倍</span></div></div></div>
+  <div id="pre-reveal" style="position:absolute;top:800px;width:1080px;text-align:center;">
+    <div style="font-size:48px;font-weight:900;color:white;letter-spacing:4px;">その馬は──</div></div>
+  <div id="honmei-mark" style="position:absolute;top:500px;width:1080px;text-align:center;">
+    <div style="font-size:120px;font-weight:900;color:#1E40AF;">◎</div></div>
+  <div id="horse-name-box" style="position:absolute;top:650px;width:1080px;text-align:center;">
+    <div id="horse-name" style="font-size:110px;font-weight:900;color:white;letter-spacing:6px;text-shadow:0 0 60px rgba(30,64,175,0.6);">ドウデュース</div></div>
+  <div id="horse-sub" style="position:absolute;top:790px;width:1080px;text-align:center;">
+    <div style="font-size:28px;font-weight:700;color:#888;">武豊 ｜ 天皇賞・春</div></div>
+  <div id="other-label" style="position:absolute;top:480px;width:1080px;text-align:center;">
+    <div style="font-size:30px;font-weight:700;color:#888;letter-spacing:3px;">── その他の注目馬 ──</div></div>
+  
+  <div id="pick-0" style="position:absolute;top:560px;width:1080px;padding:0 80px;">
+    <div style="background:rgba(59,130,246,0.1);border:2px solid #3B82F6;border-radius:20px;padding:24px 36px;display:flex;align-items:center;gap:24px;">
+      <div style="font-size:56px;font-weight:900;color:#3B82F6;">○</div>
+      <div style="flex:1;"><div style="font-size:42px;font-weight:900;color:white;">リバティアイランド</div>
+        <div style="font-size:22px;font-weight:700;color:rgb(139,210,255);margin-top:6px;">IDM1位 / 順当だが軸として信頼</div></div>
+    </div></div>
+  <div id="pick-1" style="position:absolute;top:740px;width:1080px;padding:0 80px;">
+    <div style="background:rgba(234,179,8,0.1);border:2px solid #EAB308;border-radius:20px;padding:24px 36px;display:flex;align-items:center;gap:24px;">
+      <div style="font-size:56px;font-weight:900;color:#EAB308;">▲</div>
+      <div style="flex:1;"><div style="font-size:42px;font-weight:900;color:white;">タスティエーラ</div>
+        <div style="font-size:22px;font-weight:700;color:rgb(255,255,88);margin-top:6px;">前走度外視 / 長距離適性◎</div></div>
+    </div></div>
+  <div id="pick-2" style="position:absolute;top:920px;width:1080px;padding:0 80px;">
+    <div style="background:rgba(148,163,184,0.1);border:2px solid #94A3B8;border-radius:20px;padding:24px 36px;display:flex;align-items:center;gap:24px;">
+      <div style="font-size:56px;font-weight:900;color:#94A3B8;">△</div>
+      <div style="flex:1;"><div style="font-size:42px;font-weight:900;color:white;">スターズオンアース</div>
+        <div style="font-size:22px;font-weight:700;color:rgb(228,243,255);margin-top:6px;">距離不安も地力上位 / 3着候補</div></div>
+    </div></div>
+  <div id="summary" style="position:absolute;top:480px;width:1080px;padding:0 60px;">
+    <div style="background:rgba(30,64,175,0.08);border:2px solid rgba(30,64,175,0.4);border-radius:24px;padding:36px 48px;">
+      <div style="font-size:28px;font-weight:900;color:#1E40AF;text-align:center;margin-bottom:24px;">📊 ハヤテの予想 📊</div>
+      <div style="font-size:26px;font-weight:700;color:#888;text-align:center;margin-bottom:20px;">天皇賞・春</div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+      <span style="font-size:40px;font-weight:900;color:#1E40AF;width:60px;">◎</span>
+      <span style="font-size:38px;font-weight:900;color:white;">ドウデュース</span>
+      <span style="font-size:20px;color:#888;margin-left:auto;">12.5倍</span></div><div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+      <span style="font-size:40px;font-weight:900;color:#3B82F6;width:60px;">○</span>
+      <span style="font-size:38px;font-weight:900;color:white;">リバティアイランド</span>
+      <span style="font-size:20px;color:#888;margin-left:auto;">3.2倍</span></div><div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+      <span style="font-size:40px;font-weight:900;color:#EAB308;width:60px;">▲</span>
+      <span style="font-size:38px;font-weight:900;color:white;">タスティエーラ</span>
+      <span style="font-size:20px;color:#888;margin-left:auto;">18.0倍</span></div><div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+      <span style="font-size:40px;font-weight:900;color:#94A3B8;width:60px;">△</span>
+      <span style="font-size:38px;font-weight:900;color:white;">スターズオンアース</span>
+      <span style="font-size:20px;color:#888;margin-left:auto;">8.5倍</span></div></div></div>
+  <div id="closing" style="position:absolute;top:960px;width:1080px;text-align:center;padding:0 80px;">
+    <div style="font-size:36px;font-weight:900;color:#1E40AF;line-height:1.6;">「荒れるぜ、今週は。」</div></div>
+  <div id="cta" style="position:absolute;top:1100px;width:1080px;text-align:center;">
+    <div id="cta-btn" style="display:inline-block;background:#1E40AF;color:white;font-size:34px;font-weight:900;padding:24px 70px;border-radius:60px;letter-spacing:3px;">ゲートイン！で予想する →</div>
+    <div style="font-size:24px;color:#666;margin-top:20px;font-weight:700;">🏇 gate-in.jp ｜ 登録無料</div></div>
+  <div style="position:absolute;bottom:50px;width:1080px;text-align:center;">
+    <div style="font-size:18px;color:#333;font-weight:700;letter-spacing:2px;">AI競馬予想SNS ゲートイン！</div></div>
+</div></div>
+<div class="ct">
+  <button id="playBtn" onclick="playVideo()">▶ 再生</button>
+  <button class="s" onclick="resetVideo()">↺</button>
+  <div class="pb" onclick="seekVideo(event)"><div class="pf2" id="pFill"></div></div>
+  <span id="timer">0.0s</span><span style="color:#888;font-size:13px;">/ 40s</span></div>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+<script>
+(function(){var cv=document.getElementById('particles'),ctx=cv.getContext('2d');cv.width=1080;cv.height=1920;
+var dots=[];for(var i=0;i<80;i++)dots.push({x:Math.random()*1080,y:Math.random()*1920,r:Math.random()*2.5+0.5,vx:(Math.random()-0.5)*0.4,vy:-Math.random()*1.2-0.3,a:Math.random()*0.35+0.05});
+(function loop(){ctx.clearRect(0,0,1080,1920);for(var i=0;i<dots.length;i++){var d=dots[i];d.x+=d.vx;d.y+=d.vy;if(d.y<-10){d.y=1930;d.x=Math.random()*1080;}ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);ctx.fillStyle='rgba(30,64,175,'+d.a+')';ctx.fill();}requestAnimationFrame(loop);})();})();
+function setI(){gsap.set('#root',{opacity:1});gsap.set('#char-icon',{opacity:0,scale:0});gsap.set('#char-name',{opacity:0,y:30});
+gsap.set('#series-badge',{opacity:0,scale:0.5});gsap.set('#hook-1',{opacity:0,x:-40});gsap.set('#hook-2',{opacity:0,scale:1.5});
+gsap.set('#glow',{opacity:0});gsap.set('#flash',{opacity:0});gsap.set('#race-label',{opacity:0});
+gsap.set('#race-name',{opacity:0,y:20,top:600});gsap.set('#teaser-comment',{opacity:0,y:20});
+gsap.set('.badge',{opacity:0,scale:0});gsap.set('#data-badges',{top:920});gsap.set('#pre-reveal',{opacity:0});
+gsap.set('#honmei-mark',{opacity:0,scale:5});gsap.set('#horse-name-box',{opacity:0,scale:3});
+gsap.set('#horse-sub',{opacity:0,y:10});gsap.set('#horse-name',{textShadow:'0 0 60px rgba(30,64,175,0.6)'});
+gsap.set('#other-label',{opacity:0});gsap.set('#pick-0',{opacity:0,x:80});
+  gsap.set('#pick-1',{opacity:0,x:80});
+  gsap.set('#pick-2',{opacity:0,x:80});
+gsap.set('#summary',{opacity:0,scale:0.9});gsap.set('#closing',{opacity:0,y:15});
+gsap.set('#cta',{opacity:0,y:30});gsap.set('#cta-btn',{scale:1});gsap.set('#watermark',{opacity:0});}
+setI();
+var tl=gsap.timeline({paused:true,onUpdate:function(){document.getElementById('timer').textContent=tl.time().toFixed(1)+'s';document.getElementById('pFill').style.width=(tl.progress()*100)+'%';},onComplete:function(){document.getElementById('playBtn').textContent='▶ もう一度';}});
+tl.to('#char-icon',{opacity:1,scale:1,duration:0.6,ease:'back.out(2)'},0);
+tl.to('#char-name',{opacity:1,y:0,duration:0.4,ease:'power2.out'},0.3);
+tl.to('#series-badge',{opacity:1,scale:1,duration:0.35,ease:'back.out(1.5)'},0.8);
+tl.to('#hook-1',{opacity:1,x:0,duration:0.45,ease:'power3.out'},1.4);
+tl.to('#hook-2',{opacity:1,scale:1,duration:0.35,ease:'power4.out'},2.2);
+tl.to('#glow',{opacity:0.5,duration:1.5,ease:'power2.inOut'},2.5);
+tl.to('#hook-1',{opacity:0,duration:0.25},3.5);tl.to('#hook-2',{opacity:0,duration:0.25},3.5);
+tl.to('#series-badge',{opacity:0,duration:0.25},3.5);
+tl.to('#race-label',{opacity:1,duration:0.35},4.0);tl.to('#race-name',{opacity:1,y:0,duration:0.5,ease:'power2.out'},4.2);
+tl.to('#teaser-comment',{opacity:1,y:0,duration:0.6,ease:'power2.out'},5.0);
+tl.to('#teaser-comment',{opacity:0,duration:0.25},7.2);tl.to('#race-label',{opacity:0,duration:0.25},7.2);
+tl.to('#race-name',{top:520,duration:0.4,ease:'power2.inOut'},7.5);
+tl.to('.badge:nth-child(1)',{opacity:1,scale:1,duration:0.35,ease:'back.out(1.6)'},8.0);
+tl.to('.badge:nth-child(2)',{opacity:1,scale:1,duration:0.35,ease:'back.out(1.6)'},8.7);
+tl.to('.badge:nth-child(3)',{opacity:1,scale:1,duration:0.35,ease:'back.out(1.6)'},9.4);
+tl.to('#glow',{opacity:0.8,duration:0.8,ease:'power2.inOut'},10.0);
+tl.to('.badge',{opacity:0,duration:0.25},11.0);tl.to('#race-name',{opacity:0,duration:0.25},11.0);
+tl.to('#pre-reveal',{opacity:1,duration:0.4,ease:'power2.out'},11.5);tl.to('#pre-reveal',{opacity:0,duration:0.25},12.8);
+tl.to('#flash',{opacity:1,duration:0.08},13.0);tl.to('#flash',{opacity:0,duration:0.35,ease:'power2.out'},13.08);
+tl.to('#honmei-mark',{opacity:1,scale:1,duration:0.5,ease:'power4.out'},13.1);
+tl.to('#horse-name-box',{opacity:1,scale:1,duration:0.7,ease:'power4.out'},13.4);
+tl.to('#horse-sub',{opacity:1,y:0,duration:0.4,ease:'power2.out'},14.2);
+tl.to('#horse-name',{textShadow:'0 0 100px rgba(30,64,175,1)',duration:0.4,yoyo:true,repeat:2,ease:'power2.inOut'},14.8);
+tl.to('#honmei-mark',{opacity:0,duration:0.3},18.0);tl.to('#horse-name-box',{opacity:0,duration:0.3},18.0);
+tl.to('#horse-sub',{opacity:0,duration:0.3},18.0);tl.to('#other-label',{opacity:1,duration:0.35},18.5);
+tl.to('#pick-0',{opacity:1,x:0,duration:0.5,ease:'power3.out'},19);
+tl.to('#pick-1',{opacity:1,x:0,duration:0.5,ease:'power3.out'},22);
+tl.to('#pick-2',{opacity:1,x:0,duration:0.5,ease:'power3.out'},25);
+tl.to('#other-label',{opacity:0,duration:0.25},28.0);
+tl.to('#pick-0',{opacity:0,duration:0.25},28.0);
+tl.to('#pick-1',{opacity:0,duration:0.25},28.0);
+tl.to('#pick-2',{opacity:0,duration:0.25},28.0);
+tl.to('#summary',{opacity:1,scale:1,duration:0.6,ease:'power2.out'},28.5);
+tl.to('#closing',{opacity:1,y:0,duration:0.5,ease:'power2.out'},30.5);
+tl.to('#summary',{opacity:0,duration:0.3},34.0);tl.to('#closing',{opacity:0,duration:0.3},34.0);
+tl.to('#cta',{opacity:1,y:0,duration:0.5,ease:'power2.out'},34.5);
+tl.to('#cta-btn',{scale:1.05,duration:0.35,yoyo:true,repeat:4,ease:'power2.inOut'},35.5);
+tl.to('#root',{opacity:0,duration:1.5,ease:'power2.inOut'},38.5);
+function playVideo(){var b=document.getElementById('playBtn');if(tl.isActive()){tl.pause();b.textContent='▶ 再生';}else{if(tl.progress()>=1){setI();tl.restart();}else tl.play();b.textContent='⏸ 停止';}}
+function resetVideo(){tl.pause().progress(0);setI();document.getElementById('playBtn').textContent='▶ 再生';document.getElementById('timer').textContent='0.0s';document.getElementById('pFill').style.width='0%';}
+function seekVideo(e){tl.progress(e.offsetX/e.currentTarget.offsetWidth).pause();document.getElementById('playBtn').textContent='▶ 再生';}
+</script></body></html>
