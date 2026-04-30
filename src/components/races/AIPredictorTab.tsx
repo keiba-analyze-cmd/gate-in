@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
 
@@ -122,11 +123,8 @@ export default function AIPredictorTab({ raceId, hasVoted, isFinished }: Props) 
               className="px-4 py-3 flex items-center gap-3"
               style={{ backgroundColor: p.predictor_color + "15", borderBottom: `2px solid ${p.predictor_color}40` }}
             >
-              <div
-                className="w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold"
-                style={{ backgroundColor: p.predictor_color + "25", color: p.predictor_color }}
-              >
-                {icon}
+              <div className="w-10 h-10 rounded-full overflow-hidden border-2" style={{ borderColor: p.predictor_color + "40" }}>
+                <Image src={`/images/predictors/${p.predictor_id}.webp`} alt={p.predictor_name} width={40} height={40} className="w-full h-full object-cover" />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
