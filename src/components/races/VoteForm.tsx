@@ -603,10 +603,9 @@ export default function VoteForm({
             <div
               key={entry.id}
               onTouchStart={() => handleTouchStart(entry.id)}
-              onTouchEnd={() => handleTouchEnd(entry.id)}
               onTouchMove={handleTouchMove}
-              onMouseDown={() => handleTouchStart(entry.id)}
-              onMouseUp={() => handleTouchEnd(entry.id)}
+              onMouseDown={(e) => { if (e.button === 0) handleTouchStart(entry.id); }}
+              onMouseUp={() => handleTouchEnd(entry.id)} onTouchEnd={(e) => { e.preventDefault(); handleTouchEnd(entry.id); }}
               onContextMenu={(e) => {
                 e.preventDefault();
                 setDanger(entry.id);
