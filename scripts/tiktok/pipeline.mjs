@@ -26,7 +26,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CONTENT_DIR = path.join(__dirname, "content");
 const OUTPUT_DIR = path.join(__dirname, "output-pipeline");
 const TEMPLATE_DIR = path.join(__dirname, "templates");
-const IMG_BASE = "../../../public/images/predictors";
+const IMG_BASE = "./predictors";
 
 // ── CLI ──
 const args = process.argv.slice(2);
@@ -55,11 +55,14 @@ const CHARS = {
 const GRADE_COLORS = { G1:"#f59e0b", G2:"#ef4444", G3:"#22c55e" };
 
 function toRaceKey(externalId) {
-  if (!externalId || externalId.length < 10) return externalId;
-  return externalId.slice(2, 10);
-}
-
-function ensureDir(d) { if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true }); }
+  if (!externalId || externalId.length < 12) return externalId;
+  const course = externalId.slice(4, 6);
+  const year = externalId.slice(2, 4);
+  const kai = externalId.slice(7, 8);
+  const day = externalId.slice(9, 10);
+  const race = externalId.slice(10, 12);
+  return course + year + kai + day + race;
+}function ensureDir(d) { if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true }); }
 
 function saveContent(filename, data) {
   ensureDir(CONTENT_DIR);
@@ -135,6 +138,21 @@ async function cmdFetch() {
     const entryMap = {};
     (entries || []).forEach(e => { entryMap[e.umaban] = e; });
 
+    // sire_name 補完（jrdb_horses から取得）
+    const horseCodes = (entries || []).filter(e => !e.sire_name && e.horse_code).map(e => e.horse_code);
+    if (horseCodes.length > 0) {
+      const { data: horses } = await supabase.from("jrdb_horses").select("horse_code, sire_name, dam_sire_name").in("horse_code", horseCodes);
+      const horseMap = {};
+      (horses || []).forEach(h => { horseMap[h.horse_code] = h; });
+      for (const e of (entries || [])) {
+        if (!e.sire_name && e.horse_code && horseMap[e.horse_code]) {
+          e.sire_name = horseMap[e.horse_code].sire_name;
+          e.dam_sire_name = horseMap[e.horse_code].dam_sire_name;
+          entryMap[e.umaban] = e;
+        }
+      }
+      console.log(`  🧬 sire_name補完: ${horses?.length || 0}頭`);
+    }
     // 結果データ取得（あれば）
     const { data: results } = await supabase
       .from("jrdb_race_results")
@@ -151,6 +169,7 @@ async function cmdFetch() {
       if (!char) continue;
 
       const honmeiEntry = entryMap[pred.umaban] || {};
+      const autoOAD = scoreEntriesForChar(charId, entries || [], pred.umaban);
       const honmeiResult = resultMap[pred.umaban];
 
       // ○▲△の情報取得
@@ -194,9 +213,9 @@ async function cmdFetch() {
           jockey: honmeiEntry.jockey_name?.trim() || "",
           odds: honmeiEntry.base_odds ? `${honmeiEntry.base_odds}倍` : "",
         },
-        taikou: getPickInfo(pred.taikou_umaban),
-        tanpou: getPickInfo(pred.tanpou_umaban),
-        osae: getPickInfo(pred.osae_umaban),
+        taikou: entryToPickInfo(autoOAD.taikou),
+        tanpou: entryToPickInfo(autoOAD.tanpou),
+        osae: entryToPickInfo(autoOAD.osae),
         dataRows,
         serif: pred.comment || `${char.name}の分析結果です。`,
         // 結果（あれば）
@@ -261,6 +280,33 @@ async function cmdFetch() {
   console.log(`💡 次: node pipeline.mjs generate`);
 }
 
+// ── キャラ別スコアリングで○▲△を自動算出 ──
+function scoreEntriesForChar(charId, allEntries, honmeiUmaban) {
+  const scored = (allEntries || []).filter(e => e.umaban !== honmeiUmaban).map(e => {
+    let score = 0;
+    const idm = parseFloat(e.idm) || 0;
+    const jockey = parseFloat(e.jockey_index) || 0;
+    const training = parseFloat(e.training_index) || 0;
+    const composite = parseFloat(e.composite_index) || 0;
+    const odds = parseFloat(e.base_odds) || 99;
+    const agari = parseFloat(e.agari_index) || 0;
+    switch (charId) {
+      case "hayate": score = idm * 0.8 + jockey * 0.2; break;
+      case "kazan": score = (idm + training * 0.5) * Math.log(Math.max(odds, 1.1)); break;
+      case "hakusen": score = idm * 0.7 + agari * 0.3; break;
+      case "hibari": score = idm * 0.6 + training * 0.4; break;
+      case "gantetsu": score = composite > 0 ? composite : idm; break;
+      default: score = idm;
+    }
+    return { umaban: e.umaban, score, entry: e };
+  }).sort((a, b) => b.score - a.score);
+  return { taikou: scored[0]?.entry || null, tanpou: scored[1]?.entry || null, osae: scored[2]?.entry || null };
+}
+
+function entryToPickInfo(entry) {
+  if (!entry) return { number: "-", name: "未定", jockey: "", odds: "" };
+  return { number: entry.umaban, name: entry.horse_name?.trim() || entry.umaban+"番", jockey: entry.jockey_name?.trim() || "", odds: entry.base_odds ? entry.base_odds+"倍" : "" };
+}
 function buildDataRows(charId, entry) {
   const e = entry || {};
   const clamp = (v, max) => v ? `${Math.min(100, Math.max(10, (parseFloat(v)/max)*100)).toFixed(0)}%` : "30%";
@@ -570,15 +616,32 @@ function cmdRender() {
     return;
   }
 
-  console.log(`\n🎬 MP4レンダリング: ${htmlFiles.length}本\n`);
+  console.log(`\n🎬 MP4レンダリング: ${htmlFiles.length}本 (Docker)\n`);
+
+  const renderTmp = path.join(__dirname, "render-tmp");
+  const predictorsSrc = path.join(__dirname, "..", "..", "public", "images", "predictors");
 
   for (const file of htmlFiles) {
     const htmlPath = path.join(OUTPUT_DIR, file);
     const mp4Path = htmlPath.replace(".html", ".mp4");
     console.log(`  🎬 ${file}...`);
     try {
-      execSync(`npx hyperframes render --input "${htmlPath}" --output "${mp4Path}"`, {
-        stdio: "inherit", timeout: 180000,
+      // render-tmp準備
+      if (fs.existsSync(renderTmp)) fs.rmSync(renderTmp, { recursive: true });
+      fs.mkdirSync(renderTmp, { recursive: true });
+      const predDest = path.join(renderTmp, "predictors");
+      fs.mkdirSync(predDest, { recursive: true });
+
+      // HTML → index.html
+      fs.copyFileSync(htmlPath, path.join(renderTmp, "index.html"));
+
+      // 画像コピー（png + webp）
+      for (const img of fs.readdirSync(predictorsSrc)) {
+        fs.copyFileSync(path.join(predictorsSrc, img), path.join(predDest, img));
+      }
+
+      execSync(`npx hyperframes render --input "${renderTmp}" --output "${mp4Path}" --docker`, {
+        stdio: "inherit", timeout: 600000,
       });
       console.log(`  ✅ ${file.replace(".html",".mp4")}`);
     } catch (e) {
@@ -586,8 +649,11 @@ function cmdRender() {
     }
   }
 
+  // クリーンアップ
+  if (fs.existsSync(renderTmp)) fs.rmSync(renderTmp, { recursive: true });
   console.log(`\n💡 次: node pipeline.mjs post`);
 }
+
 
 // ══════════════════════════════════════════════
 // POST: 投稿チェックリスト

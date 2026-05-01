@@ -158,12 +158,14 @@ function clampPctInverse(val, max) {
 
 // ── external_id → race_key 変換 ──
 function toRaceKey(externalId) {
-  // external_id: 12桁 (YYYYJJRRNN形式) → race_key: 8桁
-  if (!externalId || externalId.length < 8) return externalId;
-  // 先頭2桁の年を取り、残り6桁
-  return externalId.slice(2, 10);
+  if (!externalId || externalId.length < 12) return externalId;
+  const course = externalId.slice(4, 6);
+  const year = externalId.slice(2, 4);
+  const kai = externalId.slice(7, 8);
+  const day = externalId.slice(9, 10);
+  const race = externalId.slice(10, 12);
+  return course + year + kai + day + race;
 }
-
 // ── グレード → CSSクラス ──
 function gradeClass(grade) {
   if (!grade) return "grade-op";
