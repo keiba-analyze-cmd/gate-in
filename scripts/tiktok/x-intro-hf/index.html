@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;overflow:hidden}
+.comp{width:1280px;height:720px;position:relative;overflow:hidden;background:#0a0a0a}
+.layer{position:absolute;width:1280px;height:720px;top:0;left:0}
+
+.s1{z-index:10}
+.s1 .bg{position:absolute;width:1280px;height:720px;background:radial-gradient(ellipse at 50% 50%,#1a1a2e 0%,#0a0a0a 70%)}
+.s1 .badge{position:absolute;left:0;top:240px;width:1280px;text-align:center;font:700 20px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fbbf24;opacity:0;letter-spacing:4px}
+.s1 .title{position:absolute;left:0;top:290px;width:1280px;text-align:center;font:900 64px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;opacity:0;white-space:nowrap}
+.s1 .sub{position:absolute;left:0;top:380px;width:1280px;text-align:center;font:500 22px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.5);opacity:0;white-space:nowrap}
+.s1 .line{position:absolute;left:440px;top:370px;width:400px;height:2px;background:linear-gradient(90deg,transparent,#60a5fa,#34d399,transparent);opacity:0}
+
+.char-scene{z-index:20}
+.char-scene .bg{position:absolute;width:1280px;height:720px;background:#0a0a0a;opacity:0}
+.char-scene video{position:absolute;left:0;top:0;width:1280px;height:720px;object-fit:cover}
+.char-scene .overlay{position:absolute;width:1280px;height:720px;background:linear-gradient(90deg,rgba(0,0,0,0.7) 0%,transparent 40%,transparent 60%,rgba(0,0,0,0.7) 100%)}
+.char-scene .info{position:absolute;left:60px;bottom:80px;opacity:0}
+.char-scene .cname{font:900 48px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;white-space:nowrap;text-shadow:0 2px 20px rgba(0,0,0,0.8)}
+.char-scene .ctype{font:700 18px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.7);margin-top:4px;white-space:nowrap}
+.char-scene .ccatch{font:500 16px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.5);margin-top:8px;font-style:italic;white-space:nowrap}
+.char-scene .badge-pill{display:inline-block;padding:4px 16px;border-radius:20px;font:700 14px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;margin-bottom:8px}
+
+.s7{z-index:70}
+.s7 .bg{position:absolute;width:1280px;height:720px;background:#0a0a0a;opacity:0}
+.s7 .htitle{position:absolute;left:0;top:160px;width:1280px;text-align:center;font:900 36px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;opacity:0;white-space:nowrap}
+.s7 .step{position:absolute;width:320px;text-align:center;opacity:0}
+.s7 .snum{font:900 40px 'Hiragino Kaku Gothic ProN',sans-serif;margin-bottom:8px}
+.s7 .stxt{font:700 16px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;white-space:nowrap}
+.s7 .sdesc{font:400 13px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.5);margin-top:4px;white-space:nowrap}
+
+.s8{z-index:80}
+.s8 .bg{position:absolute;width:1280px;height:720px;background:#0a0a0a;opacity:0}
+.s8 .logo{position:absolute;left:0;top:240px;width:1280px;text-align:center;font:900 56px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;opacity:0;white-space:nowrap}
+.s8 .url{position:absolute;left:0;top:320px;width:1280px;text-align:center;font:500 24px 'Hiragino Kaku Gothic ProN',sans-serif;color:#60a5fa;opacity:0;white-space:nowrap}
+.s8 .cta{position:absolute;left:440px;top:400px;width:400px;height:56px;border-radius:28px;background:linear-gradient(90deg,#1E40AF,#059669);display:flex;align-items:center;justify-content:center;font:700 20px 'Hiragino Kaku Gothic ProN',sans-serif;color:#fff;opacity:0;white-space:nowrap}
+
+.wm{position:absolute;right:20px;bottom:16px;font:500 12px 'Hiragino Kaku Gothic ProN',sans-serif;color:rgba(255,255,255,0.2);z-index:99;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="comp" data-composition-id="x-intro" data-width="1280" data-height="720" data-duration="30" data-start="0">
+
+<div class="layer s1">
+  <div class="bg"></div>
+  <div class="badge" id="s1badge">NEW FEATURE</div>
+  <div class="line" id="s1line"></div>
+  <div class="title" id="s1title">AI予想家、始動。</div>
+  <div class="sub" id="s1sub">5体のスペシャリストが、あなたの◎を選ぶ</div>
+</div>
+
+<div class="layer char-scene" id="cs1">
+  <div class="bg" id="cs1bg"></div>
+  <video id="vid1" src="clips/hayate-16x9.mp4" muted data-start="4" data-duration="4"></video>
+  <div class="overlay"></div>
+  <div class="info" id="cs1info">
+    <div class="badge-pill" style="background:#1E40AF">データ分析型</div>
+    <div class="cname">ハヤテ</div>
+    <div class="ccatch">「数字は嘘をつかない。」</div>
+  </div>
+</div>
+
+<div class="layer char-scene" id="cs2">
+  <div class="bg" id="cs2bg"></div>
+  <video id="vid2" src="clips/kazan-16x9.mp4" muted data-start="8" data-duration="4"></video>
+  <div class="overlay"></div>
+  <div class="info" id="cs2info">
+    <div class="badge-pill" style="background:#DC2626">穴馬予測型</div>
+    <div class="cname">カザン</div>
+    <div class="ccatch">「人気と実力の歪み、そこに宝がある。」</div>
+  </div>
+</div>
+
+<div class="layer char-scene" id="cs3">
+  <div class="bg" id="cs3bg"></div>
+  <video id="vid3" src="clips/hakusen-16x9.mp4" muted data-start="12" data-duration="4"></video>
+  <div class="overlay"></div>
+  <div class="info" id="cs3info">
+    <div class="badge-pill" style="background:#059669">血統分析型</div>
+    <div class="cname">ハクセン</div>
+    <div class="ccatch">「血は語る。走りの答えは、その血脈にある。」</div>
+  </div>
+</div>
+
+<div class="layer char-scene" id="cs4">
+  <div class="bg" id="cs4bg"></div>
+  <video id="vid4" src="clips/hibari-16x9.mp4" muted data-start="16" data-duration="4"></video>
+  <div class="overlay"></div>
+  <div class="info" id="cs4info">
+    <div class="badge-pill" style="background:#D97706">当日データ型</div>
+    <div class="cname">ヒバリ</div>
+    <div class="ccatch">「朝イチの馬体を見れば、走る馬がわかる。」</div>
+  </div>
+</div>
+
+<div class="layer char-scene" id="cs5">
+  <div class="bg" id="cs5bg"></div>
+  <video id="vid5" src="clips/gantetsu-16x9.mp4" muted data-start="20" data-duration="4"></video>
+  <div class="overlay"></div>
+  <div class="info" id="cs5info">
+    <div class="badge-pill" style="background:#475569">軸馬特化型</div>
+    <div class="cname">ガンテツ</div>
+    <div class="ccatch">「◎は1頭。迷わない。」</div>
+  </div>
+</div>
+
+<div class="layer s7">
+  <div class="bg" id="s7bg"></div>
+  <div class="htitle" id="s7title">AI予想家の使い方</div>
+  <div class="step" id="st1" style="left:100px;top:300px"><div class="snum" style="color:#60a5fa">1</div><div class="stxt">ストーリーズで予想チェック</div><div class="sdesc">毎週金曜に◎を公開</div></div>
+  <div class="step" id="st2" style="left:480px;top:300px"><div class="snum" style="color:#34d399">2</div><div class="stxt">ワンタップで乗っかり</div><div class="sdesc">AIの◎を自分の投票に反映</div></div>
+  <div class="step" id="st3" style="left:860px;top:300px"><div class="snum" style="color:#fbbf24">3</div><div class="stxt">AI予想タブで比較</div><div class="sdesc">5体の◎を並べて確認</div></div>
+</div>
+
+<div class="layer s8">
+  <div class="bg" id="s8bg"></div>
+  <div class="logo" id="s8logo">ゲートイン！</div>
+  <div class="url" id="s8url">gate-in.jp</div>
+  <div class="cta" id="s8cta">さっそく予想してみる →</div>
+</div>
+
+<div class="wm">ゲートイン！ AI競馬予想</div>
+
+</div>
+<script>
+window.__timelines = window.__timelines || {};
+var t = gsap.timeline({ paused: true });
+
+t.to("#s1badge",{opacity:1,duration:0.4},0.3)
+.to("#s1line",{opacity:1,duration:0.3},0.5)
+.to("#s1title",{opacity:1,duration:0.5},0.8).from("#s1title",{y:30,duration:0.5},0.8)
+.to("#s1sub",{opacity:1,duration:0.4},1.5).from("#s1sub",{y:20,duration:0.4},1.5)
+.to(["#s1badge","#s1line","#s1title","#s1sub"],{opacity:0,duration:0.3},3.5)
+
+.to("#cs1bg",{opacity:1,duration:0.3},4.0)
+.to("#cs1info",{opacity:1,duration:0.4},4.5).from("#cs1info",{x:-40,duration:0.4},4.5)
+.to(["#cs1bg","#cs1info"],{opacity:0,duration:0.3},7.5)
+
+.to("#cs2bg",{opacity:1,duration:0.3},8.0)
+.to("#cs2info",{opacity:1,duration:0.4},8.5).from("#cs2info",{x:-40,duration:0.4},8.5)
+.to(["#cs2bg","#cs2info"],{opacity:0,duration:0.3},11.5)
+
+.to("#cs3bg",{opacity:1,duration:0.3},12.0)
+.to("#cs3info",{opacity:1,duration:0.4},12.5).from("#cs3info",{x:-40,duration:0.4},12.5)
+.to(["#cs3bg","#cs3info"],{opacity:0,duration:0.3},15.5)
+
+.to("#cs4bg",{opacity:1,duration:0.3},16.0)
+.to("#cs4info",{opacity:1,duration:0.4},16.5).from("#cs4info",{x:-40,duration:0.4},16.5)
+.to(["#cs4bg","#cs4info"],{opacity:0,duration:0.3},19.5)
+
+.to("#cs5bg",{opacity:1,duration:0.3},20.0)
+.to("#cs5info",{opacity:1,duration:0.4},20.5).from("#cs5info",{x:-40,duration:0.4},20.5)
+.to(["#cs5bg","#cs5info"],{opacity:0,duration:0.3},23.5)
+
+.to("#s7bg",{opacity:1,duration:0.3},24.0)
+.to("#s7title",{opacity:1,duration:0.4},24.2).from("#s7title",{y:20,duration:0.4},24.2)
+.to("#st1",{opacity:1,duration:0.3},24.6).from("#st1",{y:30,duration:0.3},24.6)
+.to("#st2",{opacity:1,duration:0.3},25.0).from("#st2",{y:30,duration:0.3},25.0)
+.to("#st3",{opacity:1,duration:0.3},25.4).from("#st3",{y:30,duration:0.3},25.4)
+.to(["#s7bg","#s7title","#st1","#st2","#st3"],{opacity:0,duration:0.3},27.0)
+
+.to("#s8bg",{opacity:1,duration:0.3},27.2)
+.to("#s8logo",{opacity:1,duration:0.5},27.5).from("#s8logo",{scale:0.8,duration:0.5,ease:"back.out(1.5)"},27.5)
+.to("#s8url",{opacity:1,duration:0.3},28.2)
+.to("#s8cta",{opacity:1,scale:1,duration:0.4,ease:"back.out(1.3)"},28.6).from("#s8cta",{scale:0.8,duration:0.4},28.6)
+.to(".comp",{opacity:0,duration:0.5},29.5);
+
+window.__timelines["x-intro"] = t;
+</script>
+</body>
+</html>
