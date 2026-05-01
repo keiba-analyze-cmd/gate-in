@@ -7,6 +7,7 @@ import G1FeatureCard from "@/components/races/G1FeatureCard";
 import FollowingVotes from "@/components/social/FollowingVotes";
 import AIPredictorStories from "@/components/social/AIPredictorStories";
 import RecentResults from "@/components/social/RecentResults";
+import AIPredictorLaunchBanner from "@/components/social/AIPredictorLaunchBanner";
 import { getArticles, getQuizQuestions } from "@/lib/microcms";
 import ContestBanner from "@/components/contest/ContestBanner";
 
@@ -268,7 +269,11 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ② G1ヒーローカード */}
+
+      {/* AI予想家ローンチバナー */}
+      <AIPredictorLaunchBanner />
+
+      {/* ②  G1ヒーローカード */}
       {g1Races.length > 0 && (
         <section>
           <div className="space-y-4">
