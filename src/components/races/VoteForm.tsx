@@ -170,6 +170,7 @@ export default function VoteForm({
   const [showDangerHint, setShowDangerHint] = useState(true);
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
   const longPressTriggered = useRef(false);
+  const touchMoved = useRef(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { showToast } = useToast();
@@ -303,6 +304,7 @@ export default function VoteForm({
   // Long press handlers
   const handleTouchStart = (entryId: string) => {
     longPressTriggered.current = false;
+    touchMoved.current = false;
     longPressTimer.current = setTimeout(() => {
       longPressTriggered.current = true;
       setDanger(entryId);
@@ -314,12 +316,13 @@ export default function VoteForm({
       clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
     }
-    if (!longPressTriggered.current) {
+    if (!longPressTriggered.current && !touchMoved.current) {
       togglePick(entryId);
     }
   };
 
   const handleTouchMove = () => {
+    touchMoved.current = true;
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
