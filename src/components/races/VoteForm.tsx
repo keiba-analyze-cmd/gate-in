@@ -191,8 +191,20 @@ export default function VoteForm({
   useEffect(() => {
     const copyFromVoteId = searchParams.get("copy_from");
     if (copyFromVoteId) loadCopySource(copyFromVoteId);
+
   }, [searchParams]);
 
+  // AI予想乗っかり: honmeiパラメータで◎自動選択
+  useEffect(() => {
+    const honmeiUmaban = searchParams.get("honmei");
+    console.log("HONMEI DEBUG:", honmeiUmaban, "entries:", entries.length, "picks:", picks.length);
+    if (honmeiUmaban && entries.length > 0 && picks.length === 0) {
+      const targetEntry = entries.find(e => { console.log("ENTRY:", e.umaban, typeof e.umaban, "vs", parseInt(honmeiUmaban)); return e.post_number === parseInt(honmeiUmaban); });
+      if (targetEntry) {
+        setPicks([{ entryId: targetEntry.id, type: "win" as PickType }]);
+      }
+    }
+  }, [entries.length]);
   const loadCopySource = async (voteId: string) => {
     setLoadingCopy(true);
     try {

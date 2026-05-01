@@ -197,7 +197,7 @@ async function predict(date) {
   const existSet = new Set((existing || []).map(e => e.predictor_id + '_' + e.race_id));
 
   // 種牡馬集計
-  const allSire = await supabaseQuery('jrdb_race_entries?select=sire_name,surface_code,distance,finish_order,anomaly&anomaly=eq.0&sire_name=not.is.null');
+  const allSire = await supabaseQuery('jrdb_race_entries?select=sire_name,surface_code,distance,finish_order,anomaly&anomaly=eq.0&sire_name=not.is.null&limit=50000');
   const sireDistStats = new Map();
   for (const row of (allSire || [])) {
     const d = (row.distance||0)<=1400?'S':(row.distance||0)<=1800?'M':(row.distance||0)<=2200?'I':'L';

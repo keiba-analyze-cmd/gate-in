@@ -1,0 +1,68 @@
+{
+  "type": "prediction",
+  "charId": "hakusen",
+  "charName": "ハクセン",
+  "charType": "血統分析型",
+  "series": "🧬 血統の法則",
+  "accent": "#059669",
+  "accentLight": "#34D399",
+  "accentDark": "#0f3d2a",
+  "accentGlow": "rgba(5,150,105,0.5)",
+  "dataTitle": "🧬 血統データが語る",
+  "race": {
+    "id": "925869ca-7e0b-4792-ab7c-36562ea1ade5",
+    "name": "フローラS",
+    "grade": "G2",
+    "gradeColor": "#ef4444",
+    "venue": "東京",
+    "surface": "芝",
+    "distance": 2000,
+    "date": "2026-04-26"
+  },
+  "honmei": {
+    "number": 2,
+    "name": "ラベルセーヌ",
+    "jockey": "荻野極",
+    "odds": "5.2倍"
+  },
+  "taikou": {
+    "number": 5,
+    "name": "ラフターラインズ",
+    "jockey": "Ｄ．レーン",
+    "odds": "2.6倍"
+  },
+  "tanpou": {
+    "number": 11,
+    "name": "ファムクラジューズ",
+    "jockey": "横山武史",
+    "odds": "5.3倍"
+  },
+  "osae": {
+    "number": 13,
+    "name": "エンネ",
+    "jockey": "Ｍ．ディー",
+    "odds": "7.3倍"
+  },
+  "dataRows": [
+    {
+      "label": "父馬",
+      "value": "キズナ",
+      "pct": "70%"
+    },
+    {
+      "label": "IDM",
+      "value": "56",
+      "pct": "70%"
+    },
+    {
+      "label": "上がり指数",
+      "value": "0.5",
+      "pct": "10%"
+    }
+  ],
+  "serif": "キズナ産駒の東京適性、血統的に申し分ございませんわ。",
+  "result": {
+    "finish": 5,
+    "hit": false
+  }
+}

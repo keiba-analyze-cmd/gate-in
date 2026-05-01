@@ -1,0 +1,68 @@
+{
+  "type": "prediction",
+  "charId": "hakusen",
+  "charName": "ハクセン",
+  "charType": "血統分析型",
+  "series": "🧬 血統の法則",
+  "accent": "#059669",
+  "accentLight": "#34D399",
+  "accentDark": "#0f3d2a",
+  "accentGlow": "rgba(5,150,105,0.5)",
+  "dataTitle": "🧬 血統データが語る",
+  "race": {
+    "id": "963f58d7-ed9c-457a-9168-7ef23c271158",
+    "name": "マイラーズC",
+    "grade": "G2",
+    "gradeColor": "#ef4444",
+    "venue": "京都",
+    "surface": "芝",
+    "distance": 1600,
+    "date": "2026-04-26"
+  },
+  "honmei": {
+    "number": 7,
+    "name": "ベラジオボンド",
+    "jockey": "北村友一",
+    "odds": "11.7倍"
+  },
+  "taikou": {
+    "number": 2,
+    "name": "オフトレイル",
+    "jockey": "岩田望来",
+    "odds": "4.7倍"
+  },
+  "tanpou": {
+    "number": 10,
+    "name": "ウォーターリヒト",
+    "jockey": "高杉吏麒",
+    "odds": "6.9倍"
+  },
+  "osae": {
+    "number": 8,
+    "name": "シャンパンカラー",
+    "jockey": "岩田康誠",
+    "odds": "38.7倍"
+  },
+  "dataRows": [
+    {
+      "label": "父馬",
+      "value": "ロードカナロア",
+      "pct": "70%"
+    },
+    {
+      "label": "IDM",
+      "value": "68",
+      "pct": "85%"
+    },
+    {
+      "label": "上がり指数",
+      "value": "3.5",
+      "pct": "10%"
+    }
+  ],
+  "serif": "ロードカナロア産駒の鋭い末脚、京都マイルで存分に輝くと見ております。",
+  "result": {
+    "finish": 3,
+    "hit": true
+  }
+}

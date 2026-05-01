@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head><body style="margin:0;background:#000">
+<div data-composition-id="test" data-width="540" data-height="960" data-duration="3" data-start="0" style="width:540px;height:960px;position:relative;background:#111">
+  <div id="txt" style="position:absolute;top:400px;left:0;width:540px;text-align:center;font:bold 40px sans-serif;color:#fff;opacity:0">テスト</div>
+</div>
+<script>
+window.__timelines = window.__timelines || {};
+var tl = gsap.timeline({ paused: true });
+tl.to("#txt",{opacity:1,duration:1},0.5);
+window.__timelines["test"] = tl;
+</script>
+</body></html>

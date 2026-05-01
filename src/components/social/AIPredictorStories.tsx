@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useTheme } from "@/contexts/ThemeContext";
 import Image from "next/image";
@@ -17,11 +17,15 @@ type AiPredictor = {
 type StoryContent = {
   id: string;
   predictor_id: string;
+  race_id?: string;
   type: "prediction" | "result" | "column" | "monthly";
   title: string;
   subtitle?: string;
   race_name?: string;
   race_grade?: string;
+  race_course?: string;
+  race_number?: number;
+  race_date?: string;
   pick_number?: number;
   pick_name?: string;
   hit?: boolean;
@@ -43,6 +47,8 @@ const BADGE_CONFIG: Record<string, { label: string; bg: string }> = {
   monthly: { label: "成績", bg: "bg-amber-500" },
 };
 
+const STORY_DURATION = 5000; // 5秒で自動進行
+
 export default function AIPredictorStories({
   predictors,
   stories,
@@ -57,6 +63,10 @@ export default function AIPredictorStories({
     null
   );
   const [storyIndex, setStoryIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const progressRef = useRef<NodeJS.Timeout | null>(null);
   const supabase = createClient();
 
   // Group stories by predictor
@@ -79,14 +89,98 @@ export default function AIPredictorStories({
     return bLatest.localeCompare(aLatest);
   });
 
+  const currentStories = activePredictor
+    ? storyMap[activePredictor] || []
+    : [];
+  const currentStory = currentStories[storyIndex] || null;
+  const currentPredictor = predictors.find(
+    (p) => p.id === activePredictor
+  );
+
+  // ── タイマー管理 ──
+  const clearTimers = useCallback(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    if (progressRef.current) clearInterval(progressRef.current);
+    timerRef.current = null;
+    progressRef.current = null;
+  }, []);
+
+  const nextStory = useCallback(() => {
+    const stories = activePredictor ? storyMap[activePredictor] || [] : [];
+    if (storyIndex < stories.length - 1) {
+      setStoryIndex((i) => i + 1);
+    } else {
+      const currentIdx = sortedPredictors.findIndex(
+        (p) => p.id === activePredictor
+      );
+      const next = sortedPredictors[currentIdx + 1];
+      if (next && storyMap[next.id]?.length) {
+        setActivePredictor(next.id);
+        setStoryIndex(0);
+      } else {
+        closeStory();
+      }
+    }
+  }, [activePredictor, storyIndex, sortedPredictors, storyMap]);
+
+  const startTimer = useCallback(() => {
+    clearTimers();
+    setProgress(0);
+
+    const startTime = Date.now();
+    progressRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      setProgress(Math.min(100, (elapsed / STORY_DURATION) * 100));
+    }, 50);
+
+    timerRef.current = setTimeout(() => {
+      clearTimers();
+      nextStory();
+    }, STORY_DURATION);
+  }, [clearTimers, nextStory]);
+
+  // タイマー開始/リセット（ストーリー切替時）
+  useEffect(() => {
+    if (activePredictor && currentStory && !paused) {
+      startTimer();
+    }
+    return () => clearTimers();
+  }, [activePredictor, storyIndex, paused]);
+
+  // 既読マーク
+  useEffect(() => {
+    if (currentStory) {
+      markAsRead(currentStory.id);
+    }
+  }, [currentStory?.id]);
+
+  // ── 開閉 ──
   const openStory = (predictorId: string) => {
     setActivePredictor(predictorId);
-    setStoryIndex(0);
+    setPaused(false);
+
+    // ② 未読スキップ: 最初の未読ストーリーから開始
+    const pStories = storyMap[predictorId] || [];
+    const firstUnreadIdx = pStories.findIndex((s) => !readIds.has(s.id));
+    setStoryIndex(firstUnreadIdx >= 0 ? firstUnreadIdx : 0);
   };
 
   const closeStory = () => {
+    clearTimers();
     setActivePredictor(null);
     setStoryIndex(0);
+    setProgress(0);
+    setPaused(false);
+  };
+
+  // ── 一時停止（長押し） ──
+  const handleTouchStart = () => {
+    setPaused(true);
+    clearTimers();
+  };
+
+  const handleTouchEnd = () => {
+    setPaused(false);
   };
 
   const markAsRead = async (storyId: string) => {
@@ -102,38 +196,6 @@ export default function AIPredictorStories({
         { onConflict: "user_id,story_id" }
       );
     } catch {}
-  };
-
-  const currentStories = activePredictor
-    ? storyMap[activePredictor] || []
-    : [];
-  const currentStory = currentStories[storyIndex] || null;
-  const currentPredictor = predictors.find(
-    (p) => p.id === activePredictor
-  );
-
-  useEffect(() => {
-    if (currentStory) {
-      markAsRead(currentStory.id);
-    }
-  }, [currentStory?.id]);
-
-  const nextStory = () => {
-    if (storyIndex < currentStories.length - 1) {
-      setStoryIndex((i) => i + 1);
-    } else {
-      // Move to next predictor
-      const currentIdx = sortedPredictors.findIndex(
-        (p) => p.id === activePredictor
-      );
-      const next = sortedPredictors[currentIdx + 1];
-      if (next && storyMap[next.id]?.length) {
-        setActivePredictor(next.id);
-        setStoryIndex(0);
-      } else {
-        closeStory();
-      }
-    }
   };
 
   const prevStory = () => {
@@ -246,6 +308,10 @@ export default function AIPredictorStories({
           <div
             className="h-full flex flex-col"
             onClick={(e) => e.stopPropagation()}
+            onMouseDown={handleTouchStart}
+            onMouseUp={handleTouchEnd}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
             {/* Progress bars */}
             <div className="flex gap-1 px-4 pt-3">
@@ -258,10 +324,16 @@ export default function AIPredictorStories({
                   }}
                 >
                   <div
-                    className="h-full rounded-full transition-all duration-300"
+                    className="h-full rounded-full"
                     style={{
-                      width: i < storyIndex ? "100%" : i === storyIndex ? "100%" : "0%",
+                      width:
+                        i < storyIndex
+                          ? "100%"
+                          : i === storyIndex
+                          ? `${progress}%`
+                          : "0%",
                       backgroundColor: "#fff",
+                      transition: i === storyIndex ? "none" : "width 0.3s",
                     }}
                   />
                 </div>
@@ -269,7 +341,9 @@ export default function AIPredictorStories({
             </div>
 
             {/* Header */}
-            <div className="flex items-center gap-3 px-4 py-3">
+            {/* z-10 to be above tap zones */}
+            <div className="flex items-center gap-3 px-4 py-3 relative z-10">
+              <Link href={`/predictors/${currentPredictor.id}`} onClick={(e) => { e.stopPropagation(); closeStory(); }} className="flex items-center gap-2 flex-1 min-w-0">
               <div
                 className="w-9 h-9 rounded-full border-2 overflow-hidden"
                 style={{
@@ -295,6 +369,7 @@ export default function AIPredictorStories({
                   {currentPredictor.type_label}
                 </div>
               </div>
+              </Link>
               <div className="text-[10px] text-white/40">
                 {new Date(currentStory.created_at).toLocaleDateString(
                   "ja-JP",
@@ -302,7 +377,10 @@ export default function AIPredictorStories({
                 )}
               </div>
               <button
-                onClick={closeStory}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  closeStory();
+                }}
                 className="text-white/60 text-lg ml-2"
               >
                 ✕
@@ -322,7 +400,7 @@ export default function AIPredictorStories({
                 {currentStory.type === "prediction" && (
                   <>
                     <div className="text-[10px] text-white/40 mb-1">
-                      {currentStory.subtitle || "今日の注目レース"}
+                      {currentStory.race_date ? `${new Date(currentStory.race_date + "T00:00").toLocaleDateString("ja-JP", {month:"numeric",day:"numeric"})} ${currentStory.race_course} ${currentStory.race_number}R` : currentStory.subtitle || "今日の注目レース"}
                     </div>
                     {currentStory.race_grade && (
                       <span
@@ -365,11 +443,12 @@ export default function AIPredictorStories({
                       </div>
                     )}
                     <Link
-                      href={`/races/${currentStory.id}`}
+                      href={`/races/${currentStory.race_id}?honmei=${currentStory.pick_number}`}
                       className="block mt-4 py-2.5 rounded-xl text-sm font-bold text-white"
                       style={{
                         backgroundColor: currentPredictor.theme_color,
                       }}
+                      onClick={(e) => e.stopPropagation()}
                     >
                       この予想で乗っかる
                     </Link>
@@ -430,6 +509,7 @@ export default function AIPredictorStories({
                     <Link
                       href={`/predictors/${currentPredictor.id}`}
                       className="inline-block mt-4 text-xs text-white/50 underline"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       もっと読む →
                     </Link>
@@ -442,12 +522,18 @@ export default function AIPredictorStories({
             <div className="absolute inset-0 flex pointer-events-none">
               <button
                 className="w-1/3 h-full pointer-events-auto"
-                onClick={prevStory}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  prevStory();
+                }}
               />
               <div className="w-1/3" />
               <button
                 className="w-1/3 h-full pointer-events-auto"
-                onClick={nextStory}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nextStory();
+                }}
               />
             </div>
 
@@ -456,6 +542,7 @@ export default function AIPredictorStories({
               <Link
                 href={`/predictors/${currentPredictor.id}`}
                 className="text-xs text-white/40 underline"
+                onClick={(e) => e.stopPropagation()}
               >
                 {currentPredictor.name}のプロフィール →
               </Link>

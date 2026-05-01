@@ -165,9 +165,9 @@ export default async function HomePage() {
   // AI予想家マスタ
   const { data: predictors } = await supabase
     .from("ai_predictors")
-    .select("id, name, type_label, theme_color, image_url")
+    .select("id, name, type_label, color_main, avatar_url")
     .eq("is_active", true)
-    .order("display_order");
+    .order("sort_order");
 
   // 最新ストーリーコンテンツ（過去3日分のAI予想）
   const threeDaysAgo = new Date();
@@ -183,18 +183,22 @@ export default async function HomePage() {
       horse_name,
       comment,
       created_at,
-      races(id, name, grade)
+      races(id, name, grade, course_name, race_number, race_date)
     `)
     .gte("created_at", threeDaysAgo.toISOString())
     .order("created_at", { ascending: false });
 
   const stories = (storyPredictions || []).map(s => ({
     id: s.id,
+    race_id: s.race_id,
     predictor_id: s.predictor_id,
     type: "prediction" as const,
     title: (s.races as any)?.name || "",
     race_name: (s.races as any)?.name || "",
     race_grade: (s.races as any)?.grade || null,
+    race_course: (s.races as any)?.course_name || "",
+    race_number: (s.races as any)?.race_number || null,
+    race_date: (s.races as any)?.race_date || "",
     pick_number: s.umaban,
     pick_name: s.horse_name || "",
     comment: s.comment || "",
@@ -256,7 +260,7 @@ export default async function HomePage() {
       {(predictors?.length ?? 0) > 0 && (
         <section>
           <AIPredictorStories
-            predictors={predictors || []}
+            predictors={(predictors || []).map(p => ({...p, theme_color: p.color_main, image_url: p.avatar_url}))}
             stories={stories}
             readStoryIds={readStoryIds}
             userId={user.id}

@@ -1,0 +1,68 @@
+{
+  "type": "prediction",
+  "charId": "kazan",
+  "charName": "カザン",
+  "charType": "穴馬予測型",
+  "series": "🔥 今週の爆弾",
+  "accent": "#DC2626",
+  "accentLight": "#F87171",
+  "accentDark": "#3d0f0f",
+  "accentGlow": "rgba(220,38,38,0.5)",
+  "dataTitle": "🔥 人気と実力の乖離",
+  "race": {
+    "id": "963f58d7-ed9c-457a-9168-7ef23c271158",
+    "name": "マイラーズC",
+    "grade": "G2",
+    "gradeColor": "#ef4444",
+    "venue": "京都",
+    "surface": "芝",
+    "distance": 1600,
+    "date": "2026-04-26"
+  },
+  "honmei": {
+    "number": 1,
+    "name": "ドラゴンブースト",
+    "jockey": "丹内祐次",
+    "odds": "18.9倍"
+  },
+  "taikou": {
+    "number": 8,
+    "name": "シャンパンカラー",
+    "jockey": "岩田康誠",
+    "odds": "38.7倍"
+  },
+  "tanpou": {
+    "number": 6,
+    "name": "ブエナオンダ",
+    "jockey": "田口貫太",
+    "odds": "31倍"
+  },
+  "osae": {
+    "number": 3,
+    "name": "ファインライン",
+    "jockey": "鮫島克駿",
+    "odds": "40.9倍"
+  },
+  "dataRows": [
+    {
+      "label": "基準オッズ",
+      "value": "18.9倍",
+      "pct": "62%"
+    },
+    {
+      "label": "IDM（実力値）",
+      "value": "67",
+      "pct": "84%"
+    },
+    {
+      "label": "調教指数（実力の裏付け）",
+      "value": "-7.3",
+      "pct": "10%"
+    }
+  ],
+  "serif": "京都の直線、アイツが弾けりゃ全部終わりだ。買わない奴は後悔しろ。",
+  "result": {
+    "finish": 2,
+    "hit": true
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "type": "prediction",
+  "charId": "hayate",
+  "charName": "ハヤテ",
+  "charType": "データ分析型",
+  "series": "📊 数字で語る◎",
+  "accent": "#1E40AF",
+  "accentLight": "#60A5FA",
+  "accentDark": "#0f1f3d",
+  "accentGlow": "rgba(30,64,175,0.5)",
+  "dataTitle": "📊 データが示す本命",
+  "race": {
+    "id": "925869ca-7e0b-4792-ab7c-36562ea1ade5",
+    "name": "フローラS",
+    "grade": "G2",
+    "gradeColor": "#ef4444",
+    "venue": "東京",
+    "surface": "芝",
+    "distance": 2000,
+    "date": "2026-04-26"
+  },
+  "honmei": {
+    "number": 5,
+    "name": "ラフターラインズ",
+    "jockey": "Ｄ．レーン",
+    "odds": "2.6倍"
+  },
+  "taikou": {
+    "number": 11,
+    "name": "ファムクラジューズ",
+    "jockey": "横山武史",
+    "odds": "5.3倍"
+  },
+  "tanpou": {
+    "number": 2,
+    "name": "ラベルセーヌ",
+    "jockey": "荻野極",
+    "odds": "5.2倍"
+  },
+  "osae": {
+    "number": 13,
+    "name": "エンネ",
+    "jockey": "Ｍ．ディー",
+    "odds": "7.3倍"
+  },
+  "dataRows": [
+    {
+      "label": "IDM（総合指数）",
+      "value": "62",
+      "pct": "78%"
+    },
+    {
+      "label": "騎手指数",
+      "value": "3",
+      "pct": "10%"
+    },
+    {
+      "label": "テン指数（スタート力）",
+      "value": "-29.1",
+      "pct": "10%"
+    }
+  ],
+  "serif": "データが示す最適解、それがラフターラインズです。感情で馬を選ぶ方々には理解できないでしょうが。",
+  "result": {
+    "finish": 1,
+    "hit": true
+  }
+}

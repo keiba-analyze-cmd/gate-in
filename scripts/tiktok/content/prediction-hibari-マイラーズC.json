@@ -1,0 +1,68 @@
+{
+  "type": "prediction",
+  "charId": "hibari",
+  "charName": "ヒバリ",
+  "charType": "当日データ型",
+  "series": "☀️ 朝イチ速報",
+  "accent": "#D97706",
+  "accentLight": "#FBBF24",
+  "accentDark": "#3d2a0f",
+  "accentGlow": "rgba(217,119,6,0.5)",
+  "dataTitle": "☀️ 当日のシグナル",
+  "race": {
+    "id": "963f58d7-ed9c-457a-9168-7ef23c271158",
+    "name": "マイラーズC",
+    "grade": "G2",
+    "gradeColor": "#ef4444",
+    "venue": "京都",
+    "surface": "芝",
+    "distance": 1600,
+    "date": "2026-04-26"
+  },
+  "honmei": {
+    "number": 2,
+    "name": "オフトレイル",
+    "jockey": "岩田望来",
+    "odds": "4.7倍"
+  },
+  "taikou": {
+    "number": 10,
+    "name": "ウォーターリヒト",
+    "jockey": "高杉吏麒",
+    "odds": "6.9倍"
+  },
+  "tanpou": {
+    "number": 7,
+    "name": "ベラジオボンド",
+    "jockey": "北村友一",
+    "odds": "11.7倍"
+  },
+  "osae": {
+    "number": 9,
+    "name": "アドマイヤズーム",
+    "jockey": "武豊",
+    "odds": "4倍"
+  },
+  "dataRows": [
+    {
+      "label": "馬体重変動",
+      "value": "未発表",
+      "pct": "50%"
+    },
+    {
+      "label": "IDM",
+      "value": "72.5",
+      "pct": "91%"
+    },
+    {
+      "label": "調教指数",
+      "value": "11.4",
+      "pct": "14%"
+    }
+  ],
+  "serif": "オフトレイルの末脚、京都の長い直線で絶対爆発する予感がするの！",
+  "result": {
+    "finish": 5,
+    "hit": false
+  }
+}

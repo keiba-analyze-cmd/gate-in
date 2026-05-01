@@ -1,0 +1,71 @@
+{
+  "type": "results",
+  "race": {
+    "name": "フローラS",
+    "grade": "G2",
+    "gradeColor": "#ef4444",
+    "venue": "東京",
+    "surface": "芝",
+    "distance": 2000
+  },
+  "characters": [
+    {
+      "id": "hakusen",
+      "name": "ハクセン",
+      "type": "血統分析型",
+      "color": "#059669",
+      "light": "#34D399",
+      "pick": {
+        "num": 2,
+        "name": "ラベルセーヌ"
+      },
+      "finish": 5,
+      "hit": false,
+      "comment": "5着 不的中"
+    },
+    {
+      "id": "hayate",
+      "name": "ハヤテ",
+      "type": "データ分析型",
+      "color": "#1E40AF",
+      "light": "#60A5FA",
+      "pick": {
+        "num": 5,
+        "name": "ラフターラインズ"
+      },
+      "finish": 1,
+      "hit": true,
+      "comment": "1着的中！"
+    },
+    {
+      "id": "hibari",
+      "name": "ヒバリ",
+      "type": "当日データ型",
+      "color": "#D97706",
+      "light": "#FBBF24",
+      "pick": {
+        "num": 5,
+        "name": "ラフターラインズ"
+      },
+      "finish": 1,
+      "hit": true,
+      "comment": "1着的中！"
+    },
+    {
+      "id": "kazan",
+      "name": "カザン",
+      "type": "穴馬予測型",
+      "color": "#DC2626",
+      "light": "#F87171",
+      "pick": {
+        "num": 6,
+        "name": "ペンダント"
+      },
+      "finish": 11,
+      "hit": false,
+      "comment": "11着 不的中"
+    }
+  ],
+  "hitCount": 2,
+  "kaishuu": 75
+}

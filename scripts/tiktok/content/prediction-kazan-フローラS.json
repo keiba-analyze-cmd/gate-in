@@ -1,0 +1,68 @@
+{
+  "type": "prediction",
+  "charId": "kazan",
+  "charName": "カザン",
+  "charType": "穴馬予測型",
+  "series": "🔥 今週の爆弾",
+  "accent": "#DC2626",
+  "accentLight": "#F87171",
+  "accentDark": "#3d0f0f",
+  "accentGlow": "rgba(220,38,38,0.5)",
+  "dataTitle": "🔥 人気と実力の乖離",
+  "race": {
+    "id": "925869ca-7e0b-4792-ab7c-36562ea1ade5",
+    "name": "フローラS",
+    "grade": "G2",
+    "gradeColor": "#ef4444",
+    "venue": "東京",
+    "surface": "芝",
+    "distance": 2000,
+    "date": "2026-04-26"
+  },
+  "honmei": {
+    "number": 6,
+    "name": "ペンダント",
+    "jockey": "佐々木大輔",
+    "odds": "26.8倍"
+  },
+  "taikou": {
+    "number": 8,
+    "name": "ゴバド",
+    "jockey": "原優介",
+    "odds": "30.9倍"
+  },
+  "tanpou": {
+    "number": 1,
+    "name": "リスレジャンデール",
+    "jockey": "津村明秀",
+    "odds": "17.9倍"
+  },
+  "osae": {
+    "number": 10,
+    "name": "エイシンウィスパー",
+    "jockey": "松若風馬",
+    "odds": "37.7倍"
+  },
+  "dataRows": [
+    {
+      "label": "基準オッズ",
+      "value": "26.8倍",
+      "pct": "46%"
+    },
+    {
+      "label": "IDM（実力値）",
+      "value": "50",
+      "pct": "63%"
+    },
+    {
+      "label": "調教指数（実力の裏付け）",
+      "value": "-5.2",
+      "pct": "10%"
+    }
+  ],
+  "serif": "6番ペンダント、ここで仕留める。逆らうなら返り討ちにしてやる。",
+  "result": {
+    "finish": 11,
+    "hit": false
+  }
+}

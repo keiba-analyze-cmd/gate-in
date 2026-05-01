@@ -1,0 +1,68 @@
+{
+  "type": "prediction",
+  "charId": "hibari",
+  "charName": "ヒバリ",
+  "charType": "当日データ型",
+  "series": "☀️ 朝イチ速報",
+  "accent": "#D97706",
+  "accentLight": "#FBBF24",
+  "accentDark": "#3d2a0f",
+  "accentGlow": "rgba(217,119,6,0.5)",
+  "dataTitle": "☀️ 当日のシグナル",
+  "race": {
+    "id": "925869ca-7e0b-4792-ab7c-36562ea1ade5",
+    "name": "フローラS",
+    "grade": "G2",
+    "gradeColor": "#ef4444",
+    "venue": "東京",
+    "surface": "芝",
+    "distance": 2000,
+    "date": "2026-04-26"
+  },
+  "honmei": {
+    "number": 5,
+    "name": "ラフターラインズ",
+    "jockey": "Ｄ．レーン",
+    "odds": "2.6倍"
+  },
+  "taikou": {
+    "number": 2,
+    "name": "ラベルセーヌ",
+    "jockey": "荻野極",
+    "odds": "5.2倍"
+  },
+  "tanpou": {
+    "number": 11,
+    "name": "ファムクラジューズ",
+    "jockey": "横山武史",
+    "odds": "5.3倍"
+  },
+  "osae": {
+    "number": 13,
+    "name": "エンネ",
+    "jockey": "Ｍ．ディー",
+    "odds": "7.3倍"
+  },
+  "dataRows": [
+    {
+      "label": "馬体重変動",
+      "value": "未発表",
+      "pct": "50%"
+    },
+    {
+      "label": "IDM",
+      "value": "62",
+      "pct": "78%"
+    },
+    {
+      "label": "調教指数",
+      "value": "20.2",
+      "pct": "25%"
+    }
+  ],
+  "serif": "ラフターラインズ、東京の広いコースで末脚ドカンと炸裂する予感がビンビンしてるの！",
+  "result": {
+    "finish": 1,
+    "hit": true
+  }
+}
