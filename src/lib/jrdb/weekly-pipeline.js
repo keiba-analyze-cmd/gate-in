@@ -157,7 +157,7 @@ function runModels(entries, sireDistStats) {
   }
 
   const bi = [...entries].filter(e => e.idm != null).sort((a, b) => (b.idm||0)-(a.idm||0));
-  const mid = bi.slice(2, 6).filter(e => (e.base_odds||0) >= 3);
+  const mid = bi.slice(2, 6).filter(e => (e.base_odds||0) >= 5);
   if (mid.length > 0) { mid.sort((a, b) => ((b.idm||0)*Math.log(b.base_odds||1))-((a.idm||0)*Math.log(a.base_odds||1)));
     preds.push({ pid: 'kazan', umaban: mid[0].umaban, horse_name: mid[0].horse_name, score: ((mid[0].idm||0)*Math.log(mid[0].base_odds||1)).toFixed(1), rk: 'midrange_value' }); }
 
@@ -174,7 +174,7 @@ function runModels(entries, sireDistStats) {
   // ヒバリ: テン指数+上がり指数+位置指数の総合力（当日パフォーマンス予測型）
   const hibariScored = entries.filter(e => e.idm != null).map(e => ({
     ...e,
-    hibariScore: (e.ten_index||0)*0.3 + (e.agari_index||0)*0.4 + (e.position_index||0)*0.3
+    hibariScore: (e.ten_index||0)*0.2 + (e.agari_index||0)*0.3 + (e.position_index||0)*0.2 + (e.idm||0)*0.3
   })).sort((a, b) => b.hibariScore - a.hibariScore);
   if (hibariScored.length > 0 && (hibariScored[0].ten_index != null || hibariScored[0].agari_index != null)) {
     preds.push({ pid: 'hibari', umaban: hibariScored[0].umaban, horse_name: hibariScored[0].horse_name, score: hibariScored[0].hibariScore.toFixed(1), rk: 'ten_agari_position' });
