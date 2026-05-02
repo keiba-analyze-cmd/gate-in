@@ -610,5 +610,82 @@ export async function settleRace(
   // 12. レースステータスを finished に更新
   await supabase.from("races").update({ status: "finished" }).eq("id", raceId);
 
+
+
+  // 13. AI予想家の結果を記録
+  try {
+    const { data: aiPredictions } = await supabase
+      .from("ai_predictions")
+      .select("id, predictor_id, race_id, umaban")
+      .eq("race_id", raceId);
+
+    if (aiPredictions && aiPredictions.length > 0) {
+      for (const pred of aiPredictions) {
+        const honmeiResult = results.find(
+          (r: any) => r.race_entries?.post_number === pred.umaban
+        );
+        if (!honmeiResult) continue;
+
+        const finishPos = honmeiResult.finish_position;
+        const isWin = finishPos === 1;
+        const isPlace = finishPos <= 3;
+        const winOdds = isWin ? (honmeiResult.race_entries?.odds ?? null) : null;
+        const placeOdds = isPlace ? (honmeiResult.race_entries?.odds ?? null) : null;
+
+        let pts = 0;
+        if (isWin) pts = 30;
+        else if (isPlace) pts = 10;
+
+        await supabase.from("ai_prediction_results").upsert({
+          prediction_id: pred.id,
+          predictor_id: pred.predictor_id,
+          race_id: raceId,
+          honmei_finish_position: finishPos,
+          is_honmei_win: isWin,
+          is_honmei_place: isPlace,
+          points: pts,
+          honmei_win_odds: winOdds,
+          honmei_place_odds: placeOdds,
+          settled_at: new Date().toISOString(),
+        }, { onConflict: "prediction_id" });
+      }
+
+      // AI月間成績を更新
+      const predictorIds = [...new Set(aiPredictions.map((p: any) => p.predictor_id))];
+      const jstNow = new Date(Date.now() + 9 * 60 * 60 * 1000);
+      const yearMonth = jstNow.toISOString().slice(0, 7);
+
+      for (const predictorId of predictorIds) {
+        const { data: allResults } = await supabase
+          .from("ai_prediction_results")
+          .select("is_honmei_win, is_honmei_place, points, honmei_win_odds")
+          .eq("predictor_id", predictorId);
+
+        if (!allResults || allResults.length === 0) continue;
+
+        const total = allResults.length;
+        const wins = allResults.filter((r: any) => r.is_honmei_win).length;
+        const places = allResults.filter((r: any) => r.is_honmei_place).length;
+        const totalPts = allResults.reduce((s: number, r: any) => s + (r.points || 0), 0);
+        const bestOdds = Math.max(...allResults.filter((r: any) => r.is_honmei_win && r.honmei_win_odds).map((r: any) => r.honmei_win_odds || 0));
+
+        await supabase.from("ai_monthly_stats").upsert({
+          predictor_id: predictorId,
+          year_month: yearMonth,
+          total_predictions: total,
+          win_count: wins,
+          place_count: places,
+          total_points: totalPts,
+          win_rate: total > 0 ? Math.round((wins / total) * 1000) / 10 : 0,
+          place_rate: total > 0 ? Math.round((places / total) * 1000) / 10 : 0,
+          best_hit_odds: bestOdds > 0 ? bestOdds : null,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: "predictor_id,year_month" });
+      }
+    }
+  } catch (aiErr: any) {
+    console.error("[settle-race] AI prediction results error:", aiErr.message);
+  }
+
   return { success: errors.length === 0, settled_votes: settledVotes, total_points_awarded: totalPointsAwarded, errors };
 }

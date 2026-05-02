@@ -7,6 +7,7 @@ import G1FeatureCard from "@/components/races/G1FeatureCard";
 import FollowingVotes from "@/components/social/FollowingVotes";
 import AIPredictorStories from "@/components/social/AIPredictorStories";
 import RecentResults from "@/components/social/RecentResults";
+import LiveYouTubeBanner from "@/components/social/LiveYouTubeBanner";
 import AIPredictorLaunchBanner from "@/components/social/AIPredictorLaunchBanner";
 import { getArticles, getQuizQuestions } from "@/lib/microcms";
 import ContestBanner from "@/components/contest/ContestBanner";
