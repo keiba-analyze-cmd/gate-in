@@ -19,14 +19,15 @@ type PredictorMeta = {
 
 type MonthlyStats = {
   year_month: string;
-  total_races: number;
+  total_predictions: number;
   win_count: number;
   place_count: number;
-  show_count: number;
+  
   win_rate: number;
   place_rate: number;
-  show_rate: number;
-  recovery_rate: number;
+  roi_win: number;
+  total_points: number;
+  best_hit_odds: number | null;
 };
 
 type Prediction = {
@@ -337,12 +338,12 @@ function StatsTab({
   // 全期間の集計
   const totals = monthlyStats.reduce(
     (acc, s) => ({
-      races: acc.races + s.total_races,
+      races: acc.races + (s.total_predictions || 0),
       win: acc.win + s.win_count,
       place: acc.place + s.place_count,
-      show: acc.show + s.show_count,
+      
     }),
-    { races: 0, win: 0, place: 0, show: 0 }
+    { races: 0, win: 0, place: 0 }
   );
 
   return (
@@ -375,7 +376,7 @@ function StatsTab({
           <div>
             <div className="text-2xl font-black text-blue-500">
               {totals.races > 0
-                ? ((totals.show / totals.races) * 100).toFixed(1)
+                ? ((totals.place / totals.races) * 100).toFixed(1)
                 : "—"}
               %
             </div>
@@ -410,25 +411,25 @@ function StatsTab({
                   {formatYearMonth(s.year_month)}
                 </span>
                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                  {s.total_races}レース
+                  {s.total_predictions}レース
                 </span>
               </div>
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="bg-white dark:bg-gray-600 rounded-lg px-2 py-1.5">
                   <div className="text-sm font-black text-red-500">
-                    {(s.win_rate * 100).toFixed(1)}%
+                    {s.win_rate?.toFixed(1) ?? '0.0'}%
                   </div>
                   <div className="text-[10px] text-gray-400">勝率</div>
                 </div>
                 <div className="bg-white dark:bg-gray-600 rounded-lg px-2 py-1.5">
                   <div className="text-sm font-black text-blue-500">
-                    {(s.show_rate * 100).toFixed(1)}%
+                    {s.place_rate?.toFixed(1) ?? '0.0'}%
                   </div>
                   <div className="text-[10px] text-gray-400">3着内</div>
                 </div>
                 <div className="bg-white dark:bg-gray-600 rounded-lg px-2 py-1.5">
                   <div className="text-sm font-black text-green-600">
-                    {(s.recovery_rate * 100).toFixed(0)}%
+                    {(s.roi_win ?? 0).toFixed(0)}%
                   </div>
                   <div className="text-[10px] text-gray-400">回収率</div>
                 </div>

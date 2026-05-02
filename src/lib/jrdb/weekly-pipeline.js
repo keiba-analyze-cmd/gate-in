@@ -171,9 +171,18 @@ function runModels(entries, sireDistStats) {
     if (best) preds.push({ pid: 'hakusen', umaban: best.umaban, horse_name: best.horse_name, score: bsc.toFixed(1), rk: 'sire_condition', sire_name: best.sire_name });
   }
 
-  const fh = entries.filter(e => e.idm != null && (e.horse_weight_change == null || e.horse_weight_change <= 10));
-  if (fh.length > 0) { fh.sort((a, b) => (b.idm||0)-(a.idm||0));
-    preds.push({ pid: 'hibari', umaban: fh[0].umaban, horse_name: fh[0].horse_name, score: (fh[0].idm||0).toFixed(1), rk: 'weight_stable', weight_change: fh[0].horse_weight_change }); }
+  // ヒバリ: テン指数+上がり指数+位置指数の総合力（当日パフォーマンス予測型）
+  const hibariScored = entries.filter(e => e.idm != null).map(e => ({
+    ...e,
+    hibariScore: (e.ten_index||0)*0.3 + (e.agari_index||0)*0.4 + (e.position_index||0)*0.3
+  })).sort((a, b) => b.hibariScore - a.hibariScore);
+  if (hibariScored.length > 0 && (hibariScored[0].ten_index != null || hibariScored[0].agari_index != null)) {
+    preds.push({ pid: 'hibari', umaban: hibariScored[0].umaban, horse_name: hibariScored[0].horse_name, score: hibariScored[0].hibariScore.toFixed(1), rk: 'ten_agari_position' });
+  } else {
+    // フォールバック: IDMベースだが騎手指数を逆に重視（ハヤテと差別化）
+    const fh = entries.filter(e => e.idm != null).sort((a, b) => ((b.jockey_index||0)*0.6+(b.idm||0)*0.4)-((a.jockey_index||0)*0.6+(a.idm||0)*0.4));
+    if (fh.length > 0) preds.push({ pid: 'hibari', umaban: fh[0].umaban, horse_name: fh[0].horse_name, score: ((fh[0].jockey_index||0)*0.6+(fh[0].idm||0)*0.4).toFixed(1), rk: 'jockey_first' });
+  }
 
   return preds;
 }
