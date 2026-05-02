@@ -36,7 +36,7 @@ export async function GET() {
       like_count,
       created_at,
       profiles!votes_user_id_fkey(display_name, avatar_url, avatar_emoji, rank_id),
-      races(name, grade, course_name, race_number),
+      races(name, grade, course_name, race_number, race_date),
       vote_picks(pick_type, race_entries(post_number, horses(name)))
     `)
     .in("user_id", followingIds)
@@ -62,6 +62,7 @@ export async function GET() {
       grade: vote.races?.grade,
       course_name: vote.races?.course_name ?? "",
       race_number: vote.races?.race_number,
+      race_date: vote.races?.race_date ?? "",
     },
     picks: (vote.vote_picks ?? []).map((p: any) => ({
       pick_type: p.pick_type,

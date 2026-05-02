@@ -29,6 +29,7 @@ type VoteItem = {
     grade: string | null;
     course_name: string;
     race_number: number | null;
+    race_date: string;
   };
   picks: Pick[];
 };
@@ -153,6 +154,11 @@ function VoteCard({ vote, isDark }: { vote: VoteItem; isDark: boolean }) {
           <span className="text-lg">🎉</span>
         </div>
       )}
+
+      {/* Race Info */}
+      <Link href={`/races/${vote.race_id}`} className={`text-[10px] mb-1.5 block ${isDark ? "text-slate-400" : "text-gray-500"}`}>
+        {vote.race.race_date ? new Date(vote.race.race_date + "T00:00").toLocaleDateString("ja-JP", {month:"numeric",day:"numeric"}) + " " : ""}{vote.race.course_name}{vote.race.race_number ? ` ${vote.race.race_number}R` : ''} — {vote.race.name}
+      </Link>
 
       {/* Picks */}
       <div className="flex flex-wrap gap-1 mb-2">
