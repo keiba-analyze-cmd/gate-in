@@ -1,6 +1,7 @@
 {
   "installCommand": "npm install --legacy-peer-deps --force",
   "crons": [
+    { "path": "/api/cron/x-post-suggestion", "schedule": "0 9 * * *" },
     { "path": "/api/cron/venue-conditions", "schedule": "*/30 * * * 0,5,6" },
     {
       "path": "/api/cron/auto-settle",

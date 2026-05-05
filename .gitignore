@@ -53,3 +53,5 @@ data/jrdb/pipeline.log
 # JRDB data
 jrdb-data/
 *.log
+setup-x-post-slack.sh
+insert-posts.js
