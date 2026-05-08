@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 const s = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 // 5/2のレースでoddsがnullのエントリーにJRDBのbase_oddsを反映
-const { data: races } = await s.from("races").select("id, name, external_id, race_number, course_name").eq("race_date", "2026-05-02");
+const { data: races } = await s.from("races").select("id, name, external_id, race_number, course_name").in("race_date", [new Date(Date.now()+9*3600000).toISOString().slice(0,10), new Date(Date.now()+9*3600000+86400000).toISOString().slice(0,10), new Date(Date.now()+9*3600000-86400000).toISOString().slice(0,10)]);
 
 function toRaceKey(externalId) {
   if (!externalId || externalId.length < 12) return externalId;

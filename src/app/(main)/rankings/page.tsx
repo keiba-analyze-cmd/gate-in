@@ -1,5 +1,9 @@
-import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import RankingsClient from "./RankingsClient";
 
-export default function RankingsPage() {
-  redirect("/contest");
+export default async function RankingsPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  return <RankingsClient currentUserId={user?.id ?? ""} />;
 }

@@ -341,6 +341,42 @@ export default async function HomePage() {
         isEligible={myContestEntry?.is_eligible ?? false}
       />
 
+
+      {/* ④-b ランキング */}
+      <Link href="/rankings" className="block">
+        <div className="flex items-center justify-between p-4 rounded-xl border-2 border-blue-400 dark:border-blue-600 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🏆</span>
+            <div>
+              <div className="text-sm font-black text-gray-900 dark:text-white">ランキング</div>
+              <div className="text-[10px] text-gray-500 dark:text-slate-400">月間・累計・連勝ランキング</div>
+            </div>
+          </div>
+          <span className="text-gray-400 dark:text-slate-500 text-sm">→</span>
+        </div>
+      </Link>
+
+      {/* ④-c 競馬道場 */}
+      <section>
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-lg">📚</span>
+          <h2 className="text-sm font-black text-gray-900 dark:text-white">競馬道場</h2>
+          <span className="text-[10px] text-gray-500 dark:text-slate-400">記事を読んで、クイズで力試し</span>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Link href="/dojo/articles" className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-4 text-center hover:shadow-md transition-shadow">
+            <span className="text-2xl block mb-2">📖</span>
+            <div className="text-xs font-bold text-gray-800 dark:text-white">記事を読む</div>
+            <div className="text-[10px] text-gray-400 dark:text-slate-500 mt-0.5">500+本の競馬知識</div>
+          </Link>
+          <Link href="/dojo/quiz" className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-4 text-center hover:shadow-md transition-shadow">
+            <span className="text-2xl block mb-2">🎯</span>
+            <div className="text-xs font-bold text-gray-800 dark:text-white">クイズに挑戦</div>
+            <div className="text-[10px] text-gray-400 dark:text-slate-500 mt-0.5">1000+問で力試し</div>
+          </Link>
+        </div>
+      </section>
+
       {/* ⑤ フォロー中の予想 */}
       <section>
         <FollowingVotes />
