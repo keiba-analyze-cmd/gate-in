@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTheme } from "@/contexts/ThemeContext";
 
 type DistributionData = {
   win: { post_number: number; horse_name: string; count: number; percentage: number }[];
@@ -13,18 +12,17 @@ type DistributionData = {
 
 type Props = { raceId: string };
 
+const BAR_COLOR: Record<string, string> = {
+  win: "var(--brand)",
+  place: "var(--info)",
+  back: "var(--osae)",
+  danger: "var(--ink-3)",
+};
+
 export default function VoteDistribution({ raceId }: Props) {
-  const { isDark } = useTheme();
   const [data, setData] = useState<DistributionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"win" | "place" | "back" | "danger">("win");
-
-  const cardBg = isDark ? "bg-slate-900 border-slate-700" : "bg-white border-gray-100";
-  const textPrimary = isDark ? "text-slate-100" : "text-gray-900";
-  const textMuted = isDark ? "text-slate-500" : "text-gray-400";
-  const tabActive = isDark ? "text-amber-400 border-amber-400" : "text-green-600 border-green-600";
-  const tabInactive = isDark ? "text-slate-400 border-transparent hover:text-slate-200" : "text-gray-500 border-transparent hover:text-gray-700";
-  const barBg = isDark ? "bg-slate-700" : "bg-gray-200";
 
   useEffect(() => {
     // 修正: /distribution → /votes
@@ -44,49 +42,52 @@ export default function VoteDistribution({ raceId }: Props) {
 
   const currentData = data?.[activeTab] ?? [];
   const getMedalIcon = (index: number) => index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : null;
-  const getBarColor = (tab: string) => {
-    const colors = { win: "bg-red-500", place: "bg-blue-500", back: "bg-yellow-500", danger: "bg-gray-500" };
-    return colors[tab as keyof typeof colors] ?? "bg-gray-500";
-  };
 
-  if (loading) return <div className={`rounded-2xl border p-8 text-center ${cardBg} ${textMuted}`}>読み込み中...</div>;
-  if (!data) return <div className={`rounded-2xl border p-8 text-center ${cardBg} ${textMuted}`}>データを取得できませんでした</div>;
+  if (loading) return <div className="rounded-2xl border bg-surface border-line p-8 text-center text-ink-3 font-display">読み込み中...</div>;
+  if (!data) return <div className="rounded-2xl border bg-surface border-line p-8 text-center text-ink-3 font-display">データを取得できませんでした</div>;
 
   return (
-    <div className={`rounded-2xl border overflow-hidden ${cardBg}`}>
+    <div className="rounded-2xl border bg-surface border-line overflow-hidden font-display">
       <div className="px-4 py-3 flex items-center justify-between">
-        <h2 className={`font-bold ${textPrimary}`}>📊 みんなの予想</h2>
-        <span className={`text-xs px-2 py-1 rounded-full ${isDark ? "bg-slate-700 text-slate-300" : "bg-gray-100 text-gray-600"}`}>
-          {data.total_votes}人が投票
+        <h2 className="font-bold text-ink">📊 みんなの予想</h2>
+        <span className="text-xs px-2 py-1 rounded-full bg-surface-2 text-ink-2">
+          <span className="font-data">{data.total_votes}</span>人が投票
         </span>
       </div>
-      <div className={`flex border-b ${isDark ? "border-slate-700" : "border-gray-100"}`}>
+      <div className="flex border-b border-line">
         {tabs.map(tab => (
           <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-            className={`flex-1 py-2 text-xs font-medium border-b-2 transition-colors ${activeTab === tab.key ? tabActive : tabInactive}`}>
-            {tab.label} {tab.count}
+            className={`flex-1 py-2 text-xs font-medium border-b-2 transition-colors ${
+              activeTab === tab.key
+                ? "text-brand-strong border-brand"
+                : "text-ink-3 border-transparent hover:text-ink-2"
+            }`}>
+            {tab.label} <span className="font-data">{tab.count}</span>
           </button>
         ))}
       </div>
       <div className="p-4 space-y-3">
         {currentData.length === 0 ? (
-          <div className={`text-center py-4 text-sm ${textMuted}`}>まだ投票がありません</div>
+          <div className="text-center py-4 text-sm text-ink-3">まだ投票がありません</div>
         ) : (
           currentData.slice(0, 5).map((item, i) => (
             <div key={item.post_number} className="flex items-center gap-3">
               <span className="w-6 text-center">{getMedalIcon(i)}</span>
-              <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${isDark ? "bg-slate-700 text-slate-100" : "bg-gray-800 text-white"}`}>
+              <span
+                className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold font-data"
+                style={{ background: "var(--ink)", color: "var(--bg)" }}
+              >
                 {item.post_number}
               </span>
               <div className="flex-1">
-                <div className={`text-sm font-bold ${textPrimary}`}>{item.horse_name}</div>
-                <div className={`h-2 rounded-full overflow-hidden ${barBg}`}>
-                  <div className={`h-full ${getBarColor(activeTab)}`} style={{ width: `${item.percentage}%` }} />
+                <div className="text-sm font-bold text-ink">{item.horse_name}</div>
+                <div className="h-2 rounded-full overflow-hidden bg-surface-2">
+                  <div className="h-full" style={{ width: `${item.percentage}%`, background: BAR_COLOR[activeTab] }} />
                 </div>
               </div>
               <div className="text-right">
-                <span className={`text-sm font-bold ${isDark ? "text-amber-400" : "text-green-600"}`}>{item.percentage.toFixed(1)}%</span>
-                <div className={`text-xs ${textMuted}`}>({item.count}票)</div>
+                <span className="text-sm font-bold text-brand-strong font-data">{item.percentage.toFixed(1)}%</span>
+                <div className="text-xs text-ink-3 font-data">({item.count}票)</div>
               </div>
             </div>
           ))

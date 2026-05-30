@@ -31,9 +31,9 @@ export default function HorseList({ entries, myVote, results }: Props) {
   const dangerPickId = myVote?.vote_picks?.find((p: any) => p.pick_type === "danger")?.race_entry_id;
 
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-1.5 font-display">
       {/* ヘッダー */}
-      <div className="grid grid-cols-12 gap-2 px-3 py-2 text-xs text-gray-400 font-medium">
+      <div className="grid grid-cols-12 gap-2 px-3 py-2 text-xs text-ink-3 font-medium">
         <div className="col-span-1">枠</div>
         <div className="col-span-1">番</div>
         <div className="col-span-3">馬名</div>
@@ -50,24 +50,26 @@ export default function HorseList({ entries, myVote, results }: Props) {
         const isDanger = entry.id === dangerPickId;
         const result = results?.find((r: any) => r.race_entry_id === entry.id);
 
+        const rowStyle: React.CSSProperties =
+          result?.finish_position === 1
+            ? { background: "var(--gate-gold-soft)", border: "1px solid var(--gate-gold)" }
+            : result?.finish_position && result.finish_position <= 3
+            ? { background: "var(--surface-2)", border: "1px solid var(--line)" }
+            : isWin
+            ? { background: "var(--brand-soft)", border: "1px solid var(--brand)" }
+            : isPlace
+            ? { background: "var(--info-soft)", border: "1px solid var(--info)" }
+            : isBack
+            ? { background: "var(--osae-soft)", border: "1px solid var(--osae)" }
+            : isDanger
+            ? { background: "var(--danger-soft)", border: "1px solid var(--danger)" }
+            : { background: "var(--surface-2)", border: "1px solid transparent" };
+
         return (
           <div
             key={entry.id}
-            className={`grid grid-cols-12 gap-2 items-center px-3 py-2.5 rounded-lg text-sm ${
-              result?.finish_position === 1
-                ? "bg-yellow-50 border border-yellow-200"
-                : result?.finish_position && result.finish_position <= 3
-                ? "bg-orange-50 border border-orange-100"
-                : isWin
-                ? "bg-red-50 border border-red-100"
-                : isPlace
-                ? "bg-blue-50 border border-blue-100"
-                : isBack
-                ? "bg-yellow-50 border border-yellow-100"
-                : isDanger
-                ? "bg-gray-100 border border-gray-200"
-                : "bg-gray-50"
-            }`}
+            className="grid grid-cols-12 gap-2 items-center px-3 py-2.5 rounded-lg text-sm"
+            style={rowStyle}
           >
             {/* 枠番 */}
             <div className="col-span-1">
@@ -76,42 +78,42 @@ export default function HorseList({ entries, myVote, results }: Props) {
 
             {/* 馬番 */}
             <div className="col-span-1">
-              <span className="font-bold text-gray-800">{entry.post_number}</span>
+              <span className="font-bold text-ink font-data">{entry.post_number}</span>
             </div>
 
             {/* 馬名 */}
             <div className="col-span-3">
-              <div className="font-bold text-gray-800 truncate">
+              <div className="font-bold text-ink truncate">
                 {entry.horses?.id ? (
-                  <Link href={"/horses/" + entry.horses.id} className="hover:text-green-600 hover:underline">
+                  <Link href={"/horses/" + entry.horses.id} className="hover:text-brand-strong hover:underline">
                     {entry.horses.name}
                   </Link>
                 ) : (
                   "不明"
                 )}
               </div>
-              <div className="text-xs text-gray-400 truncate">
+              <div className="text-xs text-ink-3 truncate">
                 {entry.horses?.sex} {entry.horses?.sire}
               </div>
             </div>
 
             {/* 騎手 */}
-            <div className="col-span-2 text-gray-600 truncate">
+            <div className="col-span-2 text-ink-2 truncate">
               {entry.jockey}
             </div>
 
             {/* 斤量 */}
-            <div className="col-span-1 text-right text-gray-500">
+            <div className="col-span-1 text-right text-ink-3 font-data">
               {entry.weight}
             </div>
 
             {/* オッズ */}
             <div className="col-span-2 text-right">
               {entry.odds && (
-                <span className="font-bold text-gray-800">{entry.odds}</span>
+                <span className="font-bold text-ink font-data">{entry.odds}</span>
               )}
               {entry.popularity && (
-                <span className="text-xs text-gray-400 ml-1">
+                <span className="text-xs text-ink-3 ml-1 font-data">
                   ({entry.popularity}人気)
                 </span>
               )}
@@ -120,18 +122,23 @@ export default function HorseList({ entries, myVote, results }: Props) {
             {/* 予想マーク */}
             <div className="col-span-2 text-right">
               {result && (
-                <span className={`text-xs font-bold px-2 py-0.5 rounded ${
-                  result.finish_position === 1 ? "bg-yellow-200 text-yellow-800" :
-                  result.finish_position <= 3 ? "bg-orange-200 text-orange-800" :
-                  "bg-gray-200 text-gray-600"
-                }`}>
+                <span
+                  className="text-xs font-bold px-2 py-0.5 rounded font-data"
+                  style={
+                    result.finish_position === 1
+                      ? { background: "var(--gate-gold)", color: "#3a2c08" }
+                      : result.finish_position <= 3
+                      ? { background: "var(--surface)", color: "var(--ink-2)" }
+                      : { background: "var(--surface)", color: "var(--ink-3)" }
+                  }
+                >
                   {result.finish_position}着
                 </span>
               )}
-              {isWin && <span className="text-xs font-bold text-red-600 ml-1">◎</span>}
-              {isPlace && <span className="text-xs font-bold text-blue-600 ml-1">○</span>}
-              {isBack && <span className="text-xs font-bold text-yellow-600 ml-1">△</span>}
-              {isDanger && <span className="text-xs font-bold text-gray-500 ml-1">⚠️</span>}
+              {isWin && <span className="text-xs font-bold text-brand-strong ml-1">◎</span>}
+              {isPlace && <span className="text-xs font-bold text-info ml-1">○</span>}
+              {isBack && <span className="text-xs font-bold text-osae ml-1">△</span>}
+              {isDanger && <span className="text-xs font-bold text-ink-3 ml-1">⚠️</span>}
             </div>
           </div>
         );
@@ -141,7 +148,7 @@ export default function HorseList({ entries, myVote, results }: Props) {
 }
 
 function GateNumber({ gate }: { gate: number | null }) {
-  if (!gate) return <span className="text-gray-300">-</span>;
+  if (!gate) return <span className="text-ink-3">-</span>;
   const colors: Record<number, string> = {
     1: "bg-white text-gray-800 border border-gray-300",
     2: "bg-black text-white",
@@ -153,7 +160,7 @@ function GateNumber({ gate }: { gate: number | null }) {
     8: "bg-pink-400 text-white",
   };
   return (
-    <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${colors[gate] ?? "bg-gray-200"}`}>
+    <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold font-data ${colors[gate] ?? "bg-gray-200"}`}>
       {gate}
     </span>
   );

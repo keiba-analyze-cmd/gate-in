@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTheme } from "@/contexts/ThemeContext";
 import confetti from "canvas-confetti";
 import dynamic from "next/dynamic";
 
@@ -86,6 +85,13 @@ const PICK_LABELS: Record<string, { sym: string; label: string }> = {
   danger: { sym: "⚠️", label: "危険" },
 };
 
+function pickColorClass(t: string): string {
+  if (t === "win") return "text-brand-strong";
+  if (t === "place") return "text-info";
+  if (t === "danger") return "text-ink-3";
+  return "text-osae";
+}
+
 export default function VoteSummary({
   vote,
   isFinished,
@@ -93,7 +99,6 @@ export default function VoteSummary({
   raceInfo,
   userName,
 }: Props) {
-  const { isDark } = useTheme();
   const [hasAnimated, setHasAnimated] = useState(false);
   const [showBigPoints, setShowBigPoints] = useState(false);
   const [showShareCard, setShowShareCard] = useState(false);
@@ -115,13 +120,6 @@ export default function VoteSummary({
     }
   }, [isFinished, isHit, isPerfect, hasAnimated]);
 
-  // Styles
-  const textPrimary = isDark ? "text-slate-100" : "text-gray-900";
-  const textSecondary = isDark ? "text-slate-400" : "text-gray-600";
-  const textMuted = isDark ? "text-slate-500" : "text-gray-400";
-  const borderColor = isDark ? "border-slate-700" : "border-gray-200";
-  const cardBg = isDark ? "bg-slate-900" : "bg-white";
-
   const winPick = picks.find((p) => p.pick_type === "win");
   const placePicks = picks.filter((p) => p.pick_type === "place");
   const backPicks = picks.filter((p) => p.pick_type === "back");
@@ -140,23 +138,18 @@ export default function VoteSummary({
   // ── 結果確定前: 予想表示 ──
   if (!isFinished) {
     return (
-      <div className={`rounded-2xl border p-5 ${cardBg} ${borderColor}`}>
-        <h3 className={`font-bold mb-3 ${textPrimary}`}>📦 あなたの予想</h3>
+      <div className="rounded-2xl border bg-surface border-line p-5 font-display">
+        <h3 className="font-bold mb-3 text-ink">📦 あなたの予想</h3>
         <div className="space-y-2">
           {picks.map((pick, i) => {
             const cfg = PICK_LABELS[pick.pick_type] ?? PICK_LABELS.back;
             return (
               <div key={i} className="flex items-center gap-2">
-                <span className={`text-sm font-bold ${
-                  pick.pick_type === "win" ? "text-red-500"
-                  : pick.pick_type === "place" ? "text-blue-500"
-                  : pick.pick_type === "danger" ? (isDark ? "text-slate-400" : "text-gray-500")
-                  : isDark ? "text-yellow-400" : "text-yellow-600"
-                }`}>
+                <span className={`text-sm font-bold ${pickColorClass(pick.pick_type)}`}>
                   {cfg.sym} {cfg.label}
                 </span>
-                <span className={textPrimary}>
-                  {pick.race_entries?.post_number}{" "}
+                <span className="text-ink">
+                  <span className="font-data">{pick.race_entries?.post_number}</span>{" "}
                   {pick.race_entries?.horses?.name ?? "不明"}
                 </span>
               </div>
@@ -290,23 +283,20 @@ export default function VoteSummary({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 font-display">
       {/* ── ポイントヘッダー ── */}
       <div
-        className={`rounded-2xl p-5 text-center ${
-          isHit
-            ? "bg-gradient-to-br from-green-600 to-emerald-600 text-white"
-            : isDark
-            ? "bg-slate-800 text-slate-300"
-            : "bg-gray-100 text-gray-600"
-        } ${showBigPoints && isHit ? "animate-pulse" : ""}`}
+        className={`rounded-2xl p-5 text-center ${isHit ? "text-white" : "bg-surface-2 text-ink-2"} ${
+          showBigPoints && isHit ? "animate-pulse" : ""
+        }`}
+        style={isHit ? { background: "linear-gradient(135deg, var(--brand), var(--brand-strong))" } : undefined}
       >
         {isHit ? (
           <>
             <div className="text-xs opacity-80 mb-1">
               {raceInfo?.name || ""}
             </div>
-            <div className="text-4xl font-black mb-1">
+            <div className="text-4xl font-black mb-1 font-data">
               +{vote.earned_points} P
             </div>
             <div className="inline-block bg-white/20 px-4 py-1 rounded-full text-sm font-bold">
@@ -317,7 +307,7 @@ export default function VoteSummary({
           <>
             <div className="text-3xl mb-2">😢</div>
             <div className="text-lg font-bold">ハズレ</div>
-            <div className={`text-xs mt-1 ${textMuted}`}>
+            <div className="text-xs mt-1 text-ink-3">
               次のレースでリベンジ！
             </div>
           </>
@@ -325,15 +315,9 @@ export default function VoteSummary({
       </div>
 
       {/* ── 予想と着順 ── */}
-      <div
-        className={`rounded-2xl border overflow-hidden ${cardBg} ${borderColor}`}
-      >
-        <div
-          className={`px-4 py-2.5 border-b ${borderColor} ${
-            isDark ? "bg-slate-800/50" : "bg-gray-50"
-          }`}
-        >
-          <div className={`text-[10px] tracking-wider ${textMuted}`}>
+      <div className="rounded-2xl border bg-surface border-line overflow-hidden">
+        <div className="px-4 py-2.5 border-b border-line bg-surface-2">
+          <div className="text-[10px] tracking-wider text-ink-3">
             YOUR PICKS
           </div>
         </div>
@@ -345,37 +329,23 @@ export default function VoteSummary({
               <div
                 key={i}
                 className={`flex items-center gap-2 py-2 ${
-                  i < picks.length - 1
-                    ? `border-b ${isDark ? "border-slate-800" : "border-gray-50"}`
-                    : ""
+                  i < picks.length - 1 ? "border-b border-line" : ""
                 }`}
               >
-                <span
-                  className={`text-xs font-bold min-w-[16px] ${
-                    pick.pick_type === "win"
-                      ? "text-red-500"
-                      : pick.pick_type === "place"
-                      ? "text-blue-500"
-                      : pick.pick_type === "danger"
-                      ? textMuted
-                      : isDark
-                      ? "text-yellow-400"
-                      : "text-yellow-600"
-                  }`}
-                >
+                <span className={`text-xs font-bold min-w-[16px] ${pickColorClass(pick.pick_type)}`}>
                   {cfg.sym}
                 </span>
-                <span className={`text-sm font-bold flex-1 ${textPrimary}`}>
-                  {pick.race_entries?.post_number}{" "}
+                <span className="text-sm font-bold flex-1 text-ink">
+                  <span className="font-data">{pick.race_entries?.post_number}</span>{" "}
                   {pick.race_entries?.horses?.name ?? "不明"}
                 </span>
                 <span
                   className={`text-xs font-medium ${
                     hitResult === true
-                      ? "text-green-500"
+                      ? "text-brand-strong"
                       : hitResult === false
-                      ? "text-red-400"
-                      : textMuted
+                      ? "text-danger"
+                      : "text-ink-3"
                   }`}
                 >
                   {hitResult === true
@@ -391,15 +361,9 @@ export default function VoteSummary({
       </div>
 
       {/* ── 馬券結果 ── */}
-      <div
-        className={`rounded-2xl border overflow-hidden ${cardBg} ${borderColor}`}
-      >
-        <div
-          className={`px-4 py-2.5 border-b ${borderColor} ${
-            isDark ? "bg-slate-800/50" : "bg-gray-50"
-          }`}
-        >
-          <div className={`text-[10px] tracking-wider ${textMuted}`}>
+      <div className="rounded-2xl border bg-surface border-line overflow-hidden">
+        <div className="px-4 py-2.5 border-b border-line bg-surface-2">
+          <div className="text-[10px] tracking-wider text-ink-3">
             POINTS BREAKDOWN
           </div>
         </div>
@@ -408,31 +372,27 @@ export default function VoteSummary({
             <div
               key={i}
               className={`flex items-center justify-between py-2 ${
-                i < betResults.length - 1
-                  ? `border-b ${isDark ? "border-slate-800" : "border-gray-50"}`
-                  : ""
+                i < betResults.length - 1 ? "border-b border-line" : ""
               }`}
             >
               <div className="flex items-center gap-2">
                 <span className="text-base">{bet.icon}</span>
-                <span className={`text-sm font-medium ${textPrimary}`}>
+                <span className="text-sm font-medium text-ink">
                   {bet.label}
                 </span>
                 {bet.detail && (
-                  <span className={`text-[10px] ${textMuted}`}>
+                  <span className="text-[10px] text-ink-3">
                     {bet.detail}
                   </span>
                 )}
               </div>
               <span
-                className={`text-sm font-bold ${
+                className={`text-sm font-bold font-data ${
                   bet.isHit
                     ? bet.icon === "💎" || bet.icon === "🔥"
-                      ? isDark
-                        ? "text-amber-400"
-                        : "text-amber-600"
-                      : "text-green-500"
-                    : "text-red-400"
+                      ? "text-gate-gold-strong"
+                      : "text-brand-strong"
+                    : "text-danger"
                 }`}
               >
                 {bet.isHit
@@ -446,23 +406,11 @@ export default function VoteSummary({
         </div>
 
         {/* 合計 */}
-        <div
-          className={`px-4 py-3 border-t ${borderColor} ${
-            isDark ? "bg-slate-800/50" : "bg-gray-50"
-          } flex items-center justify-between`}
-        >
-          <span className={`text-sm font-bold ${textPrimary}`}>
+        <div className="px-4 py-3 border-t border-line bg-surface-2 flex items-center justify-between">
+          <span className="text-sm font-bold text-ink">
             合計
           </span>
-          <span
-            className={`text-xl font-black ${
-              isHit
-                ? "text-green-500"
-                : isDark
-                ? "text-slate-500"
-                : "text-gray-400"
-            }`}
-          >
+          <span className={`text-xl font-black font-data ${isHit ? "text-brand-strong" : "text-ink-3"}`}>
             {isHit ? `+${vote.earned_points} P` : "0 P"}
           </span>
         </div>
@@ -473,11 +421,7 @@ export default function VoteSummary({
         <div className="flex gap-3">
           <button
             onClick={() => setShowShareCard(true)}
-            className={`flex-1 py-3 rounded-xl font-bold text-sm transition-colors ${
-              isDark
-                ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                : "bg-green-600 text-white hover:bg-green-700"
-            }`}
+            className="flex-1 py-3 rounded-xl font-bold text-sm transition-colors bg-brand hover:bg-brand-strong text-white"
           >
             📸 的中報告をシェア
           </button>
@@ -486,11 +430,7 @@ export default function VoteSummary({
               const url = `${window.location.origin}${window.location.pathname}`;
               navigator.clipboard?.writeText(url);
             }}
-            className={`w-12 py-3 rounded-xl text-lg ${
-              isDark
-                ? "bg-slate-700 hover:bg-slate-600"
-                : "bg-gray-100 hover:bg-gray-200"
-            }`}
+            className="w-12 py-3 rounded-xl text-lg bg-surface-2 hover:opacity-80"
           >
             🔗
           </button>
