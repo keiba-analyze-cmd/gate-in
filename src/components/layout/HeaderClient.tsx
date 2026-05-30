@@ -40,6 +40,7 @@ export default function HeaderClient({ user, profile, unreadCount }: Props) {
             <NavLink href="/races" isDark={isDark}>レース</NavLink>
             <NavLink href="/timeline" isDark={isDark}>TL</NavLink>
             <NavLink href="/contest" isDark={isDark}>大会</NavLink>
+            <NavLink href="/arena" isDark={isDark}>アリーナ</NavLink>
             <NavLink href="/rankings" isDark={isDark}>ランキング</NavLink>
             <NavLink href="/users" isDark={isDark}>検索</NavLink>
           </nav>

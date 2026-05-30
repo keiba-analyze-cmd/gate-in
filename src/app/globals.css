@@ -2,6 +2,105 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* =========================================================
+   ゲートイン！ デザインシステム A（フェーズ2 追加トークン）
+   既存の --primary/--accent/--gold はそのまま残し、新しい意味ベースの
+   トークンを追加する。新コンポーネントは bg-surface / text-ink /
+   font-display などで参照する。既存ページの見た目は変えない
+   （body の既定背景・フォントは据え置き。全体切替は後フェーズ）。
+   ※ --gold は既存と衝突するため、新しい金は --gate-gold に分離。
+   ========================================================= */
+:root {
+  /* 面・文字 */
+  --bg: #fbf7f1;
+  --surface: #ffffff;
+  --surface-2: #f7f1e8;
+  --ink: #231c14;
+  --ink-2: #7a6f60;
+  --ink-3: #a99c89;
+  --line: #efe7da;
+  /* 意味色：緑=主役/GO、金=G1/賞金のみ、赤=締切/危険/外し */
+  --brand: #159a57;
+  --brand-strong: #0f7e46;
+  --brand-soft: #e2f3ea;
+  --gate-gold: #caa24a;
+  --gate-gold-strong: #8a6a17;
+  --gate-gold-soft: #f6edd6;
+  --danger: #d63333;
+  --danger-soft: #ffe6e6;
+  --info: #2563c9;
+  --info-soft: #e6f0ff;
+  --osae: #b27400;
+  --osae-soft: #fff2db;
+  /* キャラ識別色（アバター/ドット専用） */
+  --c-hayate: #2563c9;
+  --c-kazan: #d63333;
+  --c-hakusen: #159a57;
+  --c-hibari: #ea6a1e;
+  --c-gantetsu: #8a8a8a;
+  /* フォント */
+  --font-rounded: "M PLUS Rounded 1c", system-ui, sans-serif;
+  --font-mononum: "Roboto Mono", ui-monospace, monospace;
+}
+
+.dark {
+  --bg: #181410;
+  --surface: #221c16;
+  --surface-2: #2a231b;
+  --ink: #f3ece1;
+  --ink-2: #b3a692;
+  --ink-3: #7d7263;
+  --line: #352c22;
+  --brand: #2bb673;
+  --brand-strong: #1f9d60;
+  --brand-soft: #15301f;
+  --gate-gold: #e0c074;
+  --gate-gold-strong: #e0c074;
+  --gate-gold-soft: #2e2616;
+  --danger: #ef6a6a;
+  --danger-soft: #3a1f1f;
+  --info: #6fa0ee;
+  --info-soft: #1c2740;
+  --osae: #d6a44a;
+  --osae-soft: #2e2614;
+}
+
+/* 上のCSS変数を Tailwind ユーティリティへ。
+   bg-surface / text-ink / text-ink-2 / border-line / bg-brand /
+   bg-gate-gold / font-display / font-data などが使えるようになる。
+   inline なので実行時にライト/ダークが切り替わる。 */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-gate-gold: var(--gate-gold);
+  --color-gate-gold-strong: var(--gate-gold-strong);
+  --color-gate-gold-soft: var(--gate-gold-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-osae: var(--osae);
+  --color-osae-soft: var(--osae-soft);
+
+  --color-c-hayate: var(--c-hayate);
+  --color-c-kazan: var(--c-kazan);
+  --color-c-hakusen: var(--c-hakusen);
+  --color-c-hibari: var(--c-hibari);
+  --color-c-gantetsu: var(--c-gantetsu);
+
+  --font-display: var(--font-rounded);
+  --font-data: var(--font-mononum);
+}
+
 @layer base {
   :root {
     --primary: #16a34a;

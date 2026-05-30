@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { id: 'races', href: '/races', icon: '🏇', label: 'レース', match: /^\/races/ },
   { id: 'timeline', href: '/timeline', icon: '📣', label: 'TL', match: /^\/timeline/ },
   { id: 'contest', href: '/contest', icon: '🏆', label: '大会', match: /^\/contest/ },
+  { id: 'arena', href: '/arena', icon: '🏟', label: 'アリーナ', match: /^\/arena/ },
   { id: 'mypage', href: '/mypage', icon: '👤', label: 'マイページ', match: /^\/mypage/ },
 ];
 
