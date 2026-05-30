@@ -3,6 +3,7 @@
 import Link from "next/link";
 import UserAvatar from "@/components/ui/UserAvatar";
 import { useTheme } from "@/contexts/ThemeContext";
+import RatingBlock from "@/components/rating/RatingBlock";
 
 type Props = {
   user: { id: string };
@@ -88,6 +89,8 @@ export default function MyPageClient({
           </div>
         </Link>
       </div>
+
+      <RatingBlock userId={user.id} />
 
       {/* 統計 */}
       <div className="grid grid-cols-2 gap-2">

@@ -7,6 +7,7 @@ import FollowButton from "@/components/social/FollowButton";
 import BlockButton from "@/components/social/BlockButton";
 import UserActivityFeed from "@/components/social/UserActivityFeed";
 import VerifiedBadge from "@/components/ui/VerifiedBadge";
+import RatingBlock from "@/components/rating/RatingBlock";
 
 type Rank = { id: string; name: string; icon: string; threshold: number };
 
@@ -84,6 +85,11 @@ export default function UserProfileClient({
               <BlockButton targetUserId={userId} initialBlocked={isBlocked} />
             </div>
           )}
+        </div>
+
+        {/* 実力レート */}
+        <div className="mb-4">
+          <RatingBlock userId={userId} />
         </div>
 
         {/* 自己紹介 */}
