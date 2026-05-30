@@ -1,0 +1,204 @@
+{
+  "date": "2026-05-17",
+  "model": "v3.1-sire",
+  "budgetCap": 15000,
+  "skipped": false,
+  "predictions": [
+    {
+      "leg": 1,
+      "course": "京都",
+      "raceNumber": 10,
+      "raceName": "錦S",
+      "postTime": "2026-05-17T05:50:00+00:00",
+      "difficulty": {
+        "score": 39.5,
+        "level": "Med-Hard"
+      },
+      "honmei": [
+        {
+          "umaban": 10,
+          "horseName": "インヴォーグ",
+          "jockeyName": "高杉吏麒",
+          "idm": 66,
+          "odds": 2.9,
+          "score": 63.6
+        },
+        {
+          "umaban": 12,
+          "horseName": "カズミクラーシュ",
+          "jockeyName": "岩田康誠",
+          "idm": 61.5,
+          "odds": 6.6,
+          "score": 58.7
+        }
+      ],
+      "ana": [],
+      "headCount": 13
+    },
+    {
+      "leg": 2,
+      "course": "東京",
+      "raceNumber": 10,
+      "raceName": "青梅特別",
+      "postTime": "2026-05-17T06:00:00+00:00",
+      "difficulty": {
+        "score": 42.2,
+        "level": "Med-Easy"
+      },
+      "honmei": [
+        {
+          "umaban": 1,
+          "horseName": "グロスビーク",
+          "jockeyName": "Ｃ．ルメール",
+          "idm": 55.9,
+          "odds": 2.3,
+          "score": 58.6
+        },
+        {
+          "umaban": 14,
+          "horseName": "ケイアイアルタイル",
+          "jockeyName": "松山弘平",
+          "idm": 58,
+          "odds": 6.1,
+          "score": 57.3
+        }
+      ],
+      "ana": [],
+      "headCount": 15
+    },
+    {
+      "leg": 3,
+      "course": "新潟",
+      "raceNumber": 11,
+      "raceName": "弥彦S",
+      "postTime": "2026-05-17T06:15:00+00:00",
+      "difficulty": {
+        "score": 35.8,
+        "level": "Med-Hard"
+      },
+      "honmei": [
+        {
+          "umaban": 6,
+          "horseName": "エストゥペンダ",
+          "jockeyName": "荻野極",
+          "idm": 62,
+          "odds": 2.8,
+          "score": 61.6
+        },
+        {
+          "umaban": 7,
+          "horseName": "マイエレメント",
+          "jockeyName": "斎藤新",
+          "idm": 57.2,
+          "odds": 5.1,
+          "score": 57
+        }
+      ],
+      "ana": [
+        {
+          "umaban": 12,
+          "horseName": "ピンキープロミス",
+          "jockeyName": "武藤雅",
+          "idm": 59,
+          "odds": 28.3,
+          "kazScore": 205.9,
+          "sire": "ゴールドシップ",
+          "sireBoost": "複22%×1.04"
+        }
+      ],
+      "headCount": 16
+    },
+    {
+      "leg": 4,
+      "course": "京都",
+      "raceNumber": 11,
+      "raceName": "栗東S",
+      "postTime": "2026-05-17T06:25:00+00:00",
+      "difficulty": {
+        "score": 35.3,
+        "level": "Med-Hard"
+      },
+      "honmei": [
+        {
+          "umaban": 13,
+          "horseName": "ジャスティンアース",
+          "jockeyName": "吉村誠之助",
+          "idm": 69,
+          "odds": 2.9,
+          "score": 65.1
+        },
+        {
+          "umaban": 11,
+          "horseName": "ベルジュロネット",
+          "jockeyName": "鮫島克駿",
+          "idm": 65,
+          "odds": 4.9,
+          "score": 59.1
+        }
+      ],
+      "ana": [
+        {
+          "umaban": 7,
+          "horseName": "アドバンスファラオ",
+          "jockeyName": "高倉稜",
+          "idm": 59,
+          "odds": 49.9,
+          "kazScore": 273.1,
+          "sire": "アメリカンファラオ",
+          "sireBoost": "複29%×1.18"
+        }
+      ],
+      "headCount": 16
+    },
+    {
+      "leg": 5,
+      "course": "東京",
+      "raceNumber": 11,
+      "raceName": "ヴィクトリアマイル",
+      "postTime": "2026-05-17T06:40:00+00:00",
+      "difficulty": {
+        "score": 27.2,
+        "level": "Hard"
+      },
+      "honmei": [
+        {
+          "umaban": 12,
+          "horseName": "エンブロイダリー",
+          "jockeyName": "Ｃ．ルメール",
+          "idm": 72,
+          "odds": 3.2,
+          "score": 66.5
+        },
+        {
+          "umaban": 8,
+          "horseName": "カムニャック",
+          "jockeyName": "川田将雅",
+          "idm": 71,
+          "odds": 4,
+          "score": 64.3
+        }
+      ],
+      "ana": [
+        {
+          "umaban": 15,
+          "horseName": "アイサンサン",
+          "jockeyName": "幸英明",
+          "idm": 66,
+          "odds": 37.6,
+          "kazScore": 288.2,
+          "sire": "キズナ",
+          "sireBoost": "複30%×1.2"
+        }
+      ],
+      "headCount": 18
+    }
+  ],
+  "totalCombinations": 108,
+  "cost": 10800,
+  "skipInfo": {
+    "hardCount": 1,
+    "totalHeadCount": 78,
+    "shouldSkip": false,
+    "forced": false
+  }
+}

@@ -1,7 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { checkAndGrantBadges } from "@/lib/badges";
 import { checkRankUp } from "@/lib/rank-check";
-import { settleRaceRatingWithSupabase } from "@/lib/rating/supabase-deps";
 import {
   getWinPointsByOdds,
   getPlacePointsByOdds,
@@ -686,13 +685,6 @@ export async function settleRace(
     }
   } catch (aiErr: any) {
     console.error("[settle-race] AI prediction results error:", aiErr.message);
-  }
-
-  // --- レーティング（全レース対象・既存ポイントとは別系統。失敗しても既存の精算結果には一切影響させない） ---
-  try {
-    await settleRaceRatingWithSupabase(supabase, raceId);
-  } catch (e) {
-    console.error(`[rating] settleRaceRating failed for race ${raceId}:`, e);
   }
 
   return { success: errors.length === 0, settled_votes: settledVotes, total_points_awarded: totalPointsAwarded, errors };

@@ -1,0 +1,204 @@
+{
+  "date": "2026-05-23",
+  "model": "v3.1-sire",
+  "budgetCap": 15000,
+  "skipped": false,
+  "predictions": [
+    {
+      "leg": 1,
+      "course": "東京",
+      "raceNumber": 10,
+      "raceName": "高尾特別",
+      "postTime": "2026-05-23T05:55:00+00:00",
+      "difficulty": {
+        "score": 32.2,
+        "level": "Hard"
+      },
+      "honmei": [
+        {
+          "umaban": 5,
+          "horseName": "チムグクル",
+          "jockeyName": "Ｃ．ルメール",
+          "idm": 54,
+          "odds": 2.8,
+          "score": 57.6
+        },
+        {
+          "umaban": 8,
+          "horseName": "パワースナッチ",
+          "jockeyName": "Ｄ．レーン",
+          "idm": 55.1,
+          "odds": 3.4,
+          "score": 56.2
+        }
+      ],
+      "ana": [],
+      "headCount": 16
+    },
+    {
+      "leg": 2,
+      "course": "京都",
+      "raceNumber": 10,
+      "raceName": "シドニートロフィー",
+      "postTime": "2026-05-23T06:05:00+00:00",
+      "difficulty": {
+        "score": 32.1,
+        "level": "Hard"
+      },
+      "honmei": [
+        {
+          "umaban": 6,
+          "horseName": "リンクスティップ",
+          "jockeyName": "西村淳也",
+          "idm": 63,
+          "odds": 3.1,
+          "score": 62
+        },
+        {
+          "umaban": 2,
+          "horseName": "ラブリージャブリー",
+          "jockeyName": "松山弘平",
+          "idm": 61,
+          "odds": 7,
+          "score": 57
+        }
+      ],
+      "ana": [],
+      "headCount": 16
+    },
+    {
+      "leg": 3,
+      "course": "新潟",
+      "raceNumber": 11,
+      "raceName": "大日岳特別",
+      "postTime": "2026-05-23T06:20:00+00:00",
+      "difficulty": {
+        "score": 31.3,
+        "level": "Hard"
+      },
+      "honmei": [
+        {
+          "umaban": 4,
+          "horseName": "ヴァンヴィーヴ",
+          "jockeyName": "舟山瑠泉",
+          "idm": 56.1,
+          "odds": 2.9,
+          "score": 58.7
+        },
+        {
+          "umaban": 15,
+          "horseName": "ビービーエフォート",
+          "jockeyName": "丹内祐次",
+          "idm": 55,
+          "odds": 3.5,
+          "score": 56.1
+        }
+      ],
+      "ana": [
+        {
+          "umaban": 1,
+          "horseName": "スペルキャスター",
+          "jockeyName": "小林凌大",
+          "idm": 53,
+          "odds": 45.7,
+          "kazScore": 223.6,
+          "sire": "ロードカナロア",
+          "sireBoost": "複25%×1.1"
+        }
+      ],
+      "headCount": 16
+    },
+    {
+      "leg": 4,
+      "course": "東京",
+      "raceNumber": 11,
+      "raceName": "欅ステークス",
+      "postTime": "2026-05-23T06:30:00+00:00",
+      "difficulty": {
+        "score": 37.8,
+        "level": "Med-Hard"
+      },
+      "honmei": [
+        {
+          "umaban": 3,
+          "horseName": "ドンインザムード",
+          "jockeyName": "荻野極",
+          "idm": 66,
+          "odds": 2.6,
+          "score": 63.6
+        },
+        {
+          "umaban": 14,
+          "horseName": "ペイシャケイプ",
+          "jockeyName": "横山典弘",
+          "idm": 63,
+          "odds": 5.4,
+          "score": 59.9
+        }
+      ],
+      "ana": [
+        {
+          "umaban": 13,
+          "horseName": "カンパニョーラ",
+          "jockeyName": "吉田豊",
+          "idm": 60,
+          "odds": 31.6,
+          "kazScore": 218.8,
+          "sire": "ジャスタウェイ",
+          "sireBoost": "複23%×1.06"
+        }
+      ],
+      "headCount": 16
+    },
+    {
+      "leg": 5,
+      "course": "京都",
+      "raceNumber": 11,
+      "raceName": "平安ステークス",
+      "postTime": "2026-05-23T06:45:00+00:00",
+      "difficulty": {
+        "score": 31.8,
+        "level": "Hard"
+      },
+      "honmei": [
+        {
+          "umaban": 14,
+          "horseName": "ロードクロンヌ",
+          "jockeyName": "横山和生",
+          "idm": 69.1,
+          "odds": 3.2,
+          "score": 65.1
+        },
+        {
+          "umaban": 11,
+          "horseName": "タイトニット",
+          "jockeyName": "川田将雅",
+          "idm": 64,
+          "odds": 5.5,
+          "score": 60.5
+        }
+      ],
+      "ana": [
+        {
+          "umaban": 10,
+          "horseName": "シュラザック",
+          "jockeyName": "幸英明",
+          "idm": 65,
+          "odds": 44.9,
+          "kazScore": 302.7,
+          "sire": "モーニン",
+          "sireBoost": "複31%×1.22"
+        }
+      ],
+      "headCount": 16
+    }
+  ],
+  "totalCombinations": 108,
+  "cost": 10800,
+  "skipInfo": {
+    "hardCount": 4,
+    "totalHeadCount": 80,
+    "shouldSkip": true,
+    "forced": true
+  }
+}

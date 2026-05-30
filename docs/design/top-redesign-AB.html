@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ゲートイン！ トップ リデザイン案 A / B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  body{
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    background:#e9ebf0;
+    background-image:radial-gradient(circle at 20% 0%, #f3f4f8 0%, #e3e6ec 55%, #dadde4 100%);
+    color:#2a2f3a;
+    padding:40px 20px 80px;
+    min-height:100vh;
+  }
+  .page-head{ max-width:960px; margin:0 auto 14px; text-align:center; }
+  .page-head h1{ font-size:22px; font-weight:900; letter-spacing:.02em; }
+  .page-head p{ font-size:13px; color:#6a7180; margin-top:8px; line-height:1.7; }
+  .ia-note{
+    max-width:760px; margin:18px auto 34px; background:#fff; border:1px solid #d8dbe3;
+    border-radius:14px; padding:16px 20px; font-size:12.5px; color:#444b59; line-height:1.85;
+  }
+  .ia-note b{ color:#1f2430; }
+  .ia-note .tag{ display:inline-block; background:#eef1f6; border-radius:6px; padding:1px 7px; margin:0 2px; font-size:11.5px; }
+
+  .stage{ display:flex; gap:46px; justify-content:center; align-items:flex-start; flex-wrap:wrap; }
+  .col{ display:flex; flex-direction:column; align-items:center; gap:16px; }
+  .col-cap{ max-width:390px; text-align:center; }
+  .col-cap .badge{ display:inline-block; font-weight:800; font-size:13px; padding:5px 14px; border-radius:999px; }
+  .col-cap.A .badge{ background:#fde9c8; color:#9a5b00; }
+  .col-cap.B .badge{ background:#dcefe2; color:#15693c; }
+  .col-cap h2{ font-size:16px; font-weight:800; margin:9px 0 4px; }
+  .col-cap p{ font-size:12px; color:#6a7180; line-height:1.7; }
+
+  /* device frame */
+  .device{
+    width:390px; background:#0e1116; border-radius:46px; padding:11px;
+    box-shadow:0 30px 60px -18px rgba(20,24,33,.45), 0 6px 18px -6px rgba(20,24,33,.25);
+  }
+  .screen{
+    width:100%; height:760px; border-radius:36px; overflow-y:auto; overflow-x:hidden;
+    position:relative; scrollbar-width:none;
+  }
+  .screen::-webkit-scrollbar{ display:none; }
+  .statusbar{ height:34px; display:flex; align-items:center; justify-content:space-between; padding:0 22px; font-size:12px; font-weight:700; }
+  .body{ padding:0 0 96px; }
+
+  /* generic helpers */
+  .row{ display:flex; align-items:center; }
+  .between{ justify-content:space-between; }
+  .chip{ display:inline-flex; align-items:center; font-weight:800; line-height:1; }
+
+  /* ====== STORIES (shared structure) ====== */
+  .stories{ display:flex; gap:14px; padding:14px 16px 4px; overflow-x:auto; scrollbar-width:none; }
+  .stories::-webkit-scrollbar{ display:none; }
+  .story{ flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:5px; width:56px; }
+  .avatar{ width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; color:#fff; }
+  .story .name{ font-size:10.5px; color:var(--ink-2); font-weight:700; white-space:nowrap; }
+  .story .tag{ font-size:9px; font-weight:800; padding:1px 6px; border-radius:999px; }
+
+  /* ====== HEADER ====== */
+  .appbar{ display:flex; align-items:center; justify-content:space-between; padding:8px 16px; }
+  .wordmark{ font-weight:900; font-size:18px; letter-spacing:.01em; display:flex; align-items:center; gap:6px; }
+  .appbar .right{ display:flex; align-items:center; gap:14px; }
+  .bell{ position:relative; font-size:18px; }
+  .bell .dot{ position:absolute; top:-3px; right:-4px; background:#e23b3b; color:#fff; font-size:9px; font-weight:800; width:14px; height:14px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .me{ width:30px; height:30px; border-radius:50%; }
+
+  /* ====== BOTTOM NAV (shared) ====== */
+  .nav{ position:sticky; bottom:0; left:0; right:0; height:74px; display:flex; align-items:flex-start; justify-content:space-around; padding-top:9px; backdrop-filter:blur(12px); }
+  .nav .item{ display:flex; flex-direction:column; align-items:center; gap:3px; font-size:10px; font-weight:700; width:56px; }
+  .nav .ic{ font-size:19px; line-height:1; }
+  .fab{ width:60px; height:60px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; margin-top:-22px; gap:2px; color:#fff; font-weight:800; box-shadow:0 10px 20px -6px rgba(0,0,0,.35); }
+  .fab .ic{ font-size:20px; }
+  .fab .lbl{ font-size:9.5px; }
+
+  /* section title */
+  .sec-h{ display:flex; align-items:center; justify-content:space-between; padding:18px 16px 8px; }
+  .sec-h .t{ font-weight:800; font-size:14.5px; display:flex; align-items:center; gap:6px; }
+  .sec-h .more{ font-size:11.5px; font-weight:700; }
+
+  /* ============================================================ */
+  /* DIRECTION A  — キャラIP寄せ / playful, on-brand, characterful  */
+  /* ============================================================ */
+  .A{
+    --bg:#fbf7f1; --surface:#ffffff; --ink:#231c14; --ink-2:#7a6f60; --ink-3:#a99c89;
+    --line:#efe7da; --brand:#159a57; --brand-d:#0f7e46; --gold:#caa24a;
+    font-family:'M PLUS Rounded 1c',sans-serif;
+    background:var(--bg); color:var(--ink);
+  }
+  .A .statusbar{ color:var(--ink); }
+  .A .wordmark{ color:var(--brand-d); }
+  .A .wordmark .crest{ width:26px; height:26px; border-radius:8px; background:linear-gradient(135deg,#e7b94d,#c2902a); display:flex; align-items:center; justify-content:center; font-size:14px; box-shadow:inset 0 0 0 1.5px #fff6; }
+  .A .bell{ color:var(--ink-2); }
+  .A .me{ background:conic-gradient(from 210deg,#159a57,#caa24a,#159a57); padding:2px; }
+  .A .me i{ display:block; width:100%; height:100%; border-radius:50%; background:#fff; }
+
+  .A .stories{ padding-bottom:8px; }
+  .A .avatar{ box-shadow:0 0 0 3px #fff, 0 0 0 5px var(--c); }
+  .A .story .tag{ background:#ffe1e1; color:#cf3b3b; }
+  .A .story.locked .avatar{ filter:grayscale(.7) opacity(.55); box-shadow:0 0 0 3px #fff,0 0 0 5px #d8d2c8; }
+  .A .story.locked .tag{ background:#efe7da; color:#9a8e7c; }
+
+  /* HERO A — single marquee, rich brand gradient, gold = G1 premium */
+  .A .hero{
+    margin:8px 16px 0; border-radius:26px; padding:20px; position:relative; overflow:hidden;
+    background:radial-gradient(120% 120% at 85% 0%, #1bb368 0%, #12894f 45%, #0c6e40 100%);
+    color:#fff; box-shadow:0 16px 30px -14px rgba(15,126,70,.6);
+  }
+  .A .hero::after{ content:""; position:absolute; right:-30px; top:-40px; width:160px; height:160px; border-radius:50%; background:radial-gradient(circle,#ffffff55,transparent 70%); }
+  .A .hero .topline{ display:flex; align-items:center; gap:8px; }
+  .A .hero .g1{ background:linear-gradient(135deg,#f4d272,#caa24a); color:#3a2c00; font-size:11px; padding:3px 10px; border-radius:999px; box-shadow:0 2px 6px #0003; }
+  .A .hero .date{ font-size:12px; opacity:.92; font-weight:700; }
+  .A .hero .cd{ margin-left:auto; font-size:12px; font-weight:800; background:#ffffff2e; padding:4px 10px; border-radius:999px; }
+  .A .hero h3{ font-size:30px; font-weight:800; margin:12px 0 4px; letter-spacing:.01em; }
+  .A .hero .meta{ font-size:12.5px; opacity:.92; font-weight:500; }
+  .A .hero .ai-line{ font-size:11.5px; margin-top:12px; opacity:.95; display:flex; align-items:center; gap:6px; }
+  .A .hero .cta{ margin-top:14px; width:100%; background:#fff; color:var(--brand-d); border:none; font-family:inherit; font-weight:800; font-size:15px; padding:13px; border-radius:16px; box-shadow:0 6px 14px -6px #0006; }
+
+  .A .duo{ display:flex; gap:12px; padding:14px 16px 0; }
+  .A .gcard{ flex:1; background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:13px 13px 14px; position:relative; overflow:hidden; }
+  .A .gcard::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--ac); }
+  .A .gcard .gd{ display:flex; align-items:center; justify-content:space-between; }
+  .A .gcard .g{ font-size:10.5px; font-weight:800; color:#fff; background:var(--ac); padding:2px 8px; border-radius:7px; }
+  .A .gcard .dt{ font-size:10.5px; color:var(--ink-3); font-weight:700; }
+  .A .gcard h4{ font-size:17px; font-weight:800; margin:9px 0 3px; }
+  .A .gcard .m{ font-size:11px; color:var(--ink-2); }
+  .A .gcard .go{ margin-top:11px; font-size:12px; font-weight:800; color:var(--ac); }
+
+  /* 大会 A (no purple) — warm gold/green festive but systemized */
+  .A .contest{ margin:16px 16px 0; border-radius:20px; padding:16px 17px; color:#3a2c00;
+    background:linear-gradient(135deg,#fbe6ad,#f2cf78); position:relative; overflow:hidden; box-shadow:0 10px 22px -14px #caa24a; }
+  .A .contest .live{ position:absolute; right:14px; top:14px; background:#159a57; color:#fff; font-size:10px; font-weight:800; padding:3px 9px; border-radius:999px; }
+  .A .contest .h{ font-weight:800; font-size:15px; display:flex; align-items:center; gap:6px; }
+  .A .contest .prize{ font-size:13px; font-weight:800; margin-top:8px; }
+  .A .contest .prize b{ font-size:19px; }
+  .A .progress{ margin-top:11px; }
+  .A .progress .lab{ font-size:11px; font-weight:700; display:flex; justify-content:space-between; margin-bottom:5px; }
+  .A .bar{ height:8px; border-radius:99px; background:#ffffff9c; overflow:hidden; }
+  .A .bar i{ display:block; height:100%; width:0%; background:#159a57; border-radius:99px; }
+  .A .contest .det{ margin-top:11px; font-size:12px; font-weight:800; color:#7a5a00; }
+
+  /* TL A */
+  .A .tabs{ display:flex; gap:8px; padding:0 16px; }
+  .A .tab{ font-size:12.5px; font-weight:800; padding:6px 14px; border-radius:999px; }
+  .A .tab.on{ background:var(--brand); color:#fff; }
+  .A .tab.off{ background:#f0e9dd; color:var(--ink-2); }
+  .A .new{ font-size:8.5px; background:#e23b3b; color:#fff; padding:1px 5px; border-radius:99px; margin-left:4px; vertical-align:middle; }
+  .A .vote{ margin:10px 16px 0; background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:13px; }
+  .A .vote .u{ display:flex; align-items:center; gap:8px; }
+  .A .vote .u .ua{ width:30px; height:30px; border-radius:50%; background:#dff0e6; display:flex; align-items:center; justify-content:center; font-size:14px; }
+  .A .vote .u .un{ font-weight:800; font-size:13px; }
+  .A .vote .u .tm{ margin-left:auto; font-size:10.5px; color:var(--ink-3); }
+  .A .vote .rc{ font-size:11px; color:var(--ink-2); margin:9px 0 8px; font-weight:700; }
+  .A .picks{ display:flex; gap:6px; flex-wrap:wrap; }
+  .A .pk{ font-size:11px; font-weight:800; padding:3px 9px; border-radius:8px; }
+  .A .pk.honmei{ background:#ffe6e6; color:#cf2f2f; }
+  .A .pk.sub{ background:#e6f0ff; color:#2563c9; }
+  .A .pk.osae{ background:#fff2db; color:#b27400; }
+  .A .vote .act{ display:flex; align-items:center; gap:16px; margin-top:11px; font-size:12px; color:var(--ink-3); }
+  .A .vote .act .ride{ margin-left:auto; color:var(--brand-d); font-weight:800; }
+
+  /* 投票受付中 A */
+  .A .hscroll{ display:flex; gap:11px; padding:4px 16px 2px; overflow-x:auto; scrollbar-width:none; }
+  .A .hscroll::-webkit-scrollbar{ display:none; }
+  .A .ncard{ flex:0 0 150px; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:11px 12px; }
+  .A .ncard .v{ font-size:11px; font-weight:800; display:flex; align-items:center; gap:5px; }
+  .A .ncard .v .d{ width:7px; height:7px; border-radius:50%; }
+  .A .ncard .tt{ font-size:10px; color:var(--ink-3); float:right; font-weight:700; }
+  .A .ncard h5{ font-size:14px; font-weight:800; margin:7px 0 2px; }
+  .A .ncard .mm{ font-size:10.5px; color:var(--ink-2); }
+  .A .ncard .st{ margin-top:9px; font-size:11px; font-weight:800; text-align:center; padding:5px; border-radius:9px; }
+  .A .ncard .st.soon{ background:#ffe5e5; color:#d23a3a; }
+  .A .ncard .st.open{ background:#e2f3ea; color:#159a57; }
+
+  /* footer rail A */
+  .A .rail{ display:flex; gap:12px; padding:14px 16px 0; }
+  .A .rcard{ flex:1; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:13px; display:flex; align-items:center; gap:10px; }
+  .A .rcard .ri{ width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+  .A .rcard .rt{ font-size:12.5px; font-weight:800; }
+  .A .rcard .rs{ font-size:10px; color:var(--ink-3); font-weight:700; }
+
+  .A .nav{ background:#fffdfaee; border-top:1px solid var(--line); }
+  .A .nav .item{ color:var(--ink-3); }
+  .A .nav .item.on{ color:var(--brand-d); }
+  .A .fab{ background:linear-gradient(135deg,#1bb368,#0f7e46); }
+
+  /* ============================================================ */
+  /* DIRECTION B  — データ/SNS寄せ / calm, sharp, type-driven       */
+  /* ============================================================ */
+  .B{
+    --bg:#f5f6f8; --surface:#ffffff; --ink:#101622; --ink-2:#586173; --ink-3:#9aa2b1;
+    --line:#e9ebf0; --brand:#1f8f4f; --brand-d:#16703d; --amber:#d4860a;
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    background:var(--bg); color:var(--ink);
+  }
+  .B .num{ font-family:'Roboto Mono',monospace; }
+  .B .statusbar{ color:var(--ink); }
+  .B .appbar{ border-bottom:1px solid var(--line); }
+  .B .wordmark{ color:var(--ink); font-weight:900; letter-spacing:.04em; }
+  .B .wordmark .crest{ width:22px; height:22px; border-radius:6px; background:var(--brand); display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; }
+  .B .bell{ color:var(--ink-2); }
+  .B .me{ background:#dfe3ea; border:2px solid #fff; box-shadow:0 0 0 1px var(--brand); }
+
+  .B .stories{ border-bottom:1px solid var(--line); }
+  .B .avatar{ border-radius:14px; box-shadow:0 0 0 1.5px var(--c); background:var(--c); }
+  .B .story .name{ font-weight:700; }
+  .B .story .tag{ background:transparent; color:var(--c); padding:0; font-size:9px; }
+  .B .story.locked .avatar{ background:#e7eaef; color:#aab1bd; box-shadow:0 0 0 1.5px #d6dae1; }
+  .B .story.locked .name{ color:var(--ink-3); }
+  .B .story.locked .tag{ color:var(--ink-3); }
+
+  /* HERO B — clean card, thin grade accent, big mono countdown */
+  .B .hero{ margin:16px 16px 0; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:0; overflow:hidden; }
+  .B .hero .strip{ height:4px; background:linear-gradient(90deg,#caa24a,#e0c074); }
+  .B .hero .pad{ padding:16px 17px 17px; }
+  .B .hero .topline{ display:flex; align-items:center; gap:9px; }
+  .B .hero .g1{ font-size:11px; font-weight:800; color:#8a6a17; background:#f6edd6; padding:2px 8px; border-radius:5px; letter-spacing:.04em; }
+  .B .hero .date{ font-size:12px; color:var(--ink-2); font-weight:600; }
+  .B .hero h3{ font-size:25px; font-weight:900; margin:11px 0 3px; letter-spacing:.01em; }
+  .B .hero .meta{ font-size:12.5px; color:var(--ink-2); }
+  .B .hero .cdrow{ display:flex; align-items:flex-end; justify-content:space-between; margin-top:16px; padding-top:14px; border-top:1px solid var(--line); }
+  .B .hero .cdrow .cdl{ font-size:10.5px; color:var(--ink-3); font-weight:700; letter-spacing:.06em; }
+  .B .hero .cdrow .cd{ font-size:21px; font-weight:700; line-height:1; margin-top:3px; }
+  .B .hero .cta{ background:var(--brand); color:#fff; border:none; font-family:inherit; font-weight:800; font-size:13.5px; padding:11px 20px; border-radius:11px; }
+  .B .hero .ai-line{ font-size:11px; color:var(--ink-2); margin-top:10px; }
+  .B .hero .ai-line b{ color:var(--brand-d); }
+
+  .B .duo{ display:flex; gap:11px; padding:11px 16px 0; }
+  .B .gcard{ flex:1; background:var(--surface); border:1px solid var(--line); border-radius:13px; padding:13px; }
+  .B .gcard .gd{ display:flex; align-items:center; justify-content:space-between; }
+  .B .gcard .g{ font-size:10px; font-weight:800; padding:1px 7px; border-radius:5px; letter-spacing:.03em; }
+  .B .gcard .g.g2{ color:#a23c3c; background:#f7e7e7; }
+  .B .gcard .g.g3{ color:#2a5fa8; background:#e6eefa; }
+  .B .gcard .dt{ font-size:10px; color:var(--ink-3); font-weight:600; }
+  .B .gcard h4{ font-size:16px; font-weight:800; margin:9px 0 2px; }
+  .B .gcard .m{ font-size:11px; color:var(--ink-2); }
+  .B .gcard .go{ margin-top:10px; font-size:11.5px; font-weight:800; color:var(--brand-d); }
+
+  /* 大会 B — neutral card, progress, gold prize accent */
+  .B .contest{ margin:14px 16px 0; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:15px 16px; }
+  .B .contest .top{ display:flex; align-items:center; justify-content:space-between; }
+  .B .contest .h{ font-weight:800; font-size:13.5px; display:flex; align-items:center; gap:6px; }
+  .B .contest .live{ font-size:9.5px; font-weight:800; color:var(--brand-d); background:#e3f1e9; padding:3px 9px; border-radius:6px; }
+  .B .contest .prize{ font-size:12px; color:var(--ink-2); margin-top:10px; }
+  .B .contest .prize b{ font-size:18px; color:#8a6a17; font-weight:800; }
+  .B .progress{ margin-top:12px; }
+  .B .progress .lab{ font-size:11px; font-weight:700; color:var(--ink-2); display:flex; justify-content:space-between; margin-bottom:5px; }
+  .B .bar{ height:6px; border-radius:99px; background:#eef0f4; overflow:hidden; }
+  .B .bar i{ display:block; height:100%; width:0%; background:var(--brand); }
+  .B .contest .det{ margin-top:13px; font-size:11.5px; font-weight:800; color:var(--brand-d); text-align:right; }
+
+  /* TL B */
+  .B .tabs{ display:flex; gap:0; padding:0 16px; border-bottom:1px solid var(--line); margin-top:4px; }
+  .B .tab{ font-size:13px; font-weight:700; padding:9px 0; margin-right:20px; color:var(--ink-3); border-bottom:2px solid transparent; }
+  .B .tab.on{ color:var(--ink); border-bottom-color:var(--brand); }
+  .B .new{ font-size:8px; background:var(--brand); color:#fff; padding:1px 5px; border-radius:99px; margin-left:5px; vertical-align:middle; font-weight:800; }
+  .B .vote{ margin:0 16px; padding:14px 0; border-bottom:1px solid var(--line); }
+  .B .vote .u{ display:flex; align-items:center; gap:8px; }
+  .B .vote .u .ua{ width:28px; height:28px; border-radius:8px; background:#eef0f4; display:flex; align-items:center; justify-content:center; font-size:13px; }
+  .B .vote .u .un{ font-weight:700; font-size:13px; }
+  .B .vote .u .tm{ margin-left:auto; font-size:10.5px; color:var(--ink-3); }
+  .B .vote .rc{ font-size:11px; color:var(--ink-2); margin:9px 0 8px; }
+  .B .picks{ display:flex; gap:6px; flex-wrap:wrap; }
+  .B .pk{ font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px; border:1px solid var(--line); }
+  .B .pk.honmei{ color:#cf2f2f; border-color:#f1cccc; }
+  .B .pk.sub{ color:#2563c9; border-color:#cdddf5; }
+  .B .pk.osae{ color:#9a7000; border-color:#ecdcb0; }
+  .B .vote .act{ display:flex; align-items:center; gap:18px; margin-top:11px; font-size:12px; color:var(--ink-3); }
+  .B .vote .act .ride{ margin-left:auto; color:var(--brand-d); font-weight:700; }
+
+  /* 投票受付中 B */
+  .B .hscroll{ display:flex; gap:10px; padding:2px 16px; overflow-x:auto; scrollbar-width:none; }
+  .B .hscroll::-webkit-scrollbar{ display:none; }
+  .B .ncard{ flex:0 0 148px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:11px 12px; }
+  .B .ncard .v{ font-size:11px; font-weight:700; display:flex; align-items:center; gap:5px; }
+  .B .ncard .v .d{ width:6px; height:6px; border-radius:50%; }
+  .B .ncard .tt{ font-size:10px; color:var(--ink-3); margin-left:auto; font-weight:600; font-family:'Roboto Mono',monospace; }
+  .B .ncard h5{ font-size:13.5px; font-weight:800; margin:7px 0 2px; }
+  .B .ncard .mm{ font-size:10.5px; color:var(--ink-2); }
+  .B .ncard .st{ margin-top:9px; font-size:10.5px; font-weight:800; }
+  .B .ncard .st.soon{ color:#d23a3a; }
+  .B .ncard .st.open{ color:var(--brand-d); }
+
+  /* footer rail B */
+  .B .rail{ padding:6px 16px 0; }
+  .B .rrow{ display:flex; align-items:center; gap:11px; padding:13px 0; border-bottom:1px solid var(--line); }
+  .B .rrow .ri{ width:30px; height:30px; border-radius:8px; background:#f1f3f7; display:flex; align-items:center; justify-content:center; font-size:15px; }
+  .B .rrow .rt{ font-size:13px; font-weight:700; }
+  .B .rrow .rs{ font-size:10.5px; color:var(--ink-3); }
+  .B .rrow .arr{ margin-left:auto; color:var(--ink-3); font-size:15px; }
+
+  .B .nav{ background:#ffffffee; border-top:1px solid var(--line); }
+  .B .nav .item{ color:var(--ink-3); }
+  .B .nav .item.on{ color:var(--brand-d); }
+  .B .fab{ background:var(--brand); border-radius:16px; }
+
+  @media (max-width:880px){ .stage{ gap:34px; } }
+</style>
+</head>
+<body>
+
+  <div class="page-head">
+    <h1>ゲートイン！ トップ リデザイン案</h1>
+    <p>同じ情報設計のまま、視覚言語だけを A / B で変えています。<br>判断しやすいよう中身（レース・予想・大会）はすべて同一にしています。</p>
+  </div>
+
+  <div class="ia-note">
+    <b>両案に共通して入れたIA変更：</b><br>
+    ・BottomNav を <span class="tag">ホーム / レース / ⊕予想（中央） / TL / マイページ</span> に。中央に投票への直行ボタン<br>
+    ・大会は BottomNav から外し、<b>TOPページには残置</b>（「0人参加中」は出さず、参加までの進捗＋賞金で見せる）<br>
+    ・ヒーローは<b>1つだけ</b>（直近の最重要レース）。G2/G3 は控えめな2枚組へ降格<br>
+    ・タイムラインに <span class="tag">フォロー中 / 発見</span> の2軸を導入（新規の空フィード対策）<br>
+    ・ランキング・道場はフッターの小さな導線に集約<br>
+    ・空状態（最初の予想者になろう／未投票の羅列）を撤去し、前向きな表示に
+  </div>
+
+  <div class="stage">
+
+    <!-- =========================== DIRECTION A =========================== -->
+    <div class="col">
+      <div class="device">
+        <div class="screen A">
+          <div class="statusbar"><span>9:41</span><span>● ● ●</span></div>
+          <div class="body">
+
+            <div class="appbar">
+              <div class="wordmark"><span class="crest">👑</span>ゲートイン！</div>
+              <div class="right">
+                <div class="bell">🔔<span class="dot">1</span></div>
+                <div class="me"><i></i></div>
+              </div>
+            </div>
+
+            <!-- stories -->
+            <div class="stories">
+              <div class="story"><div class="avatar" style="--c:#ea6a1e;background:linear-gradient(135deg,#f5944a,#e35d12)">ヒバ</div><div class="name">ヒバリ</div><div class="tag">予想</div></div>
+              <div class="story"><div class="avatar" style="--c:#159a57;background:linear-gradient(135deg,#2fb673,#0f7e46)">ハク</div><div class="name">ハクセン</div><div class="tag">予想</div></div>
+              <div class="story"><div class="avatar" style="--c:#d63333;background:linear-gradient(135deg,#ef5a5a,#c52525)">カザ</div><div class="name">カザン</div><div class="tag">予想</div></div>
+              <div class="story"><div class="avatar" style="--c:#2563c9;background:linear-gradient(135deg,#4d86e6,#1f54b0)">ハヤ</div><div class="name">ハヤテ</div><div class="tag">予想</div></div>
+              <div class="story locked"><div class="avatar" style="--c:#8a8a8a;background:#9a9a9a">ガン</div><div class="name">ガンテツ</div><div class="tag">厳選待ち</div></div>
+            </div>
+
+            <!-- HERO -->
+            <div class="hero">
+              <div class="topline">
+                <span class="g1 chip">G1</span>
+                <span class="date">5/31(日)</span>
+                <span class="cd">あと1日3時間</span>
+              </div>
+              <h3>日本ダービー</h3>
+              <div class="meta">東京・芝2400m・18頭・15:40発走</div>
+              <div class="ai-line">🤖 AI予想家4体が ◎ を公開中</div>
+              <button class="cta">予想する</button>
+            </div>
+
+            <!-- G2 / G3 -->
+            <div class="duo">
+              <div class="gcard" style="--ac:#d63333">
+                <div class="gd"><span class="g">G2</span><span class="dt">5/30(土)</span></div>
+                <h4>目黒記念</h4><div class="m">東京 2500m・14頭</div>
+                <div class="go">予想する →</div>
+              </div>
+              <div class="gcard" style="--ac:#159a57">
+                <div class="gd"><span class="g">G3</span><span class="dt">受付中</span></div>
+                <h4>葵S</h4><div class="m">京都 1200m・16頭</div>
+                <div class="go">予想する →</div>
+              </div>
+            </div>
+
+            <!-- 大会 -->
+            <div class="contest">
+              <span class="live">開催中</span>
+              <div class="h">🏆 週間予想大会</div>
+              <div class="prize">今週の賞金　<b>¥5,000</b> <span style="font-weight:600;font-size:11px">/ ¥3,000 / ¥2,000</span></div>
+              <div class="progress">
+                <div class="lab"><span>あと3レース予想で参加</span><span>0 / 3</span></div>
+                <div class="bar"><i style="width:6%"></i></div>
+              </div>
+              <div class="det">大会の詳細を見る →</div>
+            </div>
+
+            <!-- TL -->
+            <div class="sec-h"><div class="t">📣 タイムライン</div></div>
+            <div class="tabs">
+              <div class="tab on">フォロー中</div>
+              <div class="tab off">発見<span class="new">NEW</span></div>
+            </div>
+            <div class="vote">
+              <div class="u"><div class="ua">🐎</div><div class="un">みなとー ⭐⭐</div><div class="tm">10時間前</div></div>
+              <div class="rc">5/30 京都11R — 葵S</div>
+              <div class="picks">
+                <span class="pk honmei">◎11 タガノアラリア</span>
+                <span class="pk sub">○4 フォーゲル</span>
+                <span class="pk sub">▲13 タマモ</span>
+                <span class="pk osae">△ 2,5,15</span>
+              </div>
+              <div class="act"><span>♡ 12</span><span>💬 3</span><span class="ride">🚀 乗っかる</span></div>
+            </div>
+
+            <!-- 投票受付中 -->
+            <div class="sec-h"><div class="t">🔥 投票受付中</div><div class="more" style="color:#0f7e46">すべて見る →</div></div>
+            <div class="hscroll">
+              <div class="ncard"><span class="tt">12:25</span><div class="v"><span class="d" style="background:#159a57"></span>京都 5R</div><h5>3歳未勝利</h5><div class="mm">芝1800m・18頭</div><div class="st soon">⏰ あと1分</div></div>
+              <div class="ncard"><span class="tt">12:40</span><div class="v"><span class="d" style="background:#2563c9"></span>東京 6R</div><h5>3歳1勝クラス</h5><div class="mm">ダ1600m・12頭</div><div class="st open">受付中</div></div>
+              <div class="ncard"><span class="tt">13:25</span><div class="v"><span class="d" style="background:#159a57"></span>京都 7R</div><h5>4歳上1勝</h5><div class="mm">芝1600m・15頭</div><div class="st open">受付中</div></div>
+            </div>
+
+            <!-- rail -->
+            <div class="rail">
+              <div class="rcard"><div class="ri" style="background:#fdf0d6">🏆</div><div><div class="rt">ランキング</div><div class="rs">月間・連勝</div></div></div>
+              <div class="rcard"><div class="ri" style="background:#e2f0ff">📖</div><div><div class="rt">競馬道場</div><div class="rs">記事・クイズ</div></div></div>
+            </div>
+
+          </div>
+
+          <!-- bottom nav -->
+          <div class="nav">
+            <div class="item on"><span class="ic">🏠</span>ホーム</div>
+            <div class="item"><span class="ic">🏇</span>レース</div>
+            <div class="fab"><span class="ic">✎</span><span class="lbl">予想</span></div>
+            <div class="item"><span class="ic">📣</span>TL</div>
+            <div class="item"><span class="ic">👤</span>マイ</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-cap A">
+        <span class="badge">案 A ／ キャラIP寄せ</span>
+        <h2>賑やか・遊び心・ブランド主導</h2>
+        <p>丸ゴシック＋ブランドの緑を主役に。色は「ルール化された賑やかさ」へ。ゴールド＝G1の特別感に限定し、虹色化を回避。キャラが立つ世界観。</p>
+      </div>
+    </div>
+
+    <!-- =========================== DIRECTION B =========================== -->
+    <div class="col">
+      <div class="device">
+        <div class="screen B">
+          <div class="statusbar"><span>9:41</span><span>● ● ●</span></div>
+          <div class="body">
+
+            <div class="appbar">
+              <div class="wordmark"><span class="crest">G</span>GATE IN!</div>
+              <div class="right">
+                <div class="bell">🔔<span class="dot">1</span></div>
+                <div class="me"></div>
+              </div>
+            </div>
+
+            <!-- stories -->
+            <div class="stories">
+              <div class="story"><div class="avatar" style="--c:#ea6a1e">ヒバ</div><div class="name">ヒバリ</div><div class="tag">◎公開</div></div>
+              <div class="story"><div class="avatar" style="--c:#1f8f4f">ハク</div><div class="name">ハクセン</div><div class="tag">◎公開</div></div>
+              <div class="story"><div class="avatar" style="--c:#d63333">カザ</div><div class="name">カザン</div><div class="tag">◎公開</div></div>
+              <div class="story"><div class="avatar" style="--c:#2563c9">ハヤ</div><div class="name">ハヤテ</div><div class="tag">◎公開</div></div>
+              <div class="story locked"><div class="avatar">ガン</div><div class="name">ガンテツ</div><div class="tag">厳選待ち</div></div>
+            </div>
+
+            <!-- HERO -->
+            <div class="hero">
+              <div class="strip"></div>
+              <div class="pad">
+                <div class="topline">
+                  <span class="g1">G1</span>
+                  <span class="date">5/31(日)・東京</span>
+                </div>
+                <h3>日本ダービー</h3>
+                <div class="meta">芝2400m・18頭・15:40発走</div>
+                <div class="ai-line">AI予想家 <b>4体</b> が ◎ を公開中</div>
+                <div class="cdrow">
+                  <div><div class="cdl">締切まで</div><div class="cd num">1d 03h</div></div>
+                  <button class="cta">予想する</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- G2 / G3 -->
+            <div class="duo">
+              <div class="gcard">
+                <div class="gd"><span class="g g2">G2</span><span class="dt">5/30(土)</span></div>
+                <h4>目黒記念</h4><div class="m">東京 2500m・14頭</div>
+                <div class="go">予想する →</div>
+              </div>
+              <div class="gcard">
+                <div class="gd"><span class="g g3">G3</span><span class="dt">受付中</span></div>
+                <h4>葵S</h4><div class="m">京都 1200m・16頭</div>
+                <div class="go">予想する →</div>
+              </div>
+            </div>
+
+            <!-- 大会 -->
+            <div class="contest">
+              <div class="top">
+                <div class="h">🏆 週間予想大会</div>
+                <span class="live">開催中</span>
+              </div>
+              <div class="prize">今週の賞金　<b>¥5,000</b> / ¥3,000 / ¥2,000</div>
+              <div class="progress">
+                <div class="lab"><span>あと3レース予想で参加</span><span class="num">0/3</span></div>
+                <div class="bar"><i style="width:6%"></i></div>
+              </div>
+              <div class="det">大会の詳細を見る →</div>
+            </div>
+
+            <!-- TL -->
+            <div class="tabs">
+              <div class="tab on">フォロー中</div>
+              <div class="tab">発見<span class="new">NEW</span></div>
+            </div>
+            <div class="vote">
+              <div class="u"><div class="ua">🐎</div><div class="un">みなとー ⭐⭐</div><div class="tm">10時間前</div></div>
+              <div class="rc">5/30 京都11R — 葵S</div>
+              <div class="picks">
+                <span class="pk honmei">◎11 タガノアラリア</span>
+                <span class="pk sub">○4 フォーゲル</span>
+                <span class="pk sub">▲13 タマモ</span>
+                <span class="pk osae">△ 2,5,15</span>
+              </div>
+              <div class="act"><span>♡ 12</span><span>💬 3</span><span class="ride">乗っかる →</span></div>
+            </div>
+
+            <!-- 投票受付中 -->
+            <div class="sec-h"><div class="t">投票受付中</div><div class="more" style="color:#16703d">すべて見る →</div></div>
+            <div class="hscroll">
+              <div class="ncard"><div class="v"><span class="d" style="background:#1f8f4f"></span>京都 5R<span class="tt">12:25</span></div><h5>3歳未勝利</h5><div class="mm">芝1800m・18頭</div><div class="st soon">締切 あと1分</div></div>
+              <div class="ncard"><div class="v"><span class="d" style="background:#2563c9"></span>東京 6R<span class="tt">12:40</span></div><h5>3歳1勝クラス</h5><div class="mm">ダ1600m・12頭</div><div class="st open">受付中</div></div>
+              <div class="ncard"><div class="v"><span class="d" style="background:#1f8f4f"></span>京都 7R<span class="tt">13:25</span></div><h5>4歳上1勝</h5><div class="mm">芝1600m・15頭</div><div class="st open">受付中</div></div>
+            </div>
+
+            <!-- rail -->
+            <div class="rail">
+              <div class="rrow"><div class="ri">🏆</div><div><div class="rt">ランキング</div><div class="rs">月間・累計・連勝</div></div><span class="arr">›</span></div>
+              <div class="rrow"><div class="ri">📖</div><div><div class="rt">競馬道場</div><div class="rs">記事500本・クイズ1000問</div></div><span class="arr">›</span></div>
+            </div>
+
+          </div>
+
+          <!-- bottom nav -->
+          <div class="nav">
+            <div class="item on"><span class="ic">⌂</span>ホーム</div>
+            <div class="item"><span class="ic">🏇</span>レース</div>
+            <div class="fab"><span class="ic">✎</span><span class="lbl">予想</span></div>
+            <div class="item"><span class="ic">📣</span>TL</div>
+            <div class="item"><span class="ic">☰</span>マイ</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-cap B">
+        <span class="badge">案 B ／ データ・SNS寄せ</span>
+        <h2>静か・シャープ・タイポ主導</h2>
+        <p>角ゴシック＋数字はモノスペース。面はほぼ白×グレー、色は意味のある所だけ（受付中＝緑／締切＝赤）。階層はサイズと余白で。中上級者向けの「本気のツール」感。</p>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

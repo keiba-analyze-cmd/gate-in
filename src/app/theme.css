@@ -1,0 +1,139 @@
+/* src/app/theme.css  （globals.css に取り込む想定） */
+/* ゲートイン！ デザインシステム A：意味ベースのトークン。ライト/ダーク自動切替。 */
+
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* 面・文字 */
+  --bg: #fbf7f1;
+  --surface: #ffffff;
+  --surface-2: #f7f1e8;
+  --ink: #231c14;
+  --ink-2: #7a6f60;
+  --ink-3: #a99c89;
+  --line: #efe7da;
+
+  /* ブランド・意味色 */
+  --brand: #159a57;          /* 主役 / GO / アクティブ */
+  --brand-strong: #0f7e46;
+  --brand-soft: #e2f3ea;
+  --gold: #caa24a;           /* G1 / 賞金 / 特別感 のみ */
+  --gold-strong: #8a6a17;
+  --gold-soft: #f6edd6;
+  --danger: #d63333;         /* 締切 / 危険 / 外し */
+  --danger-soft: #ffe6e6;
+  --info: #2563c9;           /* ○ など */
+  --info-soft: #e6f0ff;
+  --osae: #b27400;           /* △ */
+  --osae-soft: #fff2db;
+
+  /* グレード（小バッジ用） */
+  --g1: #8a6a17; --g1-bg: #f6edd6;
+  --g2: #a23c3c; --g2-bg: #f7e7e7;
+  --g3: #2a5fa8; --g3-bg: #e6eefa;
+
+  /* キャラ識別色（アバター/ドット専用） */
+  --c-hayate: #2563c9;
+  --c-kazan: #d63333;
+  --c-hakusen: #159a57;
+  --c-hibari: #ea6a1e;
+  --c-gantetsu: #8a8a8a;
+
+  /* 半径・影 */
+  --r-sm: 8px; --r: 14px; --r-lg: 18px; --r-xl: 22px;
+  --sh-card: 0 1px 2px rgba(40,30,15,.04);
+  --sh-hero: 0 16px 30px -16px rgba(15,126,70,.5);
+  --sh-gold: 0 12px 24px -16px rgba(202,162,74,.7);
+}
+
+.dark {
+  --bg: #181410;
+  --surface: #221c16;
+  --surface-2: #2a231b;
+  --ink: #f3ece1;
+  --ink-2: #b3a692;
+  --ink-3: #7d7263;
+  --line: #352c22;
+
+  --brand: #2bb673;
+  --brand-strong: #1f9d60;
+  --brand-soft: #15301f;
+  --gold: #e0c074;
+  --gold-strong: #e0c074;
+  --gold-soft: #2e2616;
+  --danger: #ef6a6a;
+  --danger-soft: #3a1f1f;
+  --info: #6fa0ee;
+  --info-soft: #1c2740;
+  --osae: #d6a44a;
+  --osae-soft: #2e2614;
+
+  --g1: #e0c074; --g1-bg: #2e2616;
+  --g2: #ef8a8a; --g2-bg: #3a1f1f;
+  --g3: #8fb3f0; --g3-bg: #1c2740;
+
+  --sh-card: 0 1px 2px rgba(0,0,0,.3);
+  --sh-hero: 0 16px 30px -16px rgba(0,0,0,.6);
+  --sh-gold: 0 12px 24px -16px rgba(0,0,0,.6);
+}
+
+/* CSS変数をTailwindユーティリティへ（bg-bg, text-ink, font-display ...） */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-gold: var(--gold);
+  --color-gold-strong: var(--gold-strong);
+  --color-gold-soft: var(--gold-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-osae: var(--osae);
+  --color-osae-soft: var(--osae-soft);
+
+  --color-c-hayate: var(--c-hayate);
+  --color-c-kazan: var(--c-kazan);
+  --color-c-hakusen: var(--c-hakusen);
+  --color-c-hibari: var(--c-hibari);
+  --color-c-gantetsu: var(--c-gantetsu);
+
+  --radius-sm: var(--r-sm);
+  --radius-DEFAULT: var(--r);
+  --radius-lg: var(--r-lg);
+  --radius-xl: var(--r-xl);
+
+  --font-display: "M PLUS Rounded 1c", system-ui, sans-serif;
+  --font-num: "Roboto Mono", monospace;
+}
+
+/* 既定の地色・本文。本文＝丸ゴシック。 */
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-display);
+}
+
+/* 共通カード（全ページで再利用する基本面） */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-card);
+}
+
+/* ヒーロー（ブランドグラデ。1画面に1つ） */
+.hero-grad {
+  background: radial-gradient(120% 130% at 88% 0%, #1bb368, #12894f 45%, #0c6e40);
+  box-shadow: var(--sh-hero);
+  color: #fff;
+}

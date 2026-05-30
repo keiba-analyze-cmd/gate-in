@@ -1,0 +1,16 @@
+{
+  "model": "composite",
+  "modelName": "複合",
+  "easyPercentile": 40,
+  "hardPercentile": 75,
+  "easyThreshold": 33.8,
+  "hardThreshold": 42.2,
+  "stats": {
+    "legHitRate": 41.5,
+    "win5Hits": 8,
+    "win5Days": 410,
+    "roi": 25,
+    "avgWeeklyCost": 4365
+  },
+  "generatedAt": "2026-05-16T15:19:46.663Z"
+}

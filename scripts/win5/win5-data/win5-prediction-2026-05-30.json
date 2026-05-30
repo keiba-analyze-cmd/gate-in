@@ -1,0 +1,272 @@
+{
+  "date": "2026-05-30",
+  "model": "v3.1-sire",
+  "budgetCap": 50000,
+  "skipped": false,
+  "predictions": [
+    {
+      "leg": 1,
+      "course": "京都",
+      "raceNumber": 9,
+      "raceName": "鳳雛S",
+      "postTime": "2026-05-30T05:30:00+00:00",
+      "difficulty": {
+        "score": 71,
+        "level": "Easy"
+      },
+      "honmei": [
+        {
+          "umaban": 8,
+          "horseName": "イッテラッシャイ",
+          "jockeyName": "斎藤新",
+          "idm": 70,
+          "odds": 2.6,
+          "score": 65.6
+        }
+      ],
+      "ana": [],
+      "headCount": 9
+    },
+    {
+      "leg": 2,
+      "course": "東京",
+      "raceNumber": 10,
+      "raceName": "葉山特別",
+      "postTime": "2026-05-30T05:50:00+00:00",
+      "difficulty": {
+        "score": 56.2,
+        "level": "Easy"
+      },
+      "honmei": [
+        {
+          "umaban": 1,
+          "horseName": "クライスレリアーナ",
+          "jockeyName": "Ｃ．ルメール",
+          "idm": 63,
+          "odds": 2.2,
+          "score": 62.2
+        }
+      ],
+      "ana": [],
+      "headCount": 11
+    },
+    {
+      "leg": 3,
+      "course": "京都",
+      "raceNumber": 10,
+      "raceName": "桃山S",
+      "postTime": "2026-05-30T06:05:00+00:00",
+      "difficulty": {
+        "score": 28.8,
+        "level": "Hard"
+      },
+      "honmei": [
+        {
+          "umaban": 12,
+          "horseName": "ペンナヴェローチェ",
+          "jockeyName": "川田将雅",
+          "idm": 61.1,
+          "odds": 4,
+          "score": 61
+        },
+        {
+          "umaban": 8,
+          "horseName": "マテンロウブレイブ",
+          "jockeyName": "横山典弘",
+          "idm": 64,
+          "odds": 4.7,
+          "score": 58.6
+        },
+        {
+          "umaban": 2,
+          "horseName": "テーオーマルコーニ",
+          "jockeyName": "団野大成",
+          "idm": 60,
+          "odds": 4.5,
+          "score": 58.5
+        }
+      ],
+      "ana": [
+        {
+          "umaban": 3,
+          "horseName": "サノノワンダー",
+          "jockeyName": "高杉吏麒",
+          "idm": 61,
+          "odds": 20.7,
+          "kazScore": 199.3,
+          "sire": "ヘニーヒューズ",
+          "sireBoost": "複24%×1.08"
+        },
+        {
+          "umaban": 10,
+          "horseName": "マンオブザマッチ",
+          "jockeyName": "荻野極",
+          "idm": 62.2,
+          "odds": 16.7,
+          "kazScore": 175.1,
+          "sire": "ファインニードル",
+          "sireBoost": "複16%×1"
+        },
+        {
+          "umaban": 16,
+          "horseName": "ドラゴン",
+          "jockeyName": "武豊",
+          "idm": 62,
+          "odds": 8.7,
+          "kazScore": 134.1,
+          "sire": "マインドユアビスケッツ",
+          "sireBoost": "複20%×1"
+        }
+      ],
+      "headCount": 16
+    },
+    {
+      "leg": 4,
+      "course": "東京",
+      "raceNumber": 11,
+      "raceName": "アハルテケS",
+      "postTime": "2026-05-30T06:30:00+00:00",
+      "difficulty": {
+        "score": 31,
+        "level": "Hard"
+      },
+      "honmei": [
+        {
+          "umaban": 16,
+          "horseName": "テーオーパスワード",
+          "jockeyName": "松山弘平",
+          "idm": 65,
+          "odds": 3,
+          "score": 63
+        },
+        {
+          "umaban": 12,
+          "horseName": "ジェイパームス",
+          "jockeyName": "Ｄ．レーン",
+          "idm": 66.1,
+          "odds": 3.6,
+          "score": 61.7
+        },
+        {
+          "umaban": 6,
+          "horseName": "アマンテビアンコ",
+          "jockeyName": "Ｃ．ルメール",
+          "idm": 59.1,
+          "odds": 5.5,
+          "score": 56.1
+        }
+      ],
+      "ana": [
+        {
+          "umaban": 5,
+          "horseName": "ルージュスタニング",
+          "jockeyName": "石川裕紀人",
+          "idm": 64,
+          "odds": 29.5,
+          "kazScore": 314.9,
+          "sire": "イントゥミスチーフ",
+          "sireBoost": "複43%×1.45"
+        },
+        {
+          "umaban": 2,
+          "horseName": "スナークラファエロ",
+          "jockeyName": "小崎綾也",
+          "idm": 60.2,
+          "odds": 36.9,
+          "kazScore": 274.1,
+          "sire": "リアルスティール",
+          "sireBoost": "複33%×1.26"
+        },
+        {
+          "umaban": 9,
+          "horseName": "マーズオデッセイ",
+          "jockeyName": "三浦皇成",
+          "idm": 60.7,
+          "odds": 25,
+          "kazScore": 219.2,
+          "sire": "アドマイヤマーズ",
+          "sireBoost": "複26%×1.12"
+        }
+      ],
+      "headCount": 16
+    },
+    {
+      "leg": 5,
+      "course": "京都",
+      "raceNumber": 11,
+      "raceName": "葵S",
+      "postTime": "2026-05-30T06:45:00+00:00",
+      "difficulty": {
+        "score": 30.5,
+        "level": "Hard"
+      },
+      "honmei": [
+        {
+          "umaban": 11,
+          "horseName": "タガノアラリア",
+          "jockeyName": "鮫島克駿",
+          "idm": 59,
+          "odds": 3.9,
+          "score": 58.1
+        },
+        {
+          "umaban": 5,
+          "horseName": "エイシンディード",
+          "jockeyName": "川又賢治",
+          "idm": 54,
+          "odds": 3.9,
+          "score": 57.5
+        },
+        {
+          "umaban": 4,
+          "horseName": "フォーゲル",
+          "jockeyName": "坂井瑠星",
+          "idm": 57,
+          "odds": 6.9,
+          "score": 53.2
+        }
+      ],
+      "ana": [
+        {
+          "umaban": 7,
+          "horseName": "メランコリニスタ",
+          "jockeyName": "団野大成",
+          "idm": 50,
+          "odds": 26.5,
+          "kazScore": 177.6,
+          "sire": "ミッキーアイル",
+          "sireBoost": "複24%×1.08"
+        },
+        {
+          "umaban": 3,
+          "horseName": "ガラベイヤ",
+          "jockeyName": "丸山元気",
+          "idm": 55,
+          "odds": 23.3,
+          "kazScore": 173.2,
+          "sire": "アルアイン",
+          "sireBoost": "複19%×1"
+        },
+        {
+          "umaban": 2,
+          "horseName": "デアヴェローチェ",
+          "jockeyName": "北村友一",
+          "idm": 53,
+          "odds": 13.7,
+          "kazScore": 166.5,
+          "sire": "マテラスカイ",
+          "sireBoost": "複30%×1.2"
+        }
+      ],
+      "headCount": 16
+    }
+  ],
+  "totalCombinations": 216,
+  "cost": 21600,
+  "skipInfo": {
+    "hardCount": 3,
+    "totalHeadCount": 68,
+    "shouldSkip": false,
+    "forced": false
+  }
+}

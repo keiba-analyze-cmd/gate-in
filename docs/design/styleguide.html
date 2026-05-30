@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ゲートイン！ デザインシステム</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS（theme.css と同一の意味）============ */
+:root{
+  --bg:#fbf7f1; --surface:#ffffff; --surface-2:#f7f1e8;
+  --ink:#231c14; --ink-2:#7a6f60; --ink-3:#a99c89; --line:#efe7da;
+  --brand:#159a57; --brand-strong:#0f7e46; --brand-soft:#e2f3ea;
+  --gold:#caa24a; --gold-strong:#8a6a17; --gold-soft:#f6edd6;
+  --danger:#d63333; --danger-soft:#ffe6e6;
+  --info:#2563c9; --info-soft:#e6f0ff;
+  --osae:#b27400; --osae-soft:#fff2db;
+  /* グレード */
+  --g1:#8a6a17; --g1-bg:#f6edd6; --g2:#a23c3c; --g2-bg:#f7e7e7; --g3:#2a5fa8; --g3-bg:#e6eefa;
+  /* キャラ識別色 */
+  --c-hayate:#2563c9; --c-kazan:#d63333; --c-hakusen:#159a57; --c-hibari:#ea6a1e; --c-gantetsu:#8a8a8a;
+  /* 半径・影 */
+  --r-sm:8px; --r:14px; --r-lg:18px; --r-xl:22px; --r-pill:999px;
+  --sh-card:0 1px 2px rgba(40,30,15,.04),0 1px 0 rgba(40,30,15,.02);
+  --sh-hero:0 16px 30px -16px rgba(15,126,70,.5);
+  --sh-gold:0 12px 24px -16px rgba(202,162,74,.7);
+  --font-display:'M PLUS Rounded 1c',system-ui,sans-serif; --font-num:'Roboto Mono',monospace;
+}
+.dark{
+  --bg:#181410; --surface:#221c16; --surface-2:#2a231b;
+  --ink:#f3ece1; --ink-2:#b3a692; --ink-3:#7d7263; --line:#352c22;
+  --brand:#2bb673; --brand-strong:#1f9d60; --brand-soft:#15301f;
+  --gold:#e0c074; --gold-strong:#e0c074; --gold-soft:#2e2616;
+  --danger:#ef6a6a; --danger-soft:#3a1f1f;
+  --info:#6fa0ee; --info-soft:#1c2740;
+  --osae:#d6a44a; --osae-soft:#2e2614;
+  --g1:#e0c074; --g1-bg:#2e2616; --g2:#ef8a8a; --g2-bg:#3a1f1f; --g3:#8fb3f0; --g3-bg:#1c2740;
+  --sh-hero:0 16px 30px -16px rgba(0,0,0,.6); --sh-gold:0 12px 24px -16px rgba(0,0,0,.6);
+  --sh-card:0 1px 2px rgba(0,0,0,.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;}
+body{font-family:var(--font-display);background:var(--bg);color:var(--ink);padding:0 0 80px;transition:background .2s;}
+.num{font-family:var(--font-num);}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+.topbar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:14px 0;margin-bottom:30px;}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;}
+.topbar h1{font-size:18px;font-weight:800;}
+.toggle{font-family:var(--font-display);font-weight:800;font-size:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:var(--r-pill);cursor:pointer;}
+section{margin:46px 0;}
+.sec-title{font-size:13px;font-weight:800;color:var(--ink-2);letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid var(--brand);display:inline-block;padding-bottom:4px;margin-bottom:20px;}
+.note{font-size:12.5px;color:var(--ink-2);line-height:1.8;margin-top:10px;}
+.grid{display:grid;gap:14px;}
+.lbl{font-size:10.5px;color:var(--ink-3);font-weight:700;margin-top:6px;}
+.mono-lbl{font-family:var(--font-num);font-size:10px;color:var(--ink-3);}
+
+/* swatches */
+.swatches{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
+.sw{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--surface);}
+.sw .chip{height:54px;}
+.sw .meta{padding:8px 10px;}
+.sw .name{font-size:11.5px;font-weight:800;}
+.sw .var{font-family:var(--font-num);font-size:9.5px;color:var(--ink-3);}
+
+/* type */
+.type-row{display:flex;align-items:baseline;gap:16px;border-bottom:1px solid var(--line);padding:12px 0;}
+.type-row .demo{flex:1;}
+.type-row .spec{font-family:var(--font-num);font-size:10.5px;color:var(--ink-3);white-space:nowrap;}
+
+/* badges/chips */
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.badge{display:inline-flex;align-items:center;font-weight:800;line-height:1;}
+.g{font-size:11px;padding:2px 8px;border-radius:6px;letter-spacing:.03em;}
+.g.g1{color:var(--g1);background:var(--g1-bg);} .g.g2{color:var(--g2);background:var(--g2-bg);} .g.g3{color:var(--g3);background:var(--g3-bg);}
+.status{font-size:11px;font-weight:800;}
+.status.open{color:var(--brand-strong);} .status.soon{color:var(--danger);} .status.fixed{color:var(--ink-3);}
+.pill{font-size:11px;font-weight:800;padding:3px 9px;border-radius:var(--r-pill);}
+.pill.prov{background:var(--gold-soft);color:var(--gold-strong);} .pill.ai{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line);}
+.pill.live{background:var(--brand);color:#fff;}
+.pk{font-size:11px;font-weight:800;padding:3px 9px;border-radius:var(--r-sm);}
+.pk.h{background:var(--danger-soft);color:var(--danger);} .pk.s{background:var(--info-soft);color:var(--info);} .pk.o{background:var(--osae-soft);color:var(--osae);}
+
+/* buttons */
+.btn{font-family:var(--font-display);font-weight:800;border:none;border-radius:var(--r);padding:11px 18px;font-size:13.5px;cursor:pointer;}
+.btn.primary{background:var(--brand);color:#fff;} .btn.onhero{background:#fff;color:var(--brand-strong);}
+.btn.ghost{background:transparent;color:var(--brand-strong);border:1.5px solid var(--brand);} .btn.danger{background:var(--danger);color:#fff;}
+
+/* component cards container */
+.demo-area{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px;align-items:start;}
+.cmp{}
+.cmp .cmp-lbl{font-size:11px;font-weight:800;color:var(--ink-2);margin-bottom:8px;}
+
+/* === reusable component styles (= mock と同一) === */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-card);}
+.appbar{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);}
+.wordmark{font-weight:800;font-size:17px;color:var(--brand-strong);display:flex;align-items:center;gap:6px;}
+.crest{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#e7b94d,#c2902a);display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:inset 0 0 0 1.5px #fff6;}
+.appbar .r{display:flex;align-items:center;gap:12px;}
+.bell{position:relative;font-size:17px;color:var(--ink-2);}
+.bell .d{position:absolute;top:-3px;right:-4px;background:var(--danger);color:#fff;font-size:9px;font-weight:800;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.me{width:28px;height:28px;border-radius:50%;background:conic-gradient(from 210deg,var(--brand),var(--gold),var(--brand));padding:2px;}.me i{display:block;width:100%;height:100%;border-radius:50%;background:var(--surface);}
+
+.stories{display:flex;gap:13px;padding:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);}
+.story{display:flex;flex-direction:column;align-items:center;gap:5px;width:52px;}
+.av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#fff;box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--c);}
+.story .nm{font-size:10px;color:var(--ink-2);font-weight:700;}
+.story .tg{font-size:8.5px;font-weight:800;padding:1px 6px;border-radius:var(--r-pill);background:var(--danger-soft);color:var(--danger);}
+.story.lock .av{background:var(--c-gantetsu);filter:grayscale(.6) opacity(.6);box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--line);}
+.story.lock .tg{background:var(--surface-2);color:var(--ink-3);}
+
+.hero{border-radius:var(--r-xl);padding:18px;color:#fff;position:relative;overflow:hidden;background:radial-gradient(120% 130% at 88% 0%,#1bb368,#12894f 45%,#0c6e40);box-shadow:var(--sh-hero);}
+.hero::after{content:"";position:absolute;right:-30px;top:-44px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,#ffffff4d,transparent 70%);}
+.hero .top{display:flex;align-items:center;gap:8px;}
+.hero .g1c{background:linear-gradient(135deg,#f4d272,#caa24a);color:#3a2c00;font-size:11px;font-weight:800;padding:3px 10px;border-radius:var(--r-pill);}
+.hero .dt{font-size:12px;opacity:.92;font-weight:700;}.hero .cd{margin-left:auto;font-size:12px;font-weight:800;background:#ffffff2e;padding:4px 10px;border-radius:var(--r-pill);}
+.hero h3{font-size:26px;font-weight:800;margin:11px 0 4px;}.hero .m{font-size:12px;opacity:.92;}
+.hero .ai{font-size:11px;opacity:.95;margin-top:10px;}.hero .cta{margin-top:13px;width:100%;background:#fff;color:var(--brand-strong);border:none;font-family:var(--font-display);font-weight:800;font-size:15px;padding:12px;border-radius:var(--r);}
+
+.gcard{position:relative;overflow:hidden;padding:13px;}
+.gcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--ac);}
+.gcard .gd{display:flex;align-items:center;justify-content:space-between;}
+.gcard .gg{font-size:10px;font-weight:800;color:#fff;background:var(--ac);padding:2px 8px;border-radius:7px;}
+.gcard .dt{font-size:10px;color:var(--ink-3);font-weight:700;}.gcard h4{font-size:16px;font-weight:800;margin:8px 0 2px;}
+.gcard .m{font-size:10.5px;color:var(--ink-2);}.gcard .go{margin-top:10px;font-size:11.5px;font-weight:800;color:var(--ac);}
+
+.contest{border-radius:var(--r-lg);padding:15px 16px;color:#3a2c00;background:linear-gradient(135deg,#fbe6ad,#f2cf78);position:relative;overflow:hidden;box-shadow:var(--sh-gold);}
+.dark .contest{color:#f3ece1;background:linear-gradient(135deg,#3a2f17,#2a2210);}
+.contest .live{position:absolute;right:14px;top:14px;background:var(--brand);color:#fff;font-size:10px;font-weight:800;padding:3px 9px;border-radius:var(--r-pill);}
+.contest .h{font-weight:800;font-size:14px;}.contest .prize{font-size:12px;font-weight:800;margin-top:8px;}.contest .prize b{font-size:18px;}
+.bar{height:8px;border-radius:var(--r-pill);background:#ffffff9c;overflow:hidden;margin-top:8px;}.dark .bar{background:#0006;}.bar i{display:block;height:100%;background:var(--brand);}
+.contest .det{margin-top:10px;font-size:11.5px;font-weight:800;color:var(--gold-strong);}.dark .contest .det{color:var(--gold);}
+
+.seg{display:flex;gap:6px;}
+.seg .s{flex:1;text-align:center;font-size:12.5px;font-weight:800;padding:8px 0;border-radius:var(--r);color:var(--ink-2);background:var(--surface-2);}
+.seg .s.on{background:var(--brand);color:#fff;}
+
+.lrow{display:flex;align-items:center;gap:11px;padding:11px 13px;}
+.lrow .rk{width:22px;text-align:center;font-weight:800;font-size:14px;color:var(--ink-2);font-family:var(--font-num);}
+.lrow.r1 .rk{color:var(--gold);}
+.lav{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:#fff;box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--c);}
+.ln{flex:1;}.ln .n{font-size:13px;font-weight:800;display:flex;align-items:center;gap:5px;}.ln .st{font-size:10px;color:var(--ink-3);font-weight:700;}
+.lr{text-align:right;}.lr .rate{font-size:15px;font-weight:800;font-family:var(--font-num);}.lr .mv{font-size:10px;font-weight:800;}.mv.up{color:var(--brand);}.mv.dn{color:var(--danger);}
+
+.vote{padding:13px;}
+.vote .u{display:flex;align-items:center;gap:9px;}.vote .ua{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:800;}
+.vote .un{font-weight:800;font-size:13px;display:flex;align-items:center;gap:5px;}.vote .br{font-size:9.5px;font-weight:800;color:var(--brand-strong);background:var(--brand-soft);padding:1px 6px;border-radius:6px;font-family:var(--font-num);}
+.vote .rn{font-size:10px;color:var(--ink-3);font-weight:700;margin-top:1px;}.vote .tm{font-size:10px;color:var(--ink-3);margin-left:auto;}
+.result{margin-top:10px;border-radius:var(--r);padding:9px 11px;font-size:11.5px;font-weight:800;display:flex;align-items:center;gap:8px;}
+.result.hit{background:var(--brand-soft);color:var(--brand-strong);}.result.pend{background:var(--gold-soft);color:var(--gold-strong);}.result .ret{margin-left:auto;font-family:var(--font-num);}
+.vote .rc{font-size:10.5px;color:var(--ink-2);margin:9px 0 7px;font-weight:700;}
+.vote .act{display:flex;align-items:center;gap:15px;margin-top:11px;font-size:11.5px;color:var(--ink-3);}.vote .ride{margin-left:auto;color:var(--brand-strong);font-weight:800;}
+
+.ncard{padding:11px 12px;}
+.ncard .v{font-size:10.5px;font-weight:800;display:flex;align-items:center;gap:5px;}.ncard .v .d{width:7px;height:7px;border-radius:50%;}.ncard .tt{font-size:9.5px;color:var(--ink-3);margin-left:auto;font-weight:700;font-family:var(--font-num);}
+.ncard h5{font-size:13.5px;font-weight:800;margin:7px 0 2px;}.ncard .mm{font-size:10px;color:var(--ink-2);}
+
+.rate-blk{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:14px;}
+.rate-blk .l{font-size:10.5px;color:var(--ink-3);font-weight:700;}
+.rate-blk .row{display:flex;align-items:flex-end;gap:10px;margin-top:3px;}.rate-blk .big{font-size:34px;font-weight:800;font-family:var(--font-num);line-height:.95;}
+.rate-blk .rk2{font-size:12px;color:var(--ink-2);font-weight:700;padding-bottom:3px;}.rate-blk .dl{font-size:11px;font-weight:800;color:var(--brand-strong);background:var(--brand-soft);padding:3px 8px;border-radius:var(--r-pill);margin-bottom:4px;}
+
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:var(--r-lg);padding:24px;text-align:center;}
+.empty .ic{font-size:28px;}.empty .t{font-weight:800;font-size:14px;margin:8px 0 4px;}.empty .s{font-size:12px;color:var(--ink-2);}
+
+.bottomnav{display:flex;align-items:flex-start;justify-content:space-around;padding:9px 0 4px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);}
+.bn{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:700;width:56px;color:var(--ink-3);}.bn.on{color:var(--brand-strong);}.bn .ic{font-size:18px;}
+.fab{width:56px;height:56px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-top:-20px;gap:2px;color:#fff;font-weight:800;background:linear-gradient(135deg,#1bb368,#0f7e46);box-shadow:0 10px 20px -6px rgba(0,0,0,.35);}.fab .ic{font-size:19px;}.fab .lb{font-size:9px;}
+
+.rules{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px 22px;}
+.rules li{font-size:13px;line-height:2;color:var(--ink);margin-left:18px;}
+.rules b{color:var(--brand-strong);}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap"><h1>🎨 ゲートイン！ デザインシステム（A）</h1><button class="toggle" onclick="document.body.classList.toggle('dark')">🌙 ダーク切替</button></div></div>
+
+<div class="wrap">
+
+  <!-- カラートークン -->
+  <section>
+    <div class="sec-title">カラートークン</div>
+    <p class="note">色は<b>意味</b>で割り当てる。ブランド緑＝主役/GO/アクティブ、ゴールド＝<b>G1・賞金・特別感に限定</b>、赤＝締切/危険/外し、キャラ色＝識別のみ（UIには使わない）。<b>紫は使わない</b>。</p>
+    <div class="grid swatches" style="margin-top:16px">
+      <div class="sw"><div class="chip" style="background:var(--brand)"></div><div class="meta"><div class="name">brand</div><div class="var">--brand 主役/GO</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--brand-strong)"></div><div class="meta"><div class="name">brand-strong</div><div class="var">--brand-strong</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--gold)"></div><div class="meta"><div class="name">gold</div><div class="var">--gold G1/賞金</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--danger)"></div><div class="meta"><div class="name">danger</div><div class="var">--danger 締切/外し</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--info)"></div><div class="meta"><div class="name">info</div><div class="var">--info ○など</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--bg);border-bottom:1px solid var(--line)"></div><div class="meta"><div class="name">bg</div><div class="var">--bg 背景</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--surface);border-bottom:1px solid var(--line)"></div><div class="meta"><div class="name">surface</div><div class="var">--surface カード</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--ink)"></div><div class="meta"><div class="name">ink</div><div class="var">--ink 文字</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--ink-2)"></div><div class="meta"><div class="name">ink-2</div><div class="var">--ink-2 副文字</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--line)"></div><div class="meta"><div class="name">line</div><div class="var">--line 境界</div></div></div>
+    </div>
+    <p class="note" style="margin-top:16px"><b>キャラ識別色（アバター/ドット専用）</b></p>
+    <div class="grid swatches" style="margin-top:10px">
+      <div class="sw"><div class="chip" style="background:var(--c-hayate)"></div><div class="meta"><div class="name">ハヤテ</div><div class="var">--c-hayate</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--c-kazan)"></div><div class="meta"><div class="name">カザン</div><div class="var">--c-kazan</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--c-hakusen)"></div><div class="meta"><div class="name">ハクセン</div><div class="var">--c-hakusen</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--c-hibari)"></div><div class="meta"><div class="name">ヒバリ</div><div class="var">--c-hibari</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--c-gantetsu)"></div><div class="meta"><div class="name">ガンテツ</div><div class="var">--c-gantetsu</div></div></div>
+    </div>
+  </section>
+
+  <!-- タイポ -->
+  <section>
+    <div class="sec-title">タイポgrafi</div>
+    <p class="note">見出し・本文＝<b>M PLUS Rounded 1c</b>。数値（レート/オッズ/締切）＝<b>Roboto Mono</b>でデータ感を出す。</p>
+    <div style="margin-top:14px">
+      <div class="type-row"><div class="demo" style="font-size:28px;font-weight:800">日本ダービー</div><div class="spec">display / 28px / 800</div></div>
+      <div class="type-row"><div class="demo" style="font-size:20px;font-weight:800">セクション見出し</div><div class="spec">title / 20px / 800</div></div>
+      <div class="type-row"><div class="demo" style="font-size:14px;font-weight:700">カード見出し・ナビ</div><div class="spec">14px / 700</div></div>
+      <div class="type-row"><div class="demo" style="font-size:12.5px;color:var(--ink-2)">本文・説明テキスト</div><div class="spec">body / 12.5px / 400</div></div>
+      <div class="type-row"><div class="demo num" style="font-size:24px;font-weight:700">1847 ・ 4.3 ・ 1d 03h</div><div class="spec">num / Roboto Mono</div></div>
+    </div>
+  </section>
+
+  <!-- バッジ -->
+  <section>
+    <div class="sec-title">バッジ・チップ</div>
+    <div class="grid" style="gap:18px;margin-top:8px">
+      <div><div class="lbl">グレード（小バッジ。ベタ塗りブロックにしない）</div><div class="chips"><span class="badge g g1">G1</span><span class="badge g g2">G2</span><span class="badge g g3">G3</span></div></div>
+      <div><div class="lbl">ステータス</div><div class="chips"><span class="status open">● 受付中</span><span class="status soon">⏰ 締切間近</span><span class="status fixed">確定</span></div></div>
+      <div><div class="lbl">レート/AI</div><div class="chips"><span class="pill prov">暫定</span><span class="pill ai">AI</span><span class="pill live">開催中</span></div></div>
+      <div><div class="lbl">予想印（◎○▲△）</div><div class="chips"><span class="pk h">◎11 タガノ</span><span class="pk s">○4 フォーゲル</span><span class="pk s">▲13 タマモ</span><span class="pk o">△ 2,5,15</span></div></div>
+    </div>
+  </section>
+
+  <!-- ボタン -->
+  <section>
+    <div class="sec-title">ボタン</div>
+    <div class="chips" style="margin-top:8px"><button class="btn primary">予想する</button><button class="btn ghost">詳細を見る</button><button class="btn danger">⏰ あと1分・予想</button><span style="background:var(--brand);padding:10px;border-radius:var(--r)"><button class="btn onhero">予想する</button></span></div>
+    <p class="note">主アクション＝primary(緑)。ヒーロー上＝onhero(白)。締切煽り＝danger(赤)。副次＝ghost。</p>
+  </section>
+
+  <!-- コンポーネント -->
+  <section>
+    <div class="sec-title">コンポーネント</div>
+    <div class="demo-area" style="margin-top:8px">
+
+      <div class="cmp"><div class="cmp-lbl">App Header</div>
+        <div class="appbar"><div class="wordmark"><span class="crest">👑</span>ゲートイン！</div><div class="r"><span class="bell">🔔<span class="d">1</span></span><span class="me"><i></i></span></div></div>
+      </div>
+
+      <div class="cmp"><div class="cmp-lbl">AI予想家ストーリーズ</div>
+        <div class="stories">
+          <div class="story"><div class="av" style="--c:var(--c-hibari);background:linear-gradient(135deg,#f5944a,#e35d12)">ヒバ</div><div class="nm">ヒバリ</div><div class="tg">予想</div></div>
+          <div class="story"><div class="av" style="--c:var(--c-kazan);background:linear-gradient(135deg,#ef5a5a,#c52525)">カザ</div><div class="nm">カザン</div><div class="tg">予想</div></div>
+          <div class="story"><div class="av" style="--c:var(--c-hayate);background:linear-gradient(135deg,#4d86e6,#1f54b0)">ハヤ</div><div class="nm">ハヤテ</div><div class="tg">予想</div></div>
+          <div class="story lock"><div class="av" style="--c:var(--c-gantetsu)">ガン</div><div class="nm">ガンテツ</div><div class="tg">厳選待ち</div></div>
+        </div>
+      </div>
+
+      <div class="cmp" style="grid-column:span 2"><div class="cmp-lbl">Hero（1画面に1つだけ）</div>
+        <div class="hero"><div class="top"><span class="g1c">G1</span><span class="dt">5/31(日)</span><span class="cd num">あと1d 03h</span></div><h3>日本ダービー</h3><div class="m">東京・芝2400m・18頭・15:40発走</div><div class="ai">🤖 AI予想家4体が ◎ を公開中</div><button class="cta">予想する</button></div>
+      </div>
+
+      <div class="cmp"><div class="cmp-lbl">グレードカード（G2/G3）</div>
+        <div class="card gcard" style="--ac:var(--g2)"><div class="gd"><span class="gg">G2</span><span class="dt">5/30(土)</span></div><h4>目黒記念</h4><div class="m">東京 2500m・14頭</div><div class="go">予想する →</div></div>
+      </div>
+
+      <div class="cmp"><div class="cmp-lbl">大会カード（紫廃止・進捗表示）</div>
+        <div class="contest"><span class="live">開催中</span><div class="h">🏆 週間予想大会</div><div class="prize">賞金 <b class="num">¥5,000</b> / ¥3,000 / ¥2,000</div><div class="bar"><i style="width:6%"></i></div><div class="det">あと3R予想で参加 →</div></div>
+      </div>
+
+      <div class="cmp"><div class="cmp-lbl">切替バー（Segmented）</div>
+        <div class="seg"><div class="s on">ランキング</div><div class="s">フォロー中</div><div class="s">発見</div></div>
+        <div style="height:10px"></div>
+        <div class="cmp-lbl">あなたの実力（レートブロック）</div>
+        <div class="rate-blk"><div class="l">あなたのレート（直近100予想）</div><div class="row"><span class="big">1847</span><span class="rk2">全体142位</span><span class="dl">▲23 今週</span></div></div>
+      </div>
+
+      <div class="cmp"><div class="cmp-lbl">リーダーボード行（人＝AI同列）</div>
+        <div class="card">
+          <div class="lrow r1"><span class="rk">1</span><span class="lav" style="--c:var(--c-gantetsu);background:var(--c-gantetsu)">ガン</span><span class="ln"><span class="n">ガンテツ <span class="pill ai">AI</span></span><span class="st">的中54%・回収118%</span></span><span class="lr"><span class="rate">1980</span><span class="mv up">▲2</span></span></div>
+          <div class="lrow"><span class="rk">2</span><span class="lav" style="--c:var(--brand);background:var(--brand-soft);color:var(--brand-strong)">丼</span><span class="ln"><span class="n">ジェンティル丼名 👑</span><span class="st">的中38%・回収112%</span></span><span class="lr"><span class="rate">1955</span><span class="mv dn">▼1</span></span></div>
+        </div>
+      </div>
+
+      <div class="cmp"><div class="cmp-lbl">予想/フィードカード（実績紐づき）</div>
+        <div class="card vote"><div class="u"><span class="ua" style="background:var(--brand)">み</span><span><span class="un">みなとー ⭐⭐ <span class="br">R1920</span></span><span class="rn">3位・5/24 優駿牝馬</span></span><span class="tm">5日前</span></div><div class="result hit">🎯 的中 +140P<span class="ret">単勝 420円</span></div><div class="picks chips" style="margin-top:9px"><span class="pk h">◎18 ラフター</span><span class="pk s">○12 ドリーム</span><span class="pk o">△ 10,13</span></div><div class="act"><span>♡ 44</span><span>💬 12</span><span class="ride">🚀 乗っかる</span></div></div>
+      </div>
+
+      <div class="cmp"><div class="cmp-lbl">投票受付中カード</div>
+        <div class="card ncard"><div class="v"><span class="d" style="background:var(--brand)"></span>京都5R<span class="tt">12:25</span></div><h5>3歳未勝利</h5><div class="mm">芝1800m・18頭</div><div style="margin-top:9px"><span class="status soon">⏰ あと1分</span></div></div>
+      </div>
+
+      <div class="cmp"><div class="cmp-lbl">空状態（前向きに）</div>
+        <div class="empty"><div class="ic">🏇</div><div class="t">まだ予想がありません</div><div class="s">気になるレースで1番乗りしよう</div><div style="margin-top:12px"><button class="btn primary">予想する</button></div></div>
+      </div>
+
+      <div class="cmp" style="grid-column:span 2"><div class="cmp-lbl">BottomNav（中央＝予想FAB）</div>
+        <div class="bottomnav"><div class="bn on"><span class="ic">🏠</span>ホーム</div><div class="bn"><span class="ic">🏇</span>レース</div><div class="fab"><span class="ic">✎</span><span class="lb">予想</span></div><div class="bn"><span class="ic">🏟</span>アリーナ</div><div class="bn"><span class="ic">👤</span>マイ</div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ルール -->
+  <section>
+    <div class="sec-title">使用ルール（全ページ共通）</div>
+    <ul class="rules">
+      <li><b>色は意味で。</b> 緑＝主役/GO/アクティブ、ゴールド＝G1・賞金のみ、赤＝締切/危険/外し。装飾目的の彩色をしない。</li>
+      <li><b>ヒーローは1画面に1つ。</b> 直近の最重要レースだけ。グレードの全面ベタ塗り3連は廃止。</li>
+      <li><b>キャラ色はアバター/ドット専用。</b> ボタンや見出しには使わない。</li>
+      <li><b>数値はモノスペース。</b> レート・オッズ・締切・回収率は Roboto Mono。</li>
+      <li><b>紫グラデは使わない。</b> 大会は紫→ゴールドへ。</li>
+      <li><b>空状態は前向きに。</b>「0人参加中」「最初の予想者に」等のネガティブ表示を撤去。</li>
+      <li><b>カードは共通 .card。</b> 角丸・境界・影を統一し、ページごとに作り直さない。</li>
+    </ul>
+    <p class="note">→ これらを <code>theme.css</code> のトークン＋共通コンポーネントに落とせば、各ページの刷新は「部品を差し替えるだけ」になる。</p>
+  </section>
+
+</div>
+</body>
+</html>
