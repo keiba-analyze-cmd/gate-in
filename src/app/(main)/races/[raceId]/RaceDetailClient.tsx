@@ -14,6 +14,7 @@ import ShareButtons from "@/components/social/ShareButtons";
 import RaceCountdown from "@/components/races/RaceCountdown";
 import MyNewspaperTab from "@/components/races/MyNewspaperTab";
 import AIPredictorTab from "@/components/races/AIPredictorTab";
+import AnswerCheckCard from "@/components/races/AnswerCheckCard";
 
 type Props = {
   race: any;
@@ -74,6 +75,20 @@ export default function RaceDetailClient({
   const tabs = getTabs();
   const [activeTab, setActiveTab] = useState(tabs[0]?.key || "vote");
   const currentTab = tabs.find((t) => t.key === activeTab) ? activeTab : tabs[0]?.key;
+
+  // ── 答え合わせ用の導出値 ──
+  const winPickEntry = (myVote?.vote_picks ?? []).find((p: any) => p.pick_type === "win")?.race_entries ?? null;
+  const myWin = winPickEntry
+    ? { umaban: winPickEntry.post_number, name: (winPickEntry.horses as any)?.name ?? "" }
+    : null;
+  const myOdds = myWin
+    ? (entries ?? []).find((e: any) => e.post_number === myWin.umaban)?.odds ?? null
+    : null;
+  const firstResult = (results ?? []).find((r: any) => r.finish_position === 1)?.race_entries ?? null;
+  const result1st = firstResult
+    ? { umaban: firstResult.post_number, name: (firstResult.horses as any)?.name ?? "" }
+    : null;
+  const myScore = myVote?.rating_score ?? null;
 
   // ── Styles ──
   const cardBg = isDark ? "bg-slate-900 border-slate-700" : "bg-white border-gray-100";
@@ -228,6 +243,16 @@ export default function RaceDetailClient({
             />
           )}
 
+          {/* 答え合わせ（あなた vs AI） */}
+          <AnswerCheckCard
+            raceId={race.id}
+            myWin={myWin}
+            myOdds={myOdds}
+            result1st={result1st}
+            myScore={myScore}
+            isFinished={isFinished}
+          />
+
           {/* AI予想家と一致 */}
           <AIPredictorTab raceId={race.id} hasVoted={hasVoted} isFinished={isFinished} />
 
@@ -263,6 +288,16 @@ export default function RaceDetailClient({
               <div className={`text-sm ${textMuted}`}>このレースは予想していません</div>
             </div>
           )}
+
+          {/* 答え合わせ（あなた vs AI） */}
+          <AnswerCheckCard
+            raceId={race.id}
+            myWin={myWin}
+            myOdds={myOdds}
+            result1st={result1st}
+            myScore={myScore}
+            isFinished={isFinished}
+          />
 
           {/* AI予想家の結果 */}
           <AIPredictorTab raceId={race.id} hasVoted={hasVoted} isFinished={isFinished} />
