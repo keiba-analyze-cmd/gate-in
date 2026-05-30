@@ -294,32 +294,39 @@ export default async function HomePage() {
         <section>
           <div className={`grid gap-3 ${otherGradeRaces.length === 1 ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}>
             {otherGradeRaces.map((race) => {
-              const gradeColors: Record<string, string> = {
-                G2: "from-red-500 to-red-600",
-                G3: "from-green-500 to-green-600",
-                OP: "from-gray-500 to-gray-600",
-                L: "from-blue-500 to-blue-600",
+              const accentColors: Record<string, string> = {
+                G2: "var(--danger)",
+                G3: "var(--info)",
+                OP: "var(--ink-3)",
+                L: "var(--info)",
               };
-              const bg = gradeColors[race.grade ?? ""] ?? "from-green-500 to-green-600";
+              const ac = accentColors[race.grade ?? ""] ?? "var(--brand)";
               return (
                 <Link key={race.id} href={`/races/${race.id}`} className="block group">
-                  <div className={`rounded-2xl p-4 text-white relative overflow-hidden bg-gradient-to-br ${bg} group-hover:shadow-lg transition-shadow`}>
+                  <div
+                    className="relative overflow-hidden rounded-2xl p-4 pl-5 transition-shadow group-hover:shadow-md"
+                    style={{ background: "var(--surface)", border: "1px solid var(--line)", color: "var(--ink)" }}
+                  >
+                    <span className="absolute left-0 top-0 bottom-0 w-1.5" style={{ background: ac }} />
                     <div className="flex items-start justify-between mb-2">
-                      <span className="bg-white/25 text-white text-xs font-black px-2 py-0.5 rounded">
+                      <span className="text-[11px] font-black px-2 py-0.5 rounded text-white" style={{ background: ac }}>
                         {race.grade}
                       </span>
-                      <span className="text-white/70 text-xs font-medium">
+                      <span className="text-xs font-medium" style={{ color: "var(--ink-3)" }}>
                         {new Date(race.race_date + "T00:00:00+09:00").toLocaleDateString("ja-JP", { month: "short", day: "numeric", weekday: "short" })}
                       </span>
                     </div>
-                    <h3 className="text-xl font-black mb-1">{race.name}</h3>
-                    <p className="text-white/80 text-xs font-medium">
+                    <h3 className="text-lg font-black mb-1">{race.name}</h3>
+                    <p className="text-xs font-medium" style={{ color: "var(--ink-2)" }}>
                       {race.course_name}
                       {race.distance && ` ${race.distance}`}
                       {race.head_count && ` ${race.head_count}頭`}
                     </p>
                     <div className="mt-3 text-right">
-                      <span className="inline-block bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full group-hover:bg-white/30 transition-colors">
+                      <span
+                        className="inline-block text-xs font-bold px-3 py-1 rounded-full"
+                        style={{ background: "var(--brand-soft)", color: "var(--brand-strong)" }}
+                      >
                         予想する →
                       </span>
                     </div>
@@ -344,15 +351,18 @@ export default async function HomePage() {
 
       {/* ④-b ランキング */}
       <Link href="/rankings" className="block">
-        <div className="flex items-center justify-between p-4 rounded-xl border-2 border-blue-400 dark:border-blue-600 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+        <div
+          className="flex items-center justify-between p-4 rounded-2xl transition-shadow hover:shadow-md"
+          style={{ background: "var(--surface)", border: "1px solid var(--line)", color: "var(--ink)" }}
+        >
           <div className="flex items-center gap-3">
             <span className="text-2xl">🏆</span>
             <div>
-              <div className="text-sm font-black text-gray-900 dark:text-white">ランキング</div>
-              <div className="text-[10px] text-gray-500 dark:text-slate-400">月間・累計・連勝ランキング</div>
+              <div className="text-sm font-black">ランキング</div>
+              <div className="text-[10px]" style={{ color: "var(--ink-3)" }}>月間・累計・連勝ランキング</div>
             </div>
           </div>
-          <span className="text-gray-400 dark:text-slate-500 text-sm">→</span>
+          <span className="text-sm" style={{ color: "var(--ink-3)" }}>→</span>
         </div>
       </Link>
 

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 type Contest = {
   id: string;
@@ -41,7 +42,18 @@ export default function ContestBanner({
   myVoteCount,
   isEligible,
 }: Props) {
+  const { isDark } = useTheme();
   const [timeLeft, setTimeLeft] = useState("");
+
+  // 金トーン（ダークは暗い金面に切替）
+  const goldBg = isDark
+    ? "linear-gradient(135deg,#3a2f17,#2a2210)"
+    : "linear-gradient(135deg,#fbe6ad,#f2cf78)";
+  const goldText = isDark ? "#f3ece1" : "#3a2c00";
+  const goldMuted = isDark ? "rgba(243,236,225,.72)" : "rgba(58,44,0,.66)";
+  const onGoldSoft = isDark ? "rgba(255,255,255,.12)" : "rgba(0,0,0,.07)";
+  const barTrack = isDark ? "rgba(255,255,255,.16)" : "rgba(255,255,255,.65)";
+  const divider = isDark ? "rgba(255,255,255,.14)" : "rgba(0,0,0,.12)";
 
   useEffect(() => {
     if (!contestRaces.length) return;
@@ -77,8 +89,14 @@ export default function ContestBanner({
   if (!contest) {
     return (
       <Link href="/contest" className="block">
-        <div className="rounded-2xl overflow-hidden border-2 border-purple-300 bg-gradient-to-br from-purple-600 to-indigo-700 px-5 py-4 text-white relative">
-          <div className="absolute top-0 right-0 bg-amber-400 text-purple-900 text-[10px] font-black px-2 py-0.5 rounded-bl-lg">
+        <div
+          className="rounded-2xl overflow-hidden px-5 py-4 relative"
+          style={{ background: goldBg, color: goldText, border: "1px solid var(--line)" }}
+        >
+          <div
+            className="absolute top-0 right-0 text-[10px] font-black px-2 py-0.5 rounded-bl-lg"
+            style={{ background: "var(--gate-gold-strong)", color: "#fff" }}
+          >
             毎週開催
           </div>
           <div className="flex items-center justify-between">
@@ -86,13 +104,13 @@ export default function ContestBanner({
               <span className="text-2xl">🏆</span>
               <div>
                 <div className="text-sm font-black">週間予想大会</div>
-                <div className="text-xs text-purple-200 font-medium">
+                <div className="text-xs font-medium" style={{ color: goldMuted }}>
                   3レース以上予想で参加！WIN5対象レースでバトル
                 </div>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-xs text-purple-200">🥇🥈🥉</div>
+              <div className="text-xs" style={{ color: goldMuted }}>🥇🥈🥉</div>
               <div className="text-sm font-black">Amazonギフト券</div>
             </div>
           </div>
@@ -107,7 +125,15 @@ export default function ContestBanner({
 
   return (
     <Link href="/contest" className="block group">
-      <div className="rounded-2xl overflow-hidden border-2 border-purple-400 bg-gradient-to-br from-purple-600 via-indigo-600 to-purple-700 p-4 text-white relative shadow-lg">
+      <div
+        className="rounded-2xl overflow-hidden p-4 relative"
+        style={{
+          background: goldBg,
+          color: goldText,
+          border: "1px solid var(--line)",
+          boxShadow: "0 12px 24px -16px rgba(202,162,74,.5)",
+        }}
+      >
         {/* ヘッダー：タイトルとLIVEバッジ */}
         <div className="flex items-start justify-between gap-2 mb-3">
           <div className="flex items-center gap-2 min-w-0">
@@ -115,18 +141,24 @@ export default function ContestBanner({
             <div className="min-w-0">
               <div className="text-sm font-black truncate">{contest.name}</div>
               {timeLeft && isLive && (
-                <div className="text-xs text-amber-300 font-bold">{timeLeft}</div>
+                <div className="text-xs font-bold" style={{ color: "var(--danger)" }}>{timeLeft}</div>
               )}
             </div>
           </div>
           {isLive && (
-            <div className="bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded-full flex items-center gap-1 shrink-0">
+            <div
+              className="text-white text-[10px] font-black px-2 py-1 rounded-full flex items-center gap-1 shrink-0"
+              style={{ background: "var(--brand)" }}
+            >
               <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
               LIVE
             </div>
           )}
           {!isLive && contest.status === "active" && (
-            <div className="bg-amber-400 text-purple-900 text-[10px] font-black px-2 py-1 rounded-full shrink-0">
+            <div
+              className="text-[10px] font-black px-2 py-1 rounded-full shrink-0"
+              style={{ background: "var(--gate-gold-strong)", color: "#fff" }}
+            >
               開催中
             </div>
           )}
@@ -135,15 +167,21 @@ export default function ContestBanner({
         {/* 参加状況 */}
         <div className="flex flex-wrap items-center gap-2 mb-3">
           {isEligible ? (
-            <div className="bg-green-500/30 border border-green-400 text-green-100 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
+            <div
+              className="text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1"
+              style={{ background: "var(--brand-soft)", color: "var(--brand-strong)" }}
+            >
               <span>✓</span> 参加中
             </div>
           ) : (
-            <div className="bg-white/20 text-white/90 text-xs font-bold px-2 py-1 rounded-full">
+            <div
+              className="text-xs font-bold px-2 py-1 rounded-full"
+              style={{ background: onGoldSoft, color: goldText }}
+            >
               あと{3 - myVoteCount}レースで参加
             </div>
           )}
-          <div className="text-xs text-purple-200">
+          <div className="text-xs" style={{ color: goldMuted }}>
             👥 {totalParticipants}人参加中
           </div>
         </div>
@@ -157,32 +195,36 @@ export default function ContestBanner({
             return (
               <div
                 key={i}
-                className={`flex-1 h-1.5 rounded-full ${
-                  isFinished
-                    ? "bg-green-400"
+                className={`flex-1 h-1.5 rounded-full ${isVoting ? "animate-pulse" : ""}`}
+                style={{
+                  background: isFinished
+                    ? "var(--brand)"
                     : isVoting
-                      ? "bg-amber-400 animate-pulse"
-                      : "bg-white/30"
-                }`}
+                      ? "var(--gate-gold-strong)"
+                      : barTrack,
+                }}
               />
             );
           })}
-          <span className="text-[10px] text-purple-200 ml-1 shrink-0">
+          <span className="text-[10px] ml-1 shrink-0" style={{ color: goldMuted }}>
             {finishedRaces.length}/{contestRaces.length}
           </span>
         </div>
 
         {/* 賞金とCTA */}
-        <div className="flex items-center justify-between pt-3 border-t border-white/20">
+        <div className="flex items-center justify-between pt-3" style={{ borderTop: `1px solid ${divider}` }}>
           <div className="flex items-center gap-2">
-            <div className="text-amber-300">
-              <span className="text-lg font-black">🥇 ¥{contest.prize_1st?.toLocaleString()}</span>
-            </div>
-            <div className="text-[10px] text-purple-200">
+            <span className="text-lg font-black" style={{ fontFamily: "var(--font-mononum)" }}>
+              🥇 ¥{contest.prize_1st?.toLocaleString()}
+            </span>
+            <span className="text-[10px]" style={{ color: goldMuted, fontFamily: "var(--font-mononum)" }}>
               🥈¥{contest.prize_2nd?.toLocaleString()} 🥉¥{contest.prize_3rd?.toLocaleString()}
-            </div>
+            </span>
           </div>
-          <div className="bg-white/20 group-hover:bg-white/30 text-white text-xs font-bold px-3 py-1.5 rounded-full transition-colors shrink-0">
+          <div
+            className="text-xs font-bold px-3 py-1.5 rounded-full shrink-0"
+            style={{ background: onGoldSoft, color: goldText }}
+          >
             {isLive ? "予想 →" : "詳細 →"}
           </div>
         </div>
