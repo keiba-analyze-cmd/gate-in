@@ -110,7 +110,7 @@ export function createSupabaseRatingDeps(supabase: SupabaseClient): SettleRating
       // --- AI（ai_predictions） ---
       const { data: ais, error: aErr } = await supabase
         .from("ai_predictions")
-        .select("id, predictor_id, umaban, taikou_umaban, tanpou_umaban, osae_umaban, rating_applied")
+        .select("id, predictor_id, umaban, rating_applied")
         .eq("race_id", raceId);
       if (aErr) throw aErr;
       for (const a of (ais ?? []) as any[]) {
@@ -120,10 +120,7 @@ export function createSupabaseRatingDeps(supabase: SupabaseClient): SettleRating
           applied: a.rating_applied ?? false,
           prediction: {
             honmeiHorseId: a.umaban != null ? postToHorse.get(a.umaban) ?? "" : "",
-            taikoHorseId: a.taikou_umaban != null ? postToHorse.get(a.taikou_umaban) ?? null : null,
-            tananaHorseId: a.tanpou_umaban != null ? postToHorse.get(a.tanpou_umaban) ?? null : null,
-            renkaHorseIds:
-              a.osae_umaban != null ? ([postToHorse.get(a.osae_umaban)].filter(Boolean) as string[]) : [],
+            // ○▲△の部分点は v1.1 で対応（ai_predictions の実列名を確認後に追加）
           },
         });
         tableByPredId.set(a.id, "ai_predictions");
