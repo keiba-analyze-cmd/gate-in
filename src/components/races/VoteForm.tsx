@@ -4,7 +4,6 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
-import { useTheme } from "@/contexts/ThemeContext";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 
@@ -32,62 +31,12 @@ type PickType = "win" | "place" | "back" | "danger";
 
 const MARK_CONFIG: Record<
   PickType,
-  {
-    sym: string;
-    label: string;
-    bgLight: string;
-    bgDark: string;
-    borderLight: string;
-    borderDark: string;
-    colorLight: string;
-    colorDark: string;
-    btnBg: string;
-  }
+  { sym: string; label: string; soft: string; line: string; ink: string; solid: string }
 > = {
-  win: {
-    sym: "◎",
-    label: "本命",
-    bgLight: "bg-red-50",
-    bgDark: "bg-red-500/10",
-    borderLight: "border-red-400",
-    borderDark: "border-red-500/50",
-    colorLight: "text-red-600",
-    colorDark: "text-red-400",
-    btnBg: "bg-red-500",
-  },
-  place: {
-    sym: "○",
-    label: "対抗",
-    bgLight: "bg-blue-50",
-    bgDark: "bg-blue-500/10",
-    borderLight: "border-blue-400",
-    borderDark: "border-blue-500/50",
-    colorLight: "text-blue-600",
-    colorDark: "text-blue-400",
-    btnBg: "bg-blue-500",
-  },
-  back: {
-    sym: "△",
-    label: "抑え",
-    bgLight: "bg-yellow-50",
-    bgDark: "bg-yellow-500/10",
-    borderLight: "border-yellow-400",
-    borderDark: "border-yellow-500/50",
-    colorLight: "text-yellow-600",
-    colorDark: "text-yellow-400",
-    btnBg: "bg-yellow-600",
-  },
-  danger: {
-    sym: "⚠️",
-    label: "危険",
-    bgLight: "bg-gray-100",
-    bgDark: "bg-slate-700/50",
-    borderLight: "border-gray-400",
-    borderDark: "border-slate-500",
-    colorLight: "text-gray-600",
-    colorDark: "text-slate-400",
-    btnBg: "bg-gray-500",
-  },
+  win: { sym: "◎", label: "本命", soft: "var(--brand-soft)", line: "var(--brand)", ink: "var(--brand-strong)", solid: "var(--brand)" },
+  place: { sym: "○", label: "対抗", soft: "var(--info-soft)", line: "var(--info)", ink: "var(--info)", solid: "var(--info)" },
+  back: { sym: "△", label: "抑え", soft: "var(--osae-soft)", line: "var(--osae)", ink: "var(--osae)", solid: "var(--osae)" },
+  danger: { sym: "⚠️", label: "危険", soft: "var(--danger-soft)", line: "var(--danger)", ink: "var(--danger)", solid: "var(--danger)" },
 };
 
 const LIMITS: Record<PickType, number> = {
@@ -155,7 +104,6 @@ export default function VoteForm({
   userHandle,
   aiPicks = [],
 }: Props) {
-  const { isDark } = useTheme();
   const [picks, setPicks] = useState<{ entryId: string; type: PickType }[]>([]);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
@@ -175,18 +123,6 @@ export default function VoteForm({
   const searchParams = useSearchParams();
   const { showToast } = useToast();
   const supabase = createClient();
-
-  // Styles
-  const cardBg = isDark
-    ? "bg-slate-900 border-slate-700"
-    : "bg-white border-gray-100";
-  const textPrimary = isDark ? "text-slate-100" : "text-gray-800";
-  const textSecondary = isDark ? "text-slate-400" : "text-gray-500";
-  const textMuted = isDark ? "text-slate-500" : "text-gray-400";
-  const borderColor = isDark ? "border-slate-700" : "border-gray-100";
-  const btnPrimary = isDark
-    ? "bg-amber-500 hover:bg-amber-600 text-slate-900"
-    : "bg-green-600 hover:bg-green-700 text-white";
 
   // Copy source loading
   useEffect(() => {
@@ -487,24 +423,18 @@ export default function VoteForm({
 
   if (loadingCopy) {
     return (
-      <div className={`rounded-2xl border p-8 text-center ${cardBg}`}>
-        <div className={`text-sm ${textMuted}`}>予想を読み込み中...</div>
+      <div className="rounded-2xl border bg-surface border-line p-8 text-center font-display">
+        <div className="text-sm text-ink-3">予想を読み込み中...</div>
       </div>
     );
   }
 
   return (
-    <div className={`rounded-2xl border overflow-hidden ${cardBg}`}>
+    <div className="rounded-2xl border bg-surface border-line overflow-hidden font-display">
       {/* Header: Summary chips */}
-      <div
-        className={`p-3 border-b ${borderColor} ${
-          isDark ? "bg-slate-800/50" : "bg-gray-50"
-        } flex gap-1.5 flex-wrap min-h-[40px] items-center`}
-      >
+      <div className="p-3 border-b border-line bg-surface-2 flex gap-1.5 flex-wrap min-h-[40px] items-center">
         {picks.length === 0 && (
-          <span className={`text-xs ${textMuted}`}>
-            馬をタップして予想を入力
-          </span>
+          <span className="text-xs text-ink-3">馬をタップして予想を入力</span>
         )}
         {picks.map((p) => {
           const entry = entries.find((e) => e.id === p.entryId);
@@ -512,9 +442,8 @@ export default function VoteForm({
           return (
             <span
               key={p.entryId}
-              className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                isDark ? cfg.bgDark : cfg.bgLight
-              } ${isDark ? cfg.colorDark : cfg.colorLight}`}
+              className="text-xs px-2.5 py-1 rounded-full font-medium"
+              style={{ background: cfg.soft, color: cfg.ink }}
             >
               {cfg.sym} {entry?.post_number} {entry?.horses?.name}
             </span>
@@ -524,10 +453,8 @@ export default function VoteForm({
 
       {/* AI reference bar */}
       {aiPicks.length > 0 && (
-        <div
-          className={`px-4 py-1.5 border-b ${borderColor} flex items-center gap-1.5`}
-        >
-          <span className={`text-[9px] ${textMuted}`}>AI:</span>
+        <div className="px-4 py-1.5 border-b border-line flex items-center gap-1.5">
+          <span className="text-[9px] text-ink-3">AI:</span>
           {Object.entries(AI_COLORS).map(([id, color]) => (
             <div
               key={id}
@@ -538,9 +465,7 @@ export default function VoteForm({
               }}
             />
           ))}
-          <span className={`text-[9px] ml-auto font-medium ${
-            isDark ? "text-green-400" : "text-green-600"
-          }`}>
+          <span className="text-[9px] ml-auto font-medium text-brand-strong">
             {guideText()}
           </span>
         </div>
@@ -548,13 +473,9 @@ export default function VoteForm({
 
       {/* Guide bar (when no AI picks) */}
       {aiPicks.length === 0 && (
-        <div
-          className={`px-4 py-2 border-b ${borderColor} flex items-center justify-between`}
-        >
-          <span className={`text-xs ${textMuted}`}>馬をタップで自動割当</span>
-          <span className={`text-xs font-medium ${
-            isDark ? "text-green-400" : "text-green-600"
-          }`}>
+        <div className="px-4 py-2 border-b border-line flex items-center justify-between">
+          <span className="text-xs text-ink-3">馬をタップで自動割当</span>
+          <span className="text-xs font-medium text-brand-strong">
             {guideText()}
           </span>
         </div>
@@ -563,30 +484,20 @@ export default function VoteForm({
       {/* Copy source banner */}
       {copySource && (
         <div
-          className={`px-4 py-3 border-b ${
-            isDark
-              ? "bg-blue-500/10 border-blue-500/30"
-              : "bg-blue-50 border-blue-100"
-          }`}
+          className="px-4 py-3 border-b"
+          style={{ background: "var(--info-soft)", borderColor: "var(--info)" }}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-lg">🚀</span>
-              <span
-                className={`text-sm font-medium ${
-                  isDark ? "text-blue-400" : "text-blue-700"
-                }`}
-              >
+              <span className="text-sm font-medium" style={{ color: "var(--info)" }}>
                 {copySource.user_name}さんの予想ベース
               </span>
             </div>
             <button
               onClick={clearCopySource}
-              className={`text-xs ${
-                isDark
-                  ? "text-blue-400 hover:text-blue-300"
-                  : "text-blue-500 hover:text-blue-700"
-              }`}
+              className="text-xs hover:opacity-70"
+              style={{ color: "var(--info)" }}
             >
               クリア
             </button>
@@ -613,21 +524,14 @@ export default function VoteForm({
                 e.preventDefault();
                 setDanger(entry.id);
               }}
-              className={`flex items-center gap-2 py-2.5 border-b cursor-pointer select-none transition-colors ${
-                pick
-                  ? `${isDark ? cfg!.bgDark : cfg!.bgLight} border-l-[3px] ${
-                      isDark ? cfg!.borderDark : cfg!.borderLight
-                    } -mx-4 px-4`
-                  : `border-transparent ${
-                      isDark
-                        ? "border-b-slate-800 hover:bg-slate-800/50"
-                        : "border-b-gray-50 hover:bg-gray-50"
-                    }`
+              className={`flex items-center gap-2 py-2.5 border-b border-line cursor-pointer select-none transition-colors ${
+                pick ? "border-l-[3px] -mx-4 px-4" : "hover:bg-surface-2"
               }`}
+              style={pick ? { background: cfg!.soft, borderLeftColor: cfg!.line } : undefined}
             >
               {/* Gate number */}
               <span
-                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${getGateColor(
+                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 font-data ${getGateColor(
                   entry.gate_number
                 )}`}
               >
@@ -636,12 +540,10 @@ export default function VoteForm({
 
               {/* Horse info */}
               <div className="flex-1 min-w-0">
-                <div
-                  className={`font-bold text-sm truncate ${textPrimary}`}
-                >
+                <div className="font-bold text-sm truncate text-ink">
                   {entry.horses?.name}
                 </div>
-                <div className={`text-[10px] ${textMuted}`}>
+                <div className="text-[10px] text-ink-3">
                   {entry.jockey}
                 </div>
               </div>
@@ -650,28 +552,20 @@ export default function VoteForm({
               <div className="text-right min-w-[40px] shrink-0">
                 {entry.odds && (
                   <span
-                    className={`font-bold text-xs ${
-                      isLowOdds
-                        ? isDark
-                          ? "text-red-400"
-                          : "text-red-600"
-                        : isDark
-                        ? "text-slate-200"
-                        : "text-gray-700"
-                    }`}
+                    className="font-bold text-xs font-data"
+                    style={{ color: isLowOdds ? "var(--danger)" : "var(--ink-2)" }}
                   >
                     {entry.odds}
                   </span>
                 )}
                 {entry.popularity && (
                   <div
-                    className={`text-[10px] ${
+                    className="text-[10px] font-data"
+                    style={
                       entry.popularity <= 3
-                        ? isDark
-                          ? "text-amber-400 font-bold"
-                          : "text-amber-600 font-bold"
-                        : textMuted
-                    }`}
+                        ? { color: "var(--gate-gold-strong)", fontWeight: 700 }
+                        : { color: "var(--ink-3)" }
+                    }
                   >
                     {entry.popularity}人気
                   </div>
@@ -697,19 +591,14 @@ export default function VoteForm({
               <div className="w-8 shrink-0">
                 {pick ? (
                   <div
-                    className={`w-8 h-8 rounded-lg ${cfg!.btnBg} flex items-center justify-center text-sm text-white font-bold`}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-sm text-white font-bold"
+                    style={{ background: cfg!.solid }}
                   >
                     {cfg!.sym}
                   </div>
                 ) : (
-                  <div
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center border border-dashed ${
-                      isDark
-                        ? "border-slate-600 bg-slate-800"
-                        : "border-gray-300 bg-gray-50"
-                    }`}
-                  >
-                    <span className={`text-base ${textMuted}`}>+</span>
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center border border-dashed border-line bg-surface-2">
+                    <span className="text-base text-ink-3">+</span>
                   </div>
                 )}
               </div>
@@ -719,32 +608,21 @@ export default function VoteForm({
       </div>
 
       {/* Footer */}
-      <div
-        className={`border-t p-4 ${
-          isDark ? "bg-slate-800 border-slate-700" : "bg-gray-50 border-gray-100"
-        }`}
-      >
+      <div className="border-t border-line p-4 bg-surface-2">
         {/* Count + actions */}
         <div className="flex items-center justify-between mb-2">
-          <span className={`text-[10px] ${textMuted}`}>{countLabel()}</span>
+          <span className="text-[10px] text-ink-3 font-data">{countLabel()}</span>
           <div className="flex gap-2">
             <button
               onClick={skipOptional}
-              className={`px-2.5 py-1 rounded-md border text-[10px] ${
-                isDark
-                  ? "border-slate-600 text-slate-400 hover:bg-slate-700"
-                  : "border-gray-200 text-gray-500 hover:bg-gray-100"
-              }`}
+              className="px-2.5 py-1 rounded-md border border-line text-ink-3 hover:bg-surface text-[10px]"
             >
               ○△スキップ
             </button>
             <button
               onClick={resetAll}
-              className={`px-2.5 py-1 rounded-md border text-[10px] ${
-                isDark
-                  ? "border-red-800 text-red-400 hover:bg-red-900/30"
-                  : "border-red-200 text-red-500 hover:bg-red-50"
-              }`}
+              className="px-2.5 py-1 rounded-md border text-[10px] hover:opacity-70"
+              style={{ borderColor: "var(--danger)", color: "var(--danger)" }}
             >
               リセット
             </button>
@@ -754,23 +632,16 @@ export default function VoteForm({
         {/* Danger hint */}
         {showDangerHint && !picks.some((p) => p.type === "danger") && (
           <div
-            className={`flex items-center gap-2 rounded-lg px-3 py-2 mb-2 ${
-              isDark
-                ? "bg-amber-500/10 border border-amber-500/30"
-                : "bg-orange-50 border border-orange-200"
-            }`}
+            className="flex items-center gap-2 rounded-lg px-3 py-2 mb-2 border"
+            style={{ background: "var(--gate-gold-soft)", borderColor: "var(--gate-gold-strong)" }}
           >
             <span className="text-sm">💡</span>
-            <span
-              className={`text-[10px] ${
-                isDark ? "text-amber-300" : "text-orange-800"
-              }`}
-            >
+            <span className="text-[10px]" style={{ color: "var(--gate-gold-strong)" }}>
               馬を<strong>長押し</strong>すると⚠️危険馬に設定できます
             </span>
             <button
               onClick={() => setShowDangerHint(false)}
-              className={`text-xs ml-auto ${textMuted}`}
+              className="text-xs ml-auto text-ink-3"
             >
               ✕
             </button>
@@ -779,9 +650,7 @@ export default function VoteForm({
 
         {/* Comment */}
         <div className="mb-3">
-          <label
-            className={`block text-xs font-medium mb-1 ${textSecondary}`}
-          >
+          <label className="block text-xs font-medium mb-1 text-ink-2">
             💬 予想理由（任意）
           </label>
           <textarea
@@ -790,13 +659,9 @@ export default function VoteForm({
             placeholder="例: 前走の末脚が良かった。内枠有利のコースなので..."
             maxLength={200}
             rows={2}
-            className={`w-full px-3 py-2 rounded-lg text-sm resize-none border focus:outline-none focus:ring-2 ${
-              isDark
-                ? "bg-slate-800 border-slate-600 text-slate-100 placeholder-slate-500 focus:ring-amber-500"
-                : "bg-white border-gray-200 text-gray-800 placeholder-gray-400 focus:ring-green-500"
-            }`}
+            className="w-full px-3 py-2 rounded-lg text-sm resize-none border bg-surface border-line text-ink placeholder:text-ink-3 focus:outline-none focus:ring-2 focus:ring-brand"
           />
-          <div className={`text-right text-[10px] mt-0.5 ${textMuted}`}>
+          <div className="text-right text-[10px] mt-0.5 text-ink-3 font-data">
             {comment.length}/200
           </div>
         </div>
@@ -804,11 +669,8 @@ export default function VoteForm({
         {/* Error */}
         {error && (
           <div
-            className={`text-sm p-2 rounded-lg mb-2 ${
-              isDark
-                ? "text-red-400 bg-red-500/10"
-                : "text-red-600 bg-red-50"
-            }`}
+            className="text-sm p-2 rounded-lg mb-2"
+            style={{ background: "var(--danger-soft)", color: "var(--danger)" }}
           >
             {error}
           </div>
@@ -818,7 +680,7 @@ export default function VoteForm({
         <button
           onClick={handleConfirmOpen}
           disabled={!canSubmit || loading}
-          className={`w-full py-3 font-bold rounded-xl transition-colors disabled:opacity-40 ${btnPrimary}`}
+          className="w-full py-3 font-bold rounded-xl transition-colors disabled:opacity-40 bg-brand hover:bg-brand-strong text-white"
         >
           {loading
             ? "投票中..."
@@ -835,14 +697,10 @@ export default function VoteForm({
           onClick={() => setShowConfirm(false)}
         >
           <div
-            className={`rounded-2xl p-6 max-w-sm w-full shadow-xl ${
-              isDark ? "bg-slate-900" : "bg-white"
-            }`}
+            className="rounded-2xl p-6 max-w-sm w-full shadow-xl bg-surface font-display"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3
-              className={`text-lg font-bold mb-4 text-center ${textPrimary}`}
-            >
+            <h3 className="text-lg font-bold mb-4 text-center text-ink">
               {copySource ? "🚀 乗っかり確認" : "📋 投票内容の確認"}
             </h3>
             <div className="space-y-2 mb-6 max-h-80 overflow-y-auto">
@@ -853,27 +711,22 @@ export default function VoteForm({
                 return (
                   <div
                     key={p.entryId}
-                    className={`flex items-center gap-2 rounded-lg p-3 ${
-                      isDark ? cfg.bgDark : cfg.bgLight
-                    }`}
+                    className="flex items-center gap-2 rounded-lg p-3"
+                    style={{ background: cfg.soft }}
                   >
                     <span
-                      className={`text-xs font-bold px-2 py-0.5 rounded ${
-                        isDark ? cfg.colorDark : cfg.colorLight
-                      }`}
+                      className="text-xs font-bold px-2 py-0.5 rounded"
+                      style={{ color: cfg.ink }}
                     >
                       {cfg.sym} {cfg.label}
                     </span>
                     <span
-                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                        isDark
-                          ? "bg-slate-600 text-slate-100"
-                          : "bg-gray-800 text-white"
-                      }`}
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold font-data"
+                      style={{ background: "var(--ink)", color: "var(--bg)" }}
                     >
                       {entry.post_number}
                     </span>
-                    <span className={`font-bold ${textPrimary}`}>
+                    <span className="font-bold text-ink">
                       {entry.horses?.name}
                     </span>
                   </div>
@@ -883,17 +736,13 @@ export default function VoteForm({
             <div className="flex gap-2">
               <button
                 onClick={() => setShowConfirm(false)}
-                className={`flex-1 py-3 border rounded-xl text-sm font-bold transition-colors ${
-                  isDark
-                    ? "border-slate-600 text-slate-300 hover:bg-slate-800"
-                    : "border-gray-200 text-gray-600 hover:bg-gray-50"
-                }`}
+                className="flex-1 py-3 border border-line rounded-xl text-sm font-bold transition-colors text-ink-2 hover:bg-surface-2"
               >
                 戻る
               </button>
               <button
                 onClick={handleSubmit}
-                className={`flex-1 py-3 rounded-xl text-sm font-bold transition-colors ${btnPrimary}`}
+                className="flex-1 py-3 rounded-xl text-sm font-bold transition-colors bg-brand hover:bg-brand-strong text-white"
               >
                 {copySource ? "乗っかる" : "投票する"}
               </button>
