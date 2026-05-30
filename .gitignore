@@ -55,3 +55,7 @@ jrdb-data/
 *.log
 setup-x-post-slack.sh
 insert-posts.js
+
+gate-in-src.zip
+*.bak
+*.tmp
