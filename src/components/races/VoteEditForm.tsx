@@ -31,6 +31,28 @@ type Props = {
   postTime: string | null;
 };
 
+type MarkKey = "win" | "place" | "back" | "danger";
+
+const MARK_SYM: Record<MarkKey, string> = { win: "◎", place: "○", back: "△", danger: "⚠️" };
+const MARK_INK: Record<MarkKey, string> = {
+  win: "text-brand-strong",
+  place: "text-info",
+  back: "text-osae",
+  danger: "text-ink-3",
+};
+const MARK_SEL: Record<MarkKey, React.CSSProperties> = {
+  win: { background: "var(--brand-soft)", border: "2px solid var(--brand)" },
+  place: { background: "var(--info-soft)", border: "2px solid var(--info)" },
+  back: { background: "var(--osae-soft)", border: "2px solid var(--osae)" },
+  danger: { background: "var(--danger-soft)", border: "2px solid var(--danger)" },
+};
+const MARK_CHIP: Record<MarkKey, React.CSSProperties> = {
+  win: { background: "var(--brand-soft)", color: "var(--brand-strong)" },
+  place: { background: "var(--info-soft)", color: "var(--info)" },
+  back: { background: "var(--osae-soft)", color: "var(--osae)" },
+  danger: { background: "var(--danger-soft)", color: "var(--danger)" },
+};
+
 export default function VoteEditForm({ raceId, entries, existingPicks, postTime }: Props) {
   const existingWin = existingPicks.find((p) => p.pick_type === "win")?.race_entry_id ?? null;
   const existingPlace = existingPicks.filter((p) => p.pick_type === "place").map((p) => p.race_entry_id);
@@ -41,7 +63,7 @@ export default function VoteEditForm({ raceId, entries, existingPicks, postTime 
   const [placePicks, setPlacePicks] = useState<string[]>(existingPlace);
   const [backPicks, setBackPicks] = useState<string[]>(existingBack);
   const [dangerPick, setDangerPick] = useState<string | null>(existingDanger);
-  const [activeTab, setActiveTab] = useState<"win" | "place" | "back" | "danger">("win");
+  const [activeTab, setActiveTab] = useState<MarkKey>("win");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
@@ -127,26 +149,28 @@ export default function VoteEditForm({ raceId, entries, existingPicks, postTime 
 
   if (mode === "view") {
     return (
-      <div className="bg-white rounded-2xl border border-gray-100 p-4">
+      <div className="rounded-2xl border bg-surface border-line p-4 font-display">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-bold text-gray-700">✏️ 投票の変更・取消</span>
+          <span className="text-sm font-bold text-ink-2">✏️ 投票の変更・取消</span>
           <div className="flex gap-2">
             <button
               onClick={() => setMode("edit")}
-              className="px-3 py-1.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-lg hover:bg-blue-200 transition-colors"
+              className="px-3 py-1.5 text-xs font-bold rounded-lg transition-colors hover:opacity-80"
+              style={{ background: "var(--info-soft)", color: "var(--info)" }}
             >
               変更する
             </button>
             <button
               onClick={handleCancel}
               disabled={loading}
-              className="px-3 py-1.5 bg-red-100 text-red-700 text-xs font-bold rounded-lg hover:bg-red-200 transition-colors disabled:opacity-40"
+              className="px-3 py-1.5 text-xs font-bold rounded-lg transition-colors hover:opacity-80 disabled:opacity-40"
+              style={{ background: "var(--danger-soft)", color: "var(--danger)" }}
             >
               取り消す
             </button>
           </div>
         </div>
-        <p className="text-xs text-gray-400 mt-1">発走2分前まで変更できます</p>
+        <p className="text-xs text-ink-3 mt-1">発走2分前まで変更できます</p>
       </div>
     );
   }
@@ -159,30 +183,30 @@ export default function VoteEditForm({ raceId, entries, existingPicks, postTime 
   ];
 
   return (
-    <div className="bg-white rounded-2xl border-2 border-blue-200 overflow-hidden">
-      <div className="bg-blue-50 px-4 py-2 flex items-center justify-between">
-        <span className="text-sm font-bold text-blue-700">✏️ 投票変更モード</span>
+    <div className="rounded-2xl border-2 overflow-hidden bg-surface font-display" style={{ borderColor: "var(--brand)" }}>
+      <div className="px-4 py-2 flex items-center justify-between" style={{ background: "var(--brand-soft)" }}>
+        <span className="text-sm font-bold text-brand-strong">✏️ 投票変更モード</span>
         <button
           onClick={() => setMode("view")}
-          className="text-xs text-blue-600 font-bold hover:underline"
+          className="text-xs text-brand-strong font-bold hover:underline"
         >
           キャンセル
         </button>
       </div>
 
       {/* タブ */}
-      <div className="flex border-b border-gray-100">
+      <div className="flex border-b border-line">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
-              activeTab === tab.key ? "text-blue-600 bg-blue-50" : "text-gray-500 hover:text-gray-700"
+              activeTab === tab.key ? "text-brand-strong bg-brand-soft" : "text-ink-3 hover:text-ink-2"
             }`}
           >
             {tab.label}
-            <span className="block text-xs font-normal text-gray-400">{tab.desc}</span>
-            {activeTab === tab.key && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />}
+            <span className="block text-xs font-normal text-ink-3">{tab.desc}</span>
+            {activeTab === tab.key && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand" />}
           </button>
         ))}
       </div>
@@ -212,39 +236,33 @@ export default function VoteEditForm({ raceId, entries, existingPicks, postTime 
                 else setDangerPick(isSelected ? null : entry.id);
               }}
               disabled={isDisabled}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left border-2 ${
                 isSelected
-                  ? activeTab === "win" ? "bg-red-50 border-2 border-red-300"
-                  : activeTab === "place" ? "bg-blue-50 border-2 border-blue-300"
-                  : activeTab === "back" ? "bg-yellow-50 border-2 border-yellow-300"
-                  : "bg-gray-100 border-2 border-gray-400"
-                  : usedIn ? "bg-gray-50 border-2 border-transparent opacity-30"
-                  : "bg-gray-50 border-2 border-transparent hover:border-gray-200"
+                  ? ""
+                  : usedIn
+                  ? "bg-surface-2 border-transparent opacity-30"
+                  : "bg-surface-2 border-transparent hover:border-line"
               } ${(isMaxPlace || isMaxBack) ? "opacity-40" : ""}`}
+              style={isSelected ? MARK_SEL[activeTab] : undefined}
             >
-              <span className="w-8 h-8 rounded-full bg-gray-800 text-white flex items-center justify-center text-sm font-bold shrink-0">
+              <span className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 font-data" style={{ background: "var(--ink)", color: "var(--bg)" }}>
                 {entry.post_number}
               </span>
               <div className="flex-1 min-w-0">
-                <div className="font-bold text-gray-800 truncate">
+                <div className="font-bold text-ink truncate">
                   {entry.horses?.name}
-                  {usedIn && <span className="text-[10px] text-gray-400 font-normal ml-1">（{usedIn}で選択中）</span>}
+                  {usedIn && <span className="text-[10px] text-ink-3 font-normal ml-1">（{usedIn}で選択中）</span>}
                 </div>
-                <div className="text-xs text-gray-400">{entry.jockey}</div>
+                <div className="text-xs text-ink-3">{entry.jockey}</div>
               </div>
               <div className="text-right shrink-0">
-                {entry.odds && <span className="font-bold text-gray-700">{entry.odds}</span>}
-                {entry.popularity && <div className="text-xs text-gray-400">{entry.popularity}人気</div>}
+                {entry.odds && <span className="font-bold text-ink-2 font-data">{entry.odds}</span>}
+                {entry.popularity && <div className="text-xs text-ink-3 font-data">{entry.popularity}人気</div>}
               </div>
               <div className="w-6 shrink-0 text-center">
                 {isSelected && (
-                  <span className={`text-lg ${
-                    activeTab === "win" ? "text-red-500" 
-                    : activeTab === "place" ? "text-blue-500" 
-                    : activeTab === "back" ? "text-yellow-600" 
-                    : "text-gray-500"
-                  }`}>
-                    {activeTab === "win" ? "◎" : activeTab === "place" ? "○" : activeTab === "back" ? "△" : "⚠️"}
+                  <span className={`text-lg ${MARK_INK[activeTab]}`}>
+                    {MARK_SYM[activeTab]}
                   </span>
                 )}
               </div>
@@ -254,37 +272,41 @@ export default function VoteEditForm({ raceId, entries, existingPicks, postTime 
       </div>
 
       {/* フッター */}
-      <div className="border-t border-gray-100 p-4 bg-gray-50">
+      <div className="border-t border-line p-4 bg-surface-2">
         <div className="flex flex-wrap gap-2 mb-3 min-h-[28px]">
           {winPick && (
-            <span className="bg-red-100 text-red-700 text-xs px-2.5 py-1 rounded-full font-medium">
+            <span className="text-xs px-2.5 py-1 rounded-full font-medium" style={MARK_CHIP.win}>
               ◎ {entries.find((e) => e.id === winPick)?.horses?.name}
             </span>
           )}
           {placePicks.map((id) => (
-            <span key={id} className="bg-blue-100 text-blue-700 text-xs px-2.5 py-1 rounded-full font-medium">
+            <span key={id} className="text-xs px-2.5 py-1 rounded-full font-medium" style={MARK_CHIP.place}>
               ○ {entries.find((e) => e.id === id)?.horses?.name}
             </span>
           ))}
           {backPicks.map((id) => (
-            <span key={id} className="bg-yellow-100 text-yellow-700 text-xs px-2.5 py-1 rounded-full font-medium">
+            <span key={id} className="text-xs px-2.5 py-1 rounded-full font-medium" style={MARK_CHIP.back}>
               △ {entries.find((e) => e.id === id)?.horses?.name}
             </span>
           ))}
           {dangerPick && (
-            <span className="bg-gray-200 text-gray-700 text-xs px-2.5 py-1 rounded-full font-medium">
+            <span className="text-xs px-2.5 py-1 rounded-full font-medium" style={MARK_CHIP.danger}>
               ⚠️ {entries.find((e) => e.id === dangerPick)?.horses?.name}
             </span>
           )}
           {!winPick && !placePicks.length && !backPicks.length && !dangerPick && (
-            <span className="text-xs text-gray-400">馬を選択してください</span>
+            <span className="text-xs text-ink-3">馬を選択してください</span>
           )}
         </div>
-        {error && <div className="text-sm text-red-600 bg-red-50 p-2 rounded-lg mb-3">{error}</div>}
+        {error && (
+          <div className="text-sm p-2 rounded-lg mb-3" style={{ background: "var(--danger-soft)", color: "var(--danger)" }}>
+            {error}
+          </div>
+        )}
         <button
           onClick={() => { if (winPick) setShowConfirm(true); else setError("1着予想を選択してください"); }}
           disabled={!winPick || loading}
-          className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-40"
+          className="w-full py-3 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl transition-colors disabled:opacity-40"
         >
           {loading ? "変更中..." : "✏️ この内容で変更する"}
         </button>
@@ -293,56 +315,35 @@ export default function VoteEditForm({ raceId, entries, existingPicks, postTime 
       {/* 確認モーダル */}
       {showConfirm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowConfirm(false)}>
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">✏️ 変更内容の確認</h3>
+          <div className="rounded-2xl p-6 max-w-sm w-full shadow-xl bg-surface font-display" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-ink mb-4 text-center">✏️ 変更内容の確認</h3>
             <div className="space-y-3 mb-6 max-h-80 overflow-y-auto">
-              {winPick && (() => {
-                const e = entries.find((x) => x.id === winPick);
-                return e ? (
-                  <div className="flex items-center gap-2 bg-red-50 rounded-lg p-3">
-                    <span className="text-xs font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded">◎ 1着</span>
-                    <span className="w-6 h-6 rounded-full bg-gray-800 text-white flex items-center justify-center text-xs font-bold">{e.post_number}</span>
-                    <span className="font-bold text-gray-800">{e.horses?.name}</span>
-                  </div>
-                ) : null;
-              })()}
-              {placePicks.map((id) => {
-                const e = entries.find((x) => x.id === id);
-                return e ? (
-                  <div key={id} className="flex items-center gap-2 bg-blue-50 rounded-lg p-3">
-                    <span className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded">○ 対抗</span>
-                    <span className="w-6 h-6 rounded-full bg-gray-800 text-white flex items-center justify-center text-xs font-bold">{e.post_number}</span>
-                    <span className="font-bold text-gray-800">{e.horses?.name}</span>
-                  </div>
-                ) : null;
+              {(["win", "place", "back", "danger"] as MarkKey[]).flatMap((mk) => {
+                const ids = mk === "win" ? (winPick ? [winPick] : [])
+                  : mk === "danger" ? (dangerPick ? [dangerPick] : [])
+                  : mk === "place" ? placePicks : backPicks;
+                const labelText = mk === "win" ? "1着" : mk === "place" ? "対抗" : mk === "back" ? "抑え" : "危険";
+                return ids.map((id) => {
+                  const e = entries.find((x) => x.id === id);
+                  if (!e) return null;
+                  return (
+                    <div key={`${mk}-${id}`} className="flex items-center gap-2 rounded-lg p-3" style={{ background: MARK_CHIP[mk].background }}>
+                      <span className="text-xs font-bold px-2 py-0.5 rounded" style={{ color: MARK_CHIP[mk].color }}>
+                        {MARK_SYM[mk]} {labelText}
+                      </span>
+                      <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold font-data" style={{ background: "var(--ink)", color: "var(--bg)" }}>{e.post_number}</span>
+                      <span className="font-bold text-ink">{e.horses?.name}</span>
+                    </div>
+                  );
+                });
               })}
-              {backPicks.map((id) => {
-                const e = entries.find((x) => x.id === id);
-                return e ? (
-                  <div key={id} className="flex items-center gap-2 bg-yellow-50 rounded-lg p-3">
-                    <span className="text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-0.5 rounded">△ 抑え</span>
-                    <span className="w-6 h-6 rounded-full bg-gray-800 text-white flex items-center justify-center text-xs font-bold">{e.post_number}</span>
-                    <span className="font-bold text-gray-800">{e.horses?.name}</span>
-                  </div>
-                ) : null;
-              })}
-              {dangerPick && (() => {
-                const e = entries.find((x) => x.id === dangerPick);
-                return e ? (
-                  <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-3">
-                    <span className="text-xs font-bold text-gray-600 bg-gray-200 px-2 py-0.5 rounded">⚠️ 危険</span>
-                    <span className="w-6 h-6 rounded-full bg-gray-800 text-white flex items-center justify-center text-xs font-bold">{e.post_number}</span>
-                    <span className="font-bold text-gray-800">{e.horses?.name}</span>
-                  </div>
-                ) : null;
-              })()}
               {!dangerPick && placePicks.length === 0 && backPicks.length === 0 && (
-                <p className="text-xs text-gray-400 text-center">※ 対抗・抑え・危険馬は未選択です（任意）</p>
+                <p className="text-xs text-ink-3 text-center">※ 対抗・抑え・危険馬は未選択です（任意）</p>
               )}
             </div>
             <div className="flex gap-2">
-              <button onClick={() => setShowConfirm(false)} className="flex-1 py-3 border border-gray-200 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50 transition-colors">戻る</button>
-              <button onClick={handleUpdate} className="flex-1 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors">変更する</button>
+              <button onClick={() => setShowConfirm(false)} className="flex-1 py-3 border border-line rounded-xl text-sm font-bold text-ink-2 hover:bg-surface-2 transition-colors">戻る</button>
+              <button onClick={handleUpdate} className="flex-1 py-3 bg-brand hover:bg-brand-strong text-white rounded-xl text-sm font-bold transition-colors">変更する</button>
             </div>
           </div>
         </div>

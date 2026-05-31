@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useTheme } from "@/contexts/ThemeContext";
 
 type Props = {
   raceId: string;
@@ -13,26 +12,17 @@ type Props = {
 type Member = { user_id: string; display_name: string; avatar_url: string | null; avatar_emoji: string | null; rank_id: string };
 type MemberPick = { user_id: string; picks: { pick_type: string; race_entry_id: string }[] };
 
-const PICK_MARKS: Record<string, { mark: string; bg: string; text: string }> = {
-  win: { mark: "◎", bg: "bg-red-500", text: "text-white" },
-  place: { mark: "○", bg: "bg-blue-500", text: "text-white" },
-  back: { mark: "△", bg: "bg-yellow-500", text: "text-white" },
-  danger: { mark: "⚠️", bg: "bg-gray-500", text: "text-white" },
+const PICK_MARKS: Record<string, { mark: string; color: string }> = {
+  win: { mark: "◎", color: "var(--brand)" },
+  place: { mark: "○", color: "var(--info)" },
+  back: { mark: "△", color: "var(--osae)" },
+  danger: { mark: "⚠️", color: "var(--ink-3)" },
 };
 
 export default function MyNewspaperTab({ raceId, entries }: Props) {
-  const { isDark } = useTheme();
   const [members, setMembers] = useState<Member[]>([]);
   const [picks, setPicks] = useState<MemberPick[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const cardBg = isDark ? "bg-slate-900 border-slate-700" : "bg-white border-gray-100";
-  const textPrimary = isDark ? "text-slate-100" : "text-gray-900";
-  const textSecondary = isDark ? "text-slate-400" : "text-gray-600";
-  const textMuted = isDark ? "text-slate-500" : "text-gray-400";
-  const headerBg = isDark ? "bg-slate-800" : "bg-gray-50";
-  const borderColor = isDark ? "border-slate-700" : "border-gray-200";
-  const btnPrimary = isDark ? "bg-amber-500 text-slate-900 hover:bg-amber-400" : "bg-green-600 text-white hover:bg-green-700";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,14 +37,14 @@ export default function MyNewspaperTab({ raceId, entries }: Props) {
     fetchData();
   }, [raceId]);
 
-  if (loading) return <div className={`rounded-2xl border p-8 text-center ${cardBg} ${textMuted}`}>読み込み中...</div>;
+  if (loading) return <div className="rounded-2xl border bg-surface border-line p-8 text-center text-ink-3 font-display">読み込み中...</div>;
 
   if (members.length === 0) {
     return (
-      <div className={`rounded-2xl border p-8 text-center ${cardBg}`}>
+      <div className="rounded-2xl border bg-surface border-line p-8 text-center font-display">
         <div className="text-4xl mb-3">🗞️</div>
-        <p className={`mb-4 ${textSecondary}`}>My競馬新聞メンバーが設定されていません</p>
-        <Link href="/mypage/newspaper" className={`inline-block px-6 py-3 rounded-xl font-bold ${btnPrimary}`}>
+        <p className="mb-4 text-ink-2">My競馬新聞メンバーが設定されていません</p>
+        <Link href="/mypage/newspaper" className="inline-block px-6 py-3 rounded-xl font-bold bg-brand hover:bg-brand-strong text-white">
           メンバーを設定する
         </Link>
       </div>
@@ -68,22 +58,22 @@ export default function MyNewspaperTab({ raceId, entries }: Props) {
   };
 
   return (
-    <div className={`rounded-2xl border overflow-hidden ${cardBg}`}>
-      <div className={`px-4 py-3 ${headerBg} border-b ${borderColor}`}>
-        <h2 className={`font-bold ${textPrimary}`}>📰 My競馬新聞</h2>
+    <div className="rounded-2xl border bg-surface border-line overflow-hidden font-display">
+      <div className="px-4 py-3 bg-surface-2 border-b border-line">
+        <h2 className="font-bold text-ink">📰 My競馬新聞</h2>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className={headerBg}>
-            <tr className={`border-b ${borderColor}`}>
-              <th className={`px-3 py-2 text-left font-bold sticky left-0 ${headerBg} ${textSecondary}`}>馬</th>
+          <thead className="bg-surface-2">
+            <tr className="border-b border-line">
+              <th className="px-3 py-2 text-left font-bold sticky left-0 bg-surface-2 text-ink-2">馬</th>
               {members.map(m => (
-                <th key={m.user_id} className={`px-2 py-2 text-center min-w-[60px] ${textSecondary}`}>
+                <th key={m.user_id} className="px-2 py-2 text-center min-w-[60px] text-ink-2">
                   <Link href={`/users/${m.user_id}`} className="flex flex-col items-center gap-1">
                     {m.avatar_url ? (
                       <Image src={m.avatar_url} alt="" width={24} height={24} className="w-6 h-6 rounded-full" unoptimized />
                     ) : (
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${isDark ? "bg-slate-700" : "bg-gray-100"}`}>🏇</div>
+                      <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs bg-surface">🏇</div>
                     )}
                     <span className="text-[10px] truncate max-w-[50px]">{m.display_name}</span>
                   </Link>
@@ -93,13 +83,13 @@ export default function MyNewspaperTab({ raceId, entries }: Props) {
           </thead>
           <tbody>
             {entries.map(entry => (
-              <tr key={entry.id} className={`border-b ${borderColor} ${isDark ? "hover:bg-slate-800" : "hover:bg-gray-50"}`}>
-                <td className={`px-3 py-2 sticky left-0 ${isDark ? "bg-slate-900" : "bg-white"}`}>
+              <tr key={entry.id} className="border-b border-line">
+                <td className="px-3 py-2 sticky left-0 bg-surface">
                   <div className="flex items-center gap-2">
-                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${isDark ? "bg-slate-700 text-slate-100" : "bg-gray-800 text-white"}`}>
+                    <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold font-data" style={{ background: "var(--ink)", color: "var(--bg)" }}>
                       {entry.post_number}
                     </span>
-                    <span className={`font-medium truncate max-w-[100px] ${textPrimary}`}>{entry.horses?.name ?? "不明"}</span>
+                    <span className="font-medium truncate max-w-[100px] text-ink">{entry.horses?.name ?? "不明"}</span>
                   </div>
                 </td>
                 {members.map(m => {
@@ -107,7 +97,7 @@ export default function MyNewspaperTab({ raceId, entries }: Props) {
                   return (
                     <td key={m.user_id} className="px-2 py-2 text-center">
                       {mark && (
-                        <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${mark.bg} ${mark.text}`}>
+                        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold text-white" style={{ background: mark.color }}>
                           {mark.mark}
                         </span>
                       )}

@@ -53,13 +53,16 @@ export default function RaceCountdown({ startTime, raceDate, status }: Props) {
   if (status !== "voting_open" || !remaining) return null;
 
   return (
-    <div className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full ${
-      urgent
-        ? "bg-red-100 text-red-600 animate-pulse"
-        : "bg-orange-50 text-orange-600"
-    }`}>
+    <div
+      className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full ${urgent ? "animate-pulse" : ""}`}
+      style={
+        urgent
+          ? { background: "var(--danger-soft)", color: "var(--danger)" }
+          : { background: "var(--gate-gold-soft)", color: "var(--gate-gold-strong)" }
+      }
+    >
       <span>⏰</span>
-      <span>締切まで {remaining}</span>
+      <span>締切まで <span className="font-data">{remaining}</span></span>
     </div>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useTheme } from "@/contexts/ThemeContext";
 
 type Props = {
   text: string;
@@ -11,16 +10,15 @@ type Props = {
 };
 
 export default function ShareButtons({ text, url, hashtags = [], size = "small" }: Props) {
-  const { isDark } = useTheme();
   const [copied, setCopied] = useState(false);
-  
+
   const shareUrl = url ?? "https://www.gate-in.jp";
-  
+
   const defaultHashtags = ["ゲートイン", "競馬予想"];
   const allHashtags = [...new Set([...defaultHashtags, ...hashtags])];
   const hashtagText = allHashtags.map(t => "#" + t).join(" ");
   const fullText = text + "\n\n" + hashtagText;
-  
+
   const encodedText = encodeURIComponent(fullText);
   const encodedUrl = encodeURIComponent(shareUrl);
 
@@ -48,7 +46,7 @@ export default function ShareButtons({ text, url, hashtags = [], size = "small" 
 
   const xBtnClass = buttonBase + " bg-black text-white hover:bg-gray-800 hover:scale-105 " + flexClass;
   const lineBtnClass = buttonBase + " bg-[#06C755] text-white hover:bg-[#05b04d] hover:scale-105 " + flexClass;
-  const copyBtnClass = buttonBase + " " + (isDark ? "bg-slate-700 text-slate-200 hover:bg-slate-600" : "bg-gray-200 text-gray-700 hover:bg-gray-300") + " hover:scale-105 " + flexClass;
+  const copyBtnClass = buttonBase + " bg-surface-2 text-ink-2 hover:opacity-80 hover:scale-105 " + flexClass;
 
   return (
     <div className={containerClass}>
